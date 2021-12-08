@@ -50,8 +50,6 @@ export const RealEstateListing = () => {
     },
   ];
 
-  // const redirectView = (path: string) => (): void => history.push(path);
-
   return (
     <>
       <CRow className="mx-0">
@@ -88,24 +86,6 @@ export const RealEstateListing = () => {
       //       </div>
       //     </div>
       //   </div> */}
-
-      {/* //  <CRow className="info-box-container bg-white m-2 p-2 align-items-center rounded shadow-sm">
-        //   <CCol xs={4} className="p-0">
-        //     <img src={bds} className="w-100 h-100"/>
-        //   </CCol>
-        //   <CCol xs={8}  className="align-items-around">
-        //     <div className="info-box">
-        //       <div className="info-box-content">
-        //         <span className="info-box-text text-darkTitle">{item.infoText}</span>
-        //         <p className={`info-box-token text-primary m-0`}>{item.infoToken}</p>
-        //         <p className={`info-box-commissionRate text-success m-0 align-items-center`}>
-        //           <Icon icon={flowerIcon} className=""/> {item.commissionRate}
-        //         </p>
-        //       </div>
-        //     </div>
-        //   </CCol>
-        // </CRow>
-      // ))} */}
     </>
   );
 };

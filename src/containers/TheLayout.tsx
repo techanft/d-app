@@ -3,8 +3,10 @@ import { TheContent, TheHeader } from '.';
 import { RealEstateDetails } from '../views/realEstateDetails/RealEstateDetails';
 import { RealEstateInfo } from '../views/realEstateInfo/RealEstateInfo';
 import { RealEstateListing } from '../views/realEstateListing/RealEstateListing';
+import ExploitedManagement from '../views/realEstateManagement/owner/ExploitedManagement';
+import ActivityLogs from '../views/realEstateManagement/shared/ActivityLogs';
 import RealEstateDetailsView from '../views/realEstateManagement/shared/RealEstateDetailsView';
-import RegisterBonus from '../views/realEstateManagement/shared/RegisterBonus';
+import RegisterReward from '../views/realEstateManagement/shared/RegisterReward';
 
 const TheLayout = () => {
   return (
@@ -13,12 +15,14 @@ const TheLayout = () => {
         <div className="c-wrapper">
           <TheHeader />
           <div className="c-body">
-            {/* <TheContent /> */}
+            <TheContent />
             {/* <RealEstateListing /> */}
             {/* <RealEstateInfo /> */}
             {/* <RealEstateDetails/> */}
-            {/* <RegisterBonus/> */}
-            <RealEstateDetailsView/>
+            <RealEstateDetailsView />
+            <RegisterReward />
+            <ActivityLogs/>
+            <ExploitedManagement/>
           </div>
         </div>
       </div>

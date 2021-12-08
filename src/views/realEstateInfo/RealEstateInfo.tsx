@@ -1,13 +1,22 @@
 import { CButton, CCard, CCardBody, CCol, CCollapse, CContainer, CLink, CRow } from '@coreui/react';
-import { faArrowAltCircleDown, faArrowAltCircleUp, faClipboard, faDonate, faEdit } from '@fortawesome/free-solid-svg-icons';
+import {
+  faArrowAltCircleDown,
+  faArrowAltCircleUp,
+  faClipboard,
+  faDonate,
+  faEdit,
+  faIdBadge,
+} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState } from 'react';
-import realEstateImg from '../../assets/img/realEstateDetail.svg';
 import { Roles } from '../../enumeration/roles';
+import realEstateImg from '../../assets/img/realEstateDetail.svg';
 import { IRealEstateInfo } from '../../shared/models/realEstateInfo.model';
+
 import './index.scss';
 import RechargeTokenModal from './RechargeTokenModal';
 import WithdrawTokenModal from './WithdrawTokenModal';
+import CIcon from '@coreui/icons-react';
 
 export const RealEstateInfo = () => {
   const [rechargeToken, setRechargeToken] = useState<boolean>(false);
@@ -38,7 +47,7 @@ export const RealEstateInfo = () => {
       </CCol>
       <CCol className="realestate-info m-0 p-0">
         <CRow className="realestate-title-info m-0 p-0">
-          <CCol xs={12} className="text-dark realestate-title mt-3">
+          <CCol xs={12} className="text-dark btn-font-style mt-3">
             202 Yên Sở - Hoàng Mai - Hà Nội
           </CCol>
           <CCol xs={6} className="text-primary total-token my-3">
@@ -47,57 +56,63 @@ export const RealEstateInfo = () => {
             </p>
           </CCol>
           <CCol xs={6} className="owner-check d-flex align-items-end justify-content-between my-3">
-            <p className="ownership mr-3 m-0">Quyền sở hữu</p>
+            <p className="detail-title-font mr-3 m-0">Quyền sở hữu</p>
             <p className="ownership-checked m-0">Đã sở hữu</p>
           </CCol>
         </CRow>
         <CRow className="realestate-reward-info p-0 m-0">
           <CCol xs={6}>
-            <p className="realestate-reward-title my-2">Reward rate for listing</p>
+            <p className="detail-title-font my-2">Reward rate for listing</p>
             <p className="text-success my-2 reward-number">{demoRealEstateInfo.rewardRate}</p>
           </CCol>
           <CCol xs={6}>
-            <p className="realestate-reward-title my-2">The current owner</p>
+            <p className="detail-title-font my-2">The current owner</p>
             <p className="my-2 reward-number">{demoRealEstateInfo.currentOwner}</p>
           </CCol>
           <CCol xs={6}>
-            <p className="realestate-reward-title my-2">Reward pool of listing</p>
+            <p className="detail-title-font my-2">Reward pool of listing</p>
             <p className="my-2 reward-number">
               {demoRealEstateInfo.rewardPool} <span className="token-name">USD/ANFT</span>
             </p>
           </CCol>
           <CCol xs={6}>
-            <p className="realestate-reward-title my-2">Total ANFT</p>
+            <p className="detail-title-font my-2">Total ANFT</p>
             <p className="text-primary my-2 reward-number">
               {demoRealEstateInfo.totalToken} <span className="token-name">ANFT</span>
             </p>
           </CCol>
           <CCol xs={6}>
-            <p className="realestate-reward-title my-2">Reward rate for listing</p>
+            <p className="detail-title-font my-2">Reward rate for listing</p>
             <p className="my-2 reward-number">
               {demoRealEstateInfo.rewardPoolOfList} <span className="token-name">ANFT</span>
             </p>
           </CCol>
           <CCol xs={6}>
-            <p className="realestate-reward-title my-2">Owner wallet</p>
+            <p className="detail-title-font my-2">Owner wallet</p>
             <p className="text-primary my-2 reward-number">{demoRealEstateInfo.ownerWalletId}</p>
           </CCol>
           {/* Show-more-2-info-if-role-owner */}
           <CCol xs={6}>
-            <p className="realestate-reward-title my-2">Tổng ANFT đã nạp</p>
+            <p className="detail-title-font my-2">Tổng ANFT đã nạp</p>
             <p className="text-primary my-2 reward-number">
               {demoRealEstateInfo.tokenRecharged} <span className="token-name">ANFT</span>
             </p>
           </CCol>
           <CCol xs={6}>
-            <p className="realestate-reward-title my-2">Thời gian còn lại </p>
+            <p className="detail-title-font my-2">Thời gian còn lại </p>
             <p className="text-danger my-2 reward-number">
               {demoRealEstateInfo.ownTimeLeft} <span className="token-name">Ngày</span>
             </p>
           </CCol>
+          <CCol xs={12} className="text-center">
+            <p className="text-primary my-2">
+              <FontAwesomeIcon icon={faIdBadge} /> <u>Xem quyền khai thác</u>
+            </p>
+          </CCol>
+
           <CCol xs={12} className="mt-2 ">
             <CButton
-              className="px-3 w-100 btn-act-management btn btn-outline-primary"
+              className="px-3 w-100 btn-radius-50 btn-font-style btn btn-outline-primary"
               onClick={() => setActsInvestment(!actsInvestment)}
             >
               Hoạt động đầu tư
@@ -106,13 +121,13 @@ export const RealEstateInfo = () => {
           <CCol xs={12}>
             <CCollapse show={actsInvestment}>
               <CCard className="activities-card mt-2 mb-0">
-                <CCardBody className="py-2">
-                  <CRow>
+                <CCardBody className="p-2">
+                  <CRow className="mx-0">
                     <CLink href="" target="_blank" disabled={Roles.OWNER ? true : false}>
-                    <FontAwesomeIcon icon={faEdit} /> Đăng ký sở hữu
+                      <FontAwesomeIcon icon={faEdit} /> Đăng ký sở hữu
                     </CLink>
                   </CRow>
-                  <CRow className="my-2">
+                  <CRow className="mt-2 mx-0">
                     <CLink href="" target="_blank">
                       <FontAwesomeIcon icon={faDonate} /> Đăng ký nhận thưởng
                     </CLink>
@@ -123,7 +138,7 @@ export const RealEstateInfo = () => {
           </CCol>
           <CCol xs={12} className="mt-2">
             <CButton
-              className="px-3 w-100 btn-act-management btn btn-primary"
+              className="px-3 w-100 btn-radius-50 btn-font-style btn btn-primary"
               onClick={() => setActsOwnerMngmnt(!actsOwnerMngmnt)}
               disabled={!Roles.OWNER ? true : false}
             >
@@ -134,20 +149,20 @@ export const RealEstateInfo = () => {
           <CCol xs={12}>
             <CCollapse show={actsOwnerMngmnt}>
               <CCard className="mt-2 activities-card mb-0">
-                <CCardBody className="py-2">
-                  <CRow>
+                <CCardBody className="p-2">
+                  <CRow className="mx-0">
                     <CLink href="#" target="_blank" onClick={setWithdrawTokenListener(true)}>
-                    <FontAwesomeIcon icon={faArrowAltCircleUp} /> Rút ANFT
+                      <FontAwesomeIcon icon={faArrowAltCircleUp} /> Rút ANFT
                     </CLink>
                   </CRow>
-                  <CRow className="my-2">
+                  <CRow className="my-2 mx-0">
                     <CLink href="#" target="_blank" onClick={setRechargeTokenListener(true)}>
-                    <FontAwesomeIcon icon={faArrowAltCircleDown} /> Nạp thêm
+                      <FontAwesomeIcon icon={faArrowAltCircleDown} /> Nạp thêm
                     </CLink>
                   </CRow>
-                  <CRow>
+                  <CRow className="mx-0">
                     <CLink href="#" target="_blank">
-                    <FontAwesomeIcon icon={faClipboard} /> Quản lý quyền khai thác
+                      <FontAwesomeIcon icon={faClipboard} /> Quản lý quyền khai thác
                     </CLink>
                   </CRow>
                 </CCardBody>

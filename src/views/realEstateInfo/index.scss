@@ -11,23 +11,11 @@
   line-height: 29px;
 }
 
-.ownership,
-.realestate-reward-title {
-  font-size: 0.75rem;
-  line-height: 14px;
-  color: #828282;
-}
-
 .ownership-checked {
   font-weight: 700;
   font-size: 0.75rem;
   color: #4f4f4f;
   line-height: 14px;
-}
-
-.token-name {
-  font-size: 0.875rem;
-  line-height: 16px;
 }
 
 .reward-number {
@@ -36,34 +24,14 @@
   line-height: 21px;
 }
 
-.btn-cancel-requirement, .btn-cancel-requirement, .btn-act-management {
-  border-radius: 50px;
-  font-size: 0.9375rem;
-  line-height: 18px;
-}
-
-.token-required {
-  border-radius: 50px;
-}
-
-.recharge-modal-title {
-  font-size: 1.125rem;
-  color: #000000;
-  line-height: 21px;
-}
-
 .recharge-token-title,
-.withdraw-token-title {
+.withdraw-token-title, .token-name {
   font-size: 0.875rem;
   line-height: 16px;
-  color: #828282;
 }
-
-.recharge-modal,
-.withdraw-modal {
-  .modal-content {
-    border-radius: 20px;
-  }
+.recharge-token-title,
+.withdraw-token-title {
+  color: #828282;
 }
 
 .activities-card {

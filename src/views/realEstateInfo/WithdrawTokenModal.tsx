@@ -1,20 +1,20 @@
 import {
-    CButton,
-    CCol,
-    CForm,
-    CFormGroup,
-    CInput,
-    CLabel,
-    CModal,
-    CModalBody,
-    CModalFooter,
-    CModalHeader,
-    CModalTitle,
-    CRow,
-  } from '@coreui/react';
-  import React from 'react';
-  import { IWallet } from '../../shared/models/wallet.model';
-  import { Formik } from 'formik';
+  CButton,
+  CCol,
+  CForm,
+  CFormGroup,
+  CInput,
+  CLabel,
+  CModal,
+  CModalBody,
+  CModalFooter,
+  CModalHeader,
+  CModalTitle,
+  CRow
+} from '@coreui/react';
+import { Formik } from 'formik';
+import React from 'react';
+import { IWallet } from '../../shared/models/wallet.model';
   
   interface IWithdrawTokenModal {
     visible: boolean;
@@ -33,22 +33,18 @@ import {
     };
   
     return (
-      <CModal show={visible} onClose={closeModal(false)} closeOnBackdrop={false} centered className="withdraw-modal">
+      <CModal show={visible} onClose={closeModal(false)} closeOnBackdrop={false} centered className="border-radius-modal">
         <CModalHeader className="justify-content-center">
-          <CModalTitle className="withdraw-modal-title">Rút ANFT</CModalTitle>
+          <CModalTitle className="modal-title-style">Rút ANFT</CModalTitle>
         </CModalHeader>
         <Formik enableReinitialize initialValues={initialValues} onSubmit={(values) => {}}>
           {({
-            isSubmitting,
             values,
             errors,
             touched,
-            setFieldValue,
             handleChange,
-            setFieldTouched,
             handleSubmit,
             handleBlur,
-            resetForm,
           }) => (
             <CForm onSubmit={handleSubmit}>
               <CModalBody>
@@ -83,7 +79,7 @@ import {
                           value={values.tokenWithdraw}
                           onBlur={handleBlur}
                           invalid={!!(errors.tokenWithdraw && touched.tokenWithdraw && errors.tokenWithdraw)}
-                          className="token-required"
+                          className="btn-radius-50"
                         />
                       </CCol>
                     </CFormGroup>
@@ -93,14 +89,14 @@ import {
               <CModalFooter className="justify-content-between">
                   <CCol>
                     <CButton
-                      className="px-2 w-100 btn-cancel-requirement btn btn-outline-primary" onClick={closeModal(false)}
+                      className="px-2 w-100 btn-font-style btn btn-outline-primary btn-radius-50" onClick={closeModal(false)}
                     >
                       HỦY
                     </CButton>
                   </CCol>
                   <CCol>
                     <CButton
-                      className="px-2 w-100 btn btn-primary btn-cancel-requirement"
+                      className="px-2 w-100 btn btn-primary btn-font-style btn-radius-50"
                       type="submit"
                     >
                       ĐỒNG Ý

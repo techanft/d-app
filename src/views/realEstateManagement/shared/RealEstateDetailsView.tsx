@@ -4,6 +4,7 @@ import { RealEstateDetails } from '../../realEstateDetails/RealEstateDetails';
 import { RealEstateInfo } from '../../realEstateInfo/RealEstateInfo';
 import { RealEstateListing } from '../../realEstateListing/RealEstateListing';
 
+
 const RealEstateDetailsView = () => {
   return (
     <>
@@ -11,7 +12,7 @@ const RealEstateDetailsView = () => {
       <RealEstateDetails />
       <CRow className="mx-0">
         <CCol xs={12}>
-          <CLabel className="text-primary detail-title mt-3">More listing</CLabel>
+          <CLabel className="text-primary content-title mt-3">More listing</CLabel>
         </CCol>
         <CCol xs={12} className="px-0">
           <RealEstateListing />
