@@ -29,8 +29,8 @@ const RegisterReward = () => {
   const titleTableStyle = {
     textAlign: 'left',
     color: '#828282',
-    fontSize: '0.75rem',
-    lineHeight: '14px',
+    fontSize: '0.875rem',
+    lineHeight: '16px',
     fontWeight: '400',
   };
 

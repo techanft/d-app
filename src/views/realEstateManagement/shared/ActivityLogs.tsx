@@ -1,9 +1,5 @@
 import {
-  CBadge,
-  CCard,
-  CCardBody,
-  CCardTitle,
-  CCol,
+  CBadge, CCol,
   CContainer,
   CDataTable,
   CLabel,
@@ -13,12 +9,13 @@ import {
   CRow,
   CTabContent,
   CTabPane,
-  CTabs,
+  CTabs
 } from '@coreui/react';
 import React from 'react';
-import bgImg from '../../../assets/img/registerBonus.svg';
+import { mapstakeHolderStatusBadge, StakeHolderStatus } from '../../../enumeration/stakeHolderStatus';
 import { mapStatus, mapStatusBadge, Status } from '../../../enumeration/status';
-import { IRealEstateActivity, IRegisterRewardHistory } from '../../../shared/models/realEstateActivity.model';
+import { IExploitedPermission } from '../../../shared/models/exploitedPermission.model';
+import { IRegisterRewardHistory } from '../../../shared/models/realEstateActivity.model';
 import './index.scss';
 
 const ActivityLogs = () => {
@@ -26,7 +23,7 @@ const ActivityLogs = () => {
     textAlign: 'left',
     color: '#828282',
     fontSize: '0.875rem',
-    lineHeight: '14px',
+    lineHeight: '16px',
     fontWeight: '400',
   };
 
@@ -45,7 +42,7 @@ const ActivityLogs = () => {
     { key: 'address', _style: titleTableStyle, label: 'Address Wallet' },
     { key: 'createdDate', _style: titleTableStyle, label: 'Time' },
     { key: 'status', _style: titleTableStyle, label: 'Status' },
-  ]
+  ];
 
   const demoHistoryActivityLogs: IRegisterRewardHistory[] = [
     {
@@ -71,44 +68,44 @@ const ActivityLogs = () => {
       bonusRate: '',
       registerLevel: '1.000',
       reward: '500',
-    }
+    },
   ];
 
   const demoExchangeWallet = [
     {
       createdDate: '17:10- 29/11/2021',
       amount: '1.000',
-      type: 'withdraw'
+      type: 'withdraw',
     },
     {
       createdDate: '17:10- 29/11/2021',
       amount: '500',
-      type: 'withdraw'
+      type: 'withdraw',
     },
     {
       createdDate: '17:10- 29/11/2021',
       amount: '2.000',
-      type: 'recharge'
+      type: 'recharge',
     },
-  ]
+  ];
 
-  const demoExploitedPermission = [
+  const demoExploitedPermission: IExploitedPermission[] = [
     {
       createdDate: '17:10- 29/11/2021',
-      status: 'On',
-      address: '0xda3ac...9999'
+      status: StakeHolderStatus.Active,
+      address: '0xda3ac...9999',
     },
     {
       createdDate: '17:10- 29/11/2021',
-      status: 'Off',
-      address: '0xda3ac...9999'
+      status: StakeHolderStatus.Inactive,
+      address: '0xda3ac...9999',
     },
     {
       createdDate: '17:10- 29/11/2021',
-      status: 'On',
-      address: '0xda3ac...9999'
+      status: StakeHolderStatus.Active,
+      address: '0xda3ac...9999',
     },
-  ]
+  ];
 
   return (
     <CContainer fluid className="mx-0 my-2">
@@ -154,19 +151,14 @@ const ActivityLogs = () => {
                     activityName: (item: IRegisterRewardHistory) => {
                       return (
                         <td>
-                          <span
-                            className="d-inline-block text-truncate"
-                            style={{ maxWidth: '60px' }}
-                          >
+                          <span className="d-inline-block text-truncate" style={{ maxWidth: '60px' }}>
                             {item.activityName ? item.activityName : '_'}
                           </span>
                         </td>
                       );
                     },
                     createdDate: (item: IRegisterRewardHistory) => {
-                      return (
-                        <td>{item.createdDate ? item.createdDate : '_'}</td>
-                      );
+                      return <td>{item.createdDate ? item.createdDate : '_'}</td>;
                     },
                     status: (item: IRegisterRewardHistory) => {
                       return (
@@ -182,10 +174,7 @@ const ActivityLogs = () => {
                     value: (item: IRegisterRewardHistory) => {
                       return (
                         <td>
-                          <span
-                            className="d-inline-block text-truncate"
-                            style={{ maxWidth: '60px' }}
-                          >
+                          <span className="d-inline-block text-truncate" style={{ maxWidth: '60px' }}>
                             {item.registerLevel ? item.registerLevel : '_'}
                           </span>
                         </td>
@@ -206,19 +195,14 @@ const ActivityLogs = () => {
                     activityName: (item: IRegisterRewardHistory) => {
                       return (
                         <td>
-                          <span
-                            className="d-inline-block text-truncate"
-                            style={{ maxWidth: '60px' }}
-                          >
+                          <span className="d-inline-block text-truncate" style={{ maxWidth: '60px' }}>
                             {item.activityName ? item.activityName : '_'}
                           </span>
                         </td>
                       );
                     },
                     createdDate: (item: IRegisterRewardHistory) => {
-                      return (
-                        <td>{item.createdDate ? item.createdDate : '_'}</td>
-                      );
+                      return <td>{item.createdDate ? item.createdDate : '_'}</td>;
                     },
                     status: (item: IRegisterRewardHistory) => {
                       return (
@@ -234,10 +218,7 @@ const ActivityLogs = () => {
                     value: (item: IRegisterRewardHistory) => {
                       return (
                         <td>
-                          <span
-                            className="d-inline-block text-truncate"
-                            style={{ maxWidth: '60px' }}
-                          >
+                          <span className="d-inline-block text-truncate" style={{ maxWidth: '60px' }}>
                             {item.registerLevel ? item.registerLevel : '_'}
                           </span>
                         </td>
@@ -258,19 +239,14 @@ const ActivityLogs = () => {
                     activityName: (item: IRegisterRewardHistory) => {
                       return (
                         <td>
-                          <span
-                            className="d-inline-block text-truncate"
-                            style={{ maxWidth: '60px' }}
-                          >
+                          <span className="d-inline-block text-truncate" style={{ maxWidth: '60px' }}>
                             {item.activityName ? item.activityName : '_'}
                           </span>
                         </td>
                       );
                     },
                     createdDate: (item: IRegisterRewardHistory) => {
-                      return (
-                        <td>{item.createdDate ? item.createdDate : '_'}</td>
-                      );
+                      return <td>{item.createdDate ? item.createdDate : '_'}</td>;
                     },
                     status: (item: IRegisterRewardHistory) => {
                       return (
@@ -286,10 +262,7 @@ const ActivityLogs = () => {
                     value: (item: IRegisterRewardHistory) => {
                       return (
                         <td>
-                          <span
-                            className="d-inline-block text-truncate"
-                            style={{ maxWidth: '60px' }}
-                          >
+                          <span className="d-inline-block text-truncate" style={{ maxWidth: '60px' }}>
                             {item.reward ? item.reward : '_'}
                           </span>
                         </td>
@@ -303,33 +276,27 @@ const ActivityLogs = () => {
         </CCol>
       </CRow>
 
-{/* Ownership - Activity Logs */}
+      {/* Ownership - Activity Logs */}
       <CRow>
-      <CCol xs={12}>
+        <CCol xs={12}>
           <CLabel className="text-primary content-title">Ownership</CLabel>
         </CCol>
         <CCol xs={12}>
           <CTabs activeTab="withdraw-token-history">
             <CNav variant="tabs">
               <CNavItem className="col-4 p-0">
-                <CNavLink
-                  data-tab="withdraw-token-history"
-                  className="detail-title-font px-0 text-center text-primary"
-                >
+                <CNavLink data-tab="withdraw-token-history" className="detail-title-font px-0 text-center text-primary">
                   Withdraw Token
                 </CNavLink>
               </CNavItem>
               <CNavItem className="col-4 p-0">
-                <CNavLink
-                  data-tab="recharge-token-history"
-                  className="detail-title-font px-0 text-center text-primary"
-                >
+                <CNavLink data-tab="recharge-token-history" className="detail-title-font px-0 text-center text-primary">
                   Recharge Token
                 </CNavLink>
               </CNavItem>
               <CNavItem className="col-4 p-0">
                 <CNavLink data-tab="exploited-permission" className="detail-title-font px-0 text-center text-primary">
-                Exploited Permission
+                  Exploited Permission
                 </CNavLink>
               </CNavItem>
             </CNav>
@@ -337,26 +304,23 @@ const ActivityLogs = () => {
               <CTabPane data-tab="withdraw-token-history">
                 <CDataTable
                   striped
-                  items={demoExchangeWallet.filter((e) => e.type === "withdraw")}
+                  items={demoExchangeWallet.filter((e) => e.type === 'withdraw')}
                   fields={exchangeWallet}
                   responsive
                   hover
                   header
-                  scopedSlots={{
-                   
-                  }}
+                  scopedSlots={{}}
                 />
               </CTabPane>
               <CTabPane data-tab="recharge-token-history">
                 <CDataTable
                   striped
-                  items={demoExchangeWallet.filter((e) => e.type === "recharge")}
+                  items={demoExchangeWallet.filter((e) => e.type === 'recharge')}
                   fields={exchangeWallet}
                   responsive
                   hover
                   header
-                  scopedSlots={{
-                  }}
+                  scopedSlots={{}}
                 />
               </CTabPane>
               <CTabPane data-tab="exploited-permission">
@@ -368,7 +332,17 @@ const ActivityLogs = () => {
                   hover
                   header
                   scopedSlots={{
-                    
+                    status: (item: IExploitedPermission) => {
+                      return (
+                        <td>
+                          {
+                            <CBadge color={mapstakeHolderStatusBadge[item.status]}>
+                              {item.status ? item.status : '_'}
+                            </CBadge>
+                          }
+                        </td>
+                      );
+                    },
                   }}
                 />
               </CTabPane>

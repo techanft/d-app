@@ -5,18 +5,17 @@ import {
   faClipboard,
   faDonate,
   faEdit,
-  faIdBadge,
+  faIdBadge
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState } from 'react';
-import { Roles } from '../../enumeration/roles';
 import realEstateImg from '../../assets/img/realEstateDetail.svg';
+import { Roles } from '../../enumeration/roles';
 import { IRealEstateInfo } from '../../shared/models/realEstateInfo.model';
-
 import './index.scss';
 import RechargeTokenModal from './RechargeTokenModal';
 import WithdrawTokenModal from './WithdrawTokenModal';
-import CIcon from '@coreui/icons-react';
+
 
 export const RealEstateInfo = () => {
   const [rechargeToken, setRechargeToken] = useState<boolean>(false);
