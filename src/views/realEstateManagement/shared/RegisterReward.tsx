@@ -12,16 +12,18 @@ import {
   CFormGroup,
   CInput,
   CInputGroup,
-  CInputGroupAppend, CLabel,
+  CInputGroupAppend,
+  CLabel,
   CLink,
   CRow
 } from '@coreui/react';
+import { faClipboardCheck } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Formik } from 'formik';
 import React, { useState } from 'react';
 import bgImg from '../../../assets/img/registerBonus.svg';
+import ConfirmModal from '../../../shared/components/ConfirmModal';
 import { IRealEstateActivity } from '../../../shared/models/realEstateActivity.model';
-import ClaimRewardModal from './ConfirmClaimRewardModal';
-import UnregisterModal from './ConfirmUnregisterModal';
 import './index.scss';
 
 const RegisterReward = () => {
@@ -115,6 +117,11 @@ const RegisterReward = () => {
   const setUnregisterListener = (key: boolean) => (): void => setUnregister(key);
   const setClaimRewardListener = (key: boolean) => (): void => setClaimReward(key);
 
+  const onCloseModal = () => {
+    setUnregister(false);
+    setClaimReward(false);
+  }
+
   return (
     <CContainer fluid className="mx-0 my-2">
       <CRow>
@@ -181,7 +188,7 @@ const RegisterReward = () => {
                                       <p className="my-2">{item.createdDate ? item.createdDate : '_'}</p>
                                     </CCol>
                                   </CFormGroup>
-                                  
+
                                   <CFormGroup row>
                                     <CCol xs={6}>
                                       <p className="font-weight-bold my-2">Mức đăng ký: </p>
@@ -201,7 +208,7 @@ const RegisterReward = () => {
                                         />
                                         <CInputGroupAppend>
                                           <CButton type="submit" color="primary" className="btn-register-level">
-                                            <CIcon name="cil-pencil" className="p-0 m-0" />
+                                            <FontAwesomeIcon icon={faClipboardCheck}/>
                                           </CButton>
                                         </CInputGroupAppend>
                                       </CInputGroup>
@@ -223,7 +230,37 @@ const RegisterReward = () => {
                                       >
                                         Unregister
                                       </CButton>
-                                      <ClaimRewardModal
+                                      <ConfirmModal
+                                        isVisible={claimReward}
+                                        setVisible={setClaimReward}
+                                        color="success"
+                                        title="Nhận thưởng hoạt động"
+                                        CustomJSX={() => (
+                                          <p>
+                                            Bạn chắc chắn muốn nhận thưởng{' '}
+                                            <span className="text-primary">{values.reward} ANFT</span> của hoạt động{' '}
+                                            <span className="text-primary">“{values.activityName}”</span>
+                                          </p>
+                                        )}
+                                        onConfirm={() => {}}
+                                        onAbort={onCloseModal}
+                                        />
+                                      <ConfirmModal
+                                        isVisible={unregister}
+                                        setVisible={setUnregister}
+                                        color="danger"
+                                        title="Xác nhận hủy đăng ký"
+                                        CustomJSX={() => (
+                                          <p>
+                                            Bạn chắc chắn muốn hủy{' '}
+                                            <span className="text-primary">“{values.activityName}”</span> với đăng ký{' '}
+                                            <span className="text-primary">{values.registerLevel} ANFT</span>
+                                          </p>
+                                        )}
+                                        onConfirm={() => {}}
+                                        onAbort={onCloseModal}
+                                        />
+                                      {/* <ClaimRewardModal
                                         visible={claimReward}
                                         setVisible={setClaimReward}
                                         reward={values.reward}
@@ -234,7 +271,7 @@ const RegisterReward = () => {
                                         setVisible={setUnregister}
                                         registerLevel={values.registerLevel}
                                         activityName={values.activityName}
-                                      />
+                                      /> */}
                                     </CCol>
                                   </CFormGroup>
                                 </CCol>

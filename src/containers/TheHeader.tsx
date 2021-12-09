@@ -1,7 +1,5 @@
 import {
-  CButton,
-  CCol,
-  CDropdown,
+  CButton, CDropdown,
   CDropdownItem,
   CDropdownMenu,
   CDropdownToggle,
@@ -9,11 +7,9 @@ import {
   CHeaderBrand,
   CHeaderNav,
   CHeaderNavItem,
-  CLink,
-  CRow,
-  CSubheader
+  CLink
 } from '@coreui/react';
-import { faAngleDown, faBars, faSlidersH } from '@fortawesome/free-solid-svg-icons';
+import { faBars, faSlidersH } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 
@@ -52,7 +48,7 @@ const TheHeader = () => {
           </CDropdown>
         </CHeaderNavItem>
       </CHeaderNav>
-      <CSubheader className="sub-header mt-0 justify-content-center align-items-center">
+      {/* <CSubheader className="sub-header mt-0 justify-content-center align-items-center">
         <CRow className="w-100 px-1">
           <CCol xs={4} className="px-0 text-center">
             <CDropdown className="mx-2">
@@ -103,7 +99,7 @@ const TheHeader = () => {
             </CDropdown>
           </CCol>
         </CRow>
-      </CSubheader>
+      </CSubheader> */}
     </CHeader>
   );
 };

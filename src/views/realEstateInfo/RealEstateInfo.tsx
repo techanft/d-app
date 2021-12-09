@@ -1,22 +1,40 @@
-import { CButton, CCard, CCardBody, CCol, CCollapse, CContainer, CLink, CRow } from '@coreui/react';
+import {
+  CButton,
+  CCard,
+  CCardBody,
+  CCol,
+  CCollapse,
+  CContainer,
+  CDataTable,
+  CForm,
+  CFormGroup,
+  CInput,
+  CInvalidFeedback,
+  CLabel,
+  CLink,
+  CRow,
+} from '@coreui/react';
 import {
   faArrowAltCircleDown,
   faArrowAltCircleUp,
   faClipboard,
   faDonate,
   faEdit,
-  faIdBadge
+  faIdBadge,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Formik } from 'formik';
 import React, { useState } from 'react';
+import * as Yup from 'yup';
 import realEstateImg from '../../assets/img/realEstateDetail.svg';
+import { ExploitedStatus } from '../../enumeration/exploitedStatus';
 import { Roles } from '../../enumeration/roles';
+import ConfirmModal from '../../shared/components/ConfirmModal';
+import { calculateOwnerTime } from '../../shared/helper';
+import { IExploitedPermission } from '../../shared/models/exploitedPermission.model';
 import { IRealEstateInfo } from '../../shared/models/realEstateInfo.model';
 import './index.scss';
-import RechargeTokenModal from './RechargeTokenModal';
 import RegisterOwnershipModal from './RegisterOwnershipModal';
-import WithdrawTokenModal from './WithdrawTokenModal';
-
 
 export const RealEstateInfo = () => {
   const [rechargeToken, setRechargeToken] = useState<boolean>(false);
@@ -41,6 +59,70 @@ export const RealEstateInfo = () => {
 
   const [actsInvestment, setActsInvestment] = useState(false);
   const [actsOwnerMngmnt, setActsOwnerMngmnt] = useState(false);
+  const [exploiterListing, setExploiterListing] = useState(false);
+
+  const initialValues = {
+    totalToken: '10000',
+    totalTokenRecharged: '5000',
+    maxTokenWithdraw: '1000',
+    tokenWithdraw: 0,
+    tokenRecharge: 0,
+    exploitedFee: 5000,
+    registrationToken: 0,
+  };
+
+  const validationSchema = Yup.object().shape({
+    tokenWithdraw: Yup.number().required('Vui lòng nhập số token muốn rút'),
+    tokenRecharge: Yup.number().required('Vui lòng nhập số token muốn nạp'),
+    registrationToken: Yup.number().required('Vui lòng nhập số token muốn đăng ký'),
+  });
+
+  const titleTableStyle = {
+    textAlign: 'left',
+    color: '#828282',
+    fontSize: '0.875rem',
+    lineHeight: '16px',
+    fontWeight: '400',
+  };
+
+  const exploitedFields = [
+    {
+      key: 'address',
+      _style: titleTableStyle,
+      label: 'Address Wallet',
+    },
+    {
+      key: 'createdDate',
+      _style: titleTableStyle,
+      label: 'Thời gian bắt đầu',
+    },
+  ];
+
+  const exploitedListing: IExploitedPermission[] = [
+    {
+      address: 'h1-0xda3ac...9999',
+      createdDate: 'h1-17:10- 29/11/2021',
+      status: ExploitedStatus.Active,
+    },
+    {
+      address: 'h2-0xda3ac...9999',
+      createdDate: 'h2-17:10- 29/11/2021',
+      status: ExploitedStatus.Active,
+    },
+    {
+      address: '0xda3ac...9999',
+      createdDate: '17:10- 29/11/2021',
+      status: ExploitedStatus.Inactive,
+    },
+  ];
+
+  const exploitedActiveListing = exploitedListing.filter((e) => e.status === ExploitedStatus.Active);
+
+  const onCloseModal = () => {
+    setRechargeToken(false);
+    setWithDrawToken(false);
+    setRegisterOwnership(false);
+  }
 
   return (
     <CContainer fluid className="px-0">
@@ -108,10 +190,51 @@ export const RealEstateInfo = () => {
           </CCol>
           <CCol xs={12} className="text-center">
             <p className="text-primary my-2">
-              <CLink to="">
+              <CLink to="#" onClick={() => setExploiterListing(!exploiterListing)}>
                 <FontAwesomeIcon icon={faIdBadge} /> <u>Xem quyền khai thác</u>
               </CLink>
             </p>
+          </CCol>
+          <CCol xs={12}>
+            <CCollapse show={exploiterListing}>
+              <CRow>
+                {/* <CCol xs={6}>
+                  <p className="detail-title-font my-2">Address Wallet</p>
+                </CCol>
+                <CCol xs={6}>
+                  <p className="detail-title-font my-2">Thời gian bắt đầu</p>
+                </CCol>
+                
+                {exploitedActiveListing.map((e) => (
+                  <>
+                  <CCol xs={6}>
+                    <p className="my-2 detail-value">{e.address}</p>
+                  </CCol>
+                  <CCol xs={6}>
+                    <p className="my-2 detail-value">{e.createdDate}</p>
+                  </CCol>
+                  </>
+                ))} */}
+                <CCol xs={12}>
+                  <CDataTable
+                    striped
+                    items={exploitedActiveListing}
+                    fields={exploitedFields}
+                    responsive
+                    hover
+                    header
+                    scopedSlots={{
+                      address: ({ address }: IExploitedPermission) => {
+                        return <td>{address ? address : '_'}</td>;
+                      },
+                      createdDate: ({ createdDate }: IExploitedPermission) => {
+                        return <td>{createdDate ? createdDate : '_'}</td>;
+                      },
+                    }}
+                  />
+                </CCol>
+              </CRow>
+            </CCollapse>
           </CCol>
 
           <CCol xs={12} className="mt-2 ">
@@ -174,8 +297,204 @@ export const RealEstateInfo = () => {
               </CCard>
             </CCollapse>
           </CCol>
-          <WithdrawTokenModal visible={withdrawToken} setVisible={setWithDrawToken} />
-          <RechargeTokenModal visible={rechargeToken} setVisible={setRechargeToken} />
+          {/* <WithdrawTokenModal visible={withdrawToken} setVisible={setWithDrawToken} />
+          <RechargeTokenModal visible={rechargeToken} setVisible={setRechargeToken} /> */}
+          <ConfirmModal
+            isVisible={registerOwnership}
+            setVisible={setRegisterOwnership}
+            color="primary"
+            title="Đăng ký sở hữu"
+            CustomJSX={() => (
+              <Formik
+                enableReinitialize
+                initialValues={initialValues}
+                validationSchema={validationSchema}
+                onSubmit={(values) => {}}
+              >
+                {({ values, errors, touched, handleChange, handleSubmit, handleBlur }) => (
+                  <CForm onSubmit={handleSubmit}>
+                    <CRow>
+                      <CCol xs={12}>
+                        <CFormGroup row>
+                          <CCol xs={8}>
+                            <CLabel className="recharge-token-title">Chi phí khai thác/ngày</CLabel>
+                          </CCol>
+                          <CCol xs={4}>
+                            <p className="text-primary text-right">{values.exploitedFee}</p>
+                          </CCol>
+                        </CFormGroup>
+                        <CFormGroup row>
+                          <CCol xs={12}>
+                            <CLabel className="recharge-token-title">Số ANFT muốn nạp</CLabel>
+                          </CCol>
+                          <CCol>
+                            <CInput
+                              onChange={handleChange}
+                              id="registrationToken"
+                              autoComplete="off"
+                              name="registrationToken"
+                              value={values.registrationToken || ''}
+                              invalid={!!errors.registrationToken && touched.registrationToken}
+                              onBlur={handleBlur}
+                              className="btn-radius-50"
+                              type="number"
+                            />
+                            <CInvalidFeedback
+                              className={!!errors.registrationToken && touched.registrationToken ? 'd-block' : 'd-none'}
+                            >
+                              {errors.registrationToken}
+                            </CInvalidFeedback>
+                          </CCol>
+                        </CFormGroup>
+                        <CFormGroup row>
+                          <CCol xs={8}>
+                            <CLabel className="recharge-token-title">Ownership Period</CLabel>
+                          </CCol>
+                          <CCol xs={4}>
+                            <p className="text-primary text-right">
+                              {calculateOwnerTime(values.registrationToken, values.exploitedFee)} days
+                            </p>
+                          </CCol>
+                        </CFormGroup>
+                      </CCol>
+                    </CRow>
+                  </CForm>
+                )}
+              </Formik>
+            )}
+            onConfirm={() => {}}
+            onAbort={onCloseModal}
+          />
+          <ConfirmModal
+            isVisible={withdrawToken}
+            setVisible={setWithDrawToken}
+            color="primary"
+            title="Rút ANFT"
+            CustomJSX={() => (
+              <Formik
+                enableReinitialize
+                initialValues={initialValues}
+                validationSchema={validationSchema}
+                onSubmit={(values) => {}}
+              >
+                {({ values, errors, touched, handleChange, handleSubmit, handleBlur }) => (
+                  <CForm onSubmit={handleSubmit}>
+                    <CRow>
+                      <CCol xs={12}>
+                        <CFormGroup row>
+                          <CCol xs={8}>
+                            <CLabel className="withdraw-token-title">Số ANFT bạn đã nạp</CLabel>
+                          </CCol>
+                          <CCol xs={4}>
+                            <p className="text-primary text-right">{values.totalTokenRecharged}</p>
+                          </CCol>
+                        </CFormGroup>
+                        <CFormGroup row>
+                          <CCol xs={8}>
+                            <CLabel className="withdraw-token-title">Số ANFT Tối đa bạn rút</CLabel>
+                          </CCol>
+                          <CCol xs={4}>
+                            <p className="text-primary text-right">{values.maxTokenWithdraw}</p>
+                          </CCol>
+                        </CFormGroup>
+                        <CFormGroup row>
+                          <CCol xs={12}>
+                            <CLabel className="withdraw-token-title">Số ANFT muốn rút</CLabel>
+                          </CCol>
+                          <CCol>
+                            <CInput
+                              onChange={handleChange}
+                              id="tokenWithdraw"
+                              autoComplete="off"
+                              name="tokenWithdraw"
+                              value={values.tokenWithdraw || ''}
+                              invalid={!!errors.tokenWithdraw && touched.tokenWithdraw}
+                              onBlur={handleBlur}
+                              className="btn-radius-50"
+                              type="number"
+                            />
+                            <CInvalidFeedback
+                              className={!!errors.tokenWithdraw && touched.tokenWithdraw ? 'd-block' : 'd-none'}
+                            >
+                              {errors.tokenWithdraw}
+                            </CInvalidFeedback>
+                          </CCol>
+                        </CFormGroup>
+                      </CCol>
+                    </CRow>
+                  </CForm>
+                )}
+              </Formik>
+            )}
+            onConfirm={() => {}}
+            onAbort={onCloseModal}
+          />
+          <ConfirmModal
+            isVisible={rechargeToken}
+            setVisible={setRechargeToken}
+            color="primary"
+            title="Nạp ANFT"
+            CustomJSX={() => (
+              <Formik
+                enableReinitialize
+                initialValues={initialValues}
+                validationSchema={validationSchema}
+                onSubmit={(values) => {}}
+              >
+                {({ values, errors, touched, handleChange, handleSubmit, handleBlur }) => (
+                  <CForm onSubmit={handleSubmit}>
+                    <CRow>
+                      <CCol xs={12}>
+                        <CFormGroup row>
+                          <CCol xs={8}>
+                            <CLabel className="recharge-token-title">Số ANFT bạn đã nạp</CLabel>
+                          </CCol>
+                          <CCol xs={4}>
+                            <p className="text-primary text-right">{values.totalTokenRecharged}</p>
+                          </CCol>
+                        </CFormGroup>
+                        <CFormGroup row>
+                          <CCol xs={12}>
+                            <CLabel className="recharge-token-title">Số ANFT muốn nạp</CLabel>
+                          </CCol>
+                          <CCol>
+                            <CInput
+                              onChange={handleChange}
+                              id="tokenRecharge"
+                              autoComplete="off"
+                              name="tokenRecharge"
+                              value={values.tokenRecharge || ''}
+                              invalid={!!errors.tokenRecharge && touched.tokenRecharge}
+                              onBlur={handleBlur}
+                              className="btn-radius-50"
+                              type="number"
+                            />
+                            <CInvalidFeedback
+                              className={!!errors.tokenRecharge && touched.tokenRecharge ? 'd-block' : 'd-none'}
+                            >
+                              {errors.tokenRecharge}
+                            </CInvalidFeedback>
+                          </CCol>
+                        </CFormGroup>
+                        <CFormGroup row>
+                          <CCol xs={8}>
+                            <CLabel className="recharge-token-title">Ownership Period</CLabel>
+                          </CCol>
+                          <CCol xs={4}>
+                            <p className="text-primary text-right">
+                              {calculateOwnerTime(values.tokenRecharge, values.exploitedFee)} days
+                            </p>
+                          </CCol>
+                        </CFormGroup>
+                      </CCol>
+                    </CRow>
+                  </CForm>
+                )}
+              </Formik>
+            )}
+            onConfirm={() => {}}
+            onAbort={onCloseModal}
+          />
         </CRow>
       </CCol>
     </CContainer>
