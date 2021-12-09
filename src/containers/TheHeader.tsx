@@ -1,5 +1,8 @@
 import {
-  CButton, CDropdown,
+  CButton,
+  CCol,
+  CDropdown,
+  CDropdownHeader,
   CDropdownItem,
   CDropdownMenu,
   CDropdownToggle,
@@ -7,9 +10,12 @@ import {
   CHeaderBrand,
   CHeaderNav,
   CHeaderNavItem,
-  CLink
+  CInputCheckbox,
+  CLabel,
+  CLink,
+  CRow
 } from '@coreui/react';
-import { faBars, faSlidersH } from '@fortawesome/free-solid-svg-icons';
+import { faAngleDown, faBars, faSlidersH } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 
@@ -40,10 +46,145 @@ const TheHeader = () => {
             <CDropdownToggle caret={false} className="text-primary">
               <FontAwesomeIcon icon={faSlidersH} size="2x" />
             </CDropdownToggle>
-            <CDropdownMenu>
-              <CDropdownItem href="#">Action</CDropdownItem>
-              <CDropdownItem href="#">Another action</CDropdownItem>
-              <CDropdownItem href="#">Something else here</CDropdownItem>
+            <CDropdownMenu className="dr-menu-filter">
+              <CDropdownHeader className="text-center modal-title-style">Filter</CDropdownHeader>
+              <CRow className="mx-0">
+                <CCol xs={6} className="px-0 text-center py-2">
+                  <CDropdown className="mx-2">
+                    <CDropdownToggle
+                      color="white"
+                      className="dt-filter content-title btn-radius-50 text-dark"
+                      caret={false}
+                    >
+                      City <FontAwesomeIcon icon={faAngleDown} />
+                    </CDropdownToggle>
+                    <CDropdownMenu>
+                      <CDropdownItem href="#">Action</CDropdownItem>
+                      <CDropdownItem href="#">Another action</CDropdownItem>
+                      <CDropdownItem href="#">Something else here</CDropdownItem>
+                    </CDropdownMenu>
+                  </CDropdown>
+                </CCol>
+                <CCol xs={6} className="px-0 text-center py-2">
+                  <CDropdown className="mx-2">
+                    <CDropdownToggle
+                      color="white"
+                      className="dt-filter content-title btn-radius-50 text-dark"
+                      caret={false}
+                    >
+                      Dist <FontAwesomeIcon icon={faAngleDown} />
+                    </CDropdownToggle>
+                    <CDropdownMenu>
+                      <CDropdownItem href="#">Action</CDropdownItem>
+                      <CDropdownItem href="#">Another action</CDropdownItem>
+                      <CDropdownItem href="#">Something else here</CDropdownItem>
+                    </CDropdownMenu>
+                  </CDropdown>
+                </CCol>
+                <CCol xs={6} className="px-0 text-center py-2">
+                  <CDropdown className="mx-2">
+                    <CDropdownToggle
+                      color="white"
+                      className="dt-filter content-title btn-radius-50 text-dark"
+                      caret={false}
+                    >
+                      Loại sản phẩm <FontAwesomeIcon icon={faAngleDown} />
+                    </CDropdownToggle>
+                    <CDropdownMenu>
+                      <CDropdownItem href="#">Action</CDropdownItem>
+                      <CDropdownItem href="#">Another action</CDropdownItem>
+                      <CDropdownItem href="#">Something else here</CDropdownItem>
+                    </CDropdownMenu>
+                  </CDropdown>
+                </CCol>
+                <CCol xs={6} className="px-0 text-center py-2">
+                  <CDropdown className="mx-2">
+                    <CDropdownToggle
+                      color="white"
+                      className="dt-filter content-title btn-radius-50 text-dark"
+                      caret={false}
+                    >
+                      Phân khúc <FontAwesomeIcon icon={faAngleDown} />
+                    </CDropdownToggle>
+                    <CDropdownMenu>
+                      <CDropdownItem href="#">Action</CDropdownItem>
+                      <CDropdownItem href="#">Another action</CDropdownItem>
+                      <CDropdownItem href="#">Something else here</CDropdownItem>
+                    </CDropdownMenu>
+                  </CDropdown>
+                </CCol>
+                <CCol xs={6} className="px-0 text-center py-2">
+                  <CDropdown className="mx-2">
+                    <CDropdownToggle
+                      color="white"
+                      className="dt-filter content-title btn-radius-50 text-dark"
+                      caret={false}
+                    >
+                      Diện tích <FontAwesomeIcon icon={faAngleDown} />
+                    </CDropdownToggle>
+                    <CDropdownMenu>
+                      <CDropdownItem href="#">Action</CDropdownItem>
+                      <CDropdownItem href="#">Another action</CDropdownItem>
+                      <CDropdownItem href="#">Something else here</CDropdownItem>
+                    </CDropdownMenu>
+                  </CDropdown>
+                </CCol>
+                <CCol xs={6} className="px-0 text-center py-2">
+                  <CDropdown className="mx-2">
+                    <CDropdownToggle
+                      color="white"
+                      className="dt-filter content-title btn-radius-50 text-dark"
+                      caret={false}
+                    >
+                      Hướng <FontAwesomeIcon icon={faAngleDown} />
+                    </CDropdownToggle>
+                    <CDropdownMenu>
+                      <CDropdownItem href="#">Action</CDropdownItem>
+                      <CDropdownItem href="#">Another action</CDropdownItem>
+                      <CDropdownItem href="#">Something else here</CDropdownItem>
+                    </CDropdownMenu>
+                  </CDropdown>
+                </CCol>
+                <CCol xs={6} className="px-0 text-center py-2">
+                  <CDropdown className="mx-2">
+                    <CDropdownToggle
+                      color="white"
+                      className="dt-filter content-title btn-radius-50 text-dark"
+                      caret={false}
+                    >
+                      Phí khai thác <FontAwesomeIcon icon={faAngleDown} />
+                    </CDropdownToggle>
+                    <CDropdownMenu>
+                      <CDropdownItem href="#">Action</CDropdownItem>
+                      <CDropdownItem href="#">Another action</CDropdownItem>
+                      <CDropdownItem href="#">Something else here</CDropdownItem>
+                    </CDropdownMenu>
+                  </CDropdown>
+                </CCol>
+                <CCol xs={6} className="px-0 text-center py-2">
+                  <CDropdown className="mx-2">
+                    <CDropdownToggle
+                      color="white"
+                      className="dt-filter content-title btn-radius-50 text-dark"
+                      caret={false}
+                    >
+                      Chất lượng <FontAwesomeIcon icon={faAngleDown} />
+                    </CDropdownToggle>
+                    <CDropdownMenu>
+                      <CDropdownItem href="#">Action</CDropdownItem>
+                      <CDropdownItem href="#">Another action</CDropdownItem>
+                      <CDropdownItem href="#">Something else here</CDropdownItem>
+                    </CDropdownMenu>
+                  </CDropdown>
+                </CCol>
+                <CCol xs={6} className="px-3 text-center py-2">
+                  <CInputCheckbox id="owned" name="owned" className="form-check-input" />
+                  <CLabel className="content-title">Sở hữu bởi tôi</CLabel>
+                </CCol>
+                <CCol xs={12} className="d-flex justify-content-center">
+                  <CButton className="btn btn-primary btn-radius-50">ÁP DỤNG</CButton>
+                </CCol>
+              </CRow>
             </CDropdownMenu>
           </CDropdown>
         </CHeaderNavItem>

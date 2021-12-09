@@ -6,14 +6,13 @@ interface IConfirmModal {
   title: string;
   content?: string;
   isVisible: boolean;
-  setVisible: (visible: boolean) => void;
   onConfirm: () => void;
   onAbort: () => void;
   CustomJSX?: () => JSX.Element;
 }
 
 const ConfirmModal = (props: IConfirmModal) => {
-  const { color, title, content, isVisible, onConfirm, setVisible, CustomJSX, onAbort } = props;
+  const { color, title, content, isVisible, onConfirm, CustomJSX, onAbort } = props;
 
   return (
     <CModal show={isVisible} onClose={onAbort} centered className="border-radius-modal">

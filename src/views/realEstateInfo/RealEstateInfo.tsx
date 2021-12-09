@@ -301,7 +301,6 @@ export const RealEstateInfo = () => {
           <RechargeTokenModal visible={rechargeToken} setVisible={setRechargeToken} /> */}
           <ConfirmModal
             isVisible={registerOwnership}
-            setVisible={setRegisterOwnership}
             color="primary"
             title="Đăng ký sở hữu"
             CustomJSX={() => (
@@ -367,7 +366,6 @@ export const RealEstateInfo = () => {
           />
           <ConfirmModal
             isVisible={withdrawToken}
-            setVisible={setWithDrawToken}
             color="primary"
             title="Rút ANFT"
             CustomJSX={() => (
@@ -431,7 +429,6 @@ export const RealEstateInfo = () => {
           />
           <ConfirmModal
             isVisible={rechargeToken}
-            setVisible={setRechargeToken}
             color="primary"
             title="Nạp ANFT"
             CustomJSX={() => (
