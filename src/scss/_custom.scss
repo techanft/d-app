@@ -84,5 +84,11 @@ body {
   }
   .dr-menu-filter {
     width: 100vw;
+    border-radius: 0 0 20px 20px;
+  }
+  .form-check-input {
+    width: 20px;
+    height: 20px;
+    position: relative;
   }
 }

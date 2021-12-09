@@ -177,11 +177,11 @@ const TheHeader = () => {
                     </CDropdownMenu>
                   </CDropdown>
                 </CCol>
-                <CCol xs={6} className="px-3 text-center py-2">
-                  <CInputCheckbox id="owned" name="owned" className="form-check-input" />
-                  <CLabel className="content-title">Sở hữu bởi tôi</CLabel>
+                <CCol xs={12} className="px-3 text-left py-2 d-flex align-items-center">
+                  <CInputCheckbox id="owned" name="owned" className="form-check-input m-0"/>
+                  <CLabel className="content-title pl-2 m-0">Sở hữu bởi tôi</CLabel>
                 </CCol>
-                <CCol xs={12} className="d-flex justify-content-center">
+                <CCol xs={12} className="d-flex justify-content-center my-2">
                   <CButton className="btn btn-primary btn-radius-50">ÁP DỤNG</CButton>
                 </CCol>
               </CRow>
