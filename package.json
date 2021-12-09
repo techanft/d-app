@@ -1,13 +1,16 @@
 {
-  "name": "ANFT D-APP",
+  "name": "anft-dapp",
   "version": "3.0.1",
-  "description": "ANFT D-APP",
+  "description": "anft-dapp",
   "private": true,
   "dependencies": {
     "@coreui/coreui-pro": "^3.2.2",
     "@coreui/icons": "2.0.0-beta.4",
     "@coreui/icons-react": "^1.0.2",
     "@coreui/react": "^3.4.6",
+    "@fortawesome/fontawesome-svg-core": "^1.2.35",
+    "@fortawesome/free-solid-svg-icons": "^5.15.3",
+    "@fortawesome/react-fontawesome": "^0.1.14",
     "@reduxjs/toolkit": "^1.6.2",
     "@testing-library/jest-dom": "~5.11.3",
     "@testing-library/react": "~10.4.8",
@@ -18,6 +21,7 @@
     "@types/react-dom": "~16.9.8",
     "@types/react-redux": "~7.1.9",
     "@types/react-router-dom": "~5.1.5",
+    "ethers": "^5.5.2",
     "formik": "^2.2.9",
     "node-sass": "^4.14.1",
     "react": "~16.13.1",
@@ -28,10 +32,7 @@
     "react-scripts": "~3.4.2",
     "react-scripts-ts": "~3.1.0",
     "redux": "~4.0.5",
-    "typescript": "~3.9.7",
-    "@fortawesome/fontawesome-svg-core": "^1.2.35",
-    "@fortawesome/free-solid-svg-icons": "^5.15.3",
-    "@fortawesome/react-fontawesome": "^0.1.14"
+    "typescript": "^4.4.2"
   },
   "scripts": {
     "start": "react-scripts start",
