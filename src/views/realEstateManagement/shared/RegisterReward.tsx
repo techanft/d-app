@@ -9,28 +9,29 @@ import {
   CContainer,
   CDataTable,
   CForm,
+  CFormGroup,
   CInput,
   CInputGroup,
   CInputGroupAppend,
-  CInvalidFeedback,
   CLabel,
   CLink,
-  CRow,
+  CRow
 } from '@coreui/react';
+import { faClipboardCheck } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Formik } from 'formik';
 import React, { useState } from 'react';
 import bgImg from '../../../assets/img/registerBonus.svg';
+import ConfirmModal from '../../../shared/components/ConfirmModal';
 import { IRealEstateActivity } from '../../../shared/models/realEstateActivity.model';
-import ClaimRewardModal from './ConfirmClaimRewardModal';
 import './index.scss';
-import UnregisterModal from './ConfirmUnregisterModal';
 
 const RegisterReward = () => {
   const titleTableStyle = {
     textAlign: 'left',
     color: '#828282',
-    fontSize: '0.75rem',
-    lineHeight: '14px',
+    fontSize: '0.875rem',
+    lineHeight: '16px',
     fontWeight: '400',
   };
 
@@ -116,6 +117,11 @@ const RegisterReward = () => {
   const setUnregisterListener = (key: boolean) => (): void => setUnregister(key);
   const setClaimRewardListener = (key: boolean) => (): void => setClaimReward(key);
 
+  const onCloseModal = () => {
+    setUnregister(false);
+    setClaimReward(false);
+  }
+
   return (
     <CContainer fluid className="mx-0 my-2">
       <CRow>
@@ -149,7 +155,7 @@ const RegisterReward = () => {
                       toggleDetails(item.activityName);
                     }}
                   >
-                    <span className="text-primary d-inline-block text-truncate" style={{ maxWidth: '120px' }}>
+                    <span className="text-primary d-inline-block text-truncate" style={{ maxWidth: '80px' }}>
                       {item.activityName ? item.activityName : '_'}
                     </span>
                   </td>
@@ -166,68 +172,108 @@ const RegisterReward = () => {
               },
               details: (item: IRealEstateActivity) => {
                 return (
-                  <Formik
-                    enableReinitialize
-                    initialValues={item}
-                    // validationSchema={validationSchema}
-                    onSubmit={(values) => {}}
-                  >
-                    {({ values, errors, touched, handleChange, handleBlur, handleSubmit, setFieldValue }) => (
+                  <Formik enableReinitialize initialValues={item} onSubmit={(values) => {}}>
+                    {({ values, handleChange, handleBlur, handleSubmit }) => (
                       <CForm className="form-horizontal" onSubmit={handleSubmit}>
                         <CCollapse show={details.includes(item.activityName)}>
                           <CCard className="mb-0">
-                            <CCardBody className="p-3">
+                            <CCardBody className="px-3">
                               <CRow className="align-items-center">
-                                <CCol xs={6}>
-                                  <p className="font-weight-bold my-2">Ngày đăng ký: </p>
-                                </CCol>
-                                <CCol xs={6}>
-                                  <p className="my-2">{item.createdDate ? item.createdDate : '_'}</p>
-                                </CCol>
-                                <CCol xs={6}>
-                                  <p className="font-weight-bold my-2">Mức đăng ký: </p>
-                                </CCol>
-                                <CCol xs={6}>
-                                  <CInputGroup>
-                                    <CInput
-                                      type="text"
-                                      id="registerLevel"
-                                      autoComplete="none"
-                                      name="registerLevel"
-                                      value={values.registerLevel}
-                                      onChange={handleChange}
-                                      onBlur={handleBlur}
-                                      placeholder="Mức đăng ký..."
-                                      className="register-level-input"
-                                    />
-                                    <CInputGroupAppend>
-                                      <CButton type="submit" color="primary" className="btn-register-level">
-                                        <CIcon name="cil-pencil" className="p-0 m-0" />
+                                <CCol xs={12}>
+                                  <CFormGroup row>
+                                    <CCol xs={6}>
+                                      <p className="font-weight-bold my-2">Ngày đăng ký: </p>
+                                    </CCol>
+                                    <CCol xs={6}>
+                                      <p className="my-2">{item.createdDate ? item.createdDate : '_'}</p>
+                                    </CCol>
+                                  </CFormGroup>
+
+                                  <CFormGroup row>
+                                    <CCol xs={6}>
+                                      <p className="font-weight-bold my-2">Mức đăng ký: </p>
+                                    </CCol>
+                                    <CCol xs={6}>
+                                      <CInputGroup>
+                                        <CInput
+                                          type="text"
+                                          id="registerLevel"
+                                          autoComplete="none"
+                                          name="registerLevel"
+                                          value={values.registerLevel}
+                                          onChange={handleChange}
+                                          onBlur={handleBlur}
+                                          placeholder="Mức đăng ký..."
+                                          className="register-level-input"
+                                        />
+                                        <CInputGroupAppend>
+                                          <CButton type="submit" color="primary" className="btn-register-level">
+                                            <FontAwesomeIcon icon={faClipboardCheck}/>
+                                          </CButton>
+                                        </CInputGroupAppend>
+                                      </CInputGroup>
+                                    </CCol>
+                                  </CFormGroup>
+
+                                  <CFormGroup row>
+                                    <CCol xs={12} className="d-flex justify-content-center mt-3">
+                                      <CButton
+                                        className="btn-radius-50 btn btn-sm btn-success mr-2"
+                                        onClick={setClaimRewardListener(true)}
+                                      >
+                                        Claim Reward
                                       </CButton>
-                                    </CInputGroupAppend>
-                                  </CInputGroup>
-                                  <CInvalidFeedback
-                                    className={!!errors.registerLevel && touched.registerLevel ? 'd-block' : 'd-none'}
-                                  >
-                                    {errors.registerLevel}
-                                  </CInvalidFeedback>
-                                </CCol>
-                                <CCol xs={12} className="d-flex justify-content-center mt-3 mb-2">
-                                  <CButton
-                                    className="btn-radius-50 btn btn-sm btn-success mr-2"
-                                    onClick={setClaimRewardListener(true)}
-                                  >
-                                    Claim Reward
-                                  </CButton>
-                                  <CButton
-                                    className="btn-radius-50 btn btn-sm btn-outline-danger "
-                                    variant="ghost"
-                                    onClick={setUnregisterListener(true)}
-                                  >
-                                    Unregister
-                                  </CButton>
-                                  <ClaimRewardModal visible={claimReward} setVisible={setClaimReward} reward={values.reward} activityName={values.activityName}/>
-                                  <UnregisterModal visible={unregister} setVisible={setUnregister} registerLevel={values.registerLevel} activityName={values.activityName}/>
+                                      <CButton
+                                        className="btn-radius-50 btn btn-sm btn-outline-danger "
+                                        variant="ghost"
+                                        onClick={setUnregisterListener(true)}
+                                      >
+                                        Unregister
+                                      </CButton>
+                                      <ConfirmModal
+                                        isVisible={claimReward}
+                                        setVisible={setClaimReward}
+                                        color="success"
+                                        title="Nhận thưởng hoạt động"
+                                        CustomJSX={() => (
+                                          <p>
+                                            Bạn chắc chắn muốn nhận thưởng{' '}
+                                            <span className="text-primary">{values.reward} ANFT</span> của hoạt động{' '}
+                                            <span className="text-primary">“{values.activityName}”</span>
+                                          </p>
+                                        )}
+                                        onConfirm={() => {}}
+                                        onAbort={onCloseModal}
+                                        />
+                                      <ConfirmModal
+                                        isVisible={unregister}
+                                        setVisible={setUnregister}
+                                        color="danger"
+                                        title="Xác nhận hủy đăng ký"
+                                        CustomJSX={() => (
+                                          <p>
+                                            Bạn chắc chắn muốn hủy{' '}
+                                            <span className="text-primary">“{values.activityName}”</span> với đăng ký{' '}
+                                            <span className="text-primary">{values.registerLevel} ANFT</span>
+                                          </p>
+                                        )}
+                                        onConfirm={() => {}}
+                                        onAbort={onCloseModal}
+                                        />
+                                      {/* <ClaimRewardModal
+                                        visible={claimReward}
+                                        setVisible={setClaimReward}
+                                        reward={values.reward}
+                                        activityName={values.activityName}
+                                      />
+                                      <UnregisterModal
+                                        visible={unregister}
+                                        setVisible={setUnregister}
+                                        registerLevel={values.registerLevel}
+                                        activityName={values.activityName}
+                                      /> */}
+                                    </CCol>
+                                  </CFormGroup>
                                 </CCol>
                               </CRow>
                             </CCardBody>
@@ -244,7 +290,7 @@ const RegisterReward = () => {
             <i className="detail-title-font">*Lựa chọn Hoạt động bạn muốn SỬA hoặc HỦY đăng ký</i>
           </CCol>
           <CCol xs={12} className="text-center my-2">
-            <CLink href="#" target="_blank">
+            <CLink to="/cms/activity_logs">
               <CIcon name="cil-history" /> Activity Logs
             </CLink>
           </CCol>

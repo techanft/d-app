@@ -6,7 +6,6 @@ import {
   cilMoon,
   cilHistory,
   cilFlower,
-  cilPencil,
   cilTrash
 } from '@coreui/icons/js/free'
 
@@ -18,6 +17,5 @@ export const icons = Object.assign({},
   cilMoon,
   cilHistory,
   cilFlower,
-  cilPencil,
   cilTrash
 })

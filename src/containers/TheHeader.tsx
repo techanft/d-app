@@ -1,7 +1,5 @@
 import {
-  CButton,
-  CCol,
-  CDropdown,
+  CButton, CDropdown,
   CDropdownItem,
   CDropdownMenu,
   CDropdownToggle,
@@ -9,10 +7,9 @@ import {
   CHeaderBrand,
   CHeaderNav,
   CHeaderNavItem,
-  CRow,
-  CSubheader
-} from "@coreui/react";
-import { faAngleDown, faBars, faSlidersH } from "@fortawesome/free-solid-svg-icons";
+  CLink
+} from '@coreui/react';
+import { faBars, faSlidersH } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ethers } from "ethers";
 import React, { useEffect } from "react";
@@ -79,7 +76,9 @@ const TheHeader = () => {
           </CButton>
         </CHeaderNavItem>
         <CHeaderNavItem>
-          <p className="header-title content-title mb-0">Dashboard</p>
+          <CLink to="/dashboard">
+            <p className="header-title content-title mb-0">Dashboard</p>
+          </CLink>
         </CHeaderNavItem>
         <CHeaderNavItem>
           <CButton className="btn-link-wallet content-title btn-radius-50" onClick={onConnectWallet()}>
@@ -99,8 +98,7 @@ const TheHeader = () => {
           </CDropdown>
         </CHeaderNavItem>
       </CHeaderNav>
-
-      <CSubheader className="sub-header mt-0 justify-content-center align-items-center">
+      {/* <CSubheader className="sub-header mt-0 justify-content-center align-items-center">
         <CRow className="w-100 px-1">
           <CCol xs={4} className="px-0 text-center">
             <CDropdown className="mx-2">
@@ -151,7 +149,7 @@ const TheHeader = () => {
             </CDropdown>
           </CCol>
         </CRow>
-      </CSubheader>
+      </CSubheader> */}
     </CHeader>
   );
 };

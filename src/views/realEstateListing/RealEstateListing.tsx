@@ -1,5 +1,5 @@
 import CIcon from '@coreui/icons-react';
-import { CCol, CRow } from '@coreui/react';
+import { CCol, CLink, CRow } from '@coreui/react';
 import React from 'react';
 import realEstate1 from '../../assets/img/bds-01.svg';
 import realEstate2 from '../../assets/img/bds-02.svg';
@@ -16,7 +16,6 @@ export interface IRealEstateListing {
 }
 
 export const RealEstateListing = () => {
-
   const demoRealEstateListing: IRealEstateListing[] = [
     {
       infoImg: realEstate1,
@@ -55,16 +54,18 @@ export const RealEstateListing = () => {
       <CRow className="mx-0">
         {demoRealEstateListing.map((item, index) => (
           <CCol xs={12} key={`listing-${index}`} className="px-0">
-            <div className="media info-box bg-white mx-3 my-2 p-2 align-items-center rounded shadow-sm" >
-              <img src={item.infoImg} alt="realEstateImg" />
-              <div className="media-body align-items-around ml-2">
-                <span className="info-box-text text-dark">{item.infoText}</span>
-                <p className={`info-box-token text-primary mt-2 mb-0`}>{item.infoToken}</p>
-                <p className={`info-box-commissionRate text-success mt-2 mb-0`}>
-                <CIcon name="cil-flower"/> {item.commissionRate}
-                </p>
+            <CLink to={`cms/${`listing-${index}`}/realestate_details_view`}>
+              <div className="media info-box bg-white mx-3 my-2 p-2 align-items-center rounded shadow-sm">
+                <img src={item.infoImg} alt="realEstateImg" />
+                <div className="media-body align-items-around ml-2">
+                  <span className="info-box-text text-dark">{item.infoText}</span>
+                  <p className={`info-box-token text-primary mt-2 mb-0`}>{item.infoToken}</p>
+                  <p className={`info-box-commissionRate text-success mt-2 mb-0`}>
+                    <CIcon name="cil-flower" /> {item.commissionRate}
+                  </p>
+                </div>
               </div>
-            </div>
+            </CLink>
           </CCol>
         ))}
       </CRow>
