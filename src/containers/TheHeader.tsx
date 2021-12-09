@@ -9,6 +9,7 @@ import {
   CHeaderBrand,
   CHeaderNav,
   CHeaderNavItem,
+  CLink,
   CRow,
   CSubheader
 } from '@coreui/react';
@@ -31,7 +32,9 @@ const TheHeader = () => {
           </CButton>
         </CHeaderNavItem>
         <CHeaderNavItem>
-          <p className="header-title content-title mb-0">Dashboard</p>
+          <CLink to="/dashboard">
+            <p className="header-title content-title mb-0">Dashboard</p>
+          </CLink>
         </CHeaderNavItem>
         <CHeaderNavItem>
           <CButton className="btn-link-wallet content-title btn-radius-50">Liên kết ví</CButton>
@@ -49,13 +52,16 @@ const TheHeader = () => {
           </CDropdown>
         </CHeaderNavItem>
       </CHeaderNav>
-
       <CSubheader className="sub-header mt-0 justify-content-center align-items-center">
         <CRow className="w-100 px-1">
           <CCol xs={4} className="px-0 text-center">
             <CDropdown className="mx-2">
-              <CDropdownToggle color="white" className="dt-filter content-title btn-radius-50 w-100 px-0 text-dark" caret={false}>
-                Loại <FontAwesomeIcon icon={faAngleDown}/>
+              <CDropdownToggle
+                color="white"
+                className="dt-filter content-title btn-radius-50 w-100 px-0 text-dark"
+                caret={false}
+              >
+                Loại <FontAwesomeIcon icon={faAngleDown} />
               </CDropdownToggle>
               <CDropdownMenu>
                 <CDropdownItem href="#">Action</CDropdownItem>
@@ -66,8 +72,12 @@ const TheHeader = () => {
           </CCol>
           <CCol xs={4} className="px-0 text-center">
             <CDropdown className="mx-2">
-              <CDropdownToggle color="white" className="dt-filter content-title btn-radius-50 w-100 px-0 text-dark" caret={false}>
-                State <FontAwesomeIcon icon={faAngleDown}/>
+              <CDropdownToggle
+                color="white"
+                className="dt-filter content-title btn-radius-50 w-100 px-0 text-dark"
+                caret={false}
+              >
+                State <FontAwesomeIcon icon={faAngleDown} />
               </CDropdownToggle>
               <CDropdownMenu>
                 <CDropdownItem href="#">Action</CDropdownItem>
@@ -78,8 +88,12 @@ const TheHeader = () => {
           </CCol>
           <CCol xs={4} className="px-0 text-center">
             <CDropdown className="mx-2">
-              <CDropdownToggle color="white" className="dt-filter content-title btn-radius-50 w-100 px-0 text-dark" caret={false}>
-                Services <FontAwesomeIcon icon={faAngleDown}/>
+              <CDropdownToggle
+                color="white"
+                className="dt-filter content-title btn-radius-50 w-100 px-0 text-dark"
+                caret={false}
+              >
+                Services <FontAwesomeIcon icon={faAngleDown} />
               </CDropdownToggle>
               <CDropdownMenu>
                 <CDropdownItem href="#">Action</CDropdownItem>

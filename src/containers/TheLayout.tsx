@@ -13,16 +13,16 @@ const TheLayout = () => {
     <>
       <div className="dapp-layout">
         <div className="c-wrapper">
-          <TheHeader />
+          <TheHeader/>
           <div className="c-body">
             <TheContent />
             {/* <RealEstateListing /> */}
             {/* <RealEstateInfo /> */}
             {/* <RealEstateDetails/> */}
-            <RealEstateDetailsView />
+            {/* <RealEstateDetailsView />
             <RegisterReward />
             <ActivityLogs/>
-            <ExploitedManagement/>
+            <ExploitedManagement/> */}
           </div>
         </div>
       </div>

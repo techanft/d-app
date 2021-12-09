@@ -12,7 +12,7 @@ import {
   CTabs
 } from '@coreui/react';
 import React from 'react';
-import { mapstakeHolderStatusBadge, StakeHolderStatus } from '../../../enumeration/stakeHolderStatus';
+import { mapExploitedStatusBadge, ExploitedStatus } from '../../../enumeration/exploitedStatus';
 import { mapStatus, mapStatusBadge, Status } from '../../../enumeration/status';
 import { IExploitedPermission } from '../../../shared/models/exploitedPermission.model';
 import { IRegisterRewardHistory } from '../../../shared/models/realEstateActivity.model';
@@ -92,17 +92,17 @@ const ActivityLogs = () => {
   const demoExploitedPermission: IExploitedPermission[] = [
     {
       createdDate: '17:10- 29/11/2021',
-      status: StakeHolderStatus.Active,
+      status: ExploitedStatus.Active,
       address: '0xda3ac...9999',
     },
     {
       createdDate: '17:10- 29/11/2021',
-      status: StakeHolderStatus.Inactive,
+      status: ExploitedStatus.Inactive,
       address: '0xda3ac...9999',
     },
     {
       createdDate: '17:10- 29/11/2021',
-      status: StakeHolderStatus.Active,
+      status: ExploitedStatus.Active,
       address: '0xda3ac...9999',
     },
   ];
@@ -336,7 +336,7 @@ const ActivityLogs = () => {
                       return (
                         <td>
                           {
-                            <CBadge color={mapstakeHolderStatusBadge[item.status]}>
+                            <CBadge color={mapExploitedStatusBadge[item.status]}>
                               {item.status ? item.status : '_'}
                             </CBadge>
                           }

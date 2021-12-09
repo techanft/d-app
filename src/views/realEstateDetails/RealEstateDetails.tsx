@@ -64,7 +64,7 @@ export const RealEstateDetails = () => {
       </CRow>
       <CRow className="m-0 p-0">
       <CCol xs={12} className="text-center mt-3">
-            <CLink href="#" target="_blank">
+            <CLink to="/cms/activity_logs">
               <CIcon name="cil-history" /> <u>Activity Logs</u>
             </CLink>
           </CCol>

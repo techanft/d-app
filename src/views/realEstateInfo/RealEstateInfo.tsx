@@ -14,15 +14,18 @@ import { Roles } from '../../enumeration/roles';
 import { IRealEstateInfo } from '../../shared/models/realEstateInfo.model';
 import './index.scss';
 import RechargeTokenModal from './RechargeTokenModal';
+import RegisterOwnershipModal from './RegisterOwnershipModal';
 import WithdrawTokenModal from './WithdrawTokenModal';
 
 
 export const RealEstateInfo = () => {
   const [rechargeToken, setRechargeToken] = useState<boolean>(false);
   const [withdrawToken, setWithDrawToken] = useState<boolean>(false);
+  const [registerOwnership, setRegisterOwnership] = useState<boolean>(false);
 
   const setRechargeTokenListener = (key: boolean) => (): void => setRechargeToken(key);
   const setWithdrawTokenListener = (key: boolean) => (): void => setWithDrawToken(key);
+  const setRegisterOwnershipListener = (key: boolean) => (): void => setRegisterOwnership(key);
 
   const demoRealEstateInfo: IRealEstateInfo = {
     value: '15.000',
@@ -105,7 +108,9 @@ export const RealEstateInfo = () => {
           </CCol>
           <CCol xs={12} className="text-center">
             <p className="text-primary my-2">
-              <FontAwesomeIcon icon={faIdBadge} /> <u>Xem quyền khai thác</u>
+              <CLink to="">
+                <FontAwesomeIcon icon={faIdBadge} /> <u>Xem quyền khai thác</u>
+              </CLink>
             </p>
           </CCol>
 
@@ -122,12 +127,12 @@ export const RealEstateInfo = () => {
               <CCard className="activities-card mt-2 mb-0">
                 <CCardBody className="p-2">
                   <CRow className="mx-0">
-                    <CLink href="" target="_blank" disabled={Roles.OWNER ? true : false}>
+                    <CLink href="#" target="_blank" onClick={setRegisterOwnershipListener(true)}>
                       <FontAwesomeIcon icon={faEdit} /> Đăng ký sở hữu
                     </CLink>
                   </CRow>
                   <CRow className="mt-2 mx-0">
-                    <CLink href="" target="_blank">
+                    <CLink to="/cms/register_reward">
                       <FontAwesomeIcon icon={faDonate} /> Đăng ký nhận thưởng
                     </CLink>
                   </CRow>
@@ -144,6 +149,7 @@ export const RealEstateInfo = () => {
               Quản lý sở hữu
             </CButton>
           </CCol>
+          <RegisterOwnershipModal visible={registerOwnership} setVisible={setRegisterOwnership} />
 
           <CCol xs={12}>
             <CCollapse show={actsOwnerMngmnt}>
@@ -160,7 +166,7 @@ export const RealEstateInfo = () => {
                     </CLink>
                   </CRow>
                   <CRow className="mx-0">
-                    <CLink href="#" target="_blank">
+                    <CLink to="/cms/exploited_management">
                       <FontAwesomeIcon icon={faClipboard} /> Quản lý quyền khai thác
                     </CLink>
                   </CRow>
