@@ -56,7 +56,7 @@ export const RealEstateListing = () => {
           <CCol xs={12} key={`listing-${index}`} className="px-0">
             <CLink to={`cms/${`listing-${index}`}/realestate_details_view`}>
               <div className="media info-box bg-white mx-3 my-2 p-2 align-items-center rounded shadow-sm">
-                <img src={item.infoImg} alt="realEstateImg" />
+                <img src={item.infoImg} alt="realEstateImg" height="98px" width="120px" className="rounded"/>
                 <div className="media-body align-items-around ml-2">
                   <span className="info-box-text text-dark">{item.infoText}</span>
                   <p className={`info-box-token text-primary mt-2 mb-0`}>{item.infoToken}</p>
