@@ -17,13 +17,13 @@ declare let window: any;
 
 const App = () => {
   const dispatch = useDispatch();
-  
-  window.ethereum.on("accountsChanged", async function (accounts: any) {
-    if (window.ethereum) {
+
+  if (window.ethereum) {
+    window.ethereum.on("accountsChanged", async function (accounts: any) {
       const provider = getProvider();
       dispatch(getSigner(provider));
-    }
-  });
+    });
+  }
 
   return (
     <HashRouter>
