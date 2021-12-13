@@ -11,7 +11,7 @@ const Dashboard = (props: IDashboard) => {
   return (
     <>
       <CSubheader className="sub-header mt-0 justify-content-center align-items-center">
-        <CRow className="w-100 px-1">
+        <CRow className="w-100 p-1">
           <CCol xs={4} className="px-0 text-center">
             <CDropdown className="mx-2">
               <CDropdownToggle

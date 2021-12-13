@@ -30,7 +30,7 @@ import realEstateImg from '../../assets/img/realEstateDetail.svg';
 import { ExploitedStatus } from '../../enumeration/exploitedStatus';
 import { Roles } from '../../enumeration/roles';
 import ConfirmModal from '../../shared/components/ConfirmModal';
-import { calculateOwnerTime } from '../../shared/helper';
+import { calculateOwnerTime } from '../../shared/helpers';
 import { IExploitedPermission } from '../../shared/models/exploitedPermission.model';
 import { IRealEstateInfo } from '../../shared/models/realEstateInfo.model';
 import './index.scss';
