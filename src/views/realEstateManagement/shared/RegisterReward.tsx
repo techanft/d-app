@@ -232,7 +232,6 @@ const RegisterReward = () => {
                                       </CButton>
                                       <ConfirmModal
                                         isVisible={claimReward}
-                                        setVisible={setClaimReward}
                                         color="success"
                                         title="Nhận thưởng hoạt động"
                                         CustomJSX={() => (
@@ -247,7 +246,6 @@ const RegisterReward = () => {
                                         />
                                       <ConfirmModal
                                         isVisible={unregister}
-                                        setVisible={setUnregister}
                                         color="danger"
                                         title="Xác nhận hủy đăng ký"
                                         CustomJSX={() => (

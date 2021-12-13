@@ -1,5 +1,8 @@
 import {
-  CButton, CDropdown,
+  CButton,
+  CCol,
+  CDropdown,
+  CDropdownHeader,
   CDropdownItem,
   CDropdownMenu,
   CDropdownToggle,
@@ -7,32 +10,27 @@ import {
   CHeaderBrand,
   CHeaderNav,
   CHeaderNavItem,
-  CLink
-} from '@coreui/react';
-import { faBars, faSlidersH } from "@fortawesome/free-solid-svg-icons";
+  CInputCheckbox,
+  CLabel,
+  CLink,
+  CRow
+} from "@coreui/react";
+import { faAngleDown, faBars, faSlidersH } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ethers } from "ethers";
-import React, { useEffect } from "react";
+import { default as React, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getProvider, getTokenContractRead } from "../shared/helpers";
+import { getEllipsisTxt, getProvider, getTokenContractRead } from "../shared/helpers";
 import { RootState } from "../shared/reducers";
-import { getAddress, getContractWithSigner, getEllipsisTxt, getProviderLogin, getSigner } from "../views/walletInfo/wallet.api";
+import { getAddress, getContractWithSigner, getProviderLogin, getSigner } from "../views/walletInfo/wallet.api";
 import { softReset } from "../views/walletInfo/wallet.reducer";
-declare let window: any;
 
+declare let window: any;
 const TheHeader = () => {
   const dispatch = useDispatch();
-  const {
-    getProviderLoginSuccess,
-    getSignerSuccess,
-    signer,
-    signerAddress,
-    // contractWithSigner,
-    // transactionReceipt,
-    // getTransactionRecepitSuccess,
-    // errorMessage,
-    // transactionHash,
-  } = useSelector((state: RootState) => state.walletReducer);
+  const { getProviderLoginSuccess, getSignerSuccess, signer, signerAddress } = useSelector(
+    (state: RootState) => state.walletReducer
+  );
   const onConnectWallet = () => () => {
     if (window.ethereum) {
       const provider: ethers.providers.Web3Provider = getProvider();
@@ -90,10 +88,145 @@ const TheHeader = () => {
             <CDropdownToggle caret={false} className="text-primary">
               <FontAwesomeIcon icon={faSlidersH} size="2x" />
             </CDropdownToggle>
-            <CDropdownMenu>
-              <CDropdownItem href="#">Action</CDropdownItem>
-              <CDropdownItem href="#">Another action</CDropdownItem>
-              <CDropdownItem href="#">Something else here</CDropdownItem>
+            <CDropdownMenu className="dr-menu-filter">
+              <CDropdownHeader className="text-center modal-title-style">Filter</CDropdownHeader>
+              <CRow className="mx-0">
+                <CCol xs={6} className="px-0 text-center py-2">
+                  <CDropdown className="mx-2">
+                    <CDropdownToggle
+                      color="white"
+                      className="dt-filter content-title btn-radius-50 text-dark"
+                      caret={false}
+                    >
+                      City <FontAwesomeIcon icon={faAngleDown} />
+                    </CDropdownToggle>
+                    <CDropdownMenu>
+                      <CDropdownItem href="#">Action</CDropdownItem>
+                      <CDropdownItem href="#">Another action</CDropdownItem>
+                      <CDropdownItem href="#">Something else here</CDropdownItem>
+                    </CDropdownMenu>
+                  </CDropdown>
+                </CCol>
+                <CCol xs={6} className="px-0 text-center py-2">
+                  <CDropdown className="mx-2">
+                    <CDropdownToggle
+                      color="white"
+                      className="dt-filter content-title btn-radius-50 text-dark"
+                      caret={false}
+                    >
+                      Dist <FontAwesomeIcon icon={faAngleDown} />
+                    </CDropdownToggle>
+                    <CDropdownMenu>
+                      <CDropdownItem href="#">Action</CDropdownItem>
+                      <CDropdownItem href="#">Another action</CDropdownItem>
+                      <CDropdownItem href="#">Something else here</CDropdownItem>
+                    </CDropdownMenu>
+                  </CDropdown>
+                </CCol>
+                <CCol xs={6} className="px-0 text-center py-2">
+                  <CDropdown className="mx-2">
+                    <CDropdownToggle
+                      color="white"
+                      className="dt-filter content-title btn-radius-50 text-dark"
+                      caret={false}
+                    >
+                      Loại sản phẩm <FontAwesomeIcon icon={faAngleDown} />
+                    </CDropdownToggle>
+                    <CDropdownMenu>
+                      <CDropdownItem href="#">Action</CDropdownItem>
+                      <CDropdownItem href="#">Another action</CDropdownItem>
+                      <CDropdownItem href="#">Something else here</CDropdownItem>
+                    </CDropdownMenu>
+                  </CDropdown>
+                </CCol>
+                <CCol xs={6} className="px-0 text-center py-2">
+                  <CDropdown className="mx-2">
+                    <CDropdownToggle
+                      color="white"
+                      className="dt-filter content-title btn-radius-50 text-dark"
+                      caret={false}
+                    >
+                      Phân khúc <FontAwesomeIcon icon={faAngleDown} />
+                    </CDropdownToggle>
+                    <CDropdownMenu>
+                      <CDropdownItem href="#">Action</CDropdownItem>
+                      <CDropdownItem href="#">Another action</CDropdownItem>
+                      <CDropdownItem href="#">Something else here</CDropdownItem>
+                    </CDropdownMenu>
+                  </CDropdown>
+                </CCol>
+                <CCol xs={6} className="px-0 text-center py-2">
+                  <CDropdown className="mx-2">
+                    <CDropdownToggle
+                      color="white"
+                      className="dt-filter content-title btn-radius-50 text-dark"
+                      caret={false}
+                    >
+                      Diện tích <FontAwesomeIcon icon={faAngleDown} />
+                    </CDropdownToggle>
+                    <CDropdownMenu>
+                      <CDropdownItem href="#">Action</CDropdownItem>
+                      <CDropdownItem href="#">Another action</CDropdownItem>
+                      <CDropdownItem href="#">Something else here</CDropdownItem>
+                    </CDropdownMenu>
+                  </CDropdown>
+                </CCol>
+                <CCol xs={6} className="px-0 text-center py-2">
+                  <CDropdown className="mx-2">
+                    <CDropdownToggle
+                      color="white"
+                      className="dt-filter content-title btn-radius-50 text-dark"
+                      caret={false}
+                    >
+                      Hướng <FontAwesomeIcon icon={faAngleDown} />
+                    </CDropdownToggle>
+                    <CDropdownMenu>
+                      <CDropdownItem href="#">Action</CDropdownItem>
+                      <CDropdownItem href="#">Another action</CDropdownItem>
+                      <CDropdownItem href="#">Something else here</CDropdownItem>
+                    </CDropdownMenu>
+                  </CDropdown>
+                </CCol>
+                <CCol xs={6} className="px-0 text-center py-2">
+                  <CDropdown className="mx-2">
+                    <CDropdownToggle
+                      color="white"
+                      className="dt-filter content-title btn-radius-50 text-dark"
+                      caret={false}
+                    >
+                      Phí khai thác <FontAwesomeIcon icon={faAngleDown} />
+                    </CDropdownToggle>
+                    <CDropdownMenu>
+                      <CDropdownItem href="#">Action</CDropdownItem>
+                      <CDropdownItem href="#">Another action</CDropdownItem>
+                      <CDropdownItem href="#">Something else here</CDropdownItem>
+                    </CDropdownMenu>
+                  </CDropdown>
+                </CCol>
+                <CCol xs={6} className="px-0 text-center py-2">
+                  <CDropdown className="mx-2">
+                    <CDropdownToggle
+                      color="white"
+                      className="dt-filter content-title btn-radius-50 text-dark"
+                      caret={false}
+                    >
+                      Chất lượng <FontAwesomeIcon icon={faAngleDown} />
+                    </CDropdownToggle>
+                    <CDropdownMenu>
+                      <CDropdownItem href="#">Action</CDropdownItem>
+                      <CDropdownItem href="#">Another action</CDropdownItem>
+                      <CDropdownItem href="#">Something else here</CDropdownItem>
+                    </CDropdownMenu>
+                  </CDropdown>
+                </CCol>
+                <CCol xs={12} className="px-3 text-left py-2 d-flex align-items-center">
+                  <CInputCheckbox id="owned" name="owned" className="form-check-input m-0" />
+                  <CLabel className="content-title pl-2 m-0">Sở hữu bởi tôi</CLabel>
+                </CCol>
+                <CCol xs={12} className="d-flex justify-content-center my-2">
+                  <CButton className="btn btn-primary btn-radius-50">ÁP DỤNG</CButton>
+                </CCol>
+              </CRow>
             </CDropdownMenu>
           </CDropdown>
         </CHeaderNavItem>

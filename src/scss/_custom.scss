@@ -63,11 +63,11 @@ body {
     border-radius: 20px 20px 0 0;
     border: none;
   }
-  
+
   .rb-card-img img {
     border-radius: 20px 20px 0 0;
   }
-  
+
   .rb-card-body {
     position: absolute;
     bottom: 0;
@@ -75,11 +75,20 @@ body {
     height: 70%;
     width: 100%;
   }
-  
+
   .rb-card-body {
     .card-title {
       position: absolute;
       bottom: 0;
     }
+  }
+  .dr-menu-filter {
+    width: 100vw;
+    border-radius: 0 0 20px 20px;
+  }
+  .form-check-input {
+    width: 20px;
+    height: 20px;
+    position: relative;
   }
 }
