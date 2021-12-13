@@ -71,3 +71,11 @@ export const getProvider = ():ethers.providers.Web3Provider => {
     return error;
   }
 };
+
+
+ export const getEllipsisTxt = (str: string, n = 6) => {
+  if (str) {
+    return `${str.slice(0, n)}...${str.slice(str.length - n)}`;
+  }
+  return "";
+};

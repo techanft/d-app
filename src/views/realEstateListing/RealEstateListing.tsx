@@ -7,6 +7,7 @@ import { useGetAssetsQuery } from "../assets/assets.api";
 import "./index.scss";
 
 export interface IRealEstateListing {
+  id: string;
   infoImg: string;
   infoText: string | JSX.Element;
   infoToken: string;
@@ -24,6 +25,7 @@ export const RealEstateListing = () => {
   if (assets) {
     dataMaping = assets.map((item) => {
       const body: IRealEstateListing = {
+        id: item.id,
         infoImg: item.images,
         infoText: "202 Yên Sở - Hoàng Mai - Hà Nội",
         infoToken: "10.000 ANFT",
@@ -73,7 +75,7 @@ export const RealEstateListing = () => {
       <CRow className="mx-0">
         {dataMaping!.map((item, index) => (
           <CCol xs={12} key={`listing-${index}`} className="px-0">
-            <CLink to={`cms/${item.address}/realestate_details_view`}>
+            <CLink to={`cms/${item.id}/realestate_details_view`}>
               <div className="media info-box bg-white mx-3 my-2 p-2 align-items-center rounded shadow-sm">
                 <img src={item.infoImg} alt="realEstateImg" height="98px" width="120px" className="rounded" />
                 <div className="media-body align-items-around ml-2">

@@ -20,6 +20,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ethers } from "ethers";
 import { default as React, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { ToastError } from "../shared/components/Toast";
 import { getEllipsisTxt, getProvider, getTokenContractRead } from "../shared/helpers";
 import { RootState } from "../shared/reducers";
 import { getAddress, getContractWithSigner, getProviderLogin, getSigner } from "../views/walletInfo/wallet.api";
@@ -36,7 +37,7 @@ const TheHeader = () => {
       const provider: ethers.providers.Web3Provider = getProvider();
       dispatch(getProviderLogin(provider));
     } else {
-      alert("No provider found");
+      ToastError("No provider found");
     }
   };
 

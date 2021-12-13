@@ -1,13 +1,16 @@
-import { CSubheader, CRow, CCol, CDropdown, CDropdownToggle, CDropdownMenu, CDropdownItem } from '@coreui/react'
-import { faAngleDown } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import React from 'react'
-import { RealEstateListing } from '../realEstateListing/RealEstateListing'
+import { CCol, CDropdown, CDropdownItem, CDropdownMenu, CDropdownToggle, CRow, CSubheader } from "@coreui/react";
+import { faAngleDown } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React from "react";
+import { RouteComponentProps } from "react-router-dom";
+import { RealEstateListing } from "../realEstateListing/RealEstateListing";
 
-const Dashboard = () => {
+interface IDashboard extends RouteComponentProps {}
+
+const Dashboard = (props: IDashboard) => {
   return (
     <>
-          <CSubheader className="sub-header mt-0 justify-content-center align-items-center">
+      <CSubheader className="sub-header mt-0 justify-content-center align-items-center">
         <CRow className="w-100 px-1">
           <CCol xs={4} className="px-0 text-center">
             <CDropdown className="mx-2">
@@ -59,9 +62,9 @@ const Dashboard = () => {
           </CCol>
         </CRow>
       </CSubheader>
-      <RealEstateListing/>
+      <RealEstateListing />
     </>
-  )
-}
+  );
+};
 
-export default Dashboard
+export default Dashboard;

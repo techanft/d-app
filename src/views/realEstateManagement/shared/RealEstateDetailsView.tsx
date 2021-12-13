@@ -1,11 +1,24 @@
-import { CCol, CLabel, CRow } from '@coreui/react';
-import React from 'react';
-import { RealEstateDetails } from '../../realEstateDetails/RealEstateDetails';
-import { RealEstateInfo } from '../../realEstateInfo/RealEstateInfo';
-import { RealEstateListing } from '../../realEstateListing/RealEstateListing';
+import { CCol, CLabel, CRow } from "@coreui/react";
+import React from "react";
+import { RouteComponentProps } from "react-router-dom";
+import { useGetAssetQuery } from "../../assets/assets.api";
+import { RealEstateDetails } from "../../realEstateDetails/RealEstateDetails";
+import { RealEstateInfo } from "../../realEstateInfo/RealEstateInfo";
+import { RealEstateListing } from "../../realEstateListing/RealEstateListing";
 
+interface IRealEstateDetailsViewParams {
+  [x: string]: string;
+}
 
-const RealEstateDetailsView = () => {
+interface IRealEstateDetailsView extends RouteComponentProps<IRealEstateDetailsViewParams> {}
+
+type IProps = IRealEstateDetailsView;
+
+const RealEstateDetailsView = (props: IProps) => {
+  const { match } = props;
+  const { id } = match.params;
+  useGetAssetQuery(id)
+  
   return (
     <>
       <RealEstateInfo />
