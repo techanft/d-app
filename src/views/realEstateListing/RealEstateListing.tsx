@@ -1,12 +1,9 @@
 import CIcon from "@coreui/icons-react";
 import { CCol, CLink, CRow } from "@coreui/react";
 import React from "react";
-import realEstate1 from "../../assets/img/bds-01.svg";
-import realEstate2 from "../../assets/img/bds-02.svg";
-import realEstate3 from "../../assets/img/bds-03.svg";
-import realEstate4 from "../../assets/img/bds-04.svg";
-import realEstate5 from "../../assets/img/bds-05.svg";
-import { useGetAssetsQuery } from "../dummy/dummy.api";
+import { useSelector } from "react-redux";
+import { RootState } from "../../shared/reducers";
+import { useGetAssetsQuery } from "../assets/assets.api";
 import "./index.scss";
 
 export interface IRealEstateListing {
@@ -14,65 +11,71 @@ export interface IRealEstateListing {
   infoText: string | JSX.Element;
   infoToken: string;
   commissionRate: string;
+  address: string;
+  tHash: string;
 }
 
 export const RealEstateListing = () => {
-  const { data, isLoading, error } = useGetAssetsQuery();
+  useGetAssetsQuery();
+  const { assets } = useSelector((state: RootState) => state.assetsReducer);
+  console.log(assets, "assets");
 
   let dataMaping: IRealEstateListing[] = [];
-  if (data) {
-    dataMaping = data.map((item) => {
+  if (assets) {
+    dataMaping = assets.map((item) => {
       const body: IRealEstateListing = {
         infoImg: item.images,
         infoText: "202 Yên Sở - Hoàng Mai - Hà Nội",
         infoToken: "10.000 ANFT",
         commissionRate: "0.5%",
+        address: item.address,
+        tHash: item.tHash,
       };
       return body;
     });
   }
 
-  const demoRealEstateListing: IRealEstateListing[] = [
-    {
-      infoImg: realEstate1,
-      infoText: "202 Yên Sở - Hoàng Mai - Hà Nội",
-      infoToken: "10.000 ANFT",
-      commissionRate: "0.5%",
-    },
-    {
-      infoImg: realEstate2,
-      infoText: "121- Bà Triệu - Hai Bà Trưng - Hà Nội",
-      infoToken: "10.000 ANFT",
-      commissionRate: "0.5%",
-    },
-    {
-      infoImg: realEstate3,
-      infoText: "121- Bà Triệu - Hai Bà Trưng - Hà Nội",
-      infoToken: "10.000 ANFT",
-      commissionRate: "0.5%",
-    },
-    {
-      infoImg: realEstate4,
-      infoText: "121- Bà Triệu - Hai Bà Trưng - Hà Nội",
-      infoToken: "10.000 ANFT",
-      commissionRate: "0.5%",
-    },
-    {
-      infoImg: realEstate5,
-      infoText: "121- Bà Triệu - Hai Bà Trưng - Hà Nội",
-      infoToken: "10.000 ANFT",
-      commissionRate: "0.5%",
-    },
-  ];
+  // const demoRealEstateListing: IRealEstateListing[] = [
+  //   {
+  //     infoImg: realEstate1,
+  //     infoText: "202 Yên Sở - Hoàng Mai - Hà Nội",
+  //     infoToken: "10.000 ANFT",
+  //     commissionRate: "0.5%",
+  //   },
+  //   {
+  //     infoImg: realEstate2,
+  //     infoText: "121- Bà Triệu - Hai Bà Trưng - Hà Nội",
+  //     infoToken: "10.000 ANFT",
+  //     commissionRate: "0.5%",
+  //   },
+  //   {
+  //     infoImg: realEstate3,
+  //     infoText: "121- Bà Triệu - Hai Bà Trưng - Hà Nội",
+  //     infoToken: "10.000 ANFT",
+  //     commissionRate: "0.5%",
+  //   },
+  //   {
+  //     infoImg: realEstate4,
+  //     infoText: "121- Bà Triệu - Hai Bà Trưng - Hà Nội",
+  //     infoToken: "10.000 ANFT",
+  //     commissionRate: "0.5%",
+  //   },
+  //   {
+  //     infoImg: realEstate5,
+  //     infoText: "121- Bà Triệu - Hai Bà Trưng - Hà Nội",
+  //     infoToken: "10.000 ANFT",
+  //     commissionRate: "0.5%",
+  //   },
+  // ];
 
   return (
     <>
       <CRow className="mx-0">
         {dataMaping!.map((item, index) => (
           <CCol xs={12} key={`listing-${index}`} className="px-0">
-            <CLink to={`cms/${`listing-${index}`}/realestate_details_view`}>
+            <CLink to={`cms/${item.address}/realestate_details_view`}>
               <div className="media info-box bg-white mx-3 my-2 p-2 align-items-center rounded shadow-sm">
-                <img src={item?.infoImg} alt="realEstateImg" />
+                <img src={item.infoImg} alt="realEstateImg" height="98px" width="120px" className="rounded" />
                 <div className="media-body align-items-around ml-2">
                   <span className="info-box-text text-dark">{item?.infoText}</span>
                   <p className={`info-box-token text-primary mt-2 mb-0`}>{item?.infoToken}</p>
