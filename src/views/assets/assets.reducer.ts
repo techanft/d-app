@@ -7,6 +7,7 @@ interface IInitialState {
   asset: IAsset | null;
   errorMessage: string;
   loading: boolean;
+  totalItems: number;
 }
 
 const initialState: IInitialState = {
@@ -14,6 +15,7 @@ const initialState: IInitialState = {
   asset: null,
   errorMessage: "",
   loading: false,
+  totalItems: 0,
 };
 
 export const exchangeRateAdapter = createEntityAdapter<any>({
@@ -32,12 +34,14 @@ const { actions, reducer } = createSlice({
       state.assets = [];
       state.loading = false;
       state.errorMessage = "";
+      state.totalItems = 0;
     },
   },
   extraReducers: (builder) => {
     builder.addMatcher(assetsApi.endpoints.getAssets.matchFulfilled, (state, { payload }: PayloadAction<IAsset[]>) => {
       state.assets = payload;
       state.loading = false;
+      state.totalItems = payload.length;
     });
     builder.addMatcher(assetsApi.endpoints.getAssets.matchRejected, (state, { payload }: PayloadAction<any>) => {
       state.errorMessage = payload?.message;

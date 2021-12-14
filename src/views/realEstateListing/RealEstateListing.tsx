@@ -1,5 +1,5 @@
 import CIcon from "@coreui/icons-react";
-import { CCol, CLink, CRow } from "@coreui/react";
+import { CCol, CLink, CPagination, CRow } from "@coreui/react";
 import { BigNumber, ethers } from "ethers";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
@@ -22,12 +22,35 @@ export interface IRealEstateListing {
   tHash: string;
 }
 
+export interface IParams {
+  size: number;
+  page: number;
+  sort?: string;
+}
+
+export interface IAssetFilter extends IParams {}
+
 export const RealEstateListing = () => {
-  useGetAssetsQuery();
-  const { assets } = useSelector((state: RootState) => state.assetsReducer);
+  const { assets, totalItems } = useSelector((state: RootState) => state.assetsReducer);
   const provider = getProvider();
   const [listingLoading, setListingLoading] = useState<boolean>(false);
   const [listings, setListings] = useState<IRealEstateListing[]>([]);
+
+  const [filterState, setFilterState] = useState<IAssetFilter>({
+    page: 0,
+    size: 10,
+  });
+
+  useGetAssetsQuery(filterState);
+
+  const totalPages = Math.ceil(totalItems / filterState.size);
+  console.log(totalPages)
+  const handlePaginationChange = (page: number) => {
+    if (page !== 0) {
+      window.scrollTo(0, 0);
+      setFilterState({ ...filterState, page: page - 1 });
+    }
+  };
 
   const mapingAssets = async (assets: IAsset[]) => {
     const blockchainPromises: any[] = [];
@@ -105,27 +128,39 @@ export const RealEstateListing = () => {
       {listingLoading ? (
         <DAppLoading />
       ) : (
-        <CRow className="mx-0">
-          {listings!.map((item, index) => (
-            <CCol xs={12} key={`listing-${index}`} className="px-0">
-              <CLink to={`cms/${item.id}/realestate_details_view`}>
-                <div className="media info-box bg-white mx-3 my-2 p-2 align-items-center rounded shadow-sm">
-                  <img src={item.infoImg} alt="realEstateImg" height="98px" width="120px" className="rounded" />
-                  <div className="media-body align-items-around ml-2">
-                    <span className="info-box-text text-dark">{item?.infoText}</span>
-                    <p className={`info-box-token text-primary mt-2 mb-0`}>
-                      {insertCommas(ethers.utils.formatEther(item.infoToken.toString()))}
-                    </p>
-                    <p className={`info-box-commissionRate text-success mt-2 mb-0`}>
-                      <CIcon name="cil-flower" />{" "}
-                      {insertCommas(ethers.utils.formatEther(item.commissionRate.toString()))}
-                    </p>
+        <>
+          <CRow className="mx-0">
+            {listings!.map((item, index) => (
+              <CCol xs={12} key={`listing-${index}`} className="px-0">
+                <CLink to={`cms/${item.id}/realestate_details_view`}>
+                  <div className="media info-box bg-white mx-3 my-2 p-2 align-items-center rounded shadow-sm">
+                    <img src={item.infoImg} alt="realEstateImg" className="rounded" />
+                    <div className="media-body align-items-around ml-2">
+                      <span className="info-box-text text-dark">{item?.infoText}</span>
+                      <p className={`info-box-token text-primary mt-2 mb-0`}>
+                        {insertCommas(ethers.utils.formatEther(item.infoToken.toString()))}
+                      </p>
+                      <p className={`info-box-commissionRate text-success mt-2 mb-0`}>
+                        <CIcon name="cil-flower" />{' '}
+                        {insertCommas(ethers.utils.formatEther(item.commissionRate.toString()))}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              </CLink>
-            </CCol>
-          ))}
-        </CRow>
+                </CLink>
+              </CCol>
+            ))}
+          </CRow>
+          {totalPages > 1 && (
+            <CPagination
+              // disabled={isLoading}
+              activePage={filterState.page + 1}
+              pages={totalPages}
+              onActivePageChange={handlePaginationChange}
+              align="center"
+              className="mt-2"
+            />
+          )}
+        </>
       )}
 
       {/* {demoRealEstateListing.map((item, index) => (

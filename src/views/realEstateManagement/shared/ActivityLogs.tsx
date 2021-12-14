@@ -1,5 +1,6 @@
 import {
-  CBadge, CCol,
+  CBadge,
+  CCol,
   CContainer,
   CDataTable,
   CLabel,
@@ -9,13 +10,13 @@ import {
   CRow,
   CTabContent,
   CTabPane,
-  CTabs
+  CTabs,
 } from '@coreui/react';
 import React from 'react';
-import { mapExploitedStatusBadge, ExploitedStatus } from '../../../enumeration/exploitedStatus';
 import { mapStatus, mapStatusBadge, Status } from '../../../enumeration/status';
-import { IExploitedPermission } from '../../../shared/models/exploitedPermission.model';
+import { mapWorkerStatusBadge, WorkerStatus } from '../../../enumeration/workerStatus';
 import { IRegisterRewardHistory } from '../../../shared/models/realEstateActivity.model';
+import { IWorkerPermission } from '../../../shared/models/workerPermission.model';
 import './index.scss';
 
 const ActivityLogs = () => {
@@ -38,7 +39,7 @@ const ActivityLogs = () => {
     { key: 'amount', _style: titleTableStyle, label: 'Amount' },
   ];
 
-  const exploitedPermission = [
+  const workerPermission = [
     { key: 'address', _style: titleTableStyle, label: 'Address Wallet' },
     { key: 'createdDate', _style: titleTableStyle, label: 'Time' },
     { key: 'status', _style: titleTableStyle, label: 'Status' },
@@ -89,20 +90,20 @@ const ActivityLogs = () => {
     },
   ];
 
-  const demoExploitedPermission: IExploitedPermission[] = [
+  const demoWorkerPermission: IWorkerPermission[] = [
     {
       createdDate: '17:10- 29/11/2021',
-      status: ExploitedStatus.Active,
+      status: WorkerStatus.true,
       address: '0xda3ac...9999',
     },
     {
       createdDate: '17:10- 29/11/2021',
-      status: ExploitedStatus.Inactive,
+      status: WorkerStatus.true,
       address: '0xda3ac...9999',
     },
     {
       createdDate: '17:10- 29/11/2021',
-      status: ExploitedStatus.Active,
+      status: WorkerStatus.false,
       address: '0xda3ac...9999',
     },
   ];
@@ -295,8 +296,8 @@ const ActivityLogs = () => {
                 </CNavLink>
               </CNavItem>
               <CNavItem className="col-4 p-0">
-                <CNavLink data-tab="exploited-permission" className="detail-title-font px-0 text-center text-primary">
-                  Exploited Permission
+                <CNavLink data-tab="worker-permission" className="detail-title-font px-0 text-center text-primary">
+                  Worker Permission
                 </CNavLink>
               </CNavItem>
             </CNav>
@@ -323,23 +324,19 @@ const ActivityLogs = () => {
                   scopedSlots={{}}
                 />
               </CTabPane>
-              <CTabPane data-tab="exploited-permission">
+              <CTabPane data-tab="worker-permission">
                 <CDataTable
                   striped
-                  items={demoExploitedPermission}
-                  fields={exploitedPermission}
+                  items={demoWorkerPermission}
+                  fields={workerPermission}
                   responsive
                   hover
                   header
                   scopedSlots={{
-                    status: (item: IExploitedPermission) => {
+                    status: (item: IWorkerPermission) => {
                       return (
                         <td>
-                          {
-                            <CBadge color={mapExploitedStatusBadge[item.status]}>
-                              {item.status ? item.status : '_'}
-                            </CBadge>
-                          }
+                          {<CBadge color={mapWorkerStatusBadge[item.status]}>{item.status ? item.status : '_'}</CBadge>}
                         </td>
                       );
                     },

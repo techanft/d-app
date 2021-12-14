@@ -1,7 +1,7 @@
 export interface IWallet {
-    totalToken: string;
-    totalTokenRecharged: string;
-    maxTokenWithdraw?: string;
-    tokenWithdraw?: string;
-    tokenRecharge?: string
+    totalToken: number;
+    totalTokenRecharged: number;
+    maxTokenWithdraw?: number;
+    tokenWithdraw?: number;
+    tokenRecharge?: number
 }

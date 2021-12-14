@@ -1,17 +1,32 @@
-import { CButton, CCol, CForm, CFormGroup, CInput, CInvalidFeedback, CLabel, CModal, CModalBody, CModalFooter, CModalHeader, CModalTitle, CRow } from "@coreui/react";
-import { Formik } from "formik";
-import React from "react";
-import { useDispatch, useSelector } from "react-redux";
-import * as Yup from "yup";
-import { calculateOwnerTime, getListingContractWrite } from "../../shared/helpers";
-import { RootState } from "../../shared/reducers";
-import { extendOwnerShip } from "./realEstate.abi";
-import { fetching } from "./realEstate.reducer";
+import {
+  CButton,
+  CCol,
+  CForm,
+  CFormGroup,
+  CInput,
+  CInvalidFeedback,
+  CLabel,
+  CModal,
+  CModalBody,
+  CModalFooter,
+  CModalHeader,
+  CModalTitle,
+  CRow
+} from '@coreui/react';
+import { Formik } from 'formik';
+import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import * as Yup from 'yup';
+import { calculateOwnerTime } from '../../shared/helper';
+import { getListingContractWrite } from '../../shared/helpers';
+import { RootState } from '../../shared/reducers';
+import { extendOwnerShip } from './realEstate.abi';
+import { fetching } from './realEstate.reducer';
 
 interface IRegisterOwnershipModal {
   address:string;
-  visible: boolean;
   dailyPayment: string;
+  visible: boolean;
   setVisible: (visible: boolean) => void;
 }
 
@@ -29,7 +44,7 @@ const RegisterOwnershipModal = (props: IRegisterOwnershipModal) => {
   };
 
   const validationSchema = Yup.object().shape({
-    tokenRecharge: Yup.string().required("Vui lòng nhập số token muốn nạp"),
+    registrationToken: Yup.number().required('Vui lòng nhập số token muốn nạp'),
   });
 
   return (
@@ -75,12 +90,16 @@ const RegisterOwnershipModal = (props: IRegisterOwnershipModal) => {
                         id="registrationToken"
                         autoComplete="off"
                         name="registrationToken"
-                        value={values.registrationToken}
+                        value={values.registrationToken || ''}
                         onBlur={handleBlur}
                         className="btn-radius-50"
                         type="number"
                       />
-                      <CInvalidFeedback className={!!errors.registrationToken && touched.registrationToken ? "d-block" : "d-none"}>{errors.registrationToken}</CInvalidFeedback>
+                      <CInvalidFeedback
+                        className={!!errors.registrationToken && touched.registrationToken ? 'd-block' : 'd-none'}
+                      >
+                        {errors.registrationToken}
+                      </CInvalidFeedback>
                     </CCol>
                   </CFormGroup>
                   <CFormGroup row>
@@ -88,7 +107,9 @@ const RegisterOwnershipModal = (props: IRegisterOwnershipModal) => {
                       <CLabel className="recharge-token-title">Ownership Period</CLabel>
                     </CCol>
                     <CCol xs={4}>
-                      <p className="text-primary text-right">{calculateOwnerTime(values.registrationToken, Number(dailyPayment))} days</p>
+                      <p className="text-primary text-right">
+                        {calculateOwnerTime(values.registrationToken, Number(dailyPayment))} days
+                      </p>
                     </CCol>
                   </CFormGroup>
                 </CCol>
@@ -96,7 +117,10 @@ const RegisterOwnershipModal = (props: IRegisterOwnershipModal) => {
             </CModalBody>
             <CModalFooter className="justify-content-between">
               <CCol>
-                <CButton className="px-2 w-100 btn-font-style btn-radius-50 btn btn-outline-primary" onClick={closeModal(false)}>
+                <CButton
+                  className="px-2 w-100 btn-font-style btn-radius-50 btn btn-outline-primary"
+                  onClick={closeModal(false)}
+                >
                   HỦY
                 </CButton>
               </CCol>

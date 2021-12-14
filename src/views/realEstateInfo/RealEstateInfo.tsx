@@ -1,28 +1,26 @@
-import { CButton, CCard, CCardBody, CCol, CCollapse, CContainer, CDataTable, CForm, CFormGroup, CInput, CInvalidFeedback, CLabel, CLink, CRow } from "@coreui/react";
+import { CButton, CCard, CCardBody, CCol, CCollapse, CContainer, CDataTable, CLink, CRow } from "@coreui/react";
 import { faArrowAltCircleDown, faArrowAltCircleUp, faClipboard, faDonate, faEdit, faIdBadge } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import dayjs from "dayjs";
 import { BigNumber, ethers } from "ethers";
-import { Formik } from "formik";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import * as Yup from "yup";
 import { APP_LOCAL_DATE_FORMAT } from "../../config/constants";
-import { ExploitedStatus } from "../../enumeration/exploitedStatus";
 import { Roles } from "../../enumeration/roles";
-import ConfirmModal from "../../shared/components/ConfirmModal";
+import { WorkerStatus } from "../../enumeration/workerStatus";
 import InfoLoader from "../../shared/components/InfoLoader";
 import { ToastError, ToastSuccess } from "../../shared/components/Toast";
-import { insertCommas, unInsertCommas } from "../../shared/helper";
-import { calculateOwnerTime, getEllipsisTxt, getListingContractRead, getListingContractWrite, getProvider } from "../../shared/helpers";
+import { insertCommas } from "../../shared/helper";
+import { getEllipsisTxt, getListingContractRead, getProvider } from "../../shared/helpers";
 import { IAsset } from "../../shared/models/assets.model";
-import { IExploitedPermission } from "../../shared/models/exploitedPermission.model";
 import { IListing } from "../../shared/models/listing.model";
 import { IRealEstateInfo } from "../../shared/models/realEstateInfo.model";
+import { IWorkerPermission } from "../../shared/models/workerPermission.model";
 import { RootState } from "../../shared/reducers";
+import ExtendOwnershipModal from "./ExtendOwnershipModal";
 import "./index.scss";
-import { extendOwnerShip } from "./realEstate.abi";
-import { fetching } from "./realEstate.reducer";
+import RegisterOwnershipModal from "./RegisterOwnershipModal";
+import WithdrawTokenModal from "./WithdrawTokenModal";
 
 interface IRealEstateInfoProps {
   asset: IAsset;
@@ -85,13 +83,12 @@ export const RealEstateInfo = (props: IRealEstateInfoProps) => {
     }
   }, [asset, extendOwnerShipSuccess]);
 
+  const [extendOwnership, setExtendOwnership] = useState<boolean>(false);
   const [rechargeToken, setRechargeToken] = useState<boolean>(false);
   const [withdrawToken, setWithDrawToken] = useState<boolean>(false);
   const [registerOwnership, setRegisterOwnership] = useState<boolean>(false);
 
-  const setRechargeTokenListener = (key: boolean) => (): void => setRechargeToken(key);
-  const setWithdrawTokenListener = (key: boolean) => (): void => setWithDrawToken(key);
-  const setRegisterOwnershipListener = (key: boolean) => (): void => setRegisterOwnership(key);
+  const setRequestListener = (key: boolean, setRequestState: any) => (): void => setRequestState(key);
 
   const demoRealEstateInfo: IRealEstateInfo = {
     value: "15.000",
@@ -105,41 +102,27 @@ export const RealEstateInfo = (props: IRealEstateInfoProps) => {
     tokenRecharged: "5.000",
   };
 
-  const [actsInvestment, setActsInvestment] = useState(false);
-  const [actsOwnerMngmnt, setActsOwnerMngmnt] = useState(false);
-  const [exploiterListing, setExploiterListing] = useState(false);
 
-  const onActivitiesBtnClick = (view: boolean) => () => {
+
+  const [investmentCollapse, setInvestmentCollapse] = useState<boolean>(false); 
+  const [managementCollapse, setManagementCollapse] = useState<boolean>(false); 
+  const [workerCollapse, setWorkerCollapse] = useState<boolean>(false); 
+
+  const onActivitiesBtnClick = () => () => {
     if (signerAddress !== "") {
-      setActsInvestment(!view);
+      setInvestmentCollapse(!investmentCollapse);
     } else {
       ToastError("Bạn chưa liên kết với ví của mình");
     }
   };
 
-  const onManagementBtnClick = (view: boolean) => () => {
+  const onManagementBtnClick = () => () => {
     if (signerAddress !== "") {
-      setActsOwnerMngmnt(!view);
+      setManagementCollapse(!managementCollapse);
     } else {
       ToastError("Bạn chưa liên kết với ví của mình");
     }
   };
-
-  const initialValues = {
-    totalToken: "10000",
-    totalTokenRecharged: "5000",
-    maxTokenWithdraw: "1000",
-    tokenWithdraw: 0,
-    tokenRecharge: 0,
-    exploitedFee: 5000,
-    registrationToken: 0,
-  };
-
-  const validationSchema = Yup.object().shape({
-    tokenWithdraw: Yup.number().required("Vui lòng nhập số token muốn rút"),
-    tokenRecharge: Yup.number().required("Vui lòng nhập số token muốn nạp"),
-    registrationToken: Yup.number().min(1, "Số token không hợp lệ").required("Vui lòng nhập số token muốn đăng ký"),
-  });
 
   const titleTableStyle = {
     textAlign: "left",
@@ -149,7 +132,7 @@ export const RealEstateInfo = (props: IRealEstateInfoProps) => {
     fontWeight: "400",
   };
 
-  const exploitedFields = [
+  const workerFields = [
     {
       key: "address",
       _style: titleTableStyle,
@@ -162,31 +145,25 @@ export const RealEstateInfo = (props: IRealEstateInfoProps) => {
     },
   ];
 
-  const exploitedListing: IExploitedPermission[] = [
+  const workerListing: IWorkerPermission[] = [
     {
-      address: "h1-0xda3ac...9999",
-      createdDate: "h1-17:10- 29/11/2021",
-      status: ExploitedStatus.Active,
+      address: 'h1-0xda3ac...9999',
+      createdDate: 'h1-17:10- 29/11/2021',
+      status: WorkerStatus.true,
     },
     {
-      address: "h2-0xda3ac...9999",
-      createdDate: "h2-17:10- 29/11/2021",
-      status: ExploitedStatus.Active,
+      address: 'h2-0xda3ac...9999',
+      createdDate: 'h2-17:10- 29/11/2021',
+      status: WorkerStatus.true,
     },
     {
-      address: "0xda3ac...9999",
-      createdDate: "17:10- 29/11/2021",
-      status: ExploitedStatus.Inactive,
+      address: '0xda3ac...9999',
+      createdDate: '17:10- 29/11/2021',
+      status: WorkerStatus.false,
     },
   ];
 
-  const exploitedActiveListing = exploitedListing.filter((e) => e.status === ExploitedStatus.Active);
-
-  const onCloseModal = () => {
-    setRechargeToken(false);
-    setWithDrawToken(false);
-    setRegisterOwnership(false);
-  };
+  const workerActiveListing = workerListing.filter((e) => e.status === WorkerStatus.true);
 
   const checkOwnershipDate = (timeStamp: string): boolean => {
     const currTimstamp = dayjs().unix();
@@ -293,45 +270,28 @@ export const RealEstateInfo = (props: IRealEstateInfoProps) => {
 
           <CCol xs={12} className="text-center">
             <p className="text-primary my-2">
-              <CLink to="#" onClick={() => setExploiterListing(!exploiterListing)}>
+              <CLink to="#" onClick={() => setWorkerCollapse(!workerCollapse)}>
                 <FontAwesomeIcon icon={faIdBadge} /> <u>Xem quyền khai thác</u>
               </CLink>
             </p>
           </CCol>
           <CCol xs={12}>
-            <CCollapse show={exploiterListing}>
+            <CCollapse show={workerCollapse}>
               <CRow>
-                {/* <CCol xs={6}>
-                  <p className="detail-title-font my-2">Address Wallet</p>
-                </CCol>
-                <CCol xs={6}>
-                  <p className="detail-title-font my-2">Thời gian bắt đầu</p>
-                </CCol>
-                
-                {exploitedActiveListing.map((e) => (
-                  <>
-                  <CCol xs={6}>
-                    <p className="my-2 detail-value">{e.address}</p>
-                  </CCol>
-                  <CCol xs={6}>
-                    <p className="my-2 detail-value">{e.createdDate}</p>
-                  </CCol>
-                  </>
-                ))} */}
                 <CCol xs={12}>
                   <CDataTable
                     striped
-                    items={exploitedActiveListing}
-                    fields={exploitedFields}
+                    items={workerActiveListing}
+                    fields={workerFields}
                     responsive
                     hover
                     header
                     scopedSlots={{
-                      address: ({ address }: IExploitedPermission) => {
-                        return <td>{address ? address : "_"}</td>;
+                      address: ({ address }: IWorkerPermission) => {
+                        return <td>{address ? address : '_'}</td>;
                       },
-                      createdDate: ({ createdDate }: IExploitedPermission) => {
-                        return <td>{createdDate ? createdDate : "_"}</td>;
+                      createdDate: ({ createdDate }: IWorkerPermission) => {
+                        return <td>{createdDate ? createdDate : '_'}</td>;
                       },
                     }}
                   />
@@ -341,16 +301,19 @@ export const RealEstateInfo = (props: IRealEstateInfoProps) => {
           </CCol>
 
           <CCol xs={12} className="mt-2 ">
-            <CButton className="px-3 w-100 btn-radius-50 btn-font-style btn btn-outline-primary" onClick={onActivitiesBtnClick(actsInvestment)}>
+            <CButton
+              className="px-3 w-100 btn-radius-50 btn-font-style btn btn-outline-primary"
+              onClick={onActivitiesBtnClick()}
+            >
               Hoạt động đầu tư
             </CButton>
           </CCol>
           <CCol xs={12}>
-            <CCollapse show={actsInvestment}>
+            <CCollapse show={investmentCollapse}>
               <CCard className="activities-card mt-2 mb-0">
                 <CCardBody className="p-2">
                   <CRow className="mx-0">
-                    <CLink href="#" target="_blank" onClick={setRegisterOwnershipListener(true)}>
+                    <CLink href="#" target="_blank" onClick={setRequestListener(true, setRegisterOwnership)}>
                       <FontAwesomeIcon icon={faEdit} /> Đăng ký sở hữu
                     </CLink>
                   </CRow>
@@ -364,28 +327,32 @@ export const RealEstateInfo = (props: IRealEstateInfoProps) => {
             </CCollapse>
           </CCol>
           <CCol xs={12} className="mt-2">
-            <CButton className="px-3 w-100 btn-radius-50 btn-font-style btn btn-primary" onClick={onManagementBtnClick(actsOwnerMngmnt)} disabled={!Roles.OWNER ? true : false}>
+            <CButton
+              className="px-3 w-100 btn-radius-50 btn-font-style btn btn-primary"
+              onClick={onManagementBtnClick}
+              disabled={!Roles.OWNER ? true : false}
+            >
               Quản lý sở hữu
             </CButton>
           </CCol>
           {/* <RegisterOwnershipModal visible={registerOwnership} setVisible={setRegisterOwnership} /> */}
 
           <CCol xs={12}>
-            <CCollapse show={actsOwnerMngmnt}>
+            <CCollapse show={managementCollapse}>
               <CCard className="mt-2 activities-card mb-0">
                 <CCardBody className="p-2">
                   <CRow className="mx-0">
-                    <CLink href="#" target="_blank" onClick={setWithdrawTokenListener(true)}>
+                    <CLink href="#" target="_blank" onClick={setRequestListener(true, setWithDrawToken)}>
                       <FontAwesomeIcon icon={faArrowAltCircleUp} /> Rút ANFT
                     </CLink>
                   </CRow>
                   <CRow className="my-2 mx-0">
-                    <CLink href="#" target="_blank" onClick={setRechargeTokenListener(true)}>
+                    <CLink href="#" target="_blank" onClick={setRequestListener(true, setExtendOwnership)}>
                       <FontAwesomeIcon icon={faArrowAltCircleDown} /> Nạp thêm
                     </CLink>
                   </CRow>
                   <CRow className="mx-0">
-                    <CLink to="/cms/exploited_management">
+                    <CLink to="/cms/worker_management">
                       <FontAwesomeIcon icon={faClipboard} /> Quản lý quyền khai thác
                     </CLink>
                   </CRow>
@@ -393,197 +360,9 @@ export const RealEstateInfo = (props: IRealEstateInfoProps) => {
               </CCard>
             </CCollapse>
           </CCol>
-          {/* <WithdrawTokenModal visible={withdrawToken} setVisible={setWithDrawToken} />
-          <RechargeTokenModal visible={rechargeToken} setVisible={setRechargeToken} /> */}
-          <ConfirmModal
-            isVisible={registerOwnership}
-            formikContent={true}
-            color="primary"
-            title="Đăng ký sở hữu"
-            CustomJSX={() => (
-              <Formik
-                enableReinitialize
-                initialValues={initialValues}
-                validationSchema={validationSchema}
-                onSubmit={(values) => {
-                  const ListingContract = getListingContractWrite(asset.address, signer!);
-                  const body = {
-                    contract: ListingContract,
-                    tokenNumber: values.registrationToken,
-                  };
-                  dispatch(fetching());
-                  dispatch(extendOwnerShip(body));
-                  onCloseModal()
-                }}
-              >
-                {({ values, errors, touched, handleChange, handleSubmit, handleBlur }) => (
-                  <CForm onSubmit={handleSubmit}>
-                    <CRow>
-                      <CCol xs={12}>
-                        <CFormGroup row>
-                          <CCol xs={8}>
-                            <CLabel className="recharge-token-title">Chi phí khai thác/ngày</CLabel>
-                          </CCol>
-                          <CCol xs={4}>
-                            <p className="text-primary text-right">{listingEntity?.dailyPayment || "_"}</p>
-                          </CCol>
-                        </CFormGroup>
-                        <CFormGroup row>
-                          <CCol xs={12}>
-                            <CLabel className="recharge-token-title">Số ANFT muốn nạp</CLabel>
-                          </CCol>
-                          <CCol>
-                            <CInput
-                              onChange={handleChange}
-                              id="registrationToken"
-                              autoComplete="off"
-                              name="registrationToken"
-                              value={values.registrationToken || ""}
-                              invalid={!!errors.registrationToken && touched.registrationToken}
-                              onBlur={handleBlur}
-                              className="btn-radius-50"
-                              type="number"
-                            />
-                            <CInvalidFeedback className={!!errors.registrationToken && touched.registrationToken ? "d-block" : "d-none"}>{errors.registrationToken}</CInvalidFeedback>
-                          </CCol>
-                        </CFormGroup>
-                        <CFormGroup row>
-                          <CCol xs={8}>
-                            <CLabel className="recharge-token-title">Ownership Period</CLabel>
-                          </CCol>
-                          <CCol xs={4}>
-                            <p className="text-primary text-right">{calculateOwnerTime(values.registrationToken, Number(unInsertCommas(listingEntity?.dailyPayment || "0")))} days</p>
-                          </CCol>
-                        </CFormGroup>
-                      </CCol>
-                    </CRow>
-                    <CRow>
-                      <CCol>
-                        <CButton className={`px-2 w-100 btn btn-primary btn-font-style btn-radius-50`} type="submit">
-                          XÁC NHẬN
-                        </CButton>
-                      </CCol>
-                      <CCol>
-                        <CButton className={`px-2 w-100 btn-font-style btn-radius-50 btn btn-outline-primary`} onClick={() => onCloseModal()}>
-                          HỦY
-                        </CButton>
-                      </CCol>
-                    </CRow>
-                  </CForm>
-                )}
-              </Formik>
-            )}
-          />
-          <ConfirmModal
-            isVisible={withdrawToken}
-            formikContent={true}
-            color="primary"
-            title="Rút ANFT"
-            CustomJSX={() => (
-              <Formik enableReinitialize initialValues={initialValues} validationSchema={validationSchema} onSubmit={(values) => {}}>
-                {({ values, errors, touched, handleChange, handleSubmit, handleBlur }) => (
-                  <CForm onSubmit={handleSubmit}>
-                    <CRow>
-                      <CCol xs={12}>
-                        <CFormGroup row>
-                          <CCol xs={8}>
-                            <CLabel className="withdraw-token-title">Số ANFT bạn đã nạp</CLabel>
-                          </CCol>
-                          <CCol xs={4}>
-                            <p className="text-primary text-right">{values.totalTokenRecharged}</p>
-                          </CCol>
-                        </CFormGroup>
-                        <CFormGroup row>
-                          <CCol xs={8}>
-                            <CLabel className="withdraw-token-title">Số ANFT Tối đa bạn rút</CLabel>
-                          </CCol>
-                          <CCol xs={4}>
-                            <p className="text-primary text-right">{values.maxTokenWithdraw}</p>
-                          </CCol>
-                        </CFormGroup>
-                        <CFormGroup row>
-                          <CCol xs={12}>
-                            <CLabel className="withdraw-token-title">Số ANFT muốn rút</CLabel>
-                          </CCol>
-                          <CCol>
-                            <CInput
-                              onChange={handleChange}
-                              id="tokenWithdraw"
-                              autoComplete="off"
-                              name="tokenWithdraw"
-                              value={values.tokenWithdraw || ""}
-                              invalid={!!errors.tokenWithdraw && touched.tokenWithdraw}
-                              onBlur={handleBlur}
-                              className="btn-radius-50"
-                              type="number"
-                            />
-                            <CInvalidFeedback className={!!errors.tokenWithdraw && touched.tokenWithdraw ? "d-block" : "d-none"}>{errors.tokenWithdraw}</CInvalidFeedback>
-                          </CCol>
-                        </CFormGroup>
-                      </CCol>
-                    </CRow>
-                  </CForm>
-                )}
-              </Formik>
-            )}
-            onConfirm={() => {}}
-            onAbort={onCloseModal}
-          />
-          <ConfirmModal
-            isVisible={rechargeToken}
-            formikContent={true}
-            color="primary"
-            title="Nạp ANFT"
-            CustomJSX={() => (
-              <Formik enableReinitialize initialValues={initialValues} validationSchema={validationSchema} onSubmit={(values) => {}}>
-                {({ values, errors, touched, handleChange, handleSubmit, handleBlur }) => (
-                  <CForm onSubmit={handleSubmit}>
-                    <CRow>
-                      <CCol xs={12}>
-                        <CFormGroup row>
-                          <CCol xs={8}>
-                            <CLabel className="recharge-token-title">Số ANFT bạn đã nạp</CLabel>
-                          </CCol>
-                          <CCol xs={4}>
-                            <p className="text-primary text-right">{values.totalTokenRecharged}</p>
-                          </CCol>
-                        </CFormGroup>
-                        <CFormGroup row>
-                          <CCol xs={12}>
-                            <CLabel className="recharge-token-title">Số ANFT muốn nạp</CLabel>
-                          </CCol>
-                          <CCol>
-                            <CInput
-                              onChange={handleChange}
-                              id="tokenRecharge"
-                              autoComplete="off"
-                              name="tokenRecharge"
-                              value={values.tokenRecharge || ""}
-                              invalid={!!errors.tokenRecharge && touched.tokenRecharge}
-                              onBlur={handleBlur}
-                              className="btn-radius-50"
-                              type="number"
-                            />
-                            <CInvalidFeedback className={!!errors.tokenRecharge && touched.tokenRecharge ? "d-block" : "d-none"}>{errors.tokenRecharge}</CInvalidFeedback>
-                          </CCol>
-                        </CFormGroup>
-                        <CFormGroup row>
-                          <CCol xs={8}>
-                            <CLabel className="recharge-token-title">Ownership Period</CLabel>
-                          </CCol>
-                          <CCol xs={4}>
-                            <p className="text-primary text-right">{calculateOwnerTime(values.tokenRecharge, values.exploitedFee)} days</p>
-                          </CCol>
-                        </CFormGroup>
-                      </CCol>
-                    </CRow>
-                  </CForm>
-                )}
-              </Formik>
-            )}
-            onConfirm={() => {}}
-            onAbort={onCloseModal}
-          />
+          <RegisterOwnershipModal visible={registerOwnership} setVisible={setRegisterOwnership} />
+          <ExtendOwnershipModal visible={extendOwnership} setVisible={setExtendOwnership} />
+          <WithdrawTokenModal visible={withdrawToken} setVisible={setWithDrawToken} />
         </CRow>
       </CCol>
     </CContainer>
