@@ -18,7 +18,6 @@ import {
 } from '@coreui/react';
 import { faAngleDown } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { ethers } from 'ethers';
 import { default as React, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { ToastError } from '../shared/components/Toast';
@@ -30,12 +29,12 @@ import { softReset } from '../views/walletInfo/wallet.reducer';
 declare let window: any;
 const TheHeader = () => {
   const dispatch = useDispatch();
+  const provider = getProvider();
   const { getProviderLoginSuccess, getSignerSuccess, signer, signerAddress } = useSelector(
     (state: RootState) => state.walletReducer
   );
   const onConnectWallet = () => () => {
     if (window.ethereum) {
-      const provider: ethers.providers.Web3Provider = getProvider();
       dispatch(getProviderLogin(provider));
     } else {
       ToastError('No provider found');
@@ -44,7 +43,6 @@ const TheHeader = () => {
 
   useEffect(() => {
     if (getProviderLoginSuccess) {
-      const provider = getProvider();
       dispatch(getSigner(provider));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -52,7 +50,6 @@ const TheHeader = () => {
 
   useEffect(() => {
     if (getSignerSuccess && signer !== null) {
-      const provider = getProvider();
       const TokenContract = getTokenContractRead(provider);
       const body = { contract: TokenContract, signer };
       dispatch(getAddress(signer));

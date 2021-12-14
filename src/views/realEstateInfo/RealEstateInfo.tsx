@@ -74,6 +74,7 @@ export const RealEstateInfo = (props: IRealEstateInfoProps) => {
       ToastSuccess("Gia hạn quyền sử dụng listing thành công");
       dispatch(reset());
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [extendOwnerShipSuccess]);
 
   useEffect(() => {
