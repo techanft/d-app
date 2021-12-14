@@ -4,6 +4,7 @@ import { BigNumber, ethers } from "ethers";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import DAppLoading from "../../shared/components/DAppLoading";
+import { ToastError } from "../../shared/components/Toast";
 import { insertCommas } from "../../shared/helper";
 import { getListingContractRead, getProvider } from "../../shared/helpers";
 import { IAsset } from "../../shared/models/assets.model";
@@ -52,6 +53,7 @@ export const RealEstateListing = () => {
       })
       .catch((err) => {
         console.log(err, "err");
+        ToastError("Cannot get listing information")
       });
   };
 

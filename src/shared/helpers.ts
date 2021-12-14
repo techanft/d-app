@@ -81,6 +81,8 @@ export const getProvider = ():ethers.providers.Web3Provider => {
 };
 
 export const calculateOwnerTime = (x: number, y: number) => {
+  console.log(x,y);
+  
   if (y === 0) return '0.00';
   return (x / y).toFixed(2);
 };

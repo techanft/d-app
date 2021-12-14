@@ -1,7 +1,9 @@
 import { CCol, CLabel, CRow } from "@coreui/react";
-import React from "react";
+import React, { useEffect } from "react";
+import { useSelector } from "react-redux";
 import { RouteComponentProps } from "react-router-dom";
 import DAppLoading from "../../../shared/components/DAppLoading";
+import { RootState } from "../../../shared/reducers";
 import { useGetAssetQuery } from "../../assets/assets.api";
 import { RealEstateDetails } from "../../realEstateDetails/RealEstateDetails";
 import { RealEstateInfo } from "../../realEstateInfo/RealEstateInfo";
@@ -18,16 +20,20 @@ type IProps = IRealEstateDetailsView;
 const RealEstateDetailsView = (props: IProps) => {
   const { match } = props;
   const { id } = match.params;
-  const { data,isLoading } = useGetAssetQuery(id);
-  console.log(data);
+  const { isLoading } = useGetAssetQuery(id);
+  const { asset } = useSelector((state: RootState) => state.assetsReducer);
+
+  useEffect(() => {
+    if (!isLoading) {
+      console.log(asset);
+    }
+  }, [isLoading]);
 
   return (
     <>
-      {isLoading && data ? (
-       <DAppLoading/>
-      ) : (
+      {!isLoading && asset !== null ? (
         <>
-          <RealEstateInfo />
+          <RealEstateInfo asset={asset} />
           <RealEstateDetails />
           <CRow className="mx-0">
             <CCol xs={12}>
@@ -38,6 +44,8 @@ const RealEstateDetailsView = (props: IProps) => {
             </CCol>
           </CRow>
         </>
+      ) : (
+        <DAppLoading />
       )}
     </>
   );
