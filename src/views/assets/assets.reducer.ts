@@ -1,18 +1,25 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createEntityAdapter, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { IAsset } from "../../shared/models/assets.model";
 import { assetsApi } from "./assets.api";
 
 interface IInitialState {
-  assets: Array<any>;
+  assets: IAsset[];
+  asset: IAsset | null;
   errorMessage: string;
 }
 
 const initialState: IInitialState = {
   assets: [],
+  asset: null,
   errorMessage: "",
 };
 
+export const exchangeRateAdapter = createEntityAdapter<any>({
+    selectId: ({ id }) => id,
+  });
+
 // Config slice
-export const assetsSlice = createSlice({
+const { actions, reducer } = createSlice({
   name: "assetsApi",
   initialState,
   reducers: {
@@ -22,19 +29,26 @@ export const assetsSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addMatcher(assetsApi.endpoints.getAssets.matchFulfilled, (state, { payload }: PayloadAction<any>) => {
+    builder.addMatcher(assetsApi.endpoints.getAssets.matchFulfilled, (state, { payload }: PayloadAction<IAsset[]>) => {
       state.assets = payload;
     });
     builder.addMatcher(assetsApi.endpoints.getAssets.matchRejected, (state, { payload }: PayloadAction<any>) => {
+      state.errorMessage = payload?.message;
+    });
+    builder.addMatcher(assetsApi.endpoints.getAsset.matchFulfilled, (state, { payload }: PayloadAction<IAsset>) => {
+      state.asset = payload;
+    });
+    builder.addMatcher(assetsApi.endpoints.getAsset.matchRejected, (state, { payload }: PayloadAction<any>) => {
       state.errorMessage = payload?.message;
     });
   },
 });
 
 // Export actions
-export const { reset } = assetsSlice.actions;
+export const { reset } = actions;
 
 // Select state currentdummy from slice
 
 // Export reducer
-export default assetsSlice.reducer;
+export default reducer;
+

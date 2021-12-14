@@ -1,18 +1,16 @@
+import { IAsset } from "../../shared/models/assets.model";
 import { splitApi } from "../../shared/splitApi";
-
-type AssetsResponse = Array<any>;
-type AssetResponse = Object;
 
 export const assetsApi = splitApi.injectEndpoints({
   endpoints: (builder) => ({
-    getAssets: builder.query<AssetsResponse, void>({
-      query: () => `assets`,
+    getAssets: builder.query<IAsset[], void>({
+      query: () => `assets?size=100`,
     }),
-    getAsset: builder.query<AssetResponse, string>({
+    getAsset: builder.query<IAsset, string>({
       query: (id) => `assets/${id}`,
     }),
   }),
   overrideExisting: false,
 });
 
-export const { useGetAssetsQuery,useGetAssetQuery } = assetsApi;
+export const { useGetAssetsQuery, useGetAssetQuery } = assetsApi;
