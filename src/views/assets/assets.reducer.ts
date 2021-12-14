@@ -2,6 +2,10 @@ import { createEntityAdapter, createSlice, PayloadAction } from "@reduxjs/toolki
 import { IAsset } from "../../shared/models/assets.model";
 import { assetsApi } from "./assets.api";
 
+export interface IResponse {
+  results: IAsset[],
+  count: number
+}
 interface IInitialState {
   assets: IAsset[];
   asset: IAsset | null;
@@ -32,9 +36,9 @@ const { actions, reducer } = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addMatcher(assetsApi.endpoints.getAssets.matchFulfilled, (state, { payload }: PayloadAction<IAsset[]>) => {
-      state.assets = payload;
-      state.totalItems = payload.length;
+    builder.addMatcher(assetsApi.endpoints.getAssets.matchFulfilled, (state, { payload }: PayloadAction<IResponse>) => {
+      state.assets = payload.results;
+      state.totalItems = payload.count;
     });
     builder.addMatcher(assetsApi.endpoints.getAssets.matchRejected, (state, { payload }: PayloadAction<any>) => {
       state.errorMessage = payload?.message;

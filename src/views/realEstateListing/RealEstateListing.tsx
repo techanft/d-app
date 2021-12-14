@@ -37,13 +37,13 @@ export const RealEstateListing = () => {
 
   const [filterState, setFilterState] = useState<IAssetFilter>({
     page: 0,
-    size: 10,
+    size: 5,
+    sort: 'createdDate,desc',
   });
 
-  useGetAssetsQuery(filterState);
-
+  const { isLoading, data } = useGetAssetsQuery(filterState);
   const totalPages = Math.ceil(totalItems / filterState.size);
-  console.log(totalPages)
+
   const handlePaginationChange = (page: number) => {
     if (page !== 0) {
       window.scrollTo(0, 0);
@@ -51,40 +51,41 @@ export const RealEstateListing = () => {
     }
   };
 
-  const mapingAssets = async (assets: IAsset[]) => {
+  const mapingAssets = async (assets: IAsset[] | undefined) => {
     const blockchainPromises: any[] = [];
-    for (let index = 0; index < assets.length; index++) {
-      const addr = assets[index];
-      const assetContract = getListingContractRead(addr.address, provider);
-      const body: IRealEstateListing = {
-        id: addr.id,
-        infoImg: addr.images,
-        infoText: `${addr.id} Yên Sở - Hoàng Mai - Hà Nội`,
-        infoToken: await assetContract.value(),
-        commissionRate: await assetContract.dailyPayment(),
-        address: addr.address,
-        tHash: addr.tHash,
-      };
-      blockchainPromises.push(body);
+    if (assets) {
+      for (let index = 0; index < assets.length; index++) {
+        const addr = assets[index];
+        const assetContract = getListingContractRead(addr.address, provider);
+        const body: IRealEstateListing = {
+          id: addr.id,
+          infoImg: addr.images,
+          infoText: `${addr.id} Yên Sở - Hoàng Mai - Hà Nội`,
+          infoToken: await assetContract.value(),
+          commissionRate: await assetContract.dailyPayment(),
+          address: addr.address,
+          tHash: addr.tHash,
+        };
+        blockchainPromises.push(body);
+      }
+      Promise.all(blockchainPromises)
+        .then((result) => {
+          setListings(result);
+          setListingLoading(false);
+        })
+        .catch((err) => {
+          console.log(err, 'err');
+        });
     }
-
-    Promise.all(blockchainPromises)
-      .then((result) => {
-        setListings(result);
-        setListingLoading(false);
-      })
-      .catch((err) => {
-        console.log(err, 'err');
-      });
   };
 
   useEffect(() => {
     if (assets?.length > 0) {
       setListingLoading(true);
-      mapingAssets(assets);
+      mapingAssets(data?.results);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [assets]);
+  }, [data]);
 
   // const demoRealEstateListing: IRealEstateListing[] = [
   //   {
@@ -150,7 +151,7 @@ export const RealEstateListing = () => {
           </CRow>
           {totalPages > 1 && (
             <CPagination
-              // disabled={isLoading}
+              disabled={isLoading}
               activePage={filterState.page + 1}
               pages={totalPages}
               onActivePageChange={handlePaginationChange}

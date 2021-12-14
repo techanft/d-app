@@ -1,11 +1,12 @@
 import { IAsset } from "../../shared/models/assets.model";
 import { splitApi } from "../../shared/splitApi";
 import { IAssetFilter } from "../realEstateListing/RealEstateListing";
+import { IResponse } from "./assets.reducer";
 
 export const assetsApi = splitApi.injectEndpoints({
   endpoints: (builder) => ({
-    getAssets: builder.query<IAsset[], IAssetFilter | void>({
-      query: (fields : IAssetFilter) => `assets?page=${fields.page}&size=${fields.size}`,
+    getAssets: builder.query<IResponse, IAssetFilter | void>({
+      query: (fields : IAssetFilter) => `assets?page=${fields.page}&size=${fields.size}&sort=${fields.sort}`,
     }),
     getAsset: builder.query<IAsset, string>({
       query: (id) => `assets/${id}`,
