@@ -11,7 +11,6 @@ interface IExtendOwnerShip {
     try {
       const result = await contract.extendOwnership(tokenNumber);
       await result.wait();
-      console.log(result);
       return result.hash;
     } catch (error: any) {
       return thunkAPI.rejectWithValue(error);

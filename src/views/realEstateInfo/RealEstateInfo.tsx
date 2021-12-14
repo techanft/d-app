@@ -5,8 +5,7 @@ import dayjs from "dayjs";
 import { BigNumber, ethers } from "ethers";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { APP_LOCAL_DATE_FORMAT } from "../../config/constants";
-import { Roles } from "../../enumeration/roles";
+import { APP_DATE_FORMAT } from "../../config/constants";
 import { WorkerStatus } from "../../enumeration/workerStatus";
 import InfoLoader from "../../shared/components/InfoLoader";
 import { ToastError, ToastSuccess } from "../../shared/components/Toast";
@@ -14,11 +13,11 @@ import { insertCommas } from "../../shared/helper";
 import { getEllipsisTxt, getListingContractRead, getProvider } from "../../shared/helpers";
 import { IAsset } from "../../shared/models/assets.model";
 import { IListing } from "../../shared/models/listing.model";
-import { IRealEstateInfo } from "../../shared/models/realEstateInfo.model";
 import { IWorkerPermission } from "../../shared/models/workerPermission.model";
 import { RootState } from "../../shared/reducers";
 import ExtendOwnershipModal from "./ExtendOwnershipModal";
 import "./index.scss";
+import { reset } from "./realEstate.reducer";
 import RegisterOwnershipModal from "./RegisterOwnershipModal";
 import WithdrawTokenModal from "./WithdrawTokenModal";
 
@@ -31,15 +30,9 @@ export const RealEstateInfo = (props: IRealEstateInfoProps) => {
   const dispatch = useDispatch();
   const [listingEntity, setListingEntity] = useState<IListing | null>(null);
   const [loadingListing, setLoadingListing] = useState<boolean>(false);
-  const { signerAddress, signer } = useSelector((state: RootState) => state.walletReducer);
+  const { signerAddress } = useSelector((state: RootState) => state.walletReducer);
   const { extendOwnerShipSuccess } = useSelector((state: RootState) => state.realEstateReducer);
   const provider = getProvider();
-
-  useEffect(() => {
-    if (extendOwnerShipSuccess) {
-      ToastSuccess("Gia hạn quyền sử dụng listing thành công");
-    }
-  }, [extendOwnerShipSuccess]);
 
   const getListingInfo = async (listing: IAsset) => {
     // create asset contract reading from ether
@@ -77,36 +70,29 @@ export const RealEstateInfo = (props: IRealEstateInfoProps) => {
   console.log(listingEntity, "entity");
 
   useEffect(() => {
+    if (extendOwnerShipSuccess) {
+      ToastSuccess("Gia hạn quyền sử dụng listing thành công");
+      dispatch(reset());
+    }
+  }, [extendOwnerShipSuccess]);
+
+  useEffect(() => {
     if (asset) {
       setLoadingListing(true);
       getListingInfo(asset);
     }
-  }, [asset, extendOwnerShipSuccess]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [asset, extendOwnerShipSuccess, signerAddress]);
 
   const [extendOwnership, setExtendOwnership] = useState<boolean>(false);
-  const [rechargeToken, setRechargeToken] = useState<boolean>(false);
   const [withdrawToken, setWithDrawToken] = useState<boolean>(false);
   const [registerOwnership, setRegisterOwnership] = useState<boolean>(false);
 
   const setRequestListener = (key: boolean, setRequestState: any) => (): void => setRequestState(key);
 
-  const demoRealEstateInfo: IRealEstateInfo = {
-    value: "15.000",
-    rewardRate: "0.5%",
-    currentOwner: "DD/MM/YYYY",
-    rewardPool: "0.5",
-    totalToken: "120",
-    rewardPoolOfList: "12.000",
-    ownerWalletId: "0xda3ac...9999",
-    ownTimeLeft: "01",
-    tokenRecharged: "5.000",
-  };
-
-
-
-  const [investmentCollapse, setInvestmentCollapse] = useState<boolean>(false); 
-  const [managementCollapse, setManagementCollapse] = useState<boolean>(false); 
-  const [workerCollapse, setWorkerCollapse] = useState<boolean>(false); 
+  const [investmentCollapse, setInvestmentCollapse] = useState<boolean>(false);
+  const [managementCollapse, setManagementCollapse] = useState<boolean>(false);
+  const [workerCollapse, setWorkerCollapse] = useState<boolean>(false);
 
   const onActivitiesBtnClick = () => () => {
     if (signerAddress !== "") {
@@ -147,18 +133,18 @@ export const RealEstateInfo = (props: IRealEstateInfoProps) => {
 
   const workerListing: IWorkerPermission[] = [
     {
-      address: 'h1-0xda3ac...9999',
-      createdDate: 'h1-17:10- 29/11/2021',
+      address: "h1-0xda3ac...9999",
+      createdDate: "h1-17:10- 29/11/2021",
       status: WorkerStatus.true,
     },
     {
-      address: 'h2-0xda3ac...9999',
-      createdDate: 'h2-17:10- 29/11/2021',
+      address: "h2-0xda3ac...9999",
+      createdDate: "h2-17:10- 29/11/2021",
       status: WorkerStatus.true,
     },
     {
-      address: '0xda3ac...9999',
-      createdDate: '17:10- 29/11/2021',
+      address: "0xda3ac...9999",
+      createdDate: "17:10- 29/11/2021",
       status: WorkerStatus.false,
     },
   ];
@@ -210,16 +196,20 @@ export const RealEstateInfo = (props: IRealEstateInfoProps) => {
             <p className="text-success my-2 reward-number">{demoRealEstateInfo.rewardRate}</p>
           </CCol> */}
           <CCol xs={6}>
+            <p className="detail-title-font my-2">The listing address</p>
+            {loadingListing ? <InfoLoader width="155" height="27" /> : <p className="my-2 reward-number">{getEllipsisTxt(asset.address)}</p>}
+          </CCol>
+          <CCol xs={6}>
             <p className="detail-title-font my-2">The current owner</p>
             {loadingListing ? <InfoLoader width="155" height="27" /> : <p className="my-2 reward-number">{listingEntity ? getEllipsisTxt(listingEntity.owner) : "_"}</p>}
           </CCol>
           <CCol xs={6}>
-            <p className="detail-title-font my-2">Sở hữu tới ngày </p>
+            <p className="detail-title-font my-2">Sở hữu tới </p>
             {loadingListing ? (
               <InfoLoader width="155" height="27" />
             ) : (
               <p className={`my-2 reward-number ${listingEntity ? (checkOwnershipDate(listingEntity?.ownership) ? "text-success" : "text-danger") : ""}`}>
-                {listingEntity ? dayjs.unix(Number(listingEntity.ownership)).format(APP_LOCAL_DATE_FORMAT) : "_"}
+                {listingEntity ? dayjs.unix(Number(listingEntity.ownership)).format(APP_DATE_FORMAT) : "_"}
               </p>
             )}
           </CCol>
@@ -288,10 +278,10 @@ export const RealEstateInfo = (props: IRealEstateInfoProps) => {
                     header
                     scopedSlots={{
                       address: ({ address }: IWorkerPermission) => {
-                        return <td>{address ? address : '_'}</td>;
+                        return <td>{address ? address : "_"}</td>;
                       },
                       createdDate: ({ createdDate }: IWorkerPermission) => {
-                        return <td>{createdDate ? createdDate : '_'}</td>;
+                        return <td>{createdDate ? createdDate : "_"}</td>;
                       },
                     }}
                   />
@@ -301,10 +291,7 @@ export const RealEstateInfo = (props: IRealEstateInfoProps) => {
           </CCol>
 
           <CCol xs={12} className="mt-2 ">
-            <CButton
-              className="px-3 w-100 btn-radius-50 btn-font-style btn btn-outline-primary"
-              onClick={onActivitiesBtnClick()}
-            >
+            <CButton className="px-3 w-100 btn-radius-50 btn-font-style btn btn-outline-primary" onClick={onActivitiesBtnClick()}>
               Hoạt động đầu tư
             </CButton>
           </CCol>
@@ -327,11 +314,7 @@ export const RealEstateInfo = (props: IRealEstateInfoProps) => {
             </CCollapse>
           </CCol>
           <CCol xs={12} className="mt-2">
-            <CButton
-              className="px-3 w-100 btn-radius-50 btn-font-style btn btn-primary"
-              onClick={onManagementBtnClick}
-              disabled={!Roles.OWNER ? true : false}
-            >
+            <CButton className={`px-3 w-100 btn-radius-50 btn-font-style btn btn-primary ${signerAddress === listingEntity?.owner ? "d-block" : "d-none"}`} onClick={onManagementBtnClick()}>
               Quản lý sở hữu
             </CButton>
           </CCol>
@@ -360,9 +343,9 @@ export const RealEstateInfo = (props: IRealEstateInfoProps) => {
               </CCard>
             </CCollapse>
           </CCol>
-          <RegisterOwnershipModal visible={registerOwnership} setVisible={setRegisterOwnership} />
-          <ExtendOwnershipModal visible={extendOwnership} setVisible={setExtendOwnership} />
-          <WithdrawTokenModal visible={withdrawToken} setVisible={setWithDrawToken} />
+          {registerOwnership && <RegisterOwnershipModal address={asset.address} dailyPayment={listingEntity?.dailyPayment || "0"} visible={registerOwnership} setVisible={setRegisterOwnership} />}
+          {extendOwnership && <ExtendOwnershipModal visible={extendOwnership} setVisible={setExtendOwnership} />}
+          {withdrawToken && <WithdrawTokenModal visible={withdrawToken} setVisible={setWithDrawToken} />}
         </CRow>
       </CCol>
     </CContainer>

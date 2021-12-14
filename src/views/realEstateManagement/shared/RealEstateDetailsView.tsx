@@ -1,5 +1,5 @@
 import { CCol, CLabel, CRow } from "@coreui/react";
-import React, { useEffect } from "react";
+import React from "react";
 import { useSelector } from "react-redux";
 import { RouteComponentProps } from "react-router-dom";
 import DAppLoading from "../../../shared/components/DAppLoading";
@@ -23,11 +23,11 @@ const RealEstateDetailsView = (props: IProps) => {
   const { isLoading } = useGetAssetQuery(id);
   const { asset } = useSelector((state: RootState) => state.assetsReducer);
 
-  useEffect(() => {
-    if (!isLoading) {
-      console.log(asset);
-    }
-  }, [isLoading]);
+  // useEffect(() => {
+  //   if (!isLoading) {
+  //     console.log(asset);
+  //   }
+  // }, [isLoading]);
 
   return (
     <>

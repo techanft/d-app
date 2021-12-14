@@ -1,5 +1,5 @@
 export const calculateOwnerTime = (x: number, y: number) => {
-  if (y === 0) return '0.00';
+  if (y === 0) return "0.00";
   return (x / y).toFixed(2);
 };
 
@@ -7,7 +7,7 @@ export const noMoreThanOneCommas = (input: number | string) => {
   const str = input.toString();
   let commasCount = 0;
   for (let i = 0; i < str.length; i++) {
-    if (str[i] === '.') commasCount++;
+    if (str[i] === ".") commasCount++;
     if (commasCount > 1) break;
   }
   return commasCount <= 1;
