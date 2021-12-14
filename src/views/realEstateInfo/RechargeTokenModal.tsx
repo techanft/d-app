@@ -16,7 +16,7 @@ import {
 import React from 'react';
 import { Formik } from 'formik';
 import * as Yup from 'yup'
-import { calculateOwnerTime } from '../../shared/helper';
+import { calculateOwnerTime } from '../../shared/helpers';
 
 interface IRechargeTokenModal {
   visible: boolean;

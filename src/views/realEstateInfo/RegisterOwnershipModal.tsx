@@ -16,7 +16,7 @@ import {
 import { Formik } from 'formik';
 import React from 'react';
 import * as Yup from 'yup';
-import { calculateOwnerTime } from '../../shared/helper';
+import { calculateOwnerTime } from '../../shared/helpers';
   
   interface IRegisterOwnershipModal {
     visible: boolean;

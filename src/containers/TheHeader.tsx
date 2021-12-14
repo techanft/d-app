@@ -1,3 +1,4 @@
+import CIcon from '@coreui/icons-react';
 import {
   CButton,
   CCol,
@@ -14,17 +15,17 @@ import {
   CLabel,
   CLink,
   CRow
-} from "@coreui/react";
-import { faAngleDown, faBars, faSlidersH } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { ethers } from "ethers";
-import { default as React, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { ToastError } from "../shared/components/Toast";
-import { getEllipsisTxt, getProvider, getTokenContractRead } from "../shared/helpers";
-import { RootState } from "../shared/reducers";
-import { getAddress, getContractWithSigner, getProviderLogin, getSigner } from "../views/walletInfo/wallet.api";
-import { softReset } from "../views/walletInfo/wallet.reducer";
+} from '@coreui/react';
+import { faAngleDown } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { ethers } from 'ethers';
+import { default as React, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { ToastError } from '../shared/components/Toast';
+import { getEllipsisTxt, getProvider, getTokenContractRead } from '../shared/helpers';
+import { RootState } from '../shared/reducers';
+import { getAddress, getContractWithSigner, getProviderLogin, getSigner } from '../views/walletInfo/wallet.api';
+import { softReset } from '../views/walletInfo/wallet.reducer';
 
 declare let window: any;
 const TheHeader = () => {
@@ -37,7 +38,7 @@ const TheHeader = () => {
       const provider: ethers.providers.Web3Provider = getProvider();
       dispatch(getProviderLogin(provider));
     } else {
-      ToastError("No provider found");
+      ToastError('No provider found');
     }
   };
 
@@ -70,8 +71,8 @@ const TheHeader = () => {
       </CHeaderNav>
       <CHeaderNav className="justify-content-between bg-white">
         <CHeaderNavItem>
-          <CButton className="text-primary">
-            <FontAwesomeIcon icon={faBars} size="2x" />
+          <CButton className="text-primary pr-0 border-0 pl-2">
+            <CIcon name="cil-menu" size="xl" />
           </CButton>
         </CHeaderNavItem>
         <CHeaderNavItem>
@@ -80,20 +81,20 @@ const TheHeader = () => {
           </CLink>
         </CHeaderNavItem>
         <CHeaderNavItem>
-          <CButton className="btn-link-wallet content-title btn-radius-50" onClick={onConnectWallet()}>
-            {signerAddress ? getEllipsisTxt(signerAddress) : "Liên kết ví"}
+          <CButton className="btn-link-wallet content-title btn-radius-50 px-1" onClick={onConnectWallet()}>
+            {signerAddress ? getEllipsisTxt(signerAddress) : 'Liên kết ví'}
           </CButton>
         </CHeaderNavItem>
         <CHeaderNavItem>
           <CDropdown>
-            <CDropdownToggle caret={false} className="text-primary">
-              <FontAwesomeIcon icon={faSlidersH} size="2x" />
+            <CDropdownToggle caret={false} className="text-primary pl-0 border-0 pr-2">
+              <CIcon name="cil-filter" size="xl" />
             </CDropdownToggle>
-            <CDropdownMenu className="dr-menu-filter">
+            <CDropdownMenu className="dr-menu-filter m-0">
               <CDropdownHeader className="text-center modal-title-style">Filter</CDropdownHeader>
               <CRow className="mx-0">
                 <CCol xs={6} className="px-0 text-center py-2">
-                  <CDropdown className="mx-2">
+                  <CDropdown className="mx-1">
                     <CDropdownToggle
                       color="white"
                       className="dt-filter content-title btn-radius-50 text-dark"
@@ -101,7 +102,7 @@ const TheHeader = () => {
                     >
                       City <FontAwesomeIcon icon={faAngleDown} />
                     </CDropdownToggle>
-                    <CDropdownMenu>
+                    <CDropdownMenu className="m-0">
                       <CDropdownItem href="#">Action</CDropdownItem>
                       <CDropdownItem href="#">Another action</CDropdownItem>
                       <CDropdownItem href="#">Something else here</CDropdownItem>
@@ -109,7 +110,7 @@ const TheHeader = () => {
                   </CDropdown>
                 </CCol>
                 <CCol xs={6} className="px-0 text-center py-2">
-                  <CDropdown className="mx-2">
+                  <CDropdown className="mx-1">
                     <CDropdownToggle
                       color="white"
                       className="dt-filter content-title btn-radius-50 text-dark"
@@ -117,7 +118,7 @@ const TheHeader = () => {
                     >
                       Dist <FontAwesomeIcon icon={faAngleDown} />
                     </CDropdownToggle>
-                    <CDropdownMenu>
+                    <CDropdownMenu className="m-0">
                       <CDropdownItem href="#">Action</CDropdownItem>
                       <CDropdownItem href="#">Another action</CDropdownItem>
                       <CDropdownItem href="#">Something else here</CDropdownItem>
@@ -125,7 +126,7 @@ const TheHeader = () => {
                   </CDropdown>
                 </CCol>
                 <CCol xs={6} className="px-0 text-center py-2">
-                  <CDropdown className="mx-2">
+                  <CDropdown className="mx-1">
                     <CDropdownToggle
                       color="white"
                       className="dt-filter content-title btn-radius-50 text-dark"
@@ -133,7 +134,7 @@ const TheHeader = () => {
                     >
                       Loại sản phẩm <FontAwesomeIcon icon={faAngleDown} />
                     </CDropdownToggle>
-                    <CDropdownMenu>
+                    <CDropdownMenu className="m-0">
                       <CDropdownItem href="#">Action</CDropdownItem>
                       <CDropdownItem href="#">Another action</CDropdownItem>
                       <CDropdownItem href="#">Something else here</CDropdownItem>
@@ -141,7 +142,7 @@ const TheHeader = () => {
                   </CDropdown>
                 </CCol>
                 <CCol xs={6} className="px-0 text-center py-2">
-                  <CDropdown className="mx-2">
+                  <CDropdown className="mx-1">
                     <CDropdownToggle
                       color="white"
                       className="dt-filter content-title btn-radius-50 text-dark"
@@ -149,7 +150,7 @@ const TheHeader = () => {
                     >
                       Phân khúc <FontAwesomeIcon icon={faAngleDown} />
                     </CDropdownToggle>
-                    <CDropdownMenu>
+                    <CDropdownMenu className="m-0">
                       <CDropdownItem href="#">Action</CDropdownItem>
                       <CDropdownItem href="#">Another action</CDropdownItem>
                       <CDropdownItem href="#">Something else here</CDropdownItem>
@@ -157,7 +158,7 @@ const TheHeader = () => {
                   </CDropdown>
                 </CCol>
                 <CCol xs={6} className="px-0 text-center py-2">
-                  <CDropdown className="mx-2">
+                  <CDropdown className="mx-1">
                     <CDropdownToggle
                       color="white"
                       className="dt-filter content-title btn-radius-50 text-dark"
@@ -165,7 +166,7 @@ const TheHeader = () => {
                     >
                       Diện tích <FontAwesomeIcon icon={faAngleDown} />
                     </CDropdownToggle>
-                    <CDropdownMenu>
+                    <CDropdownMenu className="m-0">
                       <CDropdownItem href="#">Action</CDropdownItem>
                       <CDropdownItem href="#">Another action</CDropdownItem>
                       <CDropdownItem href="#">Something else here</CDropdownItem>
@@ -173,7 +174,7 @@ const TheHeader = () => {
                   </CDropdown>
                 </CCol>
                 <CCol xs={6} className="px-0 text-center py-2">
-                  <CDropdown className="mx-2">
+                  <CDropdown className="mx-1">
                     <CDropdownToggle
                       color="white"
                       className="dt-filter content-title btn-radius-50 text-dark"
@@ -181,7 +182,7 @@ const TheHeader = () => {
                     >
                       Hướng <FontAwesomeIcon icon={faAngleDown} />
                     </CDropdownToggle>
-                    <CDropdownMenu>
+                    <CDropdownMenu className="m-0">
                       <CDropdownItem href="#">Action</CDropdownItem>
                       <CDropdownItem href="#">Another action</CDropdownItem>
                       <CDropdownItem href="#">Something else here</CDropdownItem>
@@ -189,7 +190,7 @@ const TheHeader = () => {
                   </CDropdown>
                 </CCol>
                 <CCol xs={6} className="px-0 text-center py-2">
-                  <CDropdown className="mx-2">
+                  <CDropdown className="mx-1">
                     <CDropdownToggle
                       color="white"
                       className="dt-filter content-title btn-radius-50 text-dark"
@@ -197,7 +198,7 @@ const TheHeader = () => {
                     >
                       Phí khai thác <FontAwesomeIcon icon={faAngleDown} />
                     </CDropdownToggle>
-                    <CDropdownMenu>
+                    <CDropdownMenu className="m-0">
                       <CDropdownItem href="#">Action</CDropdownItem>
                       <CDropdownItem href="#">Another action</CDropdownItem>
                       <CDropdownItem href="#">Something else here</CDropdownItem>
@@ -205,7 +206,7 @@ const TheHeader = () => {
                   </CDropdown>
                 </CCol>
                 <CCol xs={6} className="px-0 text-center py-2">
-                  <CDropdown className="mx-2">
+                  <CDropdown className="mx-1">
                     <CDropdownToggle
                       color="white"
                       className="dt-filter content-title btn-radius-50 text-dark"
@@ -213,7 +214,7 @@ const TheHeader = () => {
                     >
                       Chất lượng <FontAwesomeIcon icon={faAngleDown} />
                     </CDropdownToggle>
-                    <CDropdownMenu>
+                    <CDropdownMenu className="m-0">
                       <CDropdownItem href="#">Action</CDropdownItem>
                       <CDropdownItem href="#">Another action</CDropdownItem>
                       <CDropdownItem href="#">Something else here</CDropdownItem>
