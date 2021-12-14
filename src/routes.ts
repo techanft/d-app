@@ -8,7 +8,7 @@ const RegisterReward = React.lazy(() => import('./views/realEstateManagement/sha
 
 const ActivityLogs = React.lazy(() => import('./views/realEstateManagement/shared/ActivityLogs'))
 
-const ExploitedManagement = React.lazy(() => import('./views/realEstateManagement/owner/ExploitedManagement'))
+const WorkerManagement = React.lazy(() => import('./views/realEstateManagement/owner/WorkerManagement'))
 
 // https://github.com/ReactTraining/react-router/tree/master/packages/react-router-config
 const routes = [
@@ -33,9 +33,9 @@ const routes = [
     exact: true,
   },
   {
-    path: "/cms/exploited_management",
-    name: "ExploitedManagement",
-    component: ExploitedManagement,
+    path: "/cms/worker_management",
+    name: "WorkerManagement",
+    component: WorkerManagement,
     exact: true,
   },
 ]

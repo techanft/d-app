@@ -6,12 +6,14 @@ interface IInitialState {
   assets: IAsset[];
   asset: IAsset | null;
   errorMessage: string;
+  totalItems: number;
 }
 
 const initialState: IInitialState = {
   assets: [],
   asset: null,
   errorMessage: "",
+  totalItems: 0,
 };
 
 export const exchangeRateAdapter = createEntityAdapter<any>({
@@ -26,11 +28,13 @@ const { actions, reducer } = createSlice({
     reset: (state) => {
       state.assets = [];
       state.errorMessage = "";
+      state.totalItems = 0;
     },
   },
   extraReducers: (builder) => {
     builder.addMatcher(assetsApi.endpoints.getAssets.matchFulfilled, (state, { payload }: PayloadAction<IAsset[]>) => {
       state.assets = payload;
+      state.totalItems = payload.length;
     });
     builder.addMatcher(assetsApi.endpoints.getAssets.matchRejected, (state, { payload }: PayloadAction<any>) => {
       state.errorMessage = payload?.message;

@@ -9,18 +9,18 @@ import {
   CModalFooter,
   CModalHeader,
   CModalTitle,
-  CRow
+  CRow,
 } from '@coreui/react';
 import { Formik } from 'formik';
 import React from 'react';
 import * as Yup from 'yup';
 
-interface ICancelExploitedPermission {
+interface ICancelWorkerPermission {
   visible: boolean;
   setVisible: (visible: boolean) => void;
 }
 
-const AddExploitedPermission = (props: ICancelExploitedPermission) => {
+const AddWorkerPermission = (props: ICancelWorkerPermission) => {
   const { visible, setVisible } = props;
   const closeModal = (key: boolean) => (): void => setVisible(key);
 
@@ -29,7 +29,7 @@ const AddExploitedPermission = (props: ICancelExploitedPermission) => {
   };
 
   const validationSchema = Yup.object().shape({
-    address: Yup.string().required("Địa chỉ ví không hợp lệ"),
+    address: Yup.string().required('Địa chỉ ví không hợp lệ'),
   });
 
   return (
@@ -39,7 +39,7 @@ const AddExploitedPermission = (props: ICancelExploitedPermission) => {
       </CModalHeader>
       <Formik
         enableReinitialize
-        initialValues={initialValues} 
+        initialValues={initialValues}
         validationSchema={validationSchema}
         onSubmit={(values) => {}}
       >
@@ -77,10 +77,7 @@ const AddExploitedPermission = (props: ICancelExploitedPermission) => {
                 </CButton>
               </CCol>
               <CCol>
-                <CButton
-                  className="px-2 w-100 btn btn-primary btn-font-style btn-radius-50"
-                  type="submit"
-                >
+                <CButton className="px-2 w-100 btn btn-primary btn-font-style btn-radius-50" type="submit">
                   ĐỒNG Ý
                 </CButton>
               </CCol>
@@ -92,4 +89,4 @@ const AddExploitedPermission = (props: ICancelExploitedPermission) => {
   );
 };
 
-export default AddExploitedPermission;
+export default AddWorkerPermission;

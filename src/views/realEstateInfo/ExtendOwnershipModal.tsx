@@ -13,10 +13,10 @@ import {
   CModalTitle,
   CRow,
 } from '@coreui/react';
-import React from 'react';
 import { Formik } from 'formik';
-import * as Yup from 'yup'
-import { calculateOwnerTime } from '../../shared/helpers';
+import React from 'react';
+import * as Yup from 'yup';
+import { calculateOwnerTime } from '../../shared/helper';
 
 interface IRechargeTokenModal {
   visible: boolean;
@@ -28,15 +28,15 @@ const RechargeTokenModal = (props: IRechargeTokenModal) => {
   const closeModal = (key: boolean) => (): void => setVisible(key);
 
   const initialValues = {
-    totalToken: '10000',
-    totalTokenRecharged: '5000',
-    maxTokenWithdraw: '1000',
+    totalToken: 10000,
+    totalTokenRecharged: 5000,
+    maxTokenWithdraw: 1000,
     tokenRecharge: 0,
-    exploitedFee : 5000,
+    workFee: 5000,
   };
 
   const validationSchema = Yup.object().shape({
-    tokenRecharge: Yup.string().required("Vui lòng nhập số token muốn nạp"),
+    tokenRecharge: Yup.number().required('Vui lòng nhập số token muốn nạp'),
   });
 
   return (
@@ -73,7 +73,7 @@ const RechargeTokenModal = (props: IRechargeTokenModal) => {
                         id="tokenRecharge"
                         autoComplete="off"
                         name="tokenRecharge"
-                        value={values.tokenRecharge}
+                        value={values.tokenRecharge || ''}
                         onBlur={handleBlur}
                         className="btn-radius-50"
                         type="number"
@@ -90,7 +90,9 @@ const RechargeTokenModal = (props: IRechargeTokenModal) => {
                       <CLabel className="recharge-token-title">Ownership Period</CLabel>
                     </CCol>
                     <CCol xs={4}>
-                      <p className="text-primary text-right">{calculateOwnerTime(values.tokenRecharge, values.exploitedFee)} days</p>
+                      <p className="text-primary text-right">
+                        {calculateOwnerTime(values.tokenRecharge, values.workFee)} days
+                      </p>
                     </CCol>
                   </CFormGroup>
                 </CCol>

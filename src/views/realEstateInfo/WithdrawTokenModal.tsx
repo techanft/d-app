@@ -15,7 +15,6 @@ import {
 } from '@coreui/react';
 import { Formik } from 'formik';
 import React from 'react';
-import { IWallet } from '../../shared/models/wallet.model';
 import * as Yup from 'yup';
 
 interface IWithdrawTokenModal {
@@ -27,15 +26,15 @@ const WithdrawTokenModal = (props: IWithdrawTokenModal) => {
   const { visible, setVisible } = props;
   const closeModal = (key: boolean) => (): void => setVisible(key);
 
-  const initialValues: IWallet = {
-    totalToken: '10000',
-    totalTokenRecharged: '5000',
-    maxTokenWithdraw: '1000',
-    tokenWithdraw: '',
+  const initialValues = {
+    totalToken: 10000,
+    totalTokenRecharged: 5000,
+    maxTokenWithdraw: 1000,
+    tokenWithdraw: 0,
   };
 
   const validationSchema = Yup.object().shape({
-    tokenWithdraw: Yup.string().required("Vui lòng nhập số token muốn rút"),
+    tokenWithdraw: Yup.number().required('Vui lòng nhập số token muốn rút'),
   });
 
   return (
@@ -80,7 +79,7 @@ const WithdrawTokenModal = (props: IWithdrawTokenModal) => {
                         id="tokenWithdraw"
                         autoComplete="off"
                         name="tokenWithdraw"
-                        value={values.tokenWithdraw}
+                        value={values.tokenWithdraw || ''}
                         onBlur={handleBlur}
                         className="btn-radius-50"
                         type="number"
