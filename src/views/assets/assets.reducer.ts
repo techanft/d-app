@@ -1,7 +1,11 @@
 import { createEntityAdapter, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { IAsset } from "../../shared/models/assets.model";
-import { assetsApi, IGetAssets } from "./assets.api";
+import { assetsApi } from "./assets.api";
 
+export interface IResponse {
+  results: IAsset[],
+  count: number
+}
 interface IInitialState {
   assets: IAsset[];
   asset: IAsset | null;
@@ -39,9 +43,8 @@ const { actions, reducer } = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addMatcher(assetsApi.endpoints.getAssets.matchFulfilled, (state, { payload }: PayloadAction<IGetAssets>) => {
+    builder.addMatcher(assetsApi.endpoints.getAssets.matchFulfilled, (state, { payload }: PayloadAction<IResponse>) => {
       state.assets = payload.results;
-      state.loading = false;
       state.totalItems = payload.count;
     });
     builder.addMatcher(assetsApi.endpoints.getAssets.matchRejected, (state, { payload }: PayloadAction<any>) => {
