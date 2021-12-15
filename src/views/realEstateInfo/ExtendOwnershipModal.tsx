@@ -16,7 +16,7 @@ import {
 import { Formik } from 'formik';
 import React from 'react';
 import * as Yup from 'yup';
-import { calculateOwnerTime } from '../../shared/helper';
+import { estimateOwnership } from '../../shared/helper';
 
 interface IRechargeTokenModal {
   visible: boolean;
@@ -91,7 +91,7 @@ const RechargeTokenModal = (props: IRechargeTokenModal) => {
                     </CCol>
                     <CCol xs={4}>
                       <p className="text-primary text-right">
-                        {calculateOwnerTime(values.tokenRecharge, values.workFee)} days
+                        {estimateOwnership(values.tokenRecharge, values.workFee)} days
                       </p>
                     </CCol>
                   </CFormGroup>

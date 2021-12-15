@@ -23,12 +23,14 @@ import { reset } from "./realEstate.reducer";
 import RegisterOwnershipModal from "./RegisterOwnershipModal";
 import WithdrawTokenModal from "./WithdrawTokenModal";
 
+/**
+ *  Chỉ nên truyền asset.id, sau đó từ id lấy object ra từ store. Tránh việc pass cả object giữa các component vì có thể tạo side effect
+ */
 interface IRealEstateInfoProps {
   asset: IAsset;
 }
 
-export const RealEstateInfo = (props: IRealEstateInfoProps) => {
-  const { asset } = props;
+export const RealEstateInfo = ({asset}: IRealEstateInfoProps) => {
   const dispatch = useDispatch();
   const [createBlockEvent, { isLoading }] = useCreateBlockEventMutation();
   const [listingEntity, setListingEntity] = useState<IListing | null>(null);
@@ -37,37 +39,83 @@ export const RealEstateInfo = (props: IRealEstateInfoProps) => {
   const { extendOwnerShipSuccess, extendOwnerShipTHash } = useSelector((state: RootState) => state.realEstateReducer);
   const provider = getProvider();
 
+
+  // Nên chuyển logic getListingInfo này vào api/store và lấy ra
   const getListingInfo = async (listing: IAsset) => {
     // create asset contract reading from ether
     const assetContract = getListingContractRead(listing.address, provider);
 
-    // invoke asset getter
-    const listingId: BigNumber = await assetContract.listingId();
-    const ownership: BigNumber = await assetContract.ownership();
-    const value: BigNumber = await assetContract.value();
-    const dailyPayment: BigNumber = await assetContract.dailyPayment();
-    const owner = await assetContract.owner();
-    const validator = await assetContract.validator();
-    const tokenContract = await assetContract.tokenContract();
-    const totalStake: BigNumber = await assetContract.totalStake();
-    const rewardPool: BigNumber = await assetContract.rewardPool();
+    // Type object này
+    const infoPromises: any = {
+      listingId: assetContract.listingId(),
+      ownership: assetContract.ownership(),
+      value: assetContract.value(),
+      dailyPayment: assetContract.dailyPayment(),
+      owner: assetContract.owner(),
+      validator: assetContract.validator(),
+      tokenContract: assetContract.tokenContract(),
+      totalStake: assetContract.totalStake(),
+      rewardPool: assetContract.rewardPool(),
+    }
 
-    // await all getter to complete
-    Promise.all([listingId, ownership, value, dailyPayment, owner, validator, assetContract, totalStake, rewardPool]).then(() => {
-      const body: IListing = {
-        owner,
-        validator,
-        tokenContract,
-        listingId: listingId.toString(),
-        ownership: ownership.toString(),
-        totalStake: insertCommas(ethers.utils.formatEther(totalStake.toString())),
-        rewardPool: insertCommas(ethers.utils.formatEther(rewardPool.toString())),
-        value: insertCommas(ethers.utils.formatEther(value.toString())),
-        dailyPayment: insertCommas(ethers.utils.formatEther(dailyPayment.toString())),
-      };
-      setListingEntity(body);
+    Promise.all(Object.values(infoPromises)).then((res) => {
+
+      const keys = Object.keys(infoPromises);
+      for (let index = 0; index < keys.length; index++) {
+        const key = keys[index];
+        infoPromises[key] = res[index]
+      }
+
+      /**
+       * Nên viết như thế này:
+       *   setListingEntity(infoPromises);
+       *   
+       * Sau đó trong từng trường chú format từ bigNumber => string
+       * Đặt lại type rồi sửa nhé
+       */
+      const entity = {...infoPromises,
+        listingId: infoPromises.listingId.toString(),
+        ownership: infoPromises.ownership.toString(),
+        totalStake: insertCommas(ethers.utils.formatEther(infoPromises.totalStake.toString())),
+        rewardPool: insertCommas(ethers.utils.formatEther(infoPromises.rewardPool.toString())),
+        value: insertCommas(ethers.utils.formatEther(infoPromises.value.toString())),
+        dailyPayment: insertCommas(ethers.utils.formatEther(infoPromises.dailyPayment.toString())),
+      }
+
+      setListingEntity(entity);
       setLoadingListing(false);
-    });
+    })
+
+    // // invoke asset getter
+    // const listingId: BigNumber = await assetContract.listingId();
+    // const ownership: BigNumber = await assetContract.ownership();
+    // const value: BigNumber = await assetContract.value();
+    // const dailyPayment: BigNumber = await assetContract.dailyPayment();
+    // const owner = await assetContract.owner();
+    // const validator = await assetContract.validator();
+    // const tokenContract = await assetContract.tokenContract();
+    // const totalStake: BigNumber = await assetContract.totalStake();
+    // const rewardPool: BigNumber = await assetContract.rewardPool();
+
+
+    // // await all getter to complete
+
+    // =>>>>>>>> Cái promise.all này không có ý nghĩa gì cả khi chú đã hoàn thành xong việc call APIs ở bên trên với các awaits
+    // Promise.all([listingId, ownership, value, dailyPayment, owner, validator, assetContract, totalStake, rewardPool]).then(() => {
+    //   const body: IListing = {
+    //     owner,
+    //     validator,
+    //     tokenContract,
+    //     listingId: listingId.toString(),
+    //     ownership: ownership.toString(),
+    //     totalStake: insertCommas(ethers.utils.formatEther(totalStake.toString())),
+    //     rewardPool: insertCommas(ethers.utils.formatEther(rewardPool.toString())),
+    //     value: insertCommas(ethers.utils.formatEther(value.toString())),
+    //     dailyPayment: insertCommas(ethers.utils.formatEther(dailyPayment.toString())),
+    //   };
+    //   setListingEntity(body);
+    //   setLoadingListing(false);
+    // });
   };
 
   // console.log(listingEntity, "entity");
@@ -81,7 +129,8 @@ export const RealEstateInfo = (props: IRealEstateInfoProps) => {
 
   useEffect(() => {
     if (extendOwnerShipSuccess) {
-      ToastSuccess("Gia hạn quyền sử dụng listing thành công");
+      ToastSuccess("Successfully extended ownersip");
+      // Sao lại không gửi block lên ở đây
       const body = {
         assetId: asset.id,
         hash: extendOwnerShipTHash,
@@ -101,12 +150,14 @@ export const RealEstateInfo = (props: IRealEstateInfoProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [asset, extendOwnerShipSuccess, signerAddress]);
 
+  // Hoài: Gộp 3 state này vào 1 state
   const [extendOwnership, setExtendOwnership] = useState<boolean>(false);
   const [withdrawToken, setWithDrawToken] = useState<boolean>(false);
   const [registerOwnership, setRegisterOwnership] = useState<boolean>(false);
 
   const setRequestListener = (key: boolean, setRequestState: any) => (): void => setRequestState(key);
 
+  // Hoài: Gộp 3 state này vào 1 state
   const [investmentCollapse, setInvestmentCollapse] = useState<boolean>(false);
   const [managementCollapse, setManagementCollapse] = useState<boolean>(false);
   const [workerCollapse, setWorkerCollapse] = useState<boolean>(false);
@@ -127,6 +178,7 @@ export const RealEstateInfo = (props: IRealEstateInfoProps) => {
     }
   };
 
+  // Hoài: cho 2 cái object bên dưới ra ngoài
   const titleTableStyle = {
     textAlign: "left",
     color: "#828282",
@@ -168,6 +220,7 @@ export const RealEstateInfo = (props: IRealEstateInfoProps) => {
 
   const workerActiveListing = workerListing.filter((e) => e.status === WorkerStatus.true);
 
+  // Rename checkOwnershipDate => checkOwnershipExpired
   const checkOwnershipDate = (timeStamp: string): boolean => {
     const currTimstamp = dayjs().unix();
     return currTimstamp <= Number(timeStamp);
@@ -210,22 +263,22 @@ export const RealEstateInfo = (props: IRealEstateInfoProps) => {
         <CRow className="realestate-reward-info p-0 m-0">
           {/* <CCol xs={6}>
             <p className="detail-title-font my-2">Reward rate for listing</p>
-            <p className="text-success my-2 reward-number">{demoRealEstateInfo.rewardRate}</p>
+            <p className="text-success my-2 value-text">{demoRealEstateInfo.rewardRate}</p>
           </CCol> */}
           <CCol xs={6}>
-            <p className="detail-title-font my-2">The listing address</p>
-            {loadingListing ? <InfoLoader width="155" height="27" /> : <p className="my-2 reward-number">{getEllipsisTxt(asset.address)}</p>}
+            <p className="detail-title-font my-2">Blockchain address</p>
+            {loadingListing ? <InfoLoader width="155" height="27" /> : <p className="my-2 value-text">{getEllipsisTxt(asset.address)}</p>}
           </CCol>
           <CCol xs={6}>
-            <p className="detail-title-font my-2">The current owner</p>
-            {loadingListing ? <InfoLoader width="155" height="27" /> : <p className="my-2 reward-number">{listingEntity ? getEllipsisTxt(listingEntity.owner) : "_"}</p>}
+            <p className="detail-title-font my-2">Current owner</p>
+            {loadingListing ? <InfoLoader width="155" height="27" /> : <p className="my-2 value-text">{listingEntity ? getEllipsisTxt(listingEntity.owner) : "_"}</p>}
           </CCol>
           <CCol xs={6}>
             <p className="detail-title-font my-2">Sở hữu tới </p>
             {loadingListing ? (
               <InfoLoader width="155" height="27" />
             ) : (
-              <p className={`my-2 reward-number ${listingEntity ? (checkOwnershipDate(listingEntity?.ownership) ? "text-success" : "text-danger") : ""}`}>
+              <p className={`my-2 value-text ${listingEntity ? (checkOwnershipDate(listingEntity?.ownership) ? "text-success" : "text-danger") : ""}`}>
                 {listingEntity ? dayjs.unix(Number(listingEntity.ownership)).format(APP_DATE_FORMAT) : "_"}
               </p>
             )}
@@ -236,7 +289,7 @@ export const RealEstateInfo = (props: IRealEstateInfoProps) => {
             {loadingListing ? (
               <InfoLoader width="155" height="27" />
             ) : (
-              <p className="my-2 reward-number">
+              <p className="my-2 value-text">
                 {listingEntity?.dailyPayment || "_"} <span className="token-name">ANFT</span>
               </p>
             )}
@@ -246,7 +299,7 @@ export const RealEstateInfo = (props: IRealEstateInfoProps) => {
             {loadingListing ? (
               <InfoLoader width="155" height="27" />
             ) : (
-              <p className="text-primary my-2 reward-number">
+              <p className="text-primary my-2 value-text">
                 {listingEntity?.totalStake || "_"} <span className="token-name">ANFT</span>
               </p>
             )}
@@ -256,7 +309,7 @@ export const RealEstateInfo = (props: IRealEstateInfoProps) => {
             {loadingListing ? (
               <InfoLoader width="155" height="27" />
             ) : (
-              <p className="my-2 reward-number">
+              <p className="my-2 value-text">
                 {listingEntity?.rewardPool || "_"} <span className="token-name">ANFT</span>
               </p>
             )}
@@ -264,13 +317,13 @@ export const RealEstateInfo = (props: IRealEstateInfoProps) => {
 
           {/* <CCol xs={6}>
             <p className="detail-title-font my-2">Owner wallet</p>
-            <p className="text-primary my-2 reward-number">{demoRealEstateInfo.ownerWalletId}</p>
+            <p className="text-primary my-2 value-text">{demoRealEstateInfo.ownerWalletId}</p>
           </CCol>
            */}
           {/* Show-more-2-info-if-role-owner */}
           {/* <CCol xs={6}>
             <p className="detail-title-font my-2">Tổng ANFT đã nạp</p>
-            <p className="text-primary my-2 reward-number">
+            <p className="text-primary my-2 value-text">
               {demoRealEstateInfo.tokenRecharged} <span className="token-name">ANFT</span>
             </p>
           </CCol>  */}
