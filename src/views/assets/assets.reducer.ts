@@ -32,6 +32,7 @@ const { actions, reducer } = createSlice({
     },
     reset: (state) => {
       state.assets = [];
+      state.asset = null;
       state.loading = false;
       state.errorMessage = "";
       state.totalItems = 0;

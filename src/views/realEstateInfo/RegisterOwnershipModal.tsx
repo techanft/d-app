@@ -1,4 +1,5 @@
 import { CButton, CCol, CForm, CFormGroup, CInput, CInvalidFeedback, CLabel, CModal, CModalBody, CModalFooter, CModalHeader, CModalTitle, CRow } from "@coreui/react";
+import { ethers } from "ethers";
 import { Formik } from "formik";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -43,7 +44,7 @@ const RegisterOwnershipModal = (props: IRegisterOwnershipModal) => {
           const ListingContract = getListingContractWrite(address, signer!);
           const body = {
             contract: ListingContract,
-            tokenNumber: values.registrationToken,
+            tokenNumber: ethers.utils.parseUnits(values.registrationToken.toString()),
           };
           dispatch(fetching());
           dispatch(extendOwnerShip(body));

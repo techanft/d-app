@@ -6,6 +6,7 @@ import { BigNumber, ethers } from "ethers";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { APP_DATE_FORMAT } from "../../config/constants";
+import { BlockType } from "../../enumeration/blockType";
 import { WorkerStatus } from "../../enumeration/workerStatus";
 import InfoLoader from "../../shared/components/InfoLoader";
 import { ToastError, ToastSuccess } from "../../shared/components/Toast";
@@ -15,6 +16,7 @@ import { IAsset } from "../../shared/models/assets.model";
 import { IListing } from "../../shared/models/listing.model";
 import { IWorkerPermission } from "../../shared/models/workerPermission.model";
 import { RootState } from "../../shared/reducers";
+import { useCreateBlockEventMutation } from "../blockEvents/blockEvents.api";
 import ExtendOwnershipModal from "./ExtendOwnershipModal";
 import "./index.scss";
 import { reset } from "./realEstate.reducer";
@@ -28,10 +30,11 @@ interface IRealEstateInfoProps {
 export const RealEstateInfo = (props: IRealEstateInfoProps) => {
   const { asset } = props;
   const dispatch = useDispatch();
+  const [createBlockEvent, { isLoading }] = useCreateBlockEventMutation();
   const [listingEntity, setListingEntity] = useState<IListing | null>(null);
   const [loadingListing, setLoadingListing] = useState<boolean>(false);
   const { signerAddress } = useSelector((state: RootState) => state.walletReducer);
-  const { extendOwnerShipSuccess } = useSelector((state: RootState) => state.realEstateReducer);
+  const { extendOwnerShipSuccess, extendOwnerShipTHash } = useSelector((state: RootState) => state.realEstateReducer);
   const provider = getProvider();
 
   const getListingInfo = async (listing: IAsset) => {
@@ -67,14 +70,27 @@ export const RealEstateInfo = (props: IRealEstateInfoProps) => {
     });
   };
 
-  console.log(listingEntity, "entity");
+  // console.log(listingEntity, "entity");
+
+  // const getExtendOwnerShipRceipt = async (tHash: string) => {
+  //   const receipt = await provider.getTransactionReceipt(tHash);
+  //   Promise.all([receipt]).then(() => {
+  //     console.log(receipt);
+  //   });
+  // };
 
   useEffect(() => {
     if (extendOwnerShipSuccess) {
       ToastSuccess("Gia hạn quyền sử dụng listing thành công");
+      const body = {
+        assetId: asset.id,
+        hash: extendOwnerShipTHash,
+        eventType: BlockType.OWNER_SHIP_EXTENSION,
+      }
+      createBlockEvent(body);
       dispatch(reset());
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [extendOwnerShipSuccess]);
 
   useEffect(() => {
