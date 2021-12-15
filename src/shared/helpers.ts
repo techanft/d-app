@@ -32,7 +32,7 @@ export const getListingContractRead = (listingAddress: string, provider: ethers.
     return error;
   }
 };
-
+// attachSignerToContract(contrac, signer)
 export const getListingContractWrite = (listingAddress: string, signer: ethers.providers.JsonRpcSigner):ethers.Contract => {
   try {
     const listingABI = listingArtifact.abi;

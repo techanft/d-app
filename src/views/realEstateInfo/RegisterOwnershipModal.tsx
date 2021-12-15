@@ -4,7 +4,7 @@ import { Formik } from "formik";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import * as Yup from "yup";
-import { calculateOwnerTime, insertCommas, unInsertCommas } from "../../shared/helper";
+import { estimateOwnership, insertCommas, unInsertCommas } from "../../shared/helper";
 import { getListingContractWrite } from "../../shared/helpers";
 import { RootState } from "../../shared/reducers";
 import { extendOwnerShip } from "./realEstate.abi";
@@ -21,16 +21,26 @@ const RegisterOwnershipModal = (props: IRegisterOwnershipModal) => {
   const { dailyPayment, address, visible, setVisible } = props;
   const dispatch = useDispatch();
   const closeModal = (key: boolean) => (): void => setVisible(key);
-  const { signer,signerAddress } = useSelector((state: RootState) => state.walletReducer);
 
+
+  const { signer } = useSelector((state: RootState) => state.walletReducer);
+
+  // generate initialValues sao cho không cần phải tạo một object body khi submit formik
   const initialValues = {
-    registrationToken: 0,
+    contract: getListingContractWrite(address, signer!),
+    tokenAmount: 0,
+    // registrationToken: 0,
+
+
   };
 
   const validationSchema = Yup.object().shape({
-    registrationToken: Yup.number().min(1, "Số token không hợp lệ").typeError("Số lượng token không hợp lệ").required("Vui lòng nhập số token muốn nạp"),
+    tokenAmount: Yup.number().min(1, "Số token không hợp lệ").typeError("Số lượng token không hợp lệ").required("Vui lòng nhập số token muốn nạp"),
+    // registrationToken: Yup.number().min(1, "Số token không hợp lệ").typeError("Số lượng token không hợp lệ").required("Vui lòng nhập số token muốn nạp"),
   });
 
+
+  // Cần catch các error khi user reject transaction với metamask
   return (
     <CModal show={visible} onClose={closeModal(false)} closeOnBackdrop={false} centered className="border-radius-modal">
       <CModalHeader className="justify-content-center">
@@ -41,17 +51,15 @@ const RegisterOwnershipModal = (props: IRegisterOwnershipModal) => {
         initialValues={initialValues}
         validationSchema={validationSchema}
         onSubmit={(values) => {
-          console.log(signer);
-          
-          const ListingContract = getListingContractWrite(address, signer!);
-          console.log(ListingContract);
-          
-          const body = {
-            contract: ListingContract,
-            tokenNumber: ethers.utils.parseUnits(values.registrationToken.toString()),
-          };
+          // const ListingContract = getListingContractWrite(address, signer!);
+
+          // Object này không cần thiết nếu setup formik properly
+          // const body = {
+          //   contract: ListingContract,
+          //   tokenAmount: ethers.utils.parseUnits(values.registrationToken.toString()),
+          // };
           dispatch(fetching());
-          dispatch(extendOwnerShip(body));
+          dispatch(extendOwnerShip({...values, tokenAmount: ethers.utils.parseUnits(values.tokenAmount.toString())}));
           setVisible(false);
         }}
       >
@@ -76,17 +84,17 @@ const RegisterOwnershipModal = (props: IRegisterOwnershipModal) => {
                       <CInput
                         // onChange={handleChange}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldValue(`registrationToken`, unInsertCommas(e.target.value));
+                          setFieldValue(`tokenAmount`, unInsertCommas(e.target.value));
                         }}
-                        id="registrationToken"
+                        id="tokenAmount"
                         autoComplete="off"
-                        name="registrationToken"
-                        value={values.registrationToken ? insertCommas(values.registrationToken) : ""}
-                        // value={values.registrationToken || ""}
+                        name="tokenAmount"
+                        value={values.tokenAmount ? insertCommas(values.tokenAmount) : ""}
+                        // value={values.tokenAmount || ""}
                         onBlur={handleBlur}
                         className="btn-radius-50"
                       />
-                      <CInvalidFeedback className={!!errors.registrationToken && touched.registrationToken ? "d-block" : "d-none"}>{errors.registrationToken}</CInvalidFeedback>
+                      <CInvalidFeedback className={!!errors.tokenAmount && touched.tokenAmount ? "d-block" : "d-none"}>{errors.tokenAmount}</CInvalidFeedback>
                     </CCol>
                   </CFormGroup>
                   <CFormGroup row>
@@ -94,7 +102,7 @@ const RegisterOwnershipModal = (props: IRegisterOwnershipModal) => {
                       <CLabel className="recharge-token-title">Ownership Period</CLabel>
                     </CCol>
                     <CCol xs={4}>
-                      <p className="text-primary text-right">{calculateOwnerTime(values.registrationToken, Number(unInsertCommas(dailyPayment)))} days</p>
+                      <p className="text-primary text-right">{estimateOwnership(values.tokenAmount, Number(unInsertCommas(dailyPayment)))} days</p>
                     </CCol>
                   </CFormGroup>
                 </CCol>
