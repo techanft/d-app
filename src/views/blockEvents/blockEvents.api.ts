@@ -1,12 +1,12 @@
+import { baseApi } from "../../shared/baseApi";
 import { IBlockEvent, INewBlockEvent } from "../../shared/models/blockEvents.model";
-import { splitApi } from "../../shared/splitApi";
 
 export interface IGetBlockEvent {
   count: number;
   results: IBlockEvent[];
 }
 
-export const blockEventsApi = splitApi.injectEndpoints({
+export const blockEventsApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getBlockEvents: builder.query<IGetBlockEvent, void>({
       query: () => `block-events`,

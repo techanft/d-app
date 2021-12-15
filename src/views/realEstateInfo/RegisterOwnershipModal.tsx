@@ -21,7 +21,7 @@ const RegisterOwnershipModal = (props: IRegisterOwnershipModal) => {
   const { dailyPayment, address, visible, setVisible } = props;
   const dispatch = useDispatch();
   const closeModal = (key: boolean) => (): void => setVisible(key);
-  const { signer } = useSelector((state: RootState) => state.walletReducer);
+  const { signer,signerAddress } = useSelector((state: RootState) => state.walletReducer);
 
   const initialValues = {
     registrationToken: 0,
@@ -41,7 +41,11 @@ const RegisterOwnershipModal = (props: IRegisterOwnershipModal) => {
         initialValues={initialValues}
         validationSchema={validationSchema}
         onSubmit={(values) => {
+          console.log(signer);
+          
           const ListingContract = getListingContractWrite(address, signer!);
+          console.log(ListingContract);
+          
           const body = {
             contract: ListingContract,
             tokenNumber: ethers.utils.parseUnits(values.registrationToken.toString()),
