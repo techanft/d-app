@@ -1,4 +1,4 @@
-export interface IRealEstateInfo {
+export interface IListingInfo {
   value: string;
   rewardRate: string;
   currentOwner: string;

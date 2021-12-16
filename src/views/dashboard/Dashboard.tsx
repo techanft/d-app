@@ -3,17 +3,9 @@ import { faAngleDown } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 import { RouteComponentProps } from "react-router-dom";
-import { RealEstateListing } from "../realEstateListing/RealEstateListing";
+import Listings from "../listings/Listings";
 
-interface IDashboard extends RouteComponentProps {}
-
-// ██████╗ ███████╗ █████╗ ██╗         ███████╗███████╗████████╗ █████╗ ████████╗███████╗    ██╗      ██╗     ██╗███████╗████████╗██╗███╗   ██╗ ██████╗ 
-// ██╔══██╗██╔════╝██╔══██╗██║         ██╔════╝██╔════╝╚══██╔══╝██╔══██╗╚══██╔══╝██╔════╝    ╚██╗     ██║     ██║██╔════╝╚══██╔══╝██║████╗  ██║██╔════╝ 
-// ██████╔╝█████╗  ███████║██║         █████╗  ███████╗   ██║   ███████║   ██║   █████╗       ╚██╗    ██║     ██║███████╗   ██║   ██║██╔██╗ ██║██║  ███╗
-// ██╔══██╗██╔══╝  ██╔══██║██║         ██╔══╝  ╚════██║   ██║   ██╔══██║   ██║   ██╔══╝       ██╔╝    ██║     ██║╚════██║   ██║   ██║██║╚██╗██║██║   ██║
-// ██║  ██║███████╗██║  ██║███████╗    ███████╗███████║   ██║   ██║  ██║   ██║   ███████╗    ██╔╝     ███████╗██║███████║   ██║   ██║██║ ╚████║╚██████╔╝
-// ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚══════╝    ╚══════╝╚══════╝   ╚═╝   ╚═╝  ╚═╝   ╚═╝   ╚══════╝    ╚═╝      ╚══════╝╚═╝╚══════╝   ╚═╝   ╚═╝╚═╝  ╚═══╝ ╚═════╝ 
-                                                                                                                                                     
+interface IDashboard extends RouteComponentProps {}                                                                                                        
 
 const Dashboard = (props: IDashboard) => {
   return (
@@ -70,7 +62,7 @@ const Dashboard = (props: IDashboard) => {
           </CCol>
         </CRow>
       </CSubheader>
-      <RealEstateListing />
+      <Listings />
     </>
   );
 };

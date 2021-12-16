@@ -1,6 +1,6 @@
 import { baseApi } from "../../shared/baseApi";
 import { IAsset } from "../../shared/models/assets.model";
-import { IAssetFilter } from "../realEstateListing/RealEstateListing";
+import { IAssetFilter } from "../listings/Listings";
 import { IResponse } from "./assets.reducer";
 
 export interface IGetAssets {

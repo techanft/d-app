@@ -66,10 +66,10 @@ const WorkerManagement = () => {
           <CLabel className="text-primary content-title">Danh sách quyền khai thác</CLabel>
         </CCol>
         <CCol xs={12}>
-          <CCard className="m-0 rb-card-img">
-            <img src={bgImg} alt="realEstateImg" className="w-100 h-100" />
-            <CCardBody className="p-0 rb-card-body">
-              <CCardTitle className="rb-card-title mb-0 px-3 py-2 w-100">
+          <CCard className="m-0 listing-img-card">
+            <img src={bgImg} alt="listingImg" className="w-100 h-100" />
+            <CCardBody className="p-0 listing-card-body">
+              <CCardTitle className="listing-card-title mb-0 px-3 py-2 w-100">
                 <p className="mb-2 text-white content-title">125 - Hoàn Kiếm - Hà Nội</p>
                 <p className="mb-0 text-white detail-title-font">
                   Hoạt động <b>03</b>

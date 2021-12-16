@@ -1,9 +1,5 @@
-.realestate-title-info {
+.listing-address-info {
   background-color: rgba(0, 136, 194, 0.09);
-}
-.realestate-title {
-  font-size: 0.9375rem;
-  line-height: 18px;
 }
 
 .total-token {
@@ -19,7 +15,7 @@
 }
 
 .value-text {
-  font-size: 1.125rem;
+  font-size: 1rem;
   color: #4f4f4f;
   line-height: 21px;
 }
@@ -37,3 +33,7 @@
 .activities-card {
   border-radius: 20px;
 }
+
+.copy-address:active {
+  color: white;
+ }

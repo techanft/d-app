@@ -5,19 +5,20 @@ import { RouteComponentProps } from "react-router-dom";
 import DAppLoading from "../../../shared/components/DAppLoading";
 import { RootState } from "../../../shared/reducers";
 import { useGetAssetQuery } from "../../assets/assets.api";
-import { RealEstateDetails } from "../../realEstateDetails/RealEstateDetails";
-import { RealEstateInfo } from "../../realEstateInfo/RealEstateInfo";
-import { RealEstateListing } from "../../realEstateListing/RealEstateListing";
+import ListingDetails from "../../listingDetails/ListingDetails";
+import ListingInfo from "../../listingInfo/ListingInfo";
+import Listing from "../../listings/Listings";
 
-interface IRealEstateDetailsViewParams {
+
+interface IListingDetailsViewParams {
   [x: string]: string;
 }
 
-interface IRealEstateDetailsView extends RouteComponentProps<IRealEstateDetailsViewParams> {}
+interface IListingDetailsView extends RouteComponentProps<IListingDetailsViewParams> {}
 
-type IProps = IRealEstateDetailsView;
+type IProps = IListingDetailsView;
 
-const RealEstateDetailsView = (props: IProps) => {
+const ListingDetailsView = (props: IProps) => {
   const { match } = props;
   const { id } = match.params;
   const { isLoading } = useGetAssetQuery(id);
@@ -33,14 +34,14 @@ const RealEstateDetailsView = (props: IProps) => {
     <>
       {!isLoading && asset !== null ? (
         <>
-          <RealEstateInfo asset={asset} />
-          <RealEstateDetails />
+          <ListingInfo asset={asset} />
+          <ListingDetails />
           <CRow className="mx-0">
             <CCol xs={12}>
               <CLabel className="text-primary content-title mt-3">More listing</CLabel>
             </CCol>
             <CCol xs={12} className="px-0">
-              <RealEstateListing />
+              <Listing />
             </CCol>
           </CRow>
         </>
@@ -51,4 +52,4 @@ const RealEstateDetailsView = (props: IProps) => {
   );
 };
 
-export default RealEstateDetailsView;
+export default ListingDetailsView;

@@ -1,4 +1,4 @@
-export interface IRealEstateDetails {
+export interface IListingDetails {
     address: string,
     type: string,
     area: string,

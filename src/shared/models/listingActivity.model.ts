@@ -1,6 +1,6 @@
 import { Status } from "../../enumeration/status";
 
-export interface IRealEstateActivity {
+export interface IListingActivity {
     activityName: string,
     bonusRate: string,
     registerLevel: string,
@@ -8,7 +8,7 @@ export interface IRealEstateActivity {
     createdDate: string,
 }
 
-export interface IRegisterRewardHistory extends IRealEstateActivity {
+export interface IRegisterRewardHistory extends IListingActivity {
     status: Status,
 }
 

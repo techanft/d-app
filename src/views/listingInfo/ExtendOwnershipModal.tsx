@@ -16,31 +16,34 @@ import {
 import { Formik } from 'formik';
 import React from 'react';
 import * as Yup from 'yup';
+import { estimateOwnership } from '../../shared/helper';
 
-interface IWithdrawTokenModal {
-  visible: boolean;
-  setVisible: (visible: boolean) => void;
+interface IExtendOwnershipModal {
+  isVisible: boolean;
+  setVisibility: (visible: boolean) => void;
 }
 
-const WithdrawTokenModal = (props: IWithdrawTokenModal) => {
-  const { visible, setVisible } = props;
-  const closeModal = (key: boolean) => (): void => setVisible(key);
+const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
+  const { isVisible, setVisibility } = props;
+  const closeModal = () => (): void => setVisibility(false);
 
   const initialValues = {
     totalToken: 10000,
     totalTokenRecharged: 5000,
     maxTokenWithdraw: 1000,
-    tokenWithdraw: 0,
+    tokenRecharge: 0,
+    workFee: 5000,
   };
 
   const validationSchema = Yup.object().shape({
-    tokenWithdraw: Yup.number().required('Vui lòng nhập số token muốn rút'),
+    tokenRecharge: Yup.number().required('Vui lòng nhập số token muốn nạp'),
   });
 
+
   return (
-    <CModal show={visible} onClose={closeModal(false)} closeOnBackdrop={false} centered className="border-radius-modal">
+    <CModal show={isVisible} onClose={closeModal()} centered className="border-radius-modal">
       <CModalHeader className="justify-content-center">
-        <CModalTitle className="modal-title-style">Rút ANFT</CModalTitle>
+        <CModalTitle className="modal-title-style">Nạp ANFT</CModalTitle>
       </CModalHeader>
       <Formik
         enableReinitialize
@@ -55,40 +58,42 @@ const WithdrawTokenModal = (props: IWithdrawTokenModal) => {
                 <CCol xs={12}>
                   <CFormGroup row>
                     <CCol xs={8}>
-                      <CLabel className="withdraw-token-title">Số ANFT bạn đã nạp</CLabel>
+                      <CLabel className="recharge-token-title">Số ANFT bạn đã nạp</CLabel>
                     </CCol>
                     <CCol xs={4}>
                       <p className="text-primary text-right">{values.totalTokenRecharged}</p>
                     </CCol>
                   </CFormGroup>
                   <CFormGroup row>
-                    <CCol xs={8}>
-                      <CLabel className="withdraw-token-title">Số ANFT Tối đa bạn rút</CLabel>
-                    </CCol>
-                    <CCol xs={4}>
-                      <p className="text-primary text-right">{values.maxTokenWithdraw}</p>
-                    </CCol>
-                  </CFormGroup>
-                  <CFormGroup row>
                     <CCol xs={12}>
-                      <CLabel className="withdraw-token-title">Số ANFT muốn rút</CLabel>
+                      <CLabel className="recharge-token-title">Số ANFT muốn nạp</CLabel>
                     </CCol>
                     <CCol>
                       <CInput
                         onChange={handleChange}
-                        id="tokenWithdraw"
+                        id="tokenRecharge"
                         autoComplete="off"
-                        name="tokenWithdraw"
-                        value={values.tokenWithdraw || ''}
+                        name="tokenRecharge"
+                        value={values.tokenRecharge || ''}
                         onBlur={handleBlur}
                         className="btn-radius-50"
                         type="number"
                       />
                       <CInvalidFeedback
-                        className={!!errors.tokenWithdraw && touched.tokenWithdraw ? 'd-block' : 'd-none'}
+                        className={!!errors.tokenRecharge && touched.tokenRecharge ? 'd-block' : 'd-none'}
                       >
-                        {errors.tokenWithdraw}
+                        {errors.tokenRecharge}
                       </CInvalidFeedback>
+                    </CCol>
+                  </CFormGroup>
+                  <CFormGroup row>
+                    <CCol xs={8}>
+                      <CLabel className="recharge-token-title">Ownership Period</CLabel>
+                    </CCol>
+                    <CCol xs={4}>
+                      <p className="text-primary text-right">
+                        {estimateOwnership(values.tokenRecharge, values.workFee)} days
+                      </p>
                     </CCol>
                   </CFormGroup>
                 </CCol>
@@ -97,8 +102,8 @@ const WithdrawTokenModal = (props: IWithdrawTokenModal) => {
             <CModalFooter className="justify-content-between">
               <CCol>
                 <CButton
-                  className="px-2 w-100 btn-font-style btn btn-outline-primary btn-radius-50"
-                  onClick={closeModal(false)}
+                  className="px-2 w-100 btn-font-style btn-radius-50 btn btn-outline-primary"
+                  onClick={closeModal()}
                 >
                   HỦY
                 </CButton>
@@ -116,4 +121,4 @@ const WithdrawTokenModal = (props: IWithdrawTokenModal) => {
   );
 };
 
-export default WithdrawTokenModal;
+export default ExtendOwnershipModal;

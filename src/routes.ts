@@ -2,22 +2,22 @@ import React from 'react'
 
 const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
 
-const RealEstateDetailsView = React.lazy(() => import('./views/realEstateManagement/shared/RealEstateDetailsView'))
+const ListingDetailsView = React.lazy(() => import('./views/listingManagement/shared/ListingDetailsView'))
 
-const RegisterReward = React.lazy(() => import('./views/realEstateManagement/shared/RegisterReward'))
+const RegisterReward = React.lazy(() => import('./views/listingManagement/shared/RegisterReward'))
 
-const ActivityLogs = React.lazy(() => import('./views/realEstateManagement/shared/ActivityLogs'))
+const ActivityLogs = React.lazy(() => import('./views/listingManagement/shared/ActivityLogs'))
 
-const WorkerManagement = React.lazy(() => import('./views/realEstateManagement/owner/WorkerManagement'))
+const WorkerManagement = React.lazy(() => import('./views/listingManagement/owner/WorkerManagement'))
 
 // https://github.com/ReactTraining/react-router/tree/master/packages/react-router-config
 const routes = [
   { path: '/', exact: true, name: 'Home' },
   { path: '/dashboard', name: 'Dashboard', component: Dashboard },
   {
-    path: "/cms/:id/realestate_details_view",
-    name: "RealEstateDetailsView",
-    component: RealEstateDetailsView,
+    path: "/cms/:id/listing_details_view",
+    name: "ListingDetailsView",
+    component: ListingDetailsView,
     exact: true,
   },
   {
