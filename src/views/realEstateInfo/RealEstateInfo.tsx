@@ -2,7 +2,7 @@ import { CButton, CCard, CCardBody, CCol, CCollapse, CContainer, CDataTable, CLi
 import { faArrowAltCircleDown, faArrowAltCircleUp, faClipboard, faDonate, faEdit, faIdBadge } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import dayjs from "dayjs";
-import { BigNumber, ethers } from "ethers";
+import { ethers } from "ethers";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { APP_DATE_FORMAT } from "../../config/constants";
@@ -41,7 +41,7 @@ export const RealEstateInfo = ({asset}: IRealEstateInfoProps) => {
 
 
   // Nên chuyển logic getListingInfo này vào api/store và lấy ra
-  const getListingInfo = async (listing: IAsset) => {
+  const getListingInfo =  (listing: IAsset) => {
     // create asset contract reading from ether
     const assetContract = getListingContractRead(listing.address, provider);
 
