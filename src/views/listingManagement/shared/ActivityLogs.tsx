@@ -15,7 +15,7 @@ import {
 import React from 'react';
 import { mapStatus, mapStatusBadge, Status } from '../../../enumeration/status';
 import { mapWorkerStatusBadge, WorkerStatus } from '../../../enumeration/workerStatus';
-import { IRegisterRewardHistory } from '../../../shared/models/realEstateActivity.model';
+import { IRegisterRewardHistory } from '../../../shared/models/listingActivity.model';
 import { IWorkerPermission } from '../../../shared/models/workerPermission.model';
 import './index.scss';
 

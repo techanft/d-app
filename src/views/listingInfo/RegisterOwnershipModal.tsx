@@ -7,20 +7,20 @@ import * as Yup from "yup";
 import { estimateOwnership, insertCommas, unInsertCommas } from "../../shared/helper";
 import { getListingContractWrite } from "../../shared/helpers";
 import { RootState } from "../../shared/reducers";
-import { extendOwnerShip } from "./realEstate.abi";
-import { fetching } from "./realEstate.reducer";
+import { extendOwnerShip } from "./listing.api";
+import { fetching } from "./listings.reducer";
 
 interface IRegisterOwnershipModal {
   address: string;
   dailyPayment: string;
-  visible: boolean;
-  setVisible: (visible: boolean) => void;
+  isVisible: boolean;
+  setVisibility: (isVisible: boolean) => void;
 }
 
 const RegisterOwnershipModal = (props: IRegisterOwnershipModal) => {
-  const { dailyPayment, address, visible, setVisible } = props;
+  const { dailyPayment, address, isVisible, setVisibility } = props;
   const dispatch = useDispatch();
-  const closeModal = (key: boolean) => (): void => setVisible(key);
+  const closeModal = () => (): void => setVisibility(false);
 
 
   const { signer } = useSelector((state: RootState) => state.walletReducer);
@@ -42,7 +42,7 @@ const RegisterOwnershipModal = (props: IRegisterOwnershipModal) => {
 
   // Cần catch các error khi user reject transaction với metamask
   return (
-    <CModal show={visible} onClose={closeModal(false)} closeOnBackdrop={false} centered className="border-radius-modal">
+    <CModal show={isVisible} onClose={closeModal()} centered className="border-radius-modal">
       <CModalHeader className="justify-content-center">
         <CModalTitle className="modal-title-style">Đăng ký sở hữu</CModalTitle>
       </CModalHeader>
@@ -60,7 +60,7 @@ const RegisterOwnershipModal = (props: IRegisterOwnershipModal) => {
           // };
           dispatch(fetching());
           dispatch(extendOwnerShip({...values, tokenAmount: ethers.utils.parseUnits(values.tokenAmount.toString())}));
-          setVisible(false);
+          setVisibility(false);
         }}
       >
         {({ values, errors, touched, setFieldValue, handleSubmit, handleBlur }) => (
@@ -82,7 +82,6 @@ const RegisterOwnershipModal = (props: IRegisterOwnershipModal) => {
                     </CCol>
                     <CCol>
                       <CInput
-                        // onChange={handleChange}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                           setFieldValue(`tokenAmount`, unInsertCommas(e.target.value));
                         }}
@@ -90,7 +89,6 @@ const RegisterOwnershipModal = (props: IRegisterOwnershipModal) => {
                         autoComplete="off"
                         name="tokenAmount"
                         value={values.tokenAmount ? insertCommas(values.tokenAmount) : ""}
-                        // value={values.tokenAmount || ""}
                         onBlur={handleBlur}
                         className="btn-radius-50"
                       />
@@ -110,7 +108,7 @@ const RegisterOwnershipModal = (props: IRegisterOwnershipModal) => {
             </CModalBody>
             <CModalFooter className="justify-content-between">
               <CCol>
-                <CButton className="px-2 w-100 btn-font-style btn-radius-50 btn btn-outline-primary" onClick={closeModal(false)}>
+                <CButton className="px-2 w-100 btn-font-style btn-radius-50 btn btn-outline-primary" onClick={closeModal()}>
                   HỦY
                 </CButton>
               </CCol>

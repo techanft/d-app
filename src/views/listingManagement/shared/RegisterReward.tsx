@@ -23,7 +23,7 @@ import { Formik } from 'formik';
 import React, { useState } from 'react';
 import bgImg from '../../../assets/img/registerBonus.svg';
 import ConfirmModal from '../../../shared/components/ConfirmModal';
-import { IRealEstateActivity } from '../../../shared/models/realEstateActivity.model';
+import { IListingActivity } from '../../../shared/models/listingActivity.model';
 import './index.scss';
 
 const RegisterReward = () => {
@@ -53,7 +53,7 @@ const RegisterReward = () => {
     },
   ];
 
-  const activitiesList: IRealEstateActivity[] = [
+  const activitiesList: IListingActivity[] = [
     {
       activityName: 'Lorem is pum 100000000000000000000000',
       bonusRate: '0.3%',
@@ -129,10 +129,10 @@ const RegisterReward = () => {
           <CLabel className="text-primary content-title">Chọn mức đăng ký</CLabel>
         </CCol>
         <CCol xs={12}>
-          <CCard className="m-0 rb-card-img">
-            <img src={bgImg} alt="realEstateImg" className="w-100 h-100" />
-            <CCardBody className="p-0 rb-card-body">
-              <CCardTitle className="rb-card-title mb-0 px-3 py-2 w-100">
+          <CCard className="m-0 listing-img-card">
+            <img src={bgImg} alt="listingImg" className="w-100 h-100" />
+            <CCardBody className="p-0 listing-card-body">
+              <CCardTitle className="listing-card-title mb-0 px-3 py-2 w-100">
                 <p className="mb-2 text-white content-title">125 - Hoàn Kiếm - Hà Nội</p>
                 <p className="mb-0 text-white detail-title-font">
                   Hoạt động <b>{activitiesList.length}</b>
@@ -148,7 +148,7 @@ const RegisterReward = () => {
             hover
             header
             scopedSlots={{
-              activityName: (item: IRealEstateActivity) => {
+              activityName: (item: IListingActivity) => {
                 return (
                   <td
                     onClick={() => {
@@ -161,16 +161,16 @@ const RegisterReward = () => {
                   </td>
                 );
               },
-              bonusRate: (item: IRealEstateActivity) => {
+              bonusRate: (item: IListingActivity) => {
                 return <td>{item.bonusRate ? item.bonusRate : '_'}</td>;
               },
-              registerLevel: (item: IRealEstateActivity) => {
+              registerLevel: (item: IListingActivity) => {
                 return <td>{item.registerLevel ? item.registerLevel : '_'}</td>;
               },
-              reward: (item: IRealEstateActivity) => {
+              reward: (item: IListingActivity) => {
                 return <td>{item.reward ? item.reward : '_'}</td>;
               },
-              details: (item: IRealEstateActivity) => {
+              details: (item: IListingActivity) => {
                 return (
                   <Formik enableReinitialize initialValues={item} onSubmit={(values) => {}}>
                     {({ values, handleChange, handleBlur, handleSubmit }) => (

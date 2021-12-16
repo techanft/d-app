@@ -1,7 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { ethers } from "ethers";
-
-// Tên file abi => api
 interface IExtendOwnerShip {
   contract: ethers.Contract;
   tokenAmount: ethers.BigNumber;

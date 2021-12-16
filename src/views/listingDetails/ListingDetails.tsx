@@ -1,11 +1,11 @@
 import CIcon from '@coreui/icons-react';
 import { CCol, CContainer, CLabel, CLink, CRow } from '@coreui/react';
 import React from 'react';
-import { IRealEstateDetails } from '../../shared/models/realEstateDetails.model';
+import { IListingDetails } from '../../shared/models/listingDetails.model';
 import './index.scss';
 
-export const RealEstateDetails = () => {
-  const demoRealEstateDetails: IRealEstateDetails = {
+const ListingDetails = () => {
+  const demoListingDetails: IListingDetails = {
     address: 'Ciputra Hanoi',
     type: 'Thuê Biệt Thự/Nhà Ciputra Hanoi',
     area: '400',
@@ -22,27 +22,27 @@ export const RealEstateDetails = () => {
         </CCol>
         <CCol xs={6}>
           <p className="detail-title-font my-2">Khu Vực</p>
-          <p className="my-2 detail-value">{demoRealEstateDetails.address}</p>
+          <p className="my-2 detail-value">{demoListingDetails.address}</p>
         </CCol>
         <CCol xs={6}>
           <p className="detail-title-font my-2">Loại BDS</p>
-          <p className="my-2 detail-value">{demoRealEstateDetails.type}</p>
+          <p className="my-2 detail-value">{demoListingDetails.type}</p>
         </CCol>
         <CCol xs={6}>
           <p className="detail-title-font my-2">Diện tích</p>
-          <p className="my-2 detail-value">{demoRealEstateDetails.area}</p>
+          <p className="my-2 detail-value">{demoListingDetails.area}</p>
         </CCol>
         <CCol xs={6}>
           <p className="detail-title-font my-2">Tầng/hướng</p>
-          <p className="my-2 detail-value">{demoRealEstateDetails.floorDirect}</p>
+          <p className="my-2 detail-value">{demoListingDetails.floorDirect}</p>
         </CCol>
         <CCol xs={6}>
           <p className="detail-title-font my-2">Chất lượng công trình</p>
-          <p className="my-2 detail-value">{demoRealEstateDetails.quality}</p>
+          <p className="my-2 detail-value">{demoListingDetails.quality}</p>
         </CCol>
         <CCol xs={6}>
           <p className="detail-title-font my-2">Dịch vụ khai thác</p>
-          <p className="my-2 detail-value">{demoRealEstateDetails.service}</p>
+          <p className="my-2 detail-value">{demoListingDetails.service}</p>
         </CCol>
       </CRow>
       <CRow className="m-0 p-0">
@@ -72,3 +72,5 @@ export const RealEstateDetails = () => {
     </CContainer>
   );
 };
+
+export default ListingDetails;

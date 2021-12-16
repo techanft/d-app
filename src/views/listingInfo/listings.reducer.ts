@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { extendOwnerShip } from "./realEstate.abi";
+import { extendOwnerShip } from "./listing.api";
 
 interface IAuthenticationState {
   extendOwnerShipTHash: string;
@@ -17,8 +17,8 @@ const initialState: IAuthenticationState = {
 
 // export type IAuthentication = Readonly<typeof initialState>;
 
-const realEstateSlice = createSlice({
-  name: "realEstateSlice",
+const listingSlice = createSlice({
+  name: "listingSlice",
   initialState,
   reducers: {
     fetching(state) {
@@ -51,5 +51,5 @@ const realEstateSlice = createSlice({
   },
 });
 
-export default realEstateSlice.reducer;
-export const { fetching, reset, softReset } = realEstateSlice.actions;
+export default listingSlice.reducer;
+export const { fetching, reset, softReset } = listingSlice.actions;
