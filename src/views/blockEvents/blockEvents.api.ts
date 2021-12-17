@@ -1,9 +1,9 @@
 import { baseApi } from "../../shared/baseApi";
-import { IBlockEvent, INewBlockEvent } from "../../shared/models/blockEvents.model";
+import { IEventRecord, INewEventRecord } from "../../shared/models/eventRecord.model";
 
 export interface IGetBlockEvent {
   count: number;
-  results: IBlockEvent[];
+  results: IEventRecord[];
 }
 
 export const blockEventsApi = baseApi.injectEndpoints({
@@ -11,10 +11,10 @@ export const blockEventsApi = baseApi.injectEndpoints({
     getBlockEvents: builder.query<IGetBlockEvent, void>({
       query: () => `block-events`,
     }),
-    getBlockEvent: builder.query<IBlockEvent, string>({
+    getBlockEvent: builder.query<IEventRecord, string>({
       query: (id) => `block-events/${id}`,
     }),
-    createBlockEvent: builder.mutation<IBlockEvent, Partial<INewBlockEvent>>({
+    createBlockEvent: builder.mutation<IEventRecord, Partial<INewEventRecord>>({
       query(body) {
         return {
           url: `block-events`,

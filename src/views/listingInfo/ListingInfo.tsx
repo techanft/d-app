@@ -26,12 +26,12 @@ import React, { useEffect, useState } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import { useDispatch, useSelector } from 'react-redux';
 import { APP_DATE_FORMAT } from '../../config/constants';
-import { BlockType } from '../../enumeration/blockType';
+import { EventType } from '../../enumeration/eventType';
 import { WorkerStatus } from '../../enumeration/workerStatus';
 import InfoLoader from '../../shared/components/InfoLoader';
 import { ToastError, ToastSuccess } from '../../shared/components/Toast';
-import { insertCommas } from '../../shared/helper';
-import { getEllipsisTxt, getListingContractRead, getProvider } from '../../shared/helpers';
+import { insertCommas } from '../../shared/casual-helpers';
+import { getEllipsisTxt, getListingContractRead, getProvider } from '../../shared/blockchain-helpers';
 import { IAsset } from '../../shared/models/assets.model';
 import { IListing } from '../../shared/models/listing.model';
 import { IWorkerPermission } from '../../shared/models/workerPermission.model';
@@ -96,7 +96,7 @@ const ListingInfo = ({ asset }: IListingInfoProps) => {
   const provider = getProvider();
 
   // Nên chuyển logic getListingInfo này vào api/store và lấy ra
-  const getListingInfo =  (listing: IAsset) => {
+  const getListingInfo = (listing: IAsset) => {
     // create asset contract reading from ether
     const assetContract = getListingContractRead(listing.address, provider);
 
@@ -188,7 +188,7 @@ const ListingInfo = ({ asset }: IListingInfoProps) => {
       const body = {
         assetId: asset.id,
         hash: extendOwnerShipTHash,
-        eventType: BlockType.OWNER_SHIP_EXTENSION,
+        eventType: EventType.OWNER_SHIP_EXTENSION,
       };
       createBlockEvent(body);
       dispatch(reset());

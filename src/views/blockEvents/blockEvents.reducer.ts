@@ -1,10 +1,10 @@
 import { createEntityAdapter, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { IBlockEvent } from "../../shared/models/blockEvents.model";
+import { IEventRecord } from "../../shared/models/eventRecord.model";
 import { blockEventsApi, IGetBlockEvent } from "./blockEvents.api";
 
 interface IInitialState {
-  blockEvents: IBlockEvent[];
-  blockEvent: IBlockEvent | null;
+  blockEvents: IEventRecord[];
+  blockEvent: IEventRecord | null;
   createBlockEventSuccess: boolean;
   errorMessage: string;
   loading: boolean;
@@ -51,7 +51,7 @@ const { actions, reducer } = createSlice({
       state.errorMessage = payload?.message;
       state.loading = false;
     });
-    builder.addMatcher(blockEventsApi.endpoints.getBlockEvent.matchFulfilled, (state, { payload }: PayloadAction<IBlockEvent>) => {
+    builder.addMatcher(blockEventsApi.endpoints.getBlockEvent.matchFulfilled, (state, { payload }: PayloadAction<IEventRecord>) => {
       state.blockEvent = payload;
       state.loading = false;
     });
@@ -59,7 +59,7 @@ const { actions, reducer } = createSlice({
       state.errorMessage = payload?.message;
       state.loading = false;
     });
-    builder.addMatcher(blockEventsApi.endpoints.createBlockEvent.matchFulfilled, (state, { payload }: PayloadAction<IBlockEvent>) => {
+    builder.addMatcher(blockEventsApi.endpoints.createBlockEvent.matchFulfilled, (state, { payload }: PayloadAction<IEventRecord>) => {
       state.createBlockEventSuccess = true;
       state.loading = false;
     });

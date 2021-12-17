@@ -1,4 +1,4 @@
-export enum BlockType {
+export enum EventType {
     UNREGISTER = 'UNREGISTER',
     REGISTER = 'REGISTER',
     CLAIM = 'CLAIM',

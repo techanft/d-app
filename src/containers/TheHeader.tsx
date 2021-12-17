@@ -21,7 +21,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { default as React, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { ToastError } from '../shared/components/Toast';
-import { getEllipsisTxt, getProvider, getTokenContractRead } from '../shared/helpers';
+import { getEllipsisTxt, getProvider, getTokenContractRead } from '../shared/blockchain-helpers';
 import { RootState } from '../shared/reducers';
 import { getAddress, getContractWithSigner, getProviderLogin, getSigner } from '../views/walletInfo/wallet.api';
 import { softReset } from '../views/walletInfo/wallet.reducer';
