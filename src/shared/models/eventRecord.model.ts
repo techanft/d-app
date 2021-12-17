@@ -1,7 +1,7 @@
 import { EventType } from "../../enumeration/eventType";
 
 export interface INewEventRecord {
-  assetId: string;
+  assetId: number;
   hash: string;
   eventType: EventType;
 }

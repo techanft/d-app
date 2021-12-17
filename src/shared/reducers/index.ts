@@ -1,5 +1,5 @@
 import { combineReducers } from "redux";
-import assetsReducer from "../../views/assets/assets.reducer";
+import assets from "../../views/assets/assets.reducer";
 import blockEventsReducer from "../../views/blockEvents/blockEvents.reducer";
 import listingsReducer from "../../views/listingInfo/listings.reducer";
 import walletReducer from "../../views/walletInfo/wallet.reducer";
@@ -7,7 +7,7 @@ import { baseApi } from "../baseApi";
 
 const rootReducer = combineReducers({
   walletReducer,
-  assetsReducer,
+  assets,
   listingsReducer,
   blockEventsReducer,
   [baseApi.reducerPath]: baseApi.reducer,

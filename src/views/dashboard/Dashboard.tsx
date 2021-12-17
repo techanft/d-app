@@ -8,6 +8,9 @@ import Listings from "../listings/Listings";
 interface IDashboard extends RouteComponentProps {}                                                                                                        
 
 const Dashboard = (props: IDashboard) => {
+  
+  
+  
   return (
     <>
       <CSubheader className="sub-header mt-0 justify-content-center align-items-center">
@@ -62,7 +65,7 @@ const Dashboard = (props: IDashboard) => {
           </CCol>
         </CRow>
       </CSubheader>
-      <Listings />
+      <Listings routingProps={props} />
     </>
   );
 };

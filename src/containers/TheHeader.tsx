@@ -73,7 +73,7 @@ const TheHeader = () => {
           </CButton>
         </CHeaderNavItem>
         <CHeaderNavItem>
-          <CLink to="/dashboard">
+          <CLink to="/listings">
             <p className="header-title content-title mb-0">Dashboard</p>
           </CLink>
         </CHeaderNavItem>

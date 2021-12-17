@@ -33,7 +33,7 @@ const TheContent = () => {
                 )
               );
             })}
-            <Redirect from="/" to="/dashboard" />
+            <Redirect from="/" to="/listings" />
           </Switch>
         </Suspense>
       </CContainer>
