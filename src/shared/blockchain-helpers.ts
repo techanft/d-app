@@ -20,7 +20,7 @@ export const TOKEN_INSTANCE = (signer?: ethers.providers.JsonRpcSigner ) : Token
   try {
     const contractAddress = tokenArtifact.address;
     const contractABI = tokenArtifact.abi;
-    return <Token> new ethers.Contract(contractAddress, contractABI, signer || _provider);
+    return new ethers.Contract(contractAddress, contractABI, signer || _provider) as Token;
   } catch (error) {
     console.log(`Error getting token instance: ${error}`);
     return null;
@@ -30,7 +30,7 @@ export const TOKEN_INSTANCE = (signer?: ethers.providers.JsonRpcSigner ) : Token
 export const LISTING_INSTANCE = (listingAdrr: string, signer?: ethers.providers.JsonRpcSigner) :  Listing | null => {
   try {
     const contractABI = listingArtifact.abi;
-    return <Listing> new ethers.Contract(listingAdrr, contractABI, signer || _provider);
+    return new ethers.Contract(listingAdrr, contractABI, signer || _provider) as Listing;
   } catch (error) {
     console.log(`Error getting listing instance: ${error}`);
     return null;

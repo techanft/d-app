@@ -71,18 +71,17 @@ const getListingCompleteInfo = async (listing: IAsset): Promise<IAsset> => {
 const getListingsPartialInfo = async (listings: IAsset[]): Promise<IAsset[]> => {
   try {
     // Only value and dailyPayment is neccessary
-    const listingAddrs = listings.map(({ address }) => address);
+    const valuePromises: Promise<BigNumber | undefined>[] = [];
+    const paymentPromises: Promise<BigNumber | undefined>[] = [];
 
-    // Generating promises
-    const valuePromises = listingAddrs.map((addr) => {
-      const instance = LISTING_INSTANCE(addr);
-      if (instance) return instance.value();
-    });
-
-    const paymentPromises = listingAddrs.map((addr) => {
-      const instance = LISTING_INSTANCE(addr);
-      if (instance) return instance.dailyPayment();
-    });
+    for (let index = 0; index < listings.length; index++) {
+      const { address } = listings[index];
+      const instance = LISTING_INSTANCE(address);
+      if ( instance ) {
+        valuePromises.push(instance.value());
+        paymentPromises.push(instance.dailyPayment());
+      }
+    }
 
     // Calling promises
     const listingValues = await Promise.all(valuePromises);
