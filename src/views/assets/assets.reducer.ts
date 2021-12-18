@@ -84,7 +84,7 @@ const { selectById } = assetsAdapter.getSelectors();
 
 const getAssetState = (rootState: RootState) => rootState.assets;
 
-export const selectEntityById = (id: string) => {
+export const selectEntityById = (id: number) => {
   return createSelector(getAssetState, (state) => selectById(state, id)
   );
 };

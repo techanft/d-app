@@ -4,7 +4,7 @@ import { BigNumber, ethers } from 'ethers';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
-import { insertCommas } from '../../shared/casual-helpers';
+import { formatBNToken, insertCommas } from '../../shared/casual-helpers';
 import Loading from '../../shared/components/Loading';
 import { IParams } from '../../shared/models/base.model';
 import { RootState } from '../../shared/reducers';
@@ -65,7 +65,7 @@ const Listings = ({routingProps}: IListingsProps) => {
 
 
   const onRedirecting = (path: string) => {
-    window.scrollTo(0, 0);
+    window.scrollTo(0, 0); 
     return () => {
       history.push(path);
     }
@@ -85,11 +85,11 @@ const Listings = ({routingProps}: IListingsProps) => {
                     <div className="media-body align-items-around ml-2">
                       <span className="info-box-text text-dark">{`${item.id} Yên Sở - Hoàng Mai - Hà Nội`}</span>
                       <p className={`info-box-token text-primary mt-2 mb-0`}>
-                        Value: {item.value ? insertCommas(ethers.utils.formatEther(item.value.toString())) : 0} ANFT{' '}
+                        Value: {formatBNToken(item.value, true)}
                       </p>
                       <p className={`info-box-commissionRate text-success mt-2 mb-0`}>
                         <CIcon name="cil-flower" />{' '}
-                        {insertCommas(item.dailyPayment ? ethers.utils.formatEther(item.dailyPayment.toString()) : 0)}
+                        {formatBNToken(item.dailyPayment, true)}
                       </p>
                     </div>
                   </div>

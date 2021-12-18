@@ -25,7 +25,7 @@ const ListingDetailsView = (props: IListingDetailsView) => {
 
   const { initialState } = useSelector((state: RootState) => state.assets);
   const { errorMessage, entityLoading } = initialState;
-  const listing = useSelector(selectEntityById(id));
+  const listing = useSelector(selectEntityById(Number(id)));
 
   useEffect(() => {
     if (id) {
@@ -37,9 +37,8 @@ const ListingDetailsView = (props: IListingDetailsView) => {
 
   return (
     <>
-      {listing ? (
-        <>
-          <ListingInfo asset={listing} />
+   
+          <ListingInfo listingId={Number(id)} />
           <ListingDetails />
           <CRow className="mx-0">
             <CCol xs={12}>
@@ -50,10 +49,7 @@ const ListingDetailsView = (props: IListingDetailsView) => {
             </CCol>
           </CRow>
         </>
-      ) : (
-        <Loading />
-      )}
-    </>
+
   );
 };
 

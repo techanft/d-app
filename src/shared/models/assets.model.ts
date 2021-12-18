@@ -1,4 +1,4 @@
-import { BigNumber } from "ethers";
+import { BigNumber } from 'ethers';
 
 export interface IAsset {
   id: number;
@@ -9,8 +9,8 @@ export interface IAsset {
   value: BigNumber | undefined;
   dailyPayment: BigNumber | undefined;
   ownership: BigNumber | undefined;
-owner: string | undefined;
-validator: string| undefined;
-totalStake: BigNumber | undefined;
-rewardPool: BigNumber | undefined;
+  owner: string | undefined;
+  validator: string | undefined;
+  totalStake: BigNumber | undefined;
+  rewardPool: BigNumber | undefined;
 }
