@@ -5,7 +5,7 @@ import { getAddress, getContractWithSigner, getProviderLogin, getSigner, getTran
 interface IAuthenticationState {
   transactionReceipt:ethers.providers.TransactionReceipt|null;
   getTransactionRecepitSuccess:boolean;
-  signerAddress: string;
+  signerAddress: string | undefined;
   getSignerAddressSuccess: boolean;
   contractWithSigner: ethers.Contract | null;
   getContractWithSignerSuccess: boolean;
@@ -21,7 +21,7 @@ interface IAuthenticationState {
 const initialState: IAuthenticationState = {
   transactionReceipt:null,
   getTransactionRecepitSuccess:false,
-  signerAddress: "",
+  signerAddress: undefined,
   getSignerAddressSuccess: false,
   contractWithSigner: null,
   getContractWithSignerSuccess: false,

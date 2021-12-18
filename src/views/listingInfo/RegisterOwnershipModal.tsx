@@ -7,7 +7,7 @@ import * as Yup from "yup";
 import { estimateOwnership, insertCommas, unInsertCommas } from "../../shared/casual-helpers";
 import { getListingContractWrite } from "../../shared/blockchain-helpers";
 import { RootState } from "../../shared/reducers";
-import { extendOwnerShip } from "./listing.api";
+import { extendOwnership } from "./listing.api";
 import { fetching } from "./listings.reducer";
 
 interface IRegisterOwnershipModal {
@@ -59,7 +59,7 @@ const RegisterOwnershipModal = (props: IRegisterOwnershipModal) => {
           //   tokenAmount: ethers.utils.parseUnits(values.registrationToken.toString()),
           // };
           dispatch(fetching());
-          dispatch(extendOwnerShip({...values, tokenAmount: ethers.utils.parseUnits(values.tokenAmount.toString())}));
+          dispatch(extendOwnership({...values, tokenAmount: ethers.utils.parseUnits(values.tokenAmount.toString())}));
           setVisibility(false);
         }}
       >

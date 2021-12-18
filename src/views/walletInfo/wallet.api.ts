@@ -1,5 +1,5 @@
-import { createAsyncThunk } from "@reduxjs/toolkit";
-import { ethers } from "ethers";
+import { createAsyncThunk } from '@reduxjs/toolkit';
+import { ethers } from 'ethers';
 
 interface IContractSigner {
   contract: ethers.Contract;
@@ -11,17 +11,17 @@ interface ITransactionReceipt {
 }
 
 export const getProviderLogin = createAsyncThunk(
-  "getProviderLogin",
+  'getProviderLogin',
   async (provider: ethers.providers.Web3Provider, thunkAPI) => {
     try {
-      await provider.send("eth_requestAccounts", []);
+      await provider.send('eth_requestAccounts', []);
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
     }
   }
 );
 
-export const getSigner = createAsyncThunk("getSigner", async (provider: ethers.providers.Web3Provider, thunkAPI) => {
+export const getSigner = createAsyncThunk('getSigner', async (provider: ethers.providers.Web3Provider, thunkAPI) => {
   try {
     const result = provider.getSigner();
     return result;
@@ -31,7 +31,7 @@ export const getSigner = createAsyncThunk("getSigner", async (provider: ethers.p
 });
 
 export const getContractWithSigner = createAsyncThunk(
-  "getContractWithSigner",
+  'getContractWithSigner',
   async (body: IContractSigner, thunkAPI) => {
     const { contract, signer } = body;
     try {
@@ -43,7 +43,7 @@ export const getContractWithSigner = createAsyncThunk(
   }
 );
 
-export const getAddress = createAsyncThunk("getAddress", async (signer: ethers.providers.JsonRpcSigner, thunkAPI) => {
+export const getAddress = createAsyncThunk('getAddress', async (signer: ethers.providers.JsonRpcSigner, thunkAPI) => {
   try {
     const result = await signer.getAddress();
     return result;
@@ -53,7 +53,7 @@ export const getAddress = createAsyncThunk("getAddress", async (signer: ethers.p
 });
 
 export const getTransactionReceipt = createAsyncThunk(
-  "getTransactionReceipt",
+  'getTransactionReceipt',
   async (body: ITransactionReceipt, thunkAPI) => {
     const { provider, transactionHash } = body;
     try {

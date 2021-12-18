@@ -265,8 +265,8 @@ const ListingInfo = ({ asset }: IListingInfoProps) => {
     return currTimstamp <= Number(timeStamp);
   };
 
-  const getListingOwnerStatus = (userAddress: string, listingInfo: IListing | null) => {
-    if (listingInfo !== null) {
+  const getListingOwnerStatus = (userAddress: string | undefined, listingInfo: IListing | null) => {
+    if (listingInfo) {
       const { ownership, owner } = listingInfo;
       if (userAddress && userAddress === owner) {
         return (
@@ -462,7 +462,7 @@ const ListingInfo = ({ asset }: IListingInfoProps) => {
                     </CLink> */}
                   </CRow>
                   <CRow className="mt-2 mx-0">
-                    <CLink to="/cms/register_reward">
+                    <CLink to="/register_reward">
                       <FontAwesomeIcon icon={faDonate} /> Đăng ký nhận thưởng
                     </CLink>
                   </CRow>
@@ -509,7 +509,7 @@ const ListingInfo = ({ asset }: IListingInfoProps) => {
                     </CLink> */}
                   </CRow>
                   <CRow className="mx-0">
-                    <CLink to="/cms/worker_management">
+                    <CLink to="/worker_management">
                       <FontAwesomeIcon icon={faClipboard} /> Quản lý quyền khai thác
                     </CLink>
                   </CRow>

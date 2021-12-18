@@ -1,8 +1,8 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { extendOwnerShip } from "./listing.api";
+import { extendOwnership } from "./listing.api";
 
 interface IAuthenticationState {
-  extendOwnerShipTHash: string;
+  extendOwnerShipTHash: string | undefined;
   extendOwnerShipSuccess: boolean;
   loading: boolean;
   errorMessage: string | null;
@@ -37,13 +37,13 @@ const listingSlice = createSlice({
     },
   },
   extraReducers: {
-    [extendOwnerShip.fulfilled.type]: (state, { payload }: PayloadAction<string>) => {
+    [extendOwnership.fulfilled.type]: (state, { payload }: PayloadAction<string>) => {
       state.extendOwnerShipTHash = payload;
       state.extendOwnerShipSuccess = true;
       state.errorMessage = null;
       state.loading = false;
     },
-    [extendOwnerShip.rejected.type]: (state, { payload }) => {
+    [extendOwnership.rejected.type]: (state, { payload }) => {
       state.extendOwnerShipSuccess = false;
       state.errorMessage = payload;
       state.loading = false;

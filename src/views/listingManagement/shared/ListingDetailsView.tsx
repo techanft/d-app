@@ -1,14 +1,15 @@
-import { CCol, CLabel, CRow } from "@coreui/react";
-import React from "react";
-import { useSelector } from "react-redux";
-import { RouteComponentProps } from "react-router-dom";
-import DAppLoading from "../../../shared/components/DAppLoading";
-import { RootState } from "../../../shared/reducers";
-import { useGetAssetQuery } from "../../assets/assets.api";
-import ListingDetails from "../../listingDetails/ListingDetails";
-import ListingInfo from "../../listingInfo/ListingInfo";
-import Listing from "../../listings/Listings";
-
+import { CCol, CLabel, CRow } from '@coreui/react';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { RouteComponentProps } from 'react-router-dom';
+import Loading from '../../../shared/components/Loading';
+import { RootState } from '../../../shared/reducers';
+import { getEntity } from '../../assets/assets.api';
+import { fetchingEntity, selectEntityById } from '../../assets/assets.reducer';
+// import { useGetAssetQuery } from "../../assets/assets.api";
+import ListingDetails from '../../listingDetails/ListingDetails';
+import ListingInfo from '../../listingInfo/ListingInfo';
+import Listings from '../../listings/Listings';
 
 interface IListingDetailsViewParams {
   [x: string]: string;
@@ -16,37 +17,41 @@ interface IListingDetailsViewParams {
 
 interface IListingDetailsView extends RouteComponentProps<IListingDetailsViewParams> {}
 
-type IProps = IListingDetailsView;
 
-const ListingDetailsView = (props: IProps) => {
+const ListingDetailsView = (props: IListingDetailsView) => {
+  const dispatch = useDispatch();
   const { match } = props;
-  const { id } = match.params;
-  const { isLoading } = useGetAssetQuery(id);
-  const { asset } = useSelector((state: RootState) => state.assetsReducer);
+  const { id } = match.params; 
 
-  // useEffect(() => {
-  //   if (!isLoading) {
-  //     console.log(asset);
-  //   }
-  // }, [isLoading]);
+  const { initialState } = useSelector((state: RootState) => state.assets);
+  const { errorMessage, entityLoading } = initialState;
+  const listing = useSelector(selectEntityById(id));
+
+  useEffect(() => {
+    if (id) {
+      dispatch(fetchingEntity());
+      dispatch(getEntity(Number(id)));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
 
   return (
     <>
-      {!isLoading && asset !== null ? (
+      {listing ? (
         <>
-          <ListingInfo asset={asset} />
+          <ListingInfo asset={listing} />
           <ListingDetails />
           <CRow className="mx-0">
             <CCol xs={12}>
               <CLabel className="text-primary content-title mt-3">More listing</CLabel>
             </CCol>
             <CCol xs={12} className="px-0">
-              <Listing />
+              <Listings routingProps={props} />
             </CCol>
           </CRow>
         </>
       ) : (
-        <DAppLoading />
+        <Loading />
       )}
     </>
   );

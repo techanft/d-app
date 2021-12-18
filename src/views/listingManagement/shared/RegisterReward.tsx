@@ -288,7 +288,7 @@ const RegisterReward = () => {
             <i className="detail-title-font">*Lựa chọn Hoạt động bạn muốn SỬA hoặc HỦY đăng ký</i>
           </CCol>
           <CCol xs={12} className="text-center my-2">
-            <CLink to="/cms/activity_logs">
+            <CLink to="/activity_logs">
               <CIcon name="cil-history" /> Activity Logs
             </CLink>
           </CCol>
