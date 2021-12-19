@@ -1,11 +1,17 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { ethers } from "ethers";
-interface IExtendOwnership {
-  contract: ethers.Contract;
+import { Listing } from "../../typechain";
+
+export interface IExtndOwnrshpIntialValues {
+  listingAddress: string | undefined;
+  tokenAmount: number;
+}
+export interface IExtndOwnershipBody extends Omit<IExtndOwnrshpIntialValues, "tokenAmount"> {
+  contract: Listing;
   tokenAmount: ethers.BigNumber;
 }
 
-export const extendOwnership = createAsyncThunk("extendOwnership", async (body: IExtendOwnership, thunkAPI) => {
+export const extendOwnership = createAsyncThunk("extendOwnership", async (body: IExtndOwnershipBody, thunkAPI) => {
   const { contract, tokenAmount } = body;
   try {
     const result = await contract.extendOwnership(tokenAmount);

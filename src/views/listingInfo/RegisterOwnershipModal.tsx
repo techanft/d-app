@@ -27,20 +27,17 @@ import {
   insertCommas,
   unInsertCommas,
 } from '../../shared/casual-helpers';
-import { getListingContractWrite } from '../../shared/blockchain-helpers';
+import { getListingContractWrite, LISTING_INSTANCE } from '../../shared/blockchain-helpers';
 import { RootState } from '../../shared/reducers';
-import { extendOwnership } from './listing.api';
+import { extendOwnership, IExtndOwnershipBody, IExtndOwnrshpIntialValues } from './listing.api';
 import { fetching } from './listings.reducer';
 import { selectEntityById } from '../assets/assets.reducer';
+import { ToastError } from '../../shared/components/Toast';
 
 interface IRegisterOwnershipModal {
   listingId: number;
   isVisible: boolean;
   setVisibility: (isVisible: boolean) => void;
-}
-export interface IInitialValues {
-  contract: any;
-  tokenAmount: number;
 }
 
 const RegisterOwnershipModal = (props: IRegisterOwnershipModal) => {
@@ -50,28 +47,48 @@ const RegisterOwnershipModal = (props: IRegisterOwnershipModal) => {
   const dispatch = useDispatch();
   const closeModal = () => (): void => setVisibility(false);
 
-  useEffect(() => {
-    console.log(listing, 'listing');
-  }, [listing, 'listing']);
-
   const { signer } = useSelector((state: RootState) => state.walletReducer);
 
-  // generate initialValues sao cho không cần phải tạo một object body khi submit formik
 
-  const initialValues: IInitialValues = {
-    contract: getListingContractWrite(listing?.address!, signer!),
+  const initialValues: IExtndOwnrshpIntialValues = {
+    listingAddress: listing?.address,
     tokenAmount: 0,
-    // registrationToken: 0,
   };
 
   const validationSchema = Yup.object().shape({
     tokenAmount: Yup.number()
-      .min(1, 'Số token không hợp lệ')
+    .test(
+      "dailyPayment-minimum",
+      `Minimum ownership for the listing is 1.0 day`,
+      function (value) {
+        if (!value) return true;
+        if (!listing?.dailyPayment) return false;
+        return value >= Number(convertBnToDecimal(listing.dailyPayment))
+        
+      }
+    )
       .typeError('Số lượng token không hợp lệ')
       .required('Vui lòng nhập số token muốn nạp'),
-    // registrationToken: Yup.number().min(1, "Số token không hợp lệ").typeError("Số lượng token không hợp lệ").required("Vui lòng nhập số token muốn nạp"),
   });
-  // Cần catch các error khi user reject transaction với metamask
+  
+  const handleRawFormValues = (input: IExtndOwnrshpIntialValues) : IExtndOwnershipBody  => {
+      if (!listing?.address) {
+        throw "Error getting listing address"
+      }
+      if (!signer) {
+        throw "No Signer found";
+      };
+      const instance = LISTING_INSTANCE(listing.address, signer)
+      if (!instance) {
+        throw "Error in generating contract instace"
+      }
+      return {
+        ...input,
+        tokenAmount: convertDecimalToBn(input.tokenAmount.toString()),
+        contract: instance
+      }
+  }
+
   return (
     <CModal show={isVisible} onClose={closeModal()} centered className="border-radius-modal">
       <CModalHeader className="justify-content-center">
@@ -81,12 +98,16 @@ const RegisterOwnershipModal = (props: IRegisterOwnershipModal) => {
         enableReinitialize
         initialValues={initialValues}
         validationSchema={validationSchema}
-        onSubmit={(values) => {
-
-          dispatch(fetching());
-          dispatch(extendOwnership({ ...values, tokenAmount: convertDecimalToBn(values.tokenAmount.toString()) }));
-          setVisibility(false);
-          
+        onSubmit={(rawValues) => {
+          try {
+            const value = handleRawFormValues(rawValues)
+            dispatch(fetching());
+            dispatch(extendOwnership(value));
+            setVisibility(false);
+          } catch (error) {
+            console.log(`Error submitting form ${error}`)
+            ToastError(`Error submitting form ${error}`)
+          }
         }}
       >
         {({ values, errors, touched, setFieldValue, handleSubmit, handleBlur }) => (
@@ -106,14 +127,7 @@ const RegisterOwnershipModal = (props: IRegisterOwnershipModal) => {
                     <CCol xs={12}>
                       <CLabel className="recharge-token-title">Số ANFT muốn nạp</CLabel>
                     </CCol>
-                    {/* 
-  const formatedAmount = insertCommas(ethers.utils.formatEther(input.toString())) => display value
-  ethers.utils.parseUnits(values.tokenAmount.toString() => submit value
 
-  convertBnToDecimal
-convertDecimalToBn
-  
-  */}
                     <CCol>
                       <CInput
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
