@@ -64,10 +64,12 @@ const ownershipText = (viewerAddr: string | undefined, listingInfo: IAsset) => {
   } else if (!viewerIsOwner && !ownershipExpired) {
     textClassname = 'text-danger';
     textContent = 'Đã có chủ sở hữu';
-  } else if (viewerIsOwner && ownershipExpired) {
+  } else if (!viewerIsOwner && ownershipExpired) {
     textClassname = 'text-success';
     textContent = 'Có thể sở hữu';
   }
+
+
   return <p className={`ownership-checked m-0 ${textClassname}`}>{textContent}</p>;
 };
 interface IListingInfoProps {
@@ -418,9 +420,8 @@ const ListingInfo = (props: IListingInfoProps) => {
             </CCollapse>
           </CCol>
 
-          <RegisterOwnershipModal
-            address={listing?.address || ""}
-            dailyPayment={listing?.dailyPayment?.toString() || '0'}
+          <RegisterOwnershipModal 
+            listingId={listingId}
             isVisible={modalsVisibility[ModalType.OWNERSHIP_REGISTER]}
             setVisibility={(key: boolean) => handleModalVisibility(ModalType.OWNERSHIP_REGISTER, key)}
           />
@@ -433,7 +434,7 @@ const ListingInfo = (props: IListingInfoProps) => {
             setVisibility={(key: boolean) => handleModalVisibility(ModalType.OWNERSHIP_WITHDRAW, key)}
           />
         </CRow>
-      </CCol>
+      </CCol> 
     </CContainer>
   );
 };

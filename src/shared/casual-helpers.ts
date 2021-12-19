@@ -2,9 +2,18 @@ import { BigNumber, ethers } from "ethers";
 import { APP_DATE_FORMAT, TOKEN_SYMBOL } from "../config/constants";
 import dayjs from 'dayjs';
 
-export const estimateOwnership = (x: number, y: number) => {
-  if (y === 0) return "0.00";
-  return (x / y).toFixed(2);
+export const estimateOwnership = (amount: BigNumber, dailyPayment: BigNumber, currentOwnership: BigNumber ) => {
+
+  const initialOwnership = checkOwnershipExpired(currentOwnership.toNumber()) ? BigNumber.from(dayjs().unix()) : currentOwnership;
+
+  
+  const additionalCredit = (amount.mul(86400).div(dailyPayment)).toNumber();
+
+  const newOwnership = initialOwnership.toNumber() + additionalCredit;
+  return convertUnixToDate(newOwnership);
+
+  // return (x / y).toFixed(2);
+  // return '';
 };
 
 export const noMoreThanOneCommas = (input: number | string) => {
@@ -36,11 +45,18 @@ export const unInsertCommas = (input: string) => {
   return parts.join(".");
 };
 
+export const convertBnToDecimal = (input: BigNumber) => {
+  return ethers.utils.formatEther(input.toString())
+} 
+export const convertDecimalToBn = (input: string) => {
+  const sanitizedInput = input.replace(/[^\d.-]/g, ''); //https://stackoverflow.com/questions/1862130/strip-all-non-numeric-characters-from-string-in-javascript
+  return ethers.utils.parseUnits(sanitizedInput);
+}
+
 export const formatBNToken = (input: BigNumber | undefined, displaySymbol: boolean) => {
   if (!input) return "_";
-  const formatedAmount = insertCommas(ethers.utils.formatEther(input.toString()));
+  const formatedAmount = insertCommas(convertBnToDecimal(input));
   return `${formatedAmount} ${displaySymbol ? TOKEN_SYMBOL : ''}`
-  // return `${insertCommas(ethers.utils.formatEther(input.toString()))} ${TOKEN_SYMBOL}`
 }
 
 export const checkOwnershipExpired = (timestamp: number): boolean => {
