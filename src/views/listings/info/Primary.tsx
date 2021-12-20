@@ -20,25 +20,24 @@ import {
   faIdBadge
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
-import { useDispatch, useSelector } from 'react-redux';
-import { TOKEN_SYMBOL } from '../../config/constants';
-import { CollapseType, ModalType, TCollapseVisibility, TModalsVisibility } from '../../shared/enumeration/modalType';
-import { WorkerStatus } from '../../shared/enumeration/workerStatus';
-import { getEllipsisTxt } from '../../shared/blockchain-helpers';
-import { checkOwnershipExpired, convertUnixToDate, formatBNToken } from '../../shared/casual-helpers';
-import InfoLoader from '../../shared/components/InfoLoader';
-import { ToastError } from '../../shared/components/Toast';
-import useWindowDimensions from '../../shared/hooks/useWindowDimensions';
-import { IAsset } from '../../shared/models/assets.model';
-import { IWorkerPermission } from '../../shared/models/workerPermission.model';
-import { RootState } from '../../shared/reducers';
-import { selectEntityById } from '../assets/assets.reducer';
-import ExtendOwnershipModal from './ExtendOwnershipModal';
-import './index.scss';
-import RegisterOwnershipModal from './RegisterOwnershipModal';
-import WithdrawTokenModal from './WithdrawTokenModal';
+import { useSelector } from 'react-redux';
+import { TOKEN_SYMBOL } from '../../../config/constants';
+import { checkOwnershipExpired, convertUnixToDate, formatBNToken, getEllipsisTxt } from '../../../shared/casual-helpers';
+import InfoLoader from '../../../shared/components/InfoLoader';
+import { ToastError } from '../../../shared/components/Toast';
+import { CollapseType, ModalType, TCollapseVisibility, TModalsVisibility } from '../../../shared/enumeration/modalType';
+import { WorkerStatus } from '../../../shared/enumeration/workerStatus';
+import useWindowDimensions from '../../../shared/hooks/useWindowDimensions';
+import { IAsset } from '../../../shared/models/assets.model';
+import { IWorkerPermission } from '../../../shared/models/workerPermission.model';
+import { RootState } from '../../../shared/reducers';
+import { selectEntityById } from '../../assets/assets.reducer';
+import ExtendOwnershipModal from '../actions/ExtendOwnershipModal';
+import RegisterOwnershipModal from '../actions/RegisterOwnershipModal';
+import WithdrawTokenModal from '../actions/WithdrawModal';
+import '../index.scss';
 
 
 const ownershipText = (viewerAddr: string | undefined, listingInfo: IAsset) => {
@@ -102,7 +101,6 @@ const initialCollapseState: TCollapseVisibility = {
 
 const ListingInfo = (props: IListingInfoProps) => {
   const { listingId } = props;
-  const dispatch = useDispatch();
 
   const { signerAddress } = useSelector((state: RootState) => state.wallet);
 
@@ -129,9 +127,6 @@ const ListingInfo = (props: IListingInfoProps) => {
     setModalVisibility({ ...modalsVisibility, [type]: isVisible });
   };
 
-  useEffect(() => {
-    console.log(modalsVisibility);
-  }, [JSON.stringify(modalsVisibility)]);
 
   const [collapseVisibility, setCollapseVisibility] = useState<TCollapseVisibility>(initialCollapseState);
 
@@ -334,7 +329,7 @@ const ListingInfo = (props: IListingInfoProps) => {
                     </p>
                   </CRow>
                   <CRow className="mt-2 mx-0">
-                    <CLink to="/register_reward">
+                    <CLink to="/register">
                       <FontAwesomeIcon icon={faDonate} /> Đăng ký nhận thưởng
                     </CLink>
                   </CRow>
@@ -376,7 +371,7 @@ const ListingInfo = (props: IListingInfoProps) => {
                     </p>
                   </CRow>
                   <CRow className="mx-0">
-                    <CLink to="/worker_management">
+                    <CLink to="/workers-list">
                       <FontAwesomeIcon icon={faClipboard} /> Quản lý quyền khai thác
                     </CLink>
                   </CRow>

@@ -16,7 +16,7 @@ import {
 import { Formik } from 'formik';
 import React from 'react';
 import * as Yup from 'yup';
-import { estimateOwnership } from '../../shared/casual-helpers';
+
 
 interface IExtendOwnershipModal {
   isVisible: boolean;

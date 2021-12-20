@@ -67,3 +67,9 @@ export const checkOwnershipExpired = (timestamp: number): boolean => {
 export const convertUnixToDate = (timestamp: number) : string => {
   return   dayjs.unix(timestamp).format(APP_DATE_FORMAT) 
 }
+export const getEllipsisTxt = (str: string, n = 5) => {
+  if (str) {
+    return `${str.slice(0, n)}...${str.slice(str.length - n)}`;
+  }
+  return "";
+};

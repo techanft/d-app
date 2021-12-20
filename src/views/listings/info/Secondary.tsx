@@ -1,8 +1,8 @@
 import CIcon from '@coreui/icons-react';
 import { CCol, CContainer, CLabel, CLink, CRow } from '@coreui/react';
 import React from 'react';
-import { IListingDetails } from '../../shared/models/listingDetails.model';
-import './index.scss';
+import { IListingDetails } from '../../../shared/models/listingDetails.model';
+import '../index.scss';
 
 const ListingDetails = () => {
   const demoListingDetails: IListingDetails = {

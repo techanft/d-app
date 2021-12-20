@@ -17,8 +17,8 @@ import { Formik } from 'formik';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
-import { EventType } from '../../shared/enumeration/eventType';
-import { LISTING_INSTANCE } from '../../shared/blockchain-helpers';
+import { EventType } from '../../../shared/enumeration/eventType';
+import { LISTING_INSTANCE } from '../../../shared/blockchain-helpers';
 import {
   convertBnToDecimal,
   convertDecimalToBn,
@@ -27,13 +27,13 @@ import {
   formatBNToken,
   insertCommas,
   unInsertCommas
-} from '../../shared/casual-helpers';
-import { ToastError } from '../../shared/components/Toast';
-import { RootState } from '../../shared/reducers';
+} from '../../../shared/casual-helpers';
+import { ToastError } from '../../../shared/components/Toast';
+import { RootState } from '../../../shared/reducers';
 // import { fetching } from './listings.reducer';
-import { selectEntityById } from '../assets/assets.reducer';
-import { extendOwnership, IExtndOwnershipBody, IExtndOwnrshpIntialValues } from '../transactions/transactions.api';
-import { fetching } from '../transactions/transactions.reducer';
+import { selectEntityById } from '../../assets/assets.reducer';
+import { extendOwnership, IExtndOwnershipBody, IExtndOwnrshpIntialValues } from '../../transactions/transactions.api';
+import { fetching } from '../../transactions/transactions.reducer';
 
 interface IRegisterOwnershipModal {
   listingId: number;
@@ -51,6 +51,7 @@ const RegisterOwnershipModal = (props: IRegisterOwnershipModal) => {
     if (submitted) {
       setVisibility(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [submitted]);
 
   const dispatch = useDispatch();
@@ -82,14 +83,14 @@ const RegisterOwnershipModal = (props: IRegisterOwnershipModal) => {
 
   const handleRawFormValues = (input: IExtndOwnrshpIntialValues): IExtndOwnershipBody => {
     if (!listing?.address) {
-      throw 'Error getting listing address';
+      throw Error('Error getting listing address');
     }
     if (!signer) {
-      throw 'No Signer found';
+      throw Error('No Signer found');
     }
     const instance = LISTING_INSTANCE(listing.address, signer);
     if (!instance) {
-      throw 'Error in generating contract instace';
+      throw Error('Error in generating contract instace');
     }
     return {
       ...input,

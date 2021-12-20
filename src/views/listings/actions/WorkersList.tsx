@@ -16,7 +16,7 @@ import bgImg from '../../../assets/img/registerBonus.svg';
 import { mapWorkerStatusBadge, WorkerStatus } from '../../../shared/enumeration/workerStatus';
 import ConfirmModal from '../../../shared/components/ConfirmModal';
 import { IWorkerPermission } from '../../../shared/models/workerPermission.model';
-import AddWorkerPermission from './AddWorkerPermissionModal';
+import AddWorkerPermission from './AddWorkerModal';
 
 const WorkerManagement = () => {
   const titleTableStyle = {

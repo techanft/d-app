@@ -38,44 +38,6 @@ export const LISTING_INSTANCE = (listingAdrr: string, signer?: ethers.providers.
 }
 
 
-export const getTokenContractRead = (provider: ethers.providers.Web3Provider):ethers.Contract => {
-  try {
-    const contractAddress = tokenArtifact.address;
-    const contractABI = tokenArtifact.abi;
-    return new ethers.Contract(contractAddress, contractABI, provider);
-  } catch (error:any) {
-    return error;
-  }
-};
-
-export const getTokenContractWrite = (signer: ethers.providers.JsonRpcSigner):ethers.Contract => {
-  try {
-    const contractAddress = tokenArtifact.address;
-    const contractABI = tokenArtifact.abi;
-    return new ethers.Contract(contractAddress, contractABI, signer);
-  } catch (error:any) {
-    return error;
-  }
-};
-
-export const getListingContractRead = (listingAddress: string, provider: ethers.providers.Web3Provider):ethers.Contract => {
-  try {
-    const listingABI = listingArtifact.abi;
-    return new ethers.Contract(listingAddress, listingABI, provider);
-  } catch (error:any) {
-    return error;
-  }
-};
-// attachSignerToContract(contrac, signer)
-export const getListingContractWrite = (listingAddress: string, signer: ethers.providers.JsonRpcSigner):ethers.Contract => {
-  try {
-    const listingABI = listingArtifact.abi;
-    return new ethers.Contract(listingAddress, listingABI, signer);
-  } catch (error:any) {
-    return error;
-  }
-};
-
 export const getListingAddress = (receipt: ethers.providers.TransactionReceipt) => {
   try {
     const abi = ["event ListingCreation(address _validator, address _owner, address _listingAddress)"];
@@ -97,14 +59,3 @@ export const getUpdateWorker = (receipt: ethers.providers.TransactionReceipt) =>
     return error;
   }
 };
-
-
-
-
- export const getEllipsisTxt = (str: string, n = 5) => {
-  if (str) {
-    return `${str.slice(0, n)}...${str.slice(str.length - n)}`;
-  }
-  return "";
-};
-

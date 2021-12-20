@@ -24,7 +24,7 @@ import React, { useState } from 'react';
 import bgImg from '../../../assets/img/registerBonus.svg';
 import ConfirmModal from '../../../shared/components/ConfirmModal';
 import { IListingActivity } from '../../../shared/models/listingActivity.model';
-import './index.scss';
+import '../index.scss';
 
 const RegisterReward = () => {
   const titleTableStyle = {
@@ -288,7 +288,7 @@ const RegisterReward = () => {
             <i className="detail-title-font">*Lựa chọn Hoạt động bạn muốn SỬA hoặc HỦY đăng ký</i>
           </CCol>
           <CCol xs={12} className="text-center my-2">
-            <CLink to="/activity_logs">
+            <CLink to="/activity-logs">
               <CIcon name="cil-history" /> Activity Logs
             </CLink>
           </CCol>

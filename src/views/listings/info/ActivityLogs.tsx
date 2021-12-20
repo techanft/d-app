@@ -17,7 +17,7 @@ import { mapStatus, mapStatusBadge, Status } from '../../../shared/enumeration/s
 import { mapWorkerStatusBadge, WorkerStatus } from '../../../shared/enumeration/workerStatus';
 import { IRegisterRewardHistory } from '../../../shared/models/listingActivity.model';
 import { IWorkerPermission } from '../../../shared/models/workerPermission.model';
-import './index.scss';
+import '../index.scss';
 
 const ActivityLogs = () => {
   const titleTableStyle = {

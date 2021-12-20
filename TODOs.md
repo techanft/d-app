@@ -6,3 +6,5 @@
 - Handle when listing isnt found (fake id param) (Loading + Listing entity checking)
 - Better loading icon
 - More details on ownership register modal (Current balance + max button)
+- Refactor TheHeader line 52
+- Toast Error => Info

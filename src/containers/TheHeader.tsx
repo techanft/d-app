@@ -18,13 +18,14 @@ import {
 } from '@coreui/react';
 import { faAngleDown } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { default as React, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { getProvider, TOKEN_INSTANCE } from '../shared/blockchain-helpers';
+import { getEllipsisTxt } from '../shared/casual-helpers';
 import { ToastError } from '../shared/components/Toast';
-import { getEllipsisTxt, getProvider, getTokenContractRead } from '../shared/blockchain-helpers';
 import { RootState } from '../shared/reducers';
-import { getAddress, getContractWithSigner, getProviderLogin, getSigner } from '../views/walletInfo/wallet.api';
-import { softReset } from '../views/walletInfo/wallet.reducer';
+import { getAddress, getContractWithSigner, getProviderLogin, getSigner } from '../views/wallet/wallet.api';
+import { softReset } from '../views/wallet/wallet.reducer';
 
 declare let window: any;
 const TheHeader = () => {
@@ -50,7 +51,8 @@ const TheHeader = () => {
 
   useEffect(() => {
     if (getSignerSuccess && signer !== null) {
-      const TokenContract = getTokenContractRead(provider);
+      const TokenContract = TOKEN_INSTANCE();
+      if (!TokenContract) return;
       const body = { contract: TokenContract, signer };
       dispatch(getAddress(signer));
       dispatch(getContractWithSigner(body));

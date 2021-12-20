@@ -1,10 +1,10 @@
 import CIcon from '@coreui/icons-react';
 import { CCol, CPagination, CRow } from '@coreui/react';
-import { BigNumber, ethers } from 'ethers';
+import { BigNumber } from 'ethers';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
-import { formatBNToken, insertCommas } from '../../shared/casual-helpers';
+import { formatBNToken } from '../../shared/casual-helpers';
 import Loading from '../../shared/components/Loading';
 import { IParams } from '../../shared/models/base.model';
 import { RootState } from '../../shared/reducers';

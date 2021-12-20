@@ -1,11 +1,11 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { BigNumber, ContractTransaction, ethers, Bytes } from 'ethers';
-
+import { ethers } from 'ethers';
+import axios from '../../config/axios-interceptor';
 import { EventType } from '../../shared/enumeration/eventType';
+import { IEventRecord } from '../../shared/models/eventRecord.model';
 import { Listing } from '../../typechain';
 import { ICTransaction } from './transactions.reducer';
-import axios from '../../config/axios-interceptor';
-import { IEventRecord } from '../../shared/models/eventRecord.model';
+
 
 interface ITxData {
   type: EventType;

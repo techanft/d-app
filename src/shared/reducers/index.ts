@@ -1,6 +1,6 @@
 import { combineReducers } from "redux";
 import assets from "../../views/assets/assets.reducer";
-import wallet from "../../views/walletInfo/wallet.reducer";
+import wallet from "../../views/wallet/wallet.reducer";
 import transactions from "../../views/transactions/transactions.reducer";
 
 const rootReducer = combineReducers({
