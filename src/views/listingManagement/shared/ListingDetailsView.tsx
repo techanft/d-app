@@ -1,8 +1,9 @@
 import { CCol, CLabel, CRow } from '@coreui/react';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
 import Loading from '../../../shared/components/Loading';
+import SubmissionModal from '../../../shared/components/SubmissionModal';
 import { RootState } from '../../../shared/reducers';
 import { getEntity } from '../../assets/assets.api';
 import { fetchingEntity, selectEntityById } from '../../assets/assets.reducer';
@@ -17,15 +18,10 @@ interface IListingDetailsViewParams {
 
 interface IListingDetailsView extends RouteComponentProps<IListingDetailsViewParams> {}
 
-
 const ListingDetailsView = (props: IListingDetailsView) => {
   const dispatch = useDispatch();
   const { match } = props;
-  const { id } = match.params; 
-
-  const { initialState } = useSelector((state: RootState) => state.assets);
-  const { errorMessage, entityLoading } = initialState;
-  const listing = useSelector(selectEntityById(Number(id)));
+  const { id } = match.params;
 
   useEffect(() => {
     if (id) {
@@ -35,21 +31,23 @@ const ListingDetailsView = (props: IListingDetailsView) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
+  // const handleSubmMdlVsblity = (key: boolean) => setSubmissionMdl(key);
+
   return (
     <>
-   
-          <ListingInfo listingId={Number(id)} />
-          <ListingDetails />
-          <CRow className="mx-0">
-            <CCol xs={12}>
-              <CLabel className="text-primary content-title mt-3">More listing</CLabel>
-            </CCol>
-            <CCol xs={12} className="px-0">
-              <Listings routingProps={props} />
-            </CCol>
-          </CRow>
-        </>
+      <SubmissionModal />
 
+      <ListingInfo listingId={Number(id)} />
+      <ListingDetails />
+      <CRow className="mx-0">
+        <CCol xs={12}>
+          <CLabel className="text-primary content-title mt-3">More listing</CLabel>
+        </CCol>
+        <CCol xs={12} className="px-0">
+          <Listings routingProps={props} />
+        </CCol>
+      </CRow>
+    </>
   );
 };
 

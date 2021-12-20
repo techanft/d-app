@@ -10,4 +10,5 @@ export const HTML_DATE_TIME_INPUT_FORMAT = "YYYY-MM-DDTHH:mm";
 export const DATE_SUBMIT_FORMAT = "YYYY-MM-DD";
 export const MAX_SUPPLY = 1232000000;
 export const TOKEN_SYMBOL = "ANFT";
-export const SERVER_API_URL = 'https://dev.anft.vn/api/'
+export const SERVER_API_URL = 'https://dev.anft.vn/api/';
+export const SCAN_URL = 'https://testnet.bscscan.com/';

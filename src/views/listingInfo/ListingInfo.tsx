@@ -39,11 +39,11 @@ import { RootState } from '../../shared/reducers';
 import { useCreateBlockEventMutation } from '../blockEvents/blockEvents.api';
 import ExtendOwnershipModal from './ExtendOwnershipModal';
 import './index.scss';
-import { reset } from './listings.reducer';
 import RegisterOwnershipModal from './RegisterOwnershipModal';
 import WithdrawTokenModal from './WithdrawTokenModal';
 import { selectEntityById } from '../assets/assets.reducer';
 import useWindowDimensions from '../../shared/hooks/useWindowDimensions';
+import SubmissionModal from '../../shared/components/SubmissionModal';
 
 const ownershipText = (viewerAddr: string | undefined, listingInfo: IAsset) => {
   const { ownership, owner } = listingInfo;
@@ -68,7 +68,6 @@ const ownershipText = (viewerAddr: string | undefined, listingInfo: IAsset) => {
     textClassname = 'text-success';
     textContent = 'Có thể sở hữu';
   }
-
 
   return <p className={`ownership-checked m-0 ${textClassname}`}>{textContent}</p>;
 };
@@ -124,7 +123,7 @@ const ListingInfo = (props: IListingInfoProps) => {
 
   const { signerAddress } = useSelector((state: RootState) => state.walletReducer);
 
-  const { extendOwnerShipSuccess, extendOwnerShipTHash } = useSelector((state: RootState) => state.listingsReducer);
+  // const { extendOwnerShipSuccess, extendOwnerShipTHash } = useSelector((state: RootState) => state.listingsReducer);
   const { width: screenWidth } = useWindowDimensions();
 
   // const provider = getProvider();
@@ -136,6 +135,8 @@ const ListingInfo = (props: IListingInfoProps) => {
   const ownershipExpired = listing?.ownership ? checkOwnershipExpired(listing.ownership.toNumber()) : false;
   const viewerIsOwner = signerAddress && signerAddress === listing?.owner;
 
+  const { submitted } = useSelector((state: RootState) => state.transactions);
+
   // const getExtendOwnerShipRceipt = async (tHash: string) => {
   //   const receipt = await provider.getTransactionReceipt(tHash);
   //   Promise.all([receipt]).then(() => {
@@ -143,20 +144,20 @@ const ListingInfo = (props: IListingInfoProps) => {
   //   });
   // };
 
-  useEffect(() => {
-    if (extendOwnerShipSuccess) {
-      ToastSuccess('Successfully extended ownersip');
-      // Sao lại không gửi block lên ở đây
-      // const body = {
-      //   assetId: asset.id,
-      //   hash: extendOwnerShipTHash,
-      //   eventType: EventType.OWNER_SHIP_EXTENSION,
-      // };
-      // createBlockEvent(body);
-      // dispatch(reset());
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [extendOwnerShipSuccess]);
+  // useEffect(() => {
+  //   if (extendOwnerShipSuccess) {
+  //     ToastSuccess('Successfully extended ownersip');
+  //     // Sao lại không gửi block lên ở đây
+  //     // const body = {
+  //     //   assetId: asset.id,
+  //     //   hash: extendOwnerShipTHash,
+  //     //   eventType: EventType.OWNER_SHIP_EXTENSION,
+  //     // };
+  //     // createBlockEvent(body);
+  //     // dispatch(reset());
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [extendOwnerShipSuccess]);
 
   const [modalsVisibility, setModalVisibility] = useState<TModalsVisibility>({
     [ModalType.OWNERSHIP_EXTENSION]: false,
@@ -167,6 +168,10 @@ const ListingInfo = (props: IListingInfoProps) => {
   const handleModalVisibility = (type: ModalType, isVisible: boolean) => {
     setModalVisibility({ ...modalsVisibility, [type]: isVisible });
   };
+
+  useEffect(() => {
+    console.log(modalsVisibility);
+  }, [JSON.stringify(modalsVisibility)]);
 
   const [collapseVisibility, setCollapseVisibility] = useState<TCollapseVisibility>(initialCollapseState);
 
@@ -420,7 +425,9 @@ const ListingInfo = (props: IListingInfoProps) => {
             </CCollapse>
           </CCol>
 
-          <RegisterOwnershipModal 
+
+
+          <RegisterOwnershipModal
             listingId={listingId}
             isVisible={modalsVisibility[ModalType.OWNERSHIP_REGISTER]}
             setVisibility={(key: boolean) => handleModalVisibility(ModalType.OWNERSHIP_REGISTER, key)}
@@ -434,7 +441,7 @@ const ListingInfo = (props: IListingInfoProps) => {
             setVisibility={(key: boolean) => handleModalVisibility(ModalType.OWNERSHIP_WITHDRAW, key)}
           />
         </CRow>
-      </CCol> 
+      </CCol>
     </CContainer>
   );
 };

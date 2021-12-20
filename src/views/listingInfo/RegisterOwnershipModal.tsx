@@ -11,28 +11,28 @@ import {
   CModalFooter,
   CModalHeader,
   CModalTitle,
-  CRow,
+  CRow
 } from '@coreui/react';
-import { BigNumber, ethers } from 'ethers';
 import { Formik } from 'formik';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
+import { EventType } from '../../enumeration/eventType';
+import { LISTING_INSTANCE } from '../../shared/blockchain-helpers';
 import {
-  convertBnToDecimal,
   convertDecimalToBn,
   convertUnixToDate,
   estimateOwnership,
   formatBNToken,
   insertCommas,
-  unInsertCommas,
+  unInsertCommas
 } from '../../shared/casual-helpers';
-import { getListingContractWrite, LISTING_INSTANCE } from '../../shared/blockchain-helpers';
-import { RootState } from '../../shared/reducers';
-import { extendOwnership, IExtndOwnershipBody, IExtndOwnrshpIntialValues } from './listing.api';
-import { fetching } from './listings.reducer';
-import { selectEntityById } from '../assets/assets.reducer';
 import { ToastError } from '../../shared/components/Toast';
+import { RootState } from '../../shared/reducers';
+// import { fetching } from './listings.reducer';
+import { selectEntityById } from '../assets/assets.reducer';
+import { extendOwnership, IExtndOwnershipBody, IExtndOwnrshpIntialValues } from '../transactions/transactions.api';
+import { fetching } from '../transactions/transactions.reducer';
 
 interface IRegisterOwnershipModal {
   listingId: number;
@@ -44,50 +44,59 @@ const RegisterOwnershipModal = (props: IRegisterOwnershipModal) => {
   const { isVisible, setVisibility, listingId } = props;
   const listing = useSelector(selectEntityById(listingId));
 
+  const { submitted } = useSelector((state: RootState) => state.transactions);
+
+  useEffect(() => {
+    if (submitted) {
+      setVisibility(false);
+    }
+  }, [submitted]);
+
   const dispatch = useDispatch();
   const closeModal = () => (): void => setVisibility(false);
 
   const { signer } = useSelector((state: RootState) => state.walletReducer);
 
-
   const initialValues: IExtndOwnrshpIntialValues = {
     listingAddress: listing?.address,
     tokenAmount: 0,
+    listingId
   };
 
   const validationSchema = Yup.object().shape({
     tokenAmount: Yup.number()
-    .test(
-      "dailyPayment-minimum",
-      `Minimum ownership for the listing is 1.0 day`,
-      function (value) {
-        if (!value) return true;
-        if (!listing?.dailyPayment) return false;
-        return value >= Number(convertBnToDecimal(listing.dailyPayment))
-        
-      }
-    )
+      // .test(
+      //   "dailyPayment-minimum",
+      //   `Minimum ownership for the listing is 1.0 day`,
+      //   function (value) {
+      //     if (!value) return true;
+      //     if (!listing?.dailyPayment) return false;
+      //     return value >= Number(convertBnToDecimal(listing.dailyPayment))
+
+      //   }
+      // )
       .typeError('Số lượng token không hợp lệ')
       .required('Vui lòng nhập số token muốn nạp'),
   });
-  
-  const handleRawFormValues = (input: IExtndOwnrshpIntialValues) : IExtndOwnershipBody  => {
-      if (!listing?.address) {
-        throw "Error getting listing address"
-      }
-      if (!signer) {
-        throw "No Signer found";
-      };
-      const instance = LISTING_INSTANCE(listing.address, signer)
-      if (!instance) {
-        throw "Error in generating contract instace"
-      }
-      return {
-        ...input,
-        tokenAmount: convertDecimalToBn(input.tokenAmount.toString()),
-        contract: instance
-      }
-  }
+
+  const handleRawFormValues = (input: IExtndOwnrshpIntialValues): IExtndOwnershipBody => {
+    if (!listing?.address) {
+      throw 'Error getting listing address';
+    }
+    if (!signer) {
+      throw 'No Signer found';
+    }
+    const instance = LISTING_INSTANCE(listing.address, signer);
+    if (!instance) {
+      throw 'Error in generating contract instace';
+    }
+    return {
+      ...input,
+      type: EventType.OWNERSHIP_EXTENSION,
+      tokenAmount: convertDecimalToBn(input.tokenAmount.toString()),
+      contract: instance,
+    };
+  };
 
   return (
     <CModal show={isVisible} onClose={closeModal()} centered className="border-radius-modal">
@@ -100,13 +109,13 @@ const RegisterOwnershipModal = (props: IRegisterOwnershipModal) => {
         validationSchema={validationSchema}
         onSubmit={(rawValues) => {
           try {
-            const value = handleRawFormValues(rawValues)
+            const value = handleRawFormValues(rawValues);
             dispatch(fetching());
             dispatch(extendOwnership(value));
-            setVisibility(false);
+            // setVisibility(false);
           } catch (error) {
-            console.log(`Error submitting form ${error}`)
-            ToastError(`Error submitting form ${error}`)
+            console.log(`Error submitting form ${error}`);
+            ToastError(`Error submitting form ${error}`);
           }
         }}
       >

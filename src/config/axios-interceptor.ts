@@ -12,10 +12,10 @@ const instance = axios.create({
 });
 
 const onRequestSuccess = (config: any) => {
-  const token = localStorage.getItem('authentication_token') || sessionStorage.getItem('authentication_token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
+  // const token = localStorage.getItem('authentication_token') || sessionStorage.getItem('authentication_token');
+  // if (token) {
+  //   config.headers.Authorization = `Bearer ${token}`;
+  // }
   return config;
 };
 

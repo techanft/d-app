@@ -5,8 +5,19 @@ import axios from '../../config/axios-interceptor';
 import { LISTING_INSTANCE } from '../../shared/blockchain-helpers';
 import { IAsset } from '../../shared/models/assets.model';
 import { IParams, IGetAllResp } from '../../shared/models/base.model';
+import { Listing } from '../../typechain';
+import { ethers } from "ethers";
 
-export interface IAssetFilter extends IParams {}
+export interface IAssetFilter extends IParams {};
+export interface IExtndOwnrshpIntialValues {
+  listingAddress: string | undefined;
+  tokenAmount: number;
+}
+export interface IExtndOwnershipBody extends Omit<IExtndOwnrshpIntialValues, "tokenAmount"> {
+  contract: Listing;
+  tokenAmount: ethers.BigNumber;
+}
+
 
 const prefix = 'assets';
 
@@ -99,3 +110,15 @@ const getListingsPartialInfo = async (listings: IAsset[]): Promise<IAsset[]> => 
     return listings;
   }
 };
+
+export const extendOwnership = createAsyncThunk("extendOwnership", async (body: IExtndOwnershipBody, thunkAPI) => {
+  const { contract, tokenAmount } = body;
+  try {
+    const tx = await contract.extendOwnership(tokenAmount);
+    // await result.wait();
+    return tx.hash;
+  } catch (error: any) {
+    return thunkAPI.rejectWithValue(error);
+  }
+});
+ 

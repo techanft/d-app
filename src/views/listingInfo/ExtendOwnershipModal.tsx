@@ -92,7 +92,7 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                     </CCol>
                     <CCol xs={4}>
                       <p className="text-primary text-right">
-                        {estimateOwnership(values.tokenRecharge, values.workFee)} days
+                        {/* {estimateOwnership(values.tokenRecharge, values.workFee)} days */}
                       </p>
                     </CCol>
                   </CFormGroup>
