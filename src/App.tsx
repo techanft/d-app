@@ -2,13 +2,13 @@ import React from "react";
 import { useDispatch } from "react-redux";
 import { HashRouter, Route, Switch } from "react-router-dom";
 import "./scss/style.scss";
-import { getProvider } from "./shared/helpers";
-import { getSigner } from "./views/walletInfo/wallet.api";
+import { getProvider } from "./shared/blockchain-helpers";
+import { getSigner } from "./views/wallet/wallet.api";
 
 const loading = (
   <div className="pt-3 text-center">
     <div className="sk-spinner sk-spinner-pulse"></div>
-  </div>
+  </div> 
 );
 
 // Containers

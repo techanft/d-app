@@ -1,4 +1,4 @@
-import { WorkerStatus } from "../../enumeration/workerStatus";
+import { WorkerStatus } from "../enumeration/workerStatus";
 
 export interface IWorkerPermission {
     address: string,
