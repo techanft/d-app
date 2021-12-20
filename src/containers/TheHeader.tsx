@@ -31,7 +31,7 @@ const TheHeader = () => {
   const dispatch = useDispatch();
   const provider = getProvider();
   const { getProviderLoginSuccess, getSignerSuccess, signer, signerAddress } = useSelector(
-    (state: RootState) => state.walletReducer
+    (state: RootState) => state.wallet
   );
   const onConnectWallet = () => () => {
     if (window.ethereum) {

@@ -9,7 +9,7 @@ import {
   CDataTable,
   CLink,
   CRow,
-  CTooltip,
+  CTooltip
 } from '@coreui/react';
 import {
   faArrowAltCircleDown,
@@ -17,33 +17,29 @@ import {
   faClipboard,
   faDonate,
   faEdit,
-  faIdBadge,
+  faIdBadge
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
-import { ethers } from 'ethers';
 import React, { useEffect, useState } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import { useDispatch, useSelector } from 'react-redux';
-import { APP_DATE_FORMAT, TOKEN_SYMBOL } from '../../config/constants';
-import { EventType } from '../../enumeration/eventType';
+import { TOKEN_SYMBOL } from '../../config/constants';
+import { CollapseType, ModalType, TCollapseVisibility, TModalsVisibility } from '../../enumeration/modalType';
 import { WorkerStatus } from '../../enumeration/workerStatus';
+import { getEllipsisTxt } from '../../shared/blockchain-helpers';
+import { checkOwnershipExpired, convertUnixToDate, formatBNToken } from '../../shared/casual-helpers';
 import InfoLoader from '../../shared/components/InfoLoader';
-import { ToastError, ToastSuccess } from '../../shared/components/Toast';
-import { checkOwnershipExpired, convertUnixToDate, formatBNToken, insertCommas } from '../../shared/casual-helpers';
-import { getEllipsisTxt, getListingContractRead, getProvider } from '../../shared/blockchain-helpers';
+import { ToastError } from '../../shared/components/Toast';
+import useWindowDimensions from '../../shared/hooks/useWindowDimensions';
 import { IAsset } from '../../shared/models/assets.model';
-import { IListing } from '../../shared/models/listing.model';
 import { IWorkerPermission } from '../../shared/models/workerPermission.model';
 import { RootState } from '../../shared/reducers';
-import { useCreateBlockEventMutation } from '../blockEvents/blockEvents.api';
+import { selectEntityById } from '../assets/assets.reducer';
 import ExtendOwnershipModal from './ExtendOwnershipModal';
 import './index.scss';
 import RegisterOwnershipModal from './RegisterOwnershipModal';
 import WithdrawTokenModal from './WithdrawTokenModal';
-import { selectEntityById } from '../assets/assets.reducer';
-import useWindowDimensions from '../../shared/hooks/useWindowDimensions';
-import SubmissionModal from '../../shared/components/SubmissionModal';
+
 
 const ownershipText = (viewerAddr: string | undefined, listingInfo: IAsset) => {
   const { ownership, owner } = listingInfo;
@@ -75,17 +71,6 @@ interface IListingInfoProps {
   listingId: number;
 }
 
-enum ModalType {
-  OWNERSHIP_EXTENSION = 'OWNERSHIP_EXTENSION',
-  OWNERSHIP_WITHDRAW = 'OWNERSHIP_WITHDRAW',
-  OWNERSHIP_REGISTER = 'OWNERSHIP_REGISTER',
-}
-
-enum CollapseType {
-  INVESTMENT = 'INVESTMENT',
-  MANAGEMENT = 'MANAGEMENT',
-  WORKER_LIST = 'WORKER_LIST',
-}
 
 const titleTableStyle = {
   textAlign: 'left',
@@ -108,8 +93,6 @@ const workerFields = [
   },
 ];
 
-type TModalsVisibility = { [key in ModalType]: boolean };
-type TCollapseVisibility = { [key in CollapseType]: boolean };
 
 const initialCollapseState: TCollapseVisibility = {
   [CollapseType.INVESTMENT]: false,
@@ -121,7 +104,7 @@ const ListingInfo = (props: IListingInfoProps) => {
   const { listingId } = props;
   const dispatch = useDispatch();
 
-  const { signerAddress } = useSelector((state: RootState) => state.walletReducer);
+  const { signerAddress } = useSelector((state: RootState) => state.wallet);
 
   // const { extendOwnerShipSuccess, extendOwnerShipTHash } = useSelector((state: RootState) => state.listingsReducer);
   const { width: screenWidth } = useWindowDimensions();
@@ -135,29 +118,6 @@ const ListingInfo = (props: IListingInfoProps) => {
   const ownershipExpired = listing?.ownership ? checkOwnershipExpired(listing.ownership.toNumber()) : false;
   const viewerIsOwner = signerAddress && signerAddress === listing?.owner;
 
-  const { submitted } = useSelector((state: RootState) => state.transactions);
-
-  // const getExtendOwnerShipRceipt = async (tHash: string) => {
-  //   const receipt = await provider.getTransactionReceipt(tHash);
-  //   Promise.all([receipt]).then(() => {
-  //     console.log(receipt);
-  //   });
-  // };
-
-  // useEffect(() => {
-  //   if (extendOwnerShipSuccess) {
-  //     ToastSuccess('Successfully extended ownersip');
-  //     // Sao lại không gửi block lên ở đây
-  //     // const body = {
-  //     //   assetId: asset.id,
-  //     //   hash: extendOwnerShipTHash,
-  //     //   eventType: EventType.OWNER_SHIP_EXTENSION,
-  //     // };
-  //     // createBlockEvent(body);
-  //     // dispatch(reset());
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [extendOwnerShipSuccess]);
 
   const [modalsVisibility, setModalVisibility] = useState<TModalsVisibility>({
     [ModalType.OWNERSHIP_EXTENSION]: false,

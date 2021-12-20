@@ -20,6 +20,7 @@ import * as Yup from 'yup';
 import { EventType } from '../../enumeration/eventType';
 import { LISTING_INSTANCE } from '../../shared/blockchain-helpers';
 import {
+  convertBnToDecimal,
   convertDecimalToBn,
   convertUnixToDate,
   estimateOwnership,
@@ -55,7 +56,7 @@ const RegisterOwnershipModal = (props: IRegisterOwnershipModal) => {
   const dispatch = useDispatch();
   const closeModal = () => (): void => setVisibility(false);
 
-  const { signer } = useSelector((state: RootState) => state.walletReducer);
+  const { signer } = useSelector((state: RootState) => state.wallet);
 
   const initialValues: IExtndOwnrshpIntialValues = {
     listingAddress: listing?.address,
@@ -65,16 +66,16 @@ const RegisterOwnershipModal = (props: IRegisterOwnershipModal) => {
 
   const validationSchema = Yup.object().shape({
     tokenAmount: Yup.number()
-      // .test(
-      //   "dailyPayment-minimum",
-      //   `Minimum ownership for the listing is 1.0 day`,
-      //   function (value) {
-      //     if (!value) return true;
-      //     if (!listing?.dailyPayment) return false;
-      //     return value >= Number(convertBnToDecimal(listing.dailyPayment))
+      .test(
+        "dailyPayment-minimum",
+        `Minimum ownership for the listing is 1.0 day`,
+        function (value) {
+          if (!value) return true;
+          if (!listing?.dailyPayment) return false;
+          return value >= Number(convertBnToDecimal(listing.dailyPayment))
 
-      //   }
-      // )
+        }
+      )
       .typeError('Số lượng token không hợp lệ')
       .required('Vui lòng nhập số token muốn nạp'),
   });
