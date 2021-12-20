@@ -1,7 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { BigNumber, ContractTransaction, ethers, Bytes } from 'ethers';
 
-import { EventType } from '../../enumeration/eventType';
+import { EventType } from '../../shared/enumeration/eventType';
 import { Listing } from '../../typechain';
 import { ICTransaction } from './transactions.reducer';
 import axios from '../../config/axios-interceptor';

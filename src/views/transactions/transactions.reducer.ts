@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { ethers } from "ethers";
-import { EventType } from "../../enumeration/eventType";
+import { EventType } from "../../shared/enumeration/eventType";
 import { IEventRecord } from "../../shared/models/eventRecord.model";
 import { extendOwnership, recordTransaction } from "./transactions.api";
 

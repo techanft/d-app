@@ -13,7 +13,7 @@ import {
 } from '@coreui/react';
 import React, { useState } from 'react';
 import bgImg from '../../../assets/img/registerBonus.svg';
-import { mapWorkerStatusBadge, WorkerStatus } from '../../../enumeration/workerStatus';
+import { mapWorkerStatusBadge, WorkerStatus } from '../../../shared/enumeration/workerStatus';
 import ConfirmModal from '../../../shared/components/ConfirmModal';
 import { IWorkerPermission } from '../../../shared/models/workerPermission.model';
 import AddWorkerPermission from './AddWorkerPermissionModal';

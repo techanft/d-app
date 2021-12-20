@@ -13,8 +13,8 @@ import {
   CTabs,
 } from '@coreui/react';
 import React from 'react';
-import { mapStatus, mapStatusBadge, Status } from '../../../enumeration/status';
-import { mapWorkerStatusBadge, WorkerStatus } from '../../../enumeration/workerStatus';
+import { mapStatus, mapStatusBadge, Status } from '../../../shared/enumeration/status';
+import { mapWorkerStatusBadge, WorkerStatus } from '../../../shared/enumeration/workerStatus';
 import { IRegisterRewardHistory } from '../../../shared/models/listingActivity.model';
 import { IWorkerPermission } from '../../../shared/models/workerPermission.model';
 import './index.scss';

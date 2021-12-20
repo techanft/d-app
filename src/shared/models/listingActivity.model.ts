@@ -1,4 +1,4 @@
-import { Status } from "../../enumeration/status";
+import { Status } from "../enumeration/status";
 
 export interface IListingActivity {
     activityName: string,

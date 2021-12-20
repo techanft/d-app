@@ -1,4 +1,4 @@
-import { EventType } from "../../enumeration/eventType";
+import { EventType } from "../enumeration/eventType";
 
 export interface INewEventRecord {
   assetId: number;
