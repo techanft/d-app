@@ -2,8 +2,8 @@ import React from "react";
 import ContentLoader from "react-content-loader";
 
 interface IInfoLoader {
-  width: string;
-  height: string;
+  width: number;
+  height: number;
 }
 
 const InfoLoader = (props: IInfoLoader) => {

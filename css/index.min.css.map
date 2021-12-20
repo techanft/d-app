@@ -1,9 +1,0 @@
-{
-    "version": 3,
-    "mappings": "AAAA,AAAA,cAAc,AAAC,CACb,SAAS,CAAE,IAAI,CACf,WAAW,CAAE,IAAI,CAClB,AAED,AAAA,eAAe,AAAC,CACd,SAAS,CAAE,QAAQ,CACnB,WAAW,CAAE,IAAI,CAClB,AAED,AAAA,wBAAwB,AAAC,CACvB,SAAS,CAAE,QAAQ,CACnB,WAAW,CAAE,IAAI,CAClB",
-    "sources": [
-        "../src/views/realEstateListing/index.scss"
-    ],
-    "names": [],
-    "file": "index.min.css"
-}

@@ -1,0 +1,10 @@
+- Check connected network (Handle uncaught exception)
+- Listen to network changes
+- ToastErrors
+- Listings Pagination on Detail view
+- Catching exception on user tx rejection
+- Handle when listing isnt found (fake id param) (Loading + Listing entity checking)
+- Better loading icon
+- More details on ownership register modal (Current balance + max button)
+- Refactor TheHeader line 52
+- Toast Error => Info
