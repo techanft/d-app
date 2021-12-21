@@ -32,13 +32,18 @@ import { ToastError } from '../../../shared/components/Toast';
 import { RootState } from '../../../shared/reducers';
 // import { fetching } from './listings.reducer';
 import { selectEntityById } from '../../assets/assets.reducer';
-import { extendOwnership, IExtndOwnershipBody, IExtndOwnrshpIntialValues } from '../../transactions/transactions.api';
+import { IProceedTxBody, proceedTransaction } from '../../transactions/transactions.api';
+// import { extendOwnership, IExtndOwnershipBody, IExtndOwnrshpIntialValues } from '../../transactions/transactions.api';
 import { fetching } from '../../transactions/transactions.reducer';
+import { baseSetterArgs } from '../../transactions/settersMapping';
 
 interface IRegisterOwnershipModal {
   listingId: number;
   isVisible: boolean;
   setVisibility: (isVisible: boolean) => void;
+}
+interface IIntialValues {
+  tokenAmount: number,
 }
 
 const RegisterOwnershipModal = (props: IRegisterOwnershipModal) => {
@@ -59,10 +64,9 @@ const RegisterOwnershipModal = (props: IRegisterOwnershipModal) => {
 
   const { signer } = useSelector((state: RootState) => state.wallet);
 
-  const initialValues: IExtndOwnrshpIntialValues = {
-    listingAddress: listing?.address,
+  const initialValues: IIntialValues = {
     tokenAmount: 0,
-    listingId
+    // listingId
   };
 
   const validationSchema = Yup.object().shape({
@@ -81,7 +85,7 @@ const RegisterOwnershipModal = (props: IRegisterOwnershipModal) => {
       .required('Vui lòng nhập số token muốn nạp'),
   });
 
-  const handleRawFormValues = (input: IExtndOwnrshpIntialValues): IExtndOwnershipBody => {
+  const handleRawFormValues = (input: IIntialValues): IProceedTxBody => {
     if (!listing?.address) {
       throw Error('Error getting listing address');
     }
@@ -92,12 +96,15 @@ const RegisterOwnershipModal = (props: IRegisterOwnershipModal) => {
     if (!instance) {
       throw Error('Error in generating contract instace');
     }
-    return {
-      ...input,
-      type: EventType.OWNERSHIP_EXTENSION,
-      tokenAmount: convertDecimalToBn(input.tokenAmount.toString()),
+
+    const output: IProceedTxBody = {
+      listingId,
       contract: instance,
-    };
+      type: EventType.OWNERSHIP_EXTENSION,
+      args: {...baseSetterArgs, _amount: convertDecimalToBn(input.tokenAmount.toString())}
+    }
+
+    return output
   };
 
   return (
@@ -108,12 +115,12 @@ const RegisterOwnershipModal = (props: IRegisterOwnershipModal) => {
       <Formik
         enableReinitialize
         initialValues={initialValues}
-        validationSchema={validationSchema}
+        // validationSchema={validationSchema}
         onSubmit={(rawValues) => {
           try {
             const value = handleRawFormValues(rawValues);
             dispatch(fetching());
-            dispatch(extendOwnership(value));
+            dispatch(proceedTransaction(value));
             // setVisibility(false);
           } catch (error) {
             console.log(`Error submitting form ${error}`);
