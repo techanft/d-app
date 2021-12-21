@@ -35,7 +35,6 @@ import { IWorkerPermission } from '../../../shared/models/workerPermission.model
 import { RootState } from '../../../shared/reducers';
 import { selectEntityById } from '../../assets/assets.reducer';
 import ExtendOwnershipModal from '../actions/ExtendOwnershipModal';
-import RegisterOwnershipModal from '../actions/RegisterOwnershipModal';
 import WithdrawTokenModal from '../actions/WithdrawModal';
 import '../index.scss';
 
@@ -329,7 +328,7 @@ const ListingInfo = (props: IListingInfoProps) => {
                     </p>
                   </CRow>
                   <CRow className="mt-2 mx-0">
-                    <CLink to="/register">
+                    <CLink to={`/listings/${listingId}/register`}>
                       <FontAwesomeIcon icon={faDonate} /> Đăng ký nhận thưởng
                     </CLink>
                   </CRow>
@@ -380,18 +379,20 @@ const ListingInfo = (props: IListingInfoProps) => {
             </CCollapse>
           </CCol>
 
-
-
-          <RegisterOwnershipModal
+          <ExtendOwnershipModal
             listingId={listingId}
             isVisible={modalsVisibility[ModalType.OWNERSHIP_REGISTER]}
             setVisibility={(key: boolean) => handleModalVisibility(ModalType.OWNERSHIP_REGISTER, key)}
+            title='Đăng ký sở hữu'
           />
           <ExtendOwnershipModal
+            listingId={listingId}
             isVisible={modalsVisibility[ModalType.OWNERSHIP_EXTENSION]}
             setVisibility={(key: boolean) => handleModalVisibility(ModalType.OWNERSHIP_EXTENSION, key)}
+            title='Nạp ANFT'
           />
           <WithdrawTokenModal
+            listingId={listingId}
             isVisible={modalsVisibility[ModalType.OWNERSHIP_WITHDRAW]}
             setVisibility={(key: boolean) => handleModalVisibility(ModalType.OWNERSHIP_WITHDRAW, key)}
           />

@@ -31,7 +31,7 @@ export const insertCommas = (input: number | undefined | string) => {
     if (!noMoreThanOneCommas(input)) return "";
     const parts = input.toString().split(".");
     parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    if (parts[1]) parts[1] = parts[1].substring(0, 6); // Only take the first 4 decimals
+    if (parts[1]) parts[1] = parts[1].substring(0, 6); // Only take the first 6 decimals
     return parts.join(".");
   } else {
     return "";
@@ -41,7 +41,7 @@ export const insertCommas = (input: number | undefined | string) => {
 export const unInsertCommas = (input: string) => {
   const parts = input.split(".");
   parts[0] = parts[0].replaceAll(",", "");
-  if (parts[1]) parts[1] = parts[1].substring(0, 6); // Only take the first 4 decimals
+  if (parts[1]) parts[1] = parts[1].substring(0, 6); // Only take the first 6 decimals
   return parts.join(".");
 };
 
@@ -73,3 +73,12 @@ export const getEllipsisTxt = (str: string, n = 5) => {
   }
   return "";
 };
+
+export const estimateWithdraw = (dailyPayment: BigNumber, currentOwnership: BigNumber) => {
+  const currentUnix = dayjs().unix();
+  if (currentOwnership.toNumber() > currentUnix) {
+    const amount = (currentOwnership.toNumber() - currentUnix) * Number(convertBnToDecimal(dailyPayment)) / 86400;
+  return amount;
+  }
+  return 0;
+}

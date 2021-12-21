@@ -1,119 +1,99 @@
-import {
-  CButton,
-  CCol,
-  CForm,
-  CFormGroup,
-  CInput,
-  CInvalidFeedback,
-  CLabel,
-  CModal,
-  CModalBody,
-  CModalFooter,
-  CModalHeader,
-  CModalTitle,
-  CRow,
-} from '@coreui/react';
-import { Formik } from 'formik';
-import React from 'react';
-import * as Yup from 'yup';
+import { CButton, CCol, CModal, CModalBody, CModalFooter, CModalHeader, CModalTitle } from '@coreui/react';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { LISTING_INSTANCE } from '../../../shared/blockchain-helpers';
+import { estimateWithdraw, insertCommas } from '../../../shared/casual-helpers';
+import { EventType } from '../../../shared/enumeration/eventType';
+import { RootState } from '../../../shared/reducers';
+import { selectEntityById } from '../../assets/assets.reducer';
+import { baseSetterArgs } from '../../transactions/settersMapping';
+import { IProceedTxBody, proceedTransaction } from '../../transactions/transactions.api';
+import { fetching } from '../../transactions/transactions.reducer';
 
-interface IWithdrawTokenModal {
+interface IWithdrawModal {
+  listingId: number;
   isVisible: boolean;
   setVisibility: (visible: boolean) => void;
 }
 
-const WithdrawTokenModal = (props: IWithdrawTokenModal) => {
-  const { isVisible, setVisibility } = props;
+const WithdrawModal = (props: IWithdrawModal) => {
+  const { isVisible, setVisibility, listingId } = props;
+  const dispatch = useDispatch();
+
+  const listing = useSelector(selectEntityById(listingId));
+  
+  const { signer } = useSelector((state: RootState) => state.wallet);
+
+  const { submitted } = useSelector((state: RootState) => state.transactions);
+
   const closeModal = () => (): void => setVisibility(false);
 
-  const initialValues = {
-    totalToken: 10000,
-    totalTokenRecharged: 5000,
-    maxTokenWithdraw: 1000,
-    tokenWithdraw: 0,
+  const withdrawValues = () => {
+    if (!listing?.address) {
+      throw Error('Error getting listing address');
+    }
+    if (!signer) {
+      throw Error('No Signer found');
+    }
+    const instance = LISTING_INSTANCE(listing.address, signer);
+    if (!instance) {
+      throw Error('Error in generating contract instace');
+    }
+
+    const output: IProceedTxBody = {
+      listingId,
+      contract: instance,
+      type: EventType.WITHDRAW,
+      args: { ...baseSetterArgs },
+    };
+
+    return output;
   };
 
-  const validationSchema = Yup.object().shape({
-    tokenWithdraw: Yup.number().required('Vui lòng nhập số token muốn rút'),
-  });
+  const onWithdrawConfirm = () => (): void => {
+    dispatch(fetching());
+    dispatch(proceedTransaction(withdrawValues()));
+  };
+
+  useEffect(() => {
+    if (submitted) {
+      setVisibility(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [submitted]);
+
 
   return (
     <CModal show={isVisible} onClose={closeModal()} centered className="border-radius-modal">
       <CModalHeader className="justify-content-center">
         <CModalTitle className="modal-title-style">Rút ANFT</CModalTitle>
       </CModalHeader>
-      <Formik
-        enableReinitialize
-        initialValues={initialValues}
-        validationSchema={validationSchema}
-        onSubmit={(values) => {}}
-      >
-        {({ values, errors, touched, handleChange, handleSubmit, handleBlur }) => (
-          <CForm onSubmit={handleSubmit}>
-            <CModalBody>
-              <CRow>
-                <CCol xs={12}>
-                  <CFormGroup row>
-                    <CCol xs={8}>
-                      <CLabel className="withdraw-token-title">Số ANFT bạn đã nạp</CLabel>
-                    </CCol>
-                    <CCol xs={4}>
-                      <p className="text-primary text-right">{values.totalTokenRecharged}</p>
-                    </CCol>
-                  </CFormGroup>
-                  <CFormGroup row>
-                    <CCol xs={8}>
-                      <CLabel className="withdraw-token-title">Số ANFT Tối đa bạn rút</CLabel>
-                    </CCol>
-                    <CCol xs={4}>
-                      <p className="text-primary text-right">{values.maxTokenWithdraw}</p>
-                    </CCol>
-                  </CFormGroup>
-                  <CFormGroup row>
-                    <CCol xs={12}>
-                      <CLabel className="withdraw-token-title">Số ANFT muốn rút</CLabel>
-                    </CCol>
-                    <CCol>
-                      <CInput
-                        onChange={handleChange}
-                        id="tokenWithdraw"
-                        autoComplete="off"
-                        name="tokenWithdraw"
-                        value={values.tokenWithdraw || ''}
-                        onBlur={handleBlur}
-                        className="btn-radius-50"
-                        type="number"
-                      />
-                      <CInvalidFeedback
-                        className={!!errors.tokenWithdraw && touched.tokenWithdraw ? 'd-block' : 'd-none'}
-                      >
-                        {errors.tokenWithdraw}
-                      </CInvalidFeedback>
-                    </CCol>
-                  </CFormGroup>
-                </CCol>
-              </CRow>
-            </CModalBody>
-            <CModalFooter className="justify-content-between">
-              <CCol>
-                <CButton
-                  className="px-2 w-100 btn-font-style btn btn-outline-primary btn-radius-50"
-                  onClick={closeModal()}
-                >
-                  HỦY
-                </CButton>
-              </CCol>
-              <CCol>
-                <CButton className="px-2 w-100 btn btn-primary btn-font-style btn-radius-50" type="submit">
-                  ĐỒNG Ý
-                </CButton>
-              </CCol>
-            </CModalFooter>
-          </CForm>
+      <CModalBody>
+        {listing?.dailyPayment && listing?.ownership ? (
+          <p>
+            Bạn chắc chắn muốn rút{' '}
+            <span className="text-primary">
+              {insertCommas(estimateWithdraw(listing.dailyPayment, listing.ownership))} ANFT
+            </span>
+          </p>
+        ) : (
+          ''
         )}
-      </Formik>
+      </CModalBody>
+      <CModalFooter className="justify-content-between">
+        <CCol>
+          <CButton className="px-2 w-100 btn-font-style btn btn-outline-primary btn-radius-50" onClick={closeModal()}>
+            HỦY
+          </CButton>
+        </CCol>
+        <CCol>
+          <CButton className="px-2 w-100 btn btn-primary btn-font-style btn-radius-50" onClick={onWithdrawConfirm()}>
+            XÁC NHẬN
+          </CButton>
+        </CCol>
+      </CModalFooter>
     </CModal>
   );
 };
 
-export default WithdrawTokenModal;
+export default WithdrawModal;
