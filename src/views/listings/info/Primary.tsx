@@ -371,7 +371,7 @@ const ListingInfo = (props: IListingInfoProps) => {
                     </p>
                   </CRow>
                   <CRow className="mx-0">
-                    <CLink to="/workers-list">
+                    <CLink to={`/${listingId}/workers-list`}>
                       <FontAwesomeIcon icon={faClipboard} /> Quản lý quyền khai thác
                     </CLink>
                   </CRow>

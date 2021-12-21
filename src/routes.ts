@@ -32,7 +32,7 @@ const routes = [
     exact: true,
   },
   {
-    path: '/workers-list',
+    path: '/:id/workers-list',
     name: 'WorkersList',
     component: WorkersList,
     exact: true,

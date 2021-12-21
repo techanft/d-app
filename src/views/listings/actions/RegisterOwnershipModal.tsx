@@ -1,41 +1,19 @@
-import {
-  CButton,
-  CCol,
-  CForm,
-  CFormGroup,
-  CInput,
-  CInvalidFeedback,
-  CLabel,
-  CModal,
-  CModalBody,
-  CModalFooter,
-  CModalHeader,
-  CModalTitle,
-  CRow
-} from '@coreui/react';
+import { CButton, CCol, CForm, CFormGroup, CInput, CInvalidFeedback, CLabel, CModal, CModalBody, CModalFooter, CModalHeader, CModalTitle, CRow } from '@coreui/react';
 import { Formik } from 'formik';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
-import { EventType } from '../../../shared/enumeration/eventType';
 import { LISTING_INSTANCE } from '../../../shared/blockchain-helpers';
-import {
-  convertBnToDecimal,
-  convertDecimalToBn,
-  convertUnixToDate,
-  estimateOwnership,
-  formatBNToken,
-  insertCommas,
-  unInsertCommas
-} from '../../../shared/casual-helpers';
+import { convertBnToDecimal, convertDecimalToBn, convertUnixToDate, estimateOwnership, formatBNToken, insertCommas, unInsertCommas } from '../../../shared/casual-helpers';
 import { ToastError } from '../../../shared/components/Toast';
+import { EventType } from '../../../shared/enumeration/eventType';
 import { RootState } from '../../../shared/reducers';
 // import { fetching } from './listings.reducer';
 import { selectEntityById } from '../../assets/assets.reducer';
+import { baseSetterArgs } from '../../transactions/settersMapping';
 import { IProceedTxBody, proceedTransaction } from '../../transactions/transactions.api';
 // import { extendOwnership, IExtndOwnershipBody, IExtndOwnrshpIntialValues } from '../../transactions/transactions.api';
 import { fetching } from '../../transactions/transactions.reducer';
-import { baseSetterArgs } from '../../transactions/settersMapping';
 
 interface IRegisterOwnershipModal {
   listingId: number;
@@ -50,7 +28,7 @@ const RegisterOwnershipModal = (props: IRegisterOwnershipModal) => {
   const { isVisible, setVisibility, listingId } = props;
   const listing = useSelector(selectEntityById(listingId));
 
-  const { submitted } = useSelector((state: RootState) => state.transactions);
+  const { submitted, loading } = useSelector((state: RootState) => state.transactions);
 
   useEffect(() => {
     if (submitted) {
@@ -71,16 +49,11 @@ const RegisterOwnershipModal = (props: IRegisterOwnershipModal) => {
 
   const validationSchema = Yup.object().shape({
     tokenAmount: Yup.number()
-      .test(
-        "dailyPayment-minimum",
-        `Minimum ownership for the listing is 1.0 day`,
-        function (value) {
-          if (!value) return true;
-          if (!listing?.dailyPayment) return false;
-          return value >= Number(convertBnToDecimal(listing.dailyPayment))
-
-        }
-      )
+      .test('dailyPayment-minimum', `Minimum ownership for the listing is 1.0 day`, function (value) {
+        if (!value) return true;
+        if (!listing?.dailyPayment) return false;
+        return value >= Number(convertBnToDecimal(listing.dailyPayment));
+      })
       .typeError('Số lượng token không hợp lệ')
       .required('Vui lòng nhập số token muốn nạp'),
   });
@@ -115,7 +88,7 @@ const RegisterOwnershipModal = (props: IRegisterOwnershipModal) => {
       <Formik
         enableReinitialize
         initialValues={initialValues}
-        // validationSchema={validationSchema}
+        validationSchema={validationSchema}
         onSubmit={(rawValues) => {
           try {
             const value = handleRawFormValues(rawValues);
@@ -158,9 +131,7 @@ const RegisterOwnershipModal = (props: IRegisterOwnershipModal) => {
                         onBlur={handleBlur}
                         className="btn-radius-50"
                       />
-                      <CInvalidFeedback className={!!errors.tokenAmount && touched.tokenAmount ? 'd-block' : 'd-none'}>
-                        {errors.tokenAmount}
-                      </CInvalidFeedback>
+                      <CInvalidFeedback className={!!errors.tokenAmount && touched.tokenAmount ? 'd-block' : 'd-none'}>{errors.tokenAmount}</CInvalidFeedback>
                     </CCol>
                   </CFormGroup>
                   <CFormGroup row>
@@ -181,13 +152,7 @@ const RegisterOwnershipModal = (props: IRegisterOwnershipModal) => {
                     </CCol>
                     {listing?.dailyPayment && listing?.ownership && values.tokenAmount ? (
                       <CCol xs={6}>
-                        <p className="text-primary text-right">
-                          {estimateOwnership(
-                            convertDecimalToBn(String(values.tokenAmount)),
-                            listing.dailyPayment,
-                            listing.ownership
-                          )}
-                        </p>
+                        <p className="text-primary text-right">{estimateOwnership(convertDecimalToBn(String(values.tokenAmount)), listing.dailyPayment, listing.ownership)}</p>
                       </CCol>
                     ) : (
                       ''
@@ -198,15 +163,12 @@ const RegisterOwnershipModal = (props: IRegisterOwnershipModal) => {
             </CModalBody>
             <CModalFooter className="justify-content-between">
               <CCol>
-                <CButton
-                  className="px-2 w-100 btn-font-style btn-radius-50 btn btn-outline-primary"
-                  onClick={closeModal()}
-                >
+                <CButton className="px-2 w-100 btn-font-style btn-radius-50 btn btn-outline-primary" onClick={closeModal()}>
                   HỦY
                 </CButton>
               </CCol>
               <CCol>
-                <CButton className="px-2 w-100 btn btn-primary btn-font-style btn-radius-50" type="submit">
+                <CButton disabled={loading} className="px-2 w-100 btn btn-primary btn-font-style btn-radius-50" type="submit">
                   ĐỒNG Ý
                 </CButton>
               </CCol>

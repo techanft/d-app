@@ -1,15 +1,14 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { BigNumber, BigNumberish, ethers } from 'ethers';
 import axios from '../../config/axios-interceptor';
 import { EventType } from '../../shared/enumeration/eventType';
 import { IEventRecord } from '../../shared/models/eventRecord.model';
 import { Listing } from '../../typechain';
 import { settersMapping, TBaseSetterArguments } from './settersMapping';
-import { ICTransaction } from './transactions.reducer';
+import { ICTransaction, IDeleteTransaction } from './transactions.reducer';
 
 interface ITxData {
-  type: EventType;
-  blockNumber: number;
+  eventType: EventType;
+  block: number;
   assetId: number;
 }
 const prefix = 'event-trackings';
@@ -20,13 +19,24 @@ export const recordTransaction = createAsyncThunk('recordTransaction', async (tr
     const txReceipt = await contractTransaction.wait();
 
     const txData: ITxData = {
-      type,
-      blockNumber: txReceipt.blockNumber,
+      eventType: type,
+      block: txReceipt.blockNumber,
       assetId: listingId,
     };
 
     const { data } = await axios.post<IEventRecord>(`${prefix}`, txData);
 
+    return data;
+  } catch (error: any) {
+    return thunkAPI.rejectWithValue(error);
+  }
+});
+
+export const deleteExistedTransaction = createAsyncThunk('deleteExistedTransaction', async (transaction: IDeleteTransaction, thunkAPI) => {
+  try {
+    const { eventId,contractTransaction } = transaction;
+    await contractTransaction.wait();
+    const { data } = await axios.delete<IEventRecord>(`${prefix}/${eventId}`);
     return data;
   } catch (error: any) {
     return thunkAPI.rejectWithValue(error);
@@ -53,6 +63,34 @@ export const proceedTransaction = createAsyncThunk('proceedTransaction', async (
       contractTransaction: result,
       type,
       listingId
+    };
+    return payload;
+  } catch (error: any) {
+    return thunkAPI.rejectWithValue(error);
+  }
+});
+
+export interface IDisableWorkerIntialValues  {
+  address: string;
+  eventId:number
+}
+
+export interface IDisableWorkerBody extends Omit<IDisableWorkerIntialValues, 'tokenAmount'> {
+  contract: Listing;
+  address: string;
+  type: EventType;
+  eventId:number
+}
+
+export const disableWorkerOwnership = createAsyncThunk("disableWorker", async (body: IDisableWorkerBody, thunkAPI) => {
+  const { contract, address, eventId } = body;
+  try {
+    const result = await contract.updateWorker(address);
+
+    const payload: IDeleteTransaction = {
+      contractTransaction: result,
+      type: EventType.UPDATE_WORKER,
+      eventId,
     };
     return payload;
   } catch (error: any) {
