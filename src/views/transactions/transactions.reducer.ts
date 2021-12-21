@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { ethers } from "ethers";
 import { EventType } from "../../shared/enumeration/eventType";
 import { IEventRecord } from "../../shared/models/eventRecord.model";
-import { extendOwnership, recordTransaction } from "./transactions.api";
+import { proceedTransaction, recordTransaction } from "./transactions.api";
 
 export interface ICTransaction {
   contractTransaction: ethers.ContractTransaction,
@@ -49,18 +49,15 @@ const {actions, reducer} = createSlice({
     },
   },
   extraReducers: {
-    // 2 cases below handles all blockchain transactions action marked as {TX_ACTION} (proceedTransaction)
-    [extendOwnership.fulfilled.type]: (state, { payload }: PayloadAction<ICTransaction>) => {
+    [proceedTransaction.fulfilled.type]: (state, { payload }: PayloadAction<ICTransaction>) => {
       state.transaction = payload;
       state.loading = false;
       state.submitted = true;
     },
-    [extendOwnership.rejected.type]: (state, { payload }) => {
+    [proceedTransaction.rejected.type]: (state, { payload }) => {
       state.errorMessage = payload;
       state.loading = false;
-    },
-
-    
+    },    
     [recordTransaction.fulfilled.type]: (state, _: PayloadAction<IEventRecord>) => {
       state.success = true;
       state.loading = false;

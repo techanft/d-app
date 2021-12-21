@@ -1,11 +1,11 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { ethers } from 'ethers';
+import { BigNumber, BigNumberish, ethers } from 'ethers';
 import axios from '../../config/axios-interceptor';
 import { EventType } from '../../shared/enumeration/eventType';
 import { IEventRecord } from '../../shared/models/eventRecord.model';
 import { Listing } from '../../typechain';
+import { settersMapping, TBaseSetterArguments } from './settersMapping';
 import { ICTransaction } from './transactions.reducer';
-
 
 interface ITxData {
   type: EventType;
@@ -22,10 +22,10 @@ export const recordTransaction = createAsyncThunk('recordTransaction', async (tr
     const txData: ITxData = {
       type,
       blockNumber: txReceipt.blockNumber,
-      assetId: listingId
-    }
+      assetId: listingId,
+    };
 
-    const {data} = await axios.post<IEventRecord>(`${prefix}`, txData);
+    const { data } = await axios.post<IEventRecord>(`${prefix}`, txData);
 
     return data;
   } catch (error: any) {
@@ -33,32 +33,25 @@ export const recordTransaction = createAsyncThunk('recordTransaction', async (tr
   }
 });
 
-interface ISharedBody {
-  listingAddress: string | undefined;
+export interface IProceedTxBody {
   listingId: number;
-}
-
-export interface IExtndOwnrshpIntialValues extends ISharedBody {
-  tokenAmount: number;
-}
-
-
-export interface IExtndOwnershipBody extends Omit<IExtndOwnrshpIntialValues, 'tokenAmount'> {
   contract: Listing;
-  tokenAmount: ethers.BigNumber;
-  type: EventType
+  type: EventType;
+  args: TBaseSetterArguments
 }
 
-
-const TX_ACTION = 'proceedTransaction'; // Intentionally use a common async thunk, so we can handle multiple apis response in one case reducer logic
-export const extendOwnership = createAsyncThunk(TX_ACTION, async (body: IExtndOwnershipBody, thunkAPI) => {
-  const { contract, tokenAmount, listingId } = body;
+export const proceedTransaction = createAsyncThunk('proceedTransaction', async (body: IProceedTxBody, thunkAPI) => {
+  const { contract, listingId, args, type } = body;
   try {
-    const result = await contract.extendOwnership(tokenAmount);
+    const setter = settersMapping(contract, type, args);
+
+    if (setter === null) throw ("Insufficient arguments causing contract setter can not be generated");
+  
+    const result = await setter();
 
     const payload: ICTransaction = {
       contractTransaction: result,
-      type: EventType.OWNERSHIP_EXTENSION,
+      type,
       listingId
     };
     return payload;
@@ -66,31 +59,3 @@ export const extendOwnership = createAsyncThunk(TX_ACTION, async (body: IExtndOw
     return thunkAPI.rejectWithValue(error);
   }
 });
-
-
-interface IRegisterIntialValues extends ISharedBody {
-  tokenAmount: number,
-  optionId: number,
-  increase: true,
-}
-export interface IRegisterBody extends Omit<IRegisterIntialValues, 'tokenAmount'> {
-  contract: Listing;
-  tokenAmount: ethers.BigNumber;
-  type: EventType
-}
-export const register = createAsyncThunk(TX_ACTION, async (body: IRegisterBody, thunkAPI) => {
-  const { contract, tokenAmount, listingId, optionId, increase } = body;
-
-  try {
-    const result = await contract.register(tokenAmount, optionId, increase );
-    const payload: ICTransaction = {
-      contractTransaction: result,
-      type: EventType.REGISTER,
-      listingId
-    };
-    return payload;
-  } catch (error: any) {
-    return thunkAPI.rejectWithValue(error);
-  }
-});
-
