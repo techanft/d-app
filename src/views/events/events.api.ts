@@ -62,8 +62,6 @@ const getListingsPartialInfo = async (events: IEvent[], eventType: EventType): P
     // Mapping new properties based on index
     // https://stackoverflow.com/questions/28066429/promise-all-order-of-resolved-values
     const output: IEvent[] = events.map((e, i) => {
-      console.log(listingEvent[i], 'listingEvent[i]')
-      console.log(e, 'e')
 
       // Không viết listingEvent[i][0];
       /*

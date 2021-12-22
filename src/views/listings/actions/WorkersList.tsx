@@ -46,7 +46,6 @@ const WorkerManagement = (props: IWorkersList) => {
 
   const { selectAll } = eventsSelectors;
   const events = useSelector(selectAll);
-  console.log(events, 'events')
 
   const [filterState, setFilterState] = useState<IEventTrackingFilter>({
     page: 0,
