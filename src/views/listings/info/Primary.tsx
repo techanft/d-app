@@ -1,44 +1,28 @@
 import CIcon from '@coreui/icons-react';
-import {
-  CButton,
-  CCard,
-  CCardBody,
-  CCol,
-  CCollapse,
-  CContainer,
-  CDataTable,
-  CLink,
-  CRow,
-  CTooltip
-} from '@coreui/react';
-import {
-  faArrowAltCircleDown,
-  faArrowAltCircleUp,
-  faClipboard,
-  faDonate,
-  faEdit,
-  faIdBadge
-} from '@fortawesome/free-solid-svg-icons';
+import { CButton, CCard, CCardBody, CCol, CCollapse, CContainer, CDataTable, CLink, CPagination, CRow, CTooltip } from '@coreui/react';
+import { faArrowAltCircleDown, faArrowAltCircleUp, faClipboard, faDonate, faEdit, faIdBadge } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { TOKEN_SYMBOL } from '../../../config/constants';
 import { checkOwnershipExpired, convertUnixToDate, formatBNToken, getEllipsisTxt } from '../../../shared/casual-helpers';
 import InfoLoader from '../../../shared/components/InfoLoader';
 import { ToastError } from '../../../shared/components/Toast';
+import { EventType } from '../../../shared/enumeration/eventType';
 import { CollapseType, ModalType, TCollapseVisibility, TModalsVisibility } from '../../../shared/enumeration/modalType';
-import { WorkerStatus } from '../../../shared/enumeration/workerStatus';
 import useWindowDimensions from '../../../shared/hooks/useWindowDimensions';
 import { IAsset } from '../../../shared/models/assets.model';
-import { IWorkerPermission } from '../../../shared/models/workerPermission.model';
+import { IEvent } from '../../../shared/models/events.model';
 import { RootState } from '../../../shared/reducers';
-import { selectEntityById } from '../../assets/assets.reducer';
+import { getEntity } from '../../assets/assets.api';
+import { fetchingEntity, selectEntityById } from '../../assets/assets.reducer';
+import { getEntities, IEventTrackingFilter } from '../../events/events.api';
+import { eventsSelectors, fetchingEntities } from '../../events/events.reducer';
 import ExtendOwnershipModal from '../actions/ExtendOwnershipModal';
 import RegisterOwnershipModal from '../actions/RegisterOwnershipModal';
 import WithdrawTokenModal from '../actions/WithdrawModal';
 import '../index.scss';
-
 
 const ownershipText = (viewerAddr: string | undefined, listingInfo: IAsset) => {
   const { ownership, owner } = listingInfo;
@@ -70,7 +54,6 @@ interface IListingInfoProps {
   listingId: number;
 }
 
-
 const titleTableStyle = {
   textAlign: 'left',
   color: '#828282',
@@ -85,13 +68,12 @@ const workerFields = [
     _style: titleTableStyle,
     label: 'Address Wallet',
   },
-  {
-    key: 'createdDate',
-    _style: titleTableStyle,
-    label: 'Thời gian bắt đầu',
-  },
+  // {
+  //   key: 'createdDate',
+  //   _style: titleTableStyle,
+  //   label: 'Thời gian bắt đầu',
+  // },
 ];
-
 
 const initialCollapseState: TCollapseVisibility = {
   [CollapseType.INVESTMENT]: false,
@@ -101,6 +83,28 @@ const initialCollapseState: TCollapseVisibility = {
 
 const ListingInfo = (props: IListingInfoProps) => {
   const { listingId } = props;
+  const dispatch = useDispatch();
+  //get worker list
+  const { initialState: eventInitialState } = useSelector((state: RootState) => state.events);
+  const { totalItems, entitiesLoading } = eventInitialState;
+  const { selectAll } = eventsSelectors;
+  const events = useSelector(selectAll);
+  const [filterState, setFilterState] = useState<IEventTrackingFilter>({
+    page: 0,
+    size: 10,
+    sort: 'createdDate,desc',
+    eventType: EventType.UPDATE_WORKER,
+    listingId,
+  });
+
+  const totalPages = Math.ceil(totalItems / filterState.size);
+
+  const handlePaginationChange = (page: number) => {
+    if (page !== 0) {
+      window.scrollTo(0, 0);
+      setFilterState({ ...filterState, page: page - 1 });
+    }
+  };
 
   const { signerAddress } = useSelector((state: RootState) => state.wallet);
 
@@ -116,7 +120,6 @@ const ListingInfo = (props: IListingInfoProps) => {
   const ownershipExpired = listing?.ownership ? checkOwnershipExpired(listing.ownership.toNumber()) : false;
   const viewerIsOwner = signerAddress && signerAddress === listing?.owner;
 
-
   const [modalsVisibility, setModalVisibility] = useState<TModalsVisibility>({
     [ModalType.OWNERSHIP_EXTENSION]: false,
     [ModalType.OWNERSHIP_WITHDRAW]: false,
@@ -127,7 +130,6 @@ const ListingInfo = (props: IListingInfoProps) => {
     setModalVisibility({ ...modalsVisibility, [type]: isVisible });
   };
 
-
   const [collapseVisibility, setCollapseVisibility] = useState<TCollapseVisibility>(initialCollapseState);
 
   const toggleCollapseVisibility = (type: CollapseType) => () => {
@@ -136,25 +138,19 @@ const ListingInfo = (props: IListingInfoProps) => {
     setCollapseVisibility({ ...initialCollapseState, [type]: !collapseVisibility[type] });
   };
 
-  const workerListing: IWorkerPermission[] = [
-    {
-      address: 'h1-0xda3ac...9999',
-      createdDate: 'h1-17:10- 29/11/2021',
-      status: WorkerStatus.true,
-    },
-    {
-      address: 'h2-0xda3ac...9999',
-      createdDate: 'h2-17:10- 29/11/2021',
-      status: WorkerStatus.true,
-    },
-    {
-      address: '0xda3ac...9999',
-      createdDate: '17:10- 29/11/2021',
-      status: WorkerStatus.false,
-    },
-  ];
+  useEffect(() => {
+    if (listingId) {
+      dispatch(fetchingEntity());
+      dispatch(getEntity(Number(listingId)));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [listingId]);
 
-  const workerActiveListing = workerListing.filter((e) => e.status === WorkerStatus.true);
+  useEffect(() => {
+    dispatch(fetchingEntities());
+    dispatch(getEntities(filterState));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(filterState)]);
 
   // listing
   return (
@@ -185,11 +181,7 @@ const ListingInfo = (props: IListingInfoProps) => {
           </CCol>
 
           <CCol xs={6} className=" mb-3">
-            {!entityLoading && listing?.ownership ? (
-              ownershipText(signerAddress, listing)
-            ) : (
-              <InfoLoader width={300} height={29} />
-            )}
+            {!entityLoading && listing?.ownership ? ownershipText(signerAddress, listing) : <InfoLoader width={300} height={29} />}
           </CCol>
         </CRow>
         <CRow className="p-0 m-0">
@@ -234,9 +226,7 @@ const ListingInfo = (props: IListingInfoProps) => {
           <CCol xs={6}>
             <p className="detail-title-font my-2">Sở hữu tới </p>
             {!entityLoading && listing?.ownership ? (
-              <p className={`my-2 value-text ${ownershipExpired ? 'text-danger' : 'text-success'}`}>
-                {convertUnixToDate(listing.ownership.toNumber())}
-              </p>
+              <p className={`my-2 value-text ${ownershipExpired ? 'text-danger' : 'text-success'}`}>{convertUnixToDate(listing.ownership.toNumber())}</p>
             ) : (
               <InfoLoader width={155} height={27} />
             )}
@@ -288,30 +278,27 @@ const ListingInfo = (props: IListingInfoProps) => {
                 <CCol xs={12}>
                   <CDataTable
                     striped
-                    items={workerActiveListing}
+                    items={events}
                     fields={workerFields}
                     responsive
                     hover
                     header
                     scopedSlots={{
-                      address: ({ address }: IWorkerPermission) => {
-                        return <td>{address ? address : '_'}</td>;
-                      },
-                      createdDate: ({ createdDate }: IWorkerPermission) => {
-                        return <td>{createdDate ? createdDate : '_'}</td>;
+                      address: (item: IEvent) => {
+                        return <td>{item.eventArg?._worker || '_'}</td>;
                       },
                     }}
                   />
                 </CCol>
               </CRow>
+              {totalPages > 1 && (
+                <CPagination disabled={entitiesLoading} activePage={filterState.page + 1} pages={totalPages} onActivePageChange={handlePaginationChange} align="center" className="mt-2" />
+              )}
             </CCollapse>
           </CCol>
 
           <CCol xs={12} className="mt-2 ">
-            <CButton
-              className="px-3 w-100 btn-radius-50 btn-font-style btn btn-outline-primary"
-              onClick={toggleCollapseVisibility(CollapseType.INVESTMENT)}
-            >
+            <CButton className="px-3 w-100 btn-radius-50 btn-font-style btn btn-outline-primary" onClick={toggleCollapseVisibility(CollapseType.INVESTMENT)}>
               Hoạt động đầu tư
             </CButton>
           </CCol>
@@ -321,10 +308,7 @@ const ListingInfo = (props: IListingInfoProps) => {
               <CCard className="activities-card mt-2 mb-0">
                 <CCardBody className="p-2">
                   <CRow className="mx-0">
-                    <p
-                      onClick={() => handleModalVisibility(ModalType.OWNERSHIP_REGISTER, true)}
-                      className={`m-0 text-primary`}
-                    >
+                    <p onClick={() => handleModalVisibility(ModalType.OWNERSHIP_REGISTER, true)} className={`m-0 text-primary`}>
                       <FontAwesomeIcon icon={faEdit} /> Đăng ký sở hữu
                     </p>
                   </CRow>
@@ -339,12 +323,7 @@ const ListingInfo = (props: IListingInfoProps) => {
           </CCol>
 
           <CCol xs={12} className="mt-2">
-            <CButton
-              className={`px-3 w-100 btn-radius-50 btn-font-style btn btn-primary ${
-                viewerIsOwner ? 'd-block' : 'd-none'
-              }`}
-              onClick={toggleCollapseVisibility(CollapseType.MANAGEMENT)}
-            >
+            <CButton className={`px-3 w-100 btn-radius-50 btn-font-style btn btn-primary ${viewerIsOwner ? 'd-block' : 'd-none'}`} onClick={toggleCollapseVisibility(CollapseType.MANAGEMENT)}>
               Quản lý sở hữu
             </CButton>
           </CCol>
@@ -354,19 +333,12 @@ const ListingInfo = (props: IListingInfoProps) => {
               <CCard className="mt-2 activities-card mb-0">
                 <CCardBody className="p-2">
                   <CRow className="mx-0">
-                    <CLink
-                      href="#"
-                      target="_blank"
-                      onClick={() => handleModalVisibility(ModalType.OWNERSHIP_WITHDRAW, true)}
-                    >
+                    <CLink href="#" target="_blank" onClick={() => handleModalVisibility(ModalType.OWNERSHIP_WITHDRAW, true)}>
                       <FontAwesomeIcon icon={faArrowAltCircleUp} /> Rút ANFT
                     </CLink>
                   </CRow>
                   <CRow className="my-2 mx-0">
-                    <p
-                      onClick={() => handleModalVisibility(ModalType.OWNERSHIP_EXTENSION, true)}
-                      className={`m-0 text-primary`}
-                    >
+                    <p onClick={() => handleModalVisibility(ModalType.OWNERSHIP_EXTENSION, true)} className={`m-0 text-primary`}>
                       <FontAwesomeIcon icon={faArrowAltCircleDown} /> Nạp thêm
                     </p>
                   </CRow>
@@ -380,21 +352,13 @@ const ListingInfo = (props: IListingInfoProps) => {
             </CCollapse>
           </CCol>
 
-
-
           <RegisterOwnershipModal
             listingId={listingId}
             isVisible={modalsVisibility[ModalType.OWNERSHIP_REGISTER]}
             setVisibility={(key: boolean) => handleModalVisibility(ModalType.OWNERSHIP_REGISTER, key)}
           />
-          <ExtendOwnershipModal
-            isVisible={modalsVisibility[ModalType.OWNERSHIP_EXTENSION]}
-            setVisibility={(key: boolean) => handleModalVisibility(ModalType.OWNERSHIP_EXTENSION, key)}
-          />
-          <WithdrawTokenModal
-            isVisible={modalsVisibility[ModalType.OWNERSHIP_WITHDRAW]}
-            setVisibility={(key: boolean) => handleModalVisibility(ModalType.OWNERSHIP_WITHDRAW, key)}
-          />
+          <ExtendOwnershipModal isVisible={modalsVisibility[ModalType.OWNERSHIP_EXTENSION]} setVisibility={(key: boolean) => handleModalVisibility(ModalType.OWNERSHIP_EXTENSION, key)} />
+          <WithdrawTokenModal isVisible={modalsVisibility[ModalType.OWNERSHIP_WITHDRAW]} setVisibility={(key: boolean) => handleModalVisibility(ModalType.OWNERSHIP_WITHDRAW, key)} />
         </CRow>
       </CCol>
     </CContainer>

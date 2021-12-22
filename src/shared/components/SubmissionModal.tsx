@@ -3,12 +3,12 @@ import { CButton, CLabel, CLink, CModal, CModalBody, CModalFooter, CModalHeader,
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { SCAN_URL } from '../../config/constants';
-import { deleteExistedTransaction, recordTransaction } from '../../views/transactions/transactions.api';
+import { recordTransaction } from '../../views/transactions/transactions.api';
 import { fetching, hardReset, softReset } from '../../views/transactions/transactions.reducer';
 import { RootState } from '../reducers';
 
 const SubmissionModal = () => {
-  const { submitted, transaction, success, deleteSubmitted, deleteSuccess, transactionDel } = useSelector((state: RootState) => state.transactions);
+  const { submitted, transaction, success } = useSelector((state: RootState) => state.transactions);
   const dispatch = useDispatch();
 
   const [visibility, setVisibility] = useState(false);
@@ -21,23 +21,6 @@ const SubmissionModal = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [submitted, transaction]);
-
-  useEffect(() => {
-    if (deleteSubmitted && transactionDel) {
-      setVisibility(true);
-      dispatch(fetching());
-      dispatch(deleteExistedTransaction(transactionDel));
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [deleteSubmitted, transactionDel]);
-
-  useEffect(() => {
-    if (deleteSuccess) {
-      setVisibility(false);
-      dispatch(hardReset());
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [deleteSuccess]);
 
   useEffect(() => {
     if (success) {
@@ -67,13 +50,6 @@ const SubmissionModal = () => {
         <CLabel className="text-primary mt-5 d-block">
           {transaction ? (
             <CLink href={`${SCAN_URL}tx/${transaction.contractTransaction.hash}`} target="_blank">
-              View on Network Scan <CIcon name="cil-external-link" className="pb-1" size="lg" />
-            </CLink>
-          ) : (
-            ''
-          )}
-          {transactionDel ? (
-            <CLink href={`${SCAN_URL}tx/${transactionDel.contractTransaction.hash}`} target="_blank">
               View on Network Scan <CIcon name="cil-external-link" className="pb-1" size="lg" />
             </CLink>
           ) : (

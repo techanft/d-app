@@ -4,12 +4,17 @@ import { EventType } from '../../shared/enumeration/eventType';
 import { IEventRecord } from '../../shared/models/eventRecord.model';
 import { Listing } from '../../typechain';
 import { settersMapping, TBaseSetterArguments } from './settersMapping';
-import { ICTransaction, IDeleteTransaction } from './transactions.reducer';
+import { ICTransaction } from './transactions.reducer';
 
 interface ITxData {
   eventType: EventType;
   block: number;
   assetId: number;
+}
+
+interface IDeleteTransaction {
+  eventRecord: IEventRecord;
+  oldEventId: number;
 }
 const prefix = 'event-trackings';
 
@@ -32,11 +37,11 @@ export const recordTransaction = createAsyncThunk('recordTransaction', async (tr
   }
 });
 
-export const deleteExistedTransaction = createAsyncThunk('deleteExistedTransaction', async (transaction: IDeleteTransaction, thunkAPI) => {
+export const deleteExistedTransaction = createAsyncThunk('deleteExistedTransaction', async (body: IDeleteTransaction, thunkAPI) => {
   try {
-    const { eventId,contractTransaction } = transaction;
-    await contractTransaction.wait();
-    const { data } = await axios.delete<IEventRecord>(`${prefix}/${eventId}`);
+    const { oldEventId, eventRecord } = body;
+    const eventIds = [oldEventId, eventRecord.id];
+    const { data } = await axios.delete<IEventRecord>(`${prefix}?ids=${eventIds.map((item) => item).join(',')}`);
     return data;
   } catch (error: any) {
     return thunkAPI.rejectWithValue(error);
@@ -47,7 +52,7 @@ export interface IProceedTxBody {
   listingId: number;
   contract: Listing;
   type: EventType;
-  args: TBaseSetterArguments
+  args: TBaseSetterArguments;
 }
 
 export const proceedTransaction = createAsyncThunk('proceedTransaction', async (body: IProceedTxBody, thunkAPI) => {
@@ -55,42 +60,14 @@ export const proceedTransaction = createAsyncThunk('proceedTransaction', async (
   try {
     const setter = settersMapping(contract, type, args);
 
-    if (setter === null) throw ("Insufficient arguments causing contract setter can not be generated");
-  
+    if (setter === null) throw 'Insufficient arguments causing contract setter can not be generated';
+
     const result = await setter();
 
     const payload: ICTransaction = {
       contractTransaction: result,
       type,
-      listingId
-    };
-    return payload;
-  } catch (error: any) {
-    return thunkAPI.rejectWithValue(error);
-  }
-});
-
-export interface IDisableWorkerIntialValues  {
-  address: string;
-  eventId:number
-}
-
-export interface IDisableWorkerBody extends Omit<IDisableWorkerIntialValues, 'tokenAmount'> {
-  contract: Listing;
-  address: string;
-  type: EventType;
-  eventId:number
-}
-
-export const disableWorkerOwnership = createAsyncThunk("disableWorker", async (body: IDisableWorkerBody, thunkAPI) => {
-  const { contract, address, eventId } = body;
-  try {
-    const result = await contract.updateWorker(address);
-
-    const payload: IDeleteTransaction = {
-      contractTransaction: result,
-      type: EventType.UPDATE_WORKER,
-      eventId,
+      listingId,
     };
     return payload;
   } catch (error: any) {

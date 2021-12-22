@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { ethers } from 'ethers';
 import { EventType } from '../../shared/enumeration/eventType';
 import { IEventRecord } from '../../shared/models/eventRecord.model';
-import { deleteExistedTransaction, disableWorkerOwnership, proceedTransaction, recordTransaction } from './transactions.api';
+import { deleteExistedTransaction, proceedTransaction, recordTransaction } from './transactions.api';
 
 export interface ICTransaction {
   contractTransaction: ethers.ContractTransaction;
@@ -10,17 +10,11 @@ export interface ICTransaction {
   listingId: number;
 }
 
-export interface IDeleteTransaction {
-  contractTransaction: ethers.ContractTransaction;
-  type: EventType;
-  eventId: number;
-}
 
 interface ITxInitialState {
-  transactionDel: IDeleteTransaction | undefined;
+  eventRecord: IEventRecord | undefined
   transaction: ICTransaction | undefined;
   loading: boolean;
-  deleteSubmitted:boolean;
   submitted: boolean;
   success: boolean;
   deleteSuccess:boolean;
@@ -28,10 +22,9 @@ interface ITxInitialState {
 }
 
 const initialState: ITxInitialState = {
-  transactionDel:undefined,
+  eventRecord:undefined,
   transaction: undefined,
   submitted: false,
-  deleteSubmitted:false,
   loading: false,
   success: false,
   deleteSuccess:false,
@@ -48,10 +41,9 @@ const { actions, reducer } = createSlice({
       state.loading = true;
     },
     hardReset(state) {
+      state.eventRecord = undefined;
       state.transaction = undefined;
-      state.transactionDel = undefined;
       state.submitted = false;
-      state.deleteSubmitted = false;
       state.loading = false;
       state.success = false;
       state.deleteSuccess =false;
@@ -59,7 +51,6 @@ const { actions, reducer } = createSlice({
     },
     softReset(state) {
       state.submitted = false;
-      state.deleteSubmitted = false;
       state.loading = false;
       state.errorMessage = undefined;
     },
@@ -74,18 +65,9 @@ const { actions, reducer } = createSlice({
       state.errorMessage = payload;
       state.loading = false;
     },
-    [disableWorkerOwnership.fulfilled.type]: (state, { payload }: PayloadAction<IDeleteTransaction>) => {
-      state.transactionDel = payload;
-      state.loading = false;
-      state.deleteSubmitted = true;
-    },
-    [disableWorkerOwnership.rejected.type]: (state, { payload }) => {
-      state.errorMessage = payload;
-      state.loading = false;
-    },
 
-
-    [recordTransaction.fulfilled.type]: (state, _: PayloadAction<IEventRecord>) => {
+    [recordTransaction.fulfilled.type]: (state, {payload}: PayloadAction<IEventRecord>) => {
+      state.eventRecord = payload
       state.success = true;
       state.loading = false;
     },

@@ -1,7 +1,7 @@
 import { CButton, CCol, CForm, CInput, CInvalidFeedback, CModal, CModalBody, CModalFooter, CModalHeader, CModalTitle, CRow } from '@coreui/react';
 import { utils } from 'ethers';
 import { Formik } from 'formik';
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
 import { LISTING_INSTANCE } from '../../../shared/blockchain-helpers';
@@ -10,7 +10,8 @@ import { EventType } from '../../../shared/enumeration/eventType';
 import { RootState } from '../../../shared/reducers';
 import { Listing } from '../../../typechain';
 import { selectEntityById } from '../../assets/assets.reducer';
-import { IUpdateWorkerBody, IUpdateWorkerIntialValues, updateWorkerOwnership } from '../../transactions/transactions.api';
+import { baseSetterArgs } from '../../transactions/settersMapping';
+import { IProceedTxBody, proceedTransaction } from '../../transactions/transactions.api';
 import { fetching, softReset } from '../../transactions/transactions.reducer';
 
 interface ICancelWorkerPermission {
@@ -19,9 +20,13 @@ interface ICancelWorkerPermission {
   setVisible: (visible: boolean) => void;
 }
 
+interface IIntialValues {
+  address: string;
+}
+
 const AddWorkerPermission = (props: ICancelWorkerPermission) => {
   const { visible, setVisible, listingId } = props;
-
+  const formikRef = useRef<any>();
   const dispatch = useDispatch();
   const listing = useSelector(selectEntityById(listingId));
   const { signer } = useSelector((state: RootState) => state.wallet);
@@ -30,13 +35,12 @@ const AddWorkerPermission = (props: ICancelWorkerPermission) => {
   useEffect(() => {
     if (submitted) {
       setVisible(false);
+      formikRef?.current?.resetForm();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [submitted]);
 
-  const initialValues = {
-    listingAddress: listing?.address,
-    listingId,
+  const initialValues: IIntialValues = {
     address: '',
   };
 
@@ -52,7 +56,7 @@ const AddWorkerPermission = (props: ICancelWorkerPermission) => {
     return await listing.workers(address);
   };
 
-  const handleRawFormValues = async (input: IUpdateWorkerIntialValues): Promise<IUpdateWorkerBody> => {
+  const handleRawFormValues = async (input: IIntialValues): Promise<IProceedTxBody> => {
     if (!listing?.address) {
       throw Error('Error getting listing address');
     }
@@ -63,35 +67,36 @@ const AddWorkerPermission = (props: ICancelWorkerPermission) => {
     if (!instance) {
       throw Error('Error in generating contract instace');
     }
-    
-    if(await workerExisted(instance, input.address)){
+
+    if (await workerExisted(instance, input.address)) {
       throw Error('Worker Exsisted');
     }
-    
-    return {
-      ...input,
-      type: EventType.UPDATE_WORKER,
-      address: input.address,
+
+    const output: IProceedTxBody = {
+      listingId,
       contract: instance,
+      type: EventType.UPDATE_WORKER,
+      args: { ...baseSetterArgs, _worker: input.address },
     };
+
+    return output;
   };
 
   return (
     <Formik
+      innerRef={formikRef}
       enableReinitialize
       initialValues={initialValues}
       validationSchema={validationSchema}
-      onSubmit={async (rawValues,{resetForm}) => {
+      onSubmit={async (rawValues) => {
         try {
           const value = handleRawFormValues(rawValues);
           dispatch(fetching());
-          dispatch(updateWorkerOwnership(await value));
-          // setVisibility(false);
-          resetForm()
+          dispatch(proceedTransaction(await value));
         } catch (error) {
           console.log(`Error submitting form ${error}`);
           ToastError(`Error submitting form ${error}`);
-          dispatch(softReset())
+          dispatch(softReset());
         }
       }}
     >

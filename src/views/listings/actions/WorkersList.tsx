@@ -1,5 +1,5 @@
 import CIcon from '@coreui/icons-react';
-import { CBadge, CButton, CCard, CCardBody, CCardTitle, CCol, CContainer, CDataTable, CLabel, CPagination, CRow } from '@coreui/react';
+import { CButton, CCard, CCardBody, CCardTitle, CCol, CContainer, CDataTable, CLabel, CPagination, CRow } from '@coreui/react';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
@@ -17,12 +17,18 @@ import { getEntity } from '../../assets/assets.api';
 import { fetchingEntity, selectEntityById, softReset } from '../../assets/assets.reducer';
 import { getEntities, IEventTrackingFilter } from '../../events/events.api';
 import { eventsSelectors, fetchingEntities } from '../../events/events.reducer';
-import { disableWorkerOwnership, IDisableWorkerBody, IDisableWorkerIntialValues } from '../../transactions/transactions.api';
+import { baseSetterArgs } from '../../transactions/settersMapping';
+import { deleteExistedTransaction, IProceedTxBody, proceedTransaction } from '../../transactions/transactions.api';
 import { fetching } from '../../transactions/transactions.reducer';
 import AddWorkerPermission from './AddWorkerModal';
 
 interface IWorkerListParams {
   [x: string]: string;
+}
+
+interface IIntialValues {
+  address: string;
+  eventId: number;
 }
 
 interface IWorkersList extends RouteComponentProps<IWorkerListParams> {}
@@ -35,21 +41,18 @@ const WorkerManagement = (props: IWorkersList) => {
   const listing = useSelector(selectEntityById(Number(id)));
   const { signer } = useSelector((state: RootState) => state.wallet);
   const { initialState } = useSelector((state: RootState) => state.events);
-  const { success, deleteSuccess } = useSelector((state: RootState) => state.transactions);
+  const { success, submitted, deleteSuccess, eventRecord } = useSelector((state: RootState) => state.transactions);
   const { totalItems, entitiesLoading } = initialState;
-
 
   const { selectAll } = eventsSelectors;
   const events = useSelector(selectAll);
-  
-  console.log(events, 'events');
 
   const [filterState, setFilterState] = useState<IEventTrackingFilter>({
     page: 0,
-    size: 5,
+    size: 10,
     sort: 'createdDate,desc',
     eventType: EventType.UPDATE_WORKER,
-    listingId: id,
+    listingId: Number(id),
   });
 
   const totalPages = Math.ceil(totalItems / filterState.size);
@@ -60,6 +63,20 @@ const WorkerManagement = (props: IWorkersList) => {
       setFilterState({ ...filterState, page: page - 1 });
     }
   };
+
+  useEffect(() => {
+    if (submitted) {
+      setDeltAlrtMdl(false);
+    }
+  }, [submitted]);
+
+  useEffect(() => {
+    if (success && entityToDelete !== undefined && eventRecord) {
+      dispatch(fetching());
+      dispatch(deleteExistedTransaction({ oldEventId: entityToDelete.eventId, eventRecord }));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [success]);
 
   useEffect(() => {
     if (id) {
@@ -84,11 +101,10 @@ const WorkerManagement = (props: IWorkersList) => {
   };
   const fields = [
     { key: 'address', _style: titleTableStyle, label: 'Address' },
-    { key: 'status', _style: titleTableStyle, label: 'Status' },
     { key: 'action', _style: titleTableStyle, label: 'Action' },
   ];
 
-  const handleRawFormValues = (input: IDisableWorkerIntialValues): IDisableWorkerBody => {
+  const handleRawFormValues = (input: IIntialValues): IProceedTxBody => {
     if (!listing?.address) {
       throw Error('Error getting listing address');
     }
@@ -99,29 +115,26 @@ const WorkerManagement = (props: IWorkersList) => {
     if (!instance) {
       throw Error('Error in generating contract instace');
     }
-    return {
-      eventId: input.eventId,
-      type: EventType.UPDATE_WORKER,
-      address: input.address,
+
+    const output: IProceedTxBody = {
+      listingId: Number(id),
       contract: instance,
+      type: EventType.UPDATE_WORKER,
+      args: { ...baseSetterArgs, _worker: input.address },
     };
+
+    return output;
   };
 
-  const [entityToDelete, setEntityToDelete] = useState<IDisableWorkerIntialValues | undefined>(undefined);
+  const [entityToDelete, setEntityToDelete] = useState<IIntialValues | undefined>(undefined);
   const [delAlrtMdl, setDeltAlrtMdl] = useState<boolean>(false);
 
   const onDelMldConfrmed = () => {
     if (entityToDelete !== undefined) {
-      const initialValues = {
-        eventId: entityToDelete.eventId,
-        address: entityToDelete.address,
-      };
       try {
-        const value = handleRawFormValues(initialValues);
+        const value = handleRawFormValues(entityToDelete);
         dispatch(fetching());
-        dispatch(disableWorkerOwnership(value));
-        setDeltAlrtMdl(false);
-        setEntityToDelete(undefined);
+        dispatch(proceedTransaction(value));
       } catch (error) {
         console.log(`Error submitting form ${error}`);
         ToastError(`Error submitting form ${error}`);
@@ -157,18 +170,18 @@ const WorkerManagement = (props: IWorkersList) => {
               <CCardTitle className="listing-card-title mb-0 px-3 py-2 w-100">
                 <p className="mb-2 text-white content-title">125 - Hoàn Kiếm - Hà Nội</p>
                 <p className="mb-0 text-white detail-title-font">
-                  Hoạt động <b>03</b>
+                  Hoạt động <b>{totalItems}</b>
                 </p>
               </CCardTitle>
             </CCardBody>
           </CCard>
         </CCol>
         <>
-          {entitiesLoading && !events.length ? (
-            <Loading />
-          ) : (
-            <>
-              <CCol xs={12}>
+          <CCol xs={12}>
+            {entitiesLoading && !events.length ? (
+              <Loading />
+            ) : (
+              <>
                 <CDataTable
                   striped
                   items={events}
@@ -178,25 +191,12 @@ const WorkerManagement = (props: IWorkersList) => {
                   header
                   scopedSlots={{
                     address: (item: IEvent) => {
-                      return <td>{item.eventArgs && item.eventArgs[0] ? getEllipsisTxt(item.eventArgs[0].args?._worker || '_', 10) : '_'}</td>;
-                    },
-                    status: (item: IEvent) => {
-                      return (
-                        <td>
-                          {item.eventArgs
-                            ? (
-                                <>
-                                  <CBadge color={item.eventArgs[0].args?._isAuthorized ? 'success' : 'danger'}>Active</CBadge>
-                                </>
-                              ) || '_'
-                            : '_'}
-                        </td>
-                      );
+                      return <td>{getEllipsisTxt(item.eventArg?._worker || '_', 10)}</td>;
                     },
                     action: (item: IEvent) => {
                       return (
                         <td>
-                          <CButton className="text-danger p-0" onClick={onEntityRemoval(item.id, item.eventArgs && item.eventArgs[0] ? item.eventArgs[0].args?._worker || '_' : '_')}>
+                          <CButton className="text-danger p-0" onClick={onEntityRemoval(item.id, item.eventArg?._worker || '_')}>
                             <CIcon name="cil-trash" />
                           </CButton>
                         </td>
@@ -204,12 +204,12 @@ const WorkerManagement = (props: IWorkersList) => {
                     },
                   }}
                 />
-              </CCol>
-              {totalPages > 1 && (
-                <CPagination disabled={entitiesLoading} activePage={filterState.page + 1} pages={totalPages} onActivePageChange={handlePaginationChange} align="center" className="mt-2" />
-              )}
-            </>
-          )}
+              </>
+            )}
+            {totalPages > 1 && (
+              <CPagination disabled={entitiesLoading} activePage={filterState.page + 1} pages={totalPages} onActivePageChange={handlePaginationChange} align="center" className="mt-2" />
+            )}
+          </CCol>
         </>
 
         <CCol xs={12} className="d-flex justify-content-center">
