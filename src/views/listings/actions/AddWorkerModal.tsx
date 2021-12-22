@@ -1,14 +1,25 @@
-import { CButton, CCol, CForm, CInput, CInvalidFeedback, CModal, CModalBody, CModalFooter, CModalHeader, CModalTitle, CRow } from '@coreui/react';
+import {
+  CButton,
+  CCol,
+  CForm,
+  CInput,
+  CInvalidFeedback,
+  CModal,
+  CModalBody,
+  CModalFooter,
+  CModalHeader,
+  CModalTitle,
+  CRow
+} from '@coreui/react';
 import { utils } from 'ethers';
-import { Formik } from 'formik';
+import { Formik, FormikProps } from 'formik';
 import React, { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
-import { LISTING_INSTANCE } from '../../../shared/blockchain-helpers';
+import { checkWorkerStatus, LISTING_INSTANCE } from '../../../shared/blockchain-helpers';
 import { ToastError } from '../../../shared/components/Toast';
 import { EventType } from '../../../shared/enumeration/eventType';
 import { RootState } from '../../../shared/reducers';
-import { Listing } from '../../../typechain';
 import { selectEntityById } from '../../assets/assets.reducer';
 import { baseSetterArgs } from '../../transactions/settersMapping';
 import { IProceedTxBody, proceedTransaction } from '../../transactions/transactions.api';
@@ -28,7 +39,7 @@ const AddWorkerPermission = (props: ICancelWorkerPermission) => {
   const { visible, setVisible, listingId } = props;
 
   // FormikRef is type-able https://github.com/jaredpalmer/formik/issues/2290
-  const formikRef = useRef<any>();
+  const formikRef = useRef<FormikProps<IIntialValues>>(null);
   const dispatch = useDispatch();
   const listing = useSelector(selectEntityById(listingId));
   const { signer } = useSelector((state: RootState) => state.wallet);
@@ -37,7 +48,7 @@ const AddWorkerPermission = (props: ICancelWorkerPermission) => {
   useEffect(() => {
     if (submitted) {
       setVisible(false);
-      formikRef?.current?.resetForm();
+      formikRef.current?.resetForm();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [submitted]);
@@ -54,21 +65,7 @@ const AddWorkerPermission = (props: ICancelWorkerPermission) => {
       }),
   });
 
-  /*
-    Tách & đổi tên function workerExisted thành 1 hàm riêng trong blockchain-helpers
-    something like this
-
-    const checkWorkerStatus = async (listing: Listing, address: string, status: boolean) => {
-      const workerStatus = await listing.workers(address);
-      return workerStatus === status
-    };
-  */ 
-
-  const workerExisted = async (listing: Listing, address: string) => {
-    return await listing.workers(address);
-  };
-  
-  const handleRawFormValues = async (input: IIntialValues): Promise<IProceedTxBody> => {
+  const handleRawFormValues = (input: IIntialValues): IProceedTxBody => {
     if (!listing?.address) {
       throw Error('Error getting listing address');
     }
@@ -79,14 +76,6 @@ const AddWorkerPermission = (props: ICancelWorkerPermission) => {
     if (!instance) {
       throw Error('Error in generating contract instace');
     }
-    /*
-      Hàm handleRawFormValues chỉ để xử lý raw data, không phải để check worker status
-      Call checkWorkerStatus ở dưới {const value = handleRawFormValues(rawValues)} 
-    */
-    if (await workerExisted(instance, input.address)) {
-      throw Error('Worker Exsisted');
-    }
-
     const output: IProceedTxBody = {
       listingId,
       contract: instance,
@@ -97,79 +86,86 @@ const AddWorkerPermission = (props: ICancelWorkerPermission) => {
     return output;
   };
 
+  const closeModal = () => () => {
+    setVisible(false);
+    formikRef.current?.resetForm();
+  };
+
   return (
-    <Formik
-      innerRef={formikRef}
-      enableReinitialize
-      initialValues={initialValues}
-      validationSchema={validationSchema}
-      onSubmit={async (rawValues) => {
-        try {
-          const value = handleRawFormValues(rawValues);
-          /*
-          Check worker status here
-          const shouldProceed = await checkWorkerStatus(value.listing, listing.address, false)
-          */ 
-
-          dispatch(fetching());
-          dispatch(proceedTransaction(await value)); // The await here looks stupid and is a result of bad practice
-        } catch (error) {
-          console.log(`Error submitting form ${error}`);
-          ToastError(`Error submitting form ${error}`);
-          dispatch(softReset());
-        }
-      }}
-    >
-      {({ values, errors, touched, handleChange, handleSubmit, handleBlur, resetForm }) => (
-        <CForm onSubmit={handleSubmit}>
-           {/* Cho modal ra ngoài formik */}
-          <CModal
-            show={visible}
-            onClose={() => {
-              setVisible(false);
-              resetForm();
-            }}
-            closeOnBackdrop={false}
-            centered
-            className="border-radius-modal"
-          >
-            <CModalHeader className="justify-content-center">
-              <CModalTitle className="modal-title-style">Thêm quyền khai thác</CModalTitle>
-            </CModalHeader>
-
-            <CModalBody>
-              <CRow>
-                <CCol xs={12}>
-                  <p>Address Wallet</p>
+    <CModal show={visible} onClose={closeModal()} closeOnBackdrop={false} centered className="border-radius-modal">
+      <CModalHeader className="justify-content-center">
+        <CModalTitle className="modal-title-style">Thêm quyền khai thác</CModalTitle>
+      </CModalHeader>
+      <Formik<IIntialValues>
+        innerRef={formikRef}
+        enableReinitialize
+        initialValues={initialValues}
+        validationSchema={validationSchema}
+        onSubmit={async (rawValues) => {
+          try {
+            const value = handleRawFormValues(rawValues);
+            const workerExisted = await checkWorkerStatus(value.contract, rawValues.address, true);
+            if (workerExisted) {
+              throw Error('Worker Exsisted');
+            }
+            dispatch(fetching());
+            dispatch(proceedTransaction(value));
+          } catch (error) {
+            console.log(`Error submitting form ${error}`);
+            ToastError(`Error submitting form ${error}`);
+            dispatch(softReset());
+          }
+        }}
+      >
+        {({ values, errors, touched, handleChange, handleSubmit, handleBlur, resetForm }) => (
+          <CForm onSubmit={handleSubmit}>
+            <>
+              <CModalBody>
+                <CRow>
+                  <CCol xs={12}>
+                    <p>Address Wallet</p>
+                  </CCol>
+                  <CCol xs={12}>
+                    <CInput
+                      type="text"
+                      id="address"
+                      name="address"
+                      onChange={handleChange}
+                      autoComplete="off"
+                      value={values.address || ''}
+                      onBlur={handleBlur}
+                      className="btn-radius-50"
+                    />
+                    <CInvalidFeedback className={!!errors.address && touched.address ? 'd-block' : 'd-none'}>
+                      {errors.address}
+                    </CInvalidFeedback>
+                  </CCol>
+                </CRow>
+              </CModalBody>
+              <CModalFooter className="justify-content-between">
+                <CCol>
+                  <CButton
+                    className="px-2 w-100 btn-font-style btn btn-outline-primary btn-radius-50"
+                    onClick={closeModal()}
+                  >
+                    HỦY
+                  </CButton>
                 </CCol>
-                <CCol xs={12}>
-                  <CInput type="text" id="address" name="address" onChange={handleChange} autoComplete="off" value={values.address || ''} onBlur={handleBlur} className="btn-radius-50" />
-                  <CInvalidFeedback className={!!errors.address && touched.address ? 'd-block' : 'd-none'}>{errors.address}</CInvalidFeedback>
+                <CCol>
+                  <CButton
+                    disabled={loading}
+                    className="px-2 w-100 btn btn-primary btn-font-style btn-radius-50"
+                    type="submit"
+                  >
+                    ĐỒNG Ý
+                  </CButton>
                 </CCol>
-              </CRow>
-            </CModalBody>
-            <CModalFooter className="justify-content-between">
-              <CCol>
-                <CButton
-                  className="px-2 w-100 btn-font-style btn btn-outline-primary btn-radius-50"
-                  onClick={() => {
-                    setVisible(false);
-                    resetForm();
-                  }}
-                >
-                  HỦY
-                </CButton>
-              </CCol>
-              <CCol>
-                <CButton disabled={loading} className="px-2 w-100 btn btn-primary btn-font-style btn-radius-50" type="submit">
-                  ĐỒNG Ý
-                </CButton>
-              </CCol>
-            </CModalFooter>
-          </CModal>{' '}
-        </CForm>
-      )}
-    </Formik>
+              </CModalFooter>
+            </>
+          </CForm>
+        )}
+      </Formik>
+    </CModal>
   );
 };
 

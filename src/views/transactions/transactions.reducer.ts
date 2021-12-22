@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { ethers } from 'ethers';
 import { EventType } from '../../shared/enumeration/eventType';
 import { IEventRecord } from '../../shared/models/eventRecord.model';
-import { deleteExistedTransaction, proceedTransaction, recordTransaction } from './transactions.api';
+import { proceedTransaction, recordTransaction } from './transactions.api';
 
 export interface ICTransaction {
   contractTransaction: ethers.ContractTransaction;
@@ -16,8 +16,7 @@ interface ITxInitialState {
   transaction: ICTransaction | undefined;
   loading: boolean;
   submitted: boolean;
-  success: boolean;
-  deleteSuccess:boolean;  // => Shouldnt be here
+  success: boolean;  
   errorMessage: string | undefined;
 }
 
@@ -27,7 +26,6 @@ const initialState: ITxInitialState = {
   submitted: false,
   loading: false,
   success: false,
-  deleteSuccess:false,
   errorMessage: undefined,
 };
 
@@ -46,7 +44,6 @@ const { actions, reducer } = createSlice({
       state.submitted = false;
       state.loading = false;
       state.success = false;
-      state.deleteSuccess =false;
       state.errorMessage = undefined;
     },
     softReset(state) {
@@ -76,15 +73,7 @@ const { actions, reducer } = createSlice({
       state.loading = false;
     },
 
-     // Shouldnt be here
-    [deleteExistedTransaction.fulfilled.type]: (state, _: PayloadAction<IEventRecord>) => {
-      state.deleteSuccess = true;
-      state.loading = false;
-    },
-    [deleteExistedTransaction.rejected.type]: (state, { payload }) => {
-      state.errorMessage = payload;
-      state.loading = false;
-    },
+   
   },
 });
 

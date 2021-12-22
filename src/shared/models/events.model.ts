@@ -1,8 +1,9 @@
 import { EventType } from '@testing-library/react';
 import { BigNumber, ethers } from 'ethers';
+import { TBaseEventFilterVariable } from '../../views/events/eventsHelper';
 import { IAsset } from './assets.model';
 
-interface IEventArg extends ethers.utils.Result{
+export interface IEventArg extends ethers.utils.Result{
   _prevOwner?: string;
   _newOwner?: string;
   _start?: BigNumber;
@@ -28,5 +29,5 @@ export interface IEvent {
   eventType: EventType;
   asset: IAsset;
   listingId: string;
-  eventArg: IEventArg |undefined;
+  eventArg: TBaseEventFilterVariable;
 }

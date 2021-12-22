@@ -1,5 +1,16 @@
 import CIcon from '@coreui/icons-react';
-import { CButton, CCard, CCardBody, CCardTitle, CCol, CContainer, CDataTable, CLabel, CPagination, CRow } from '@coreui/react';
+import {
+  CButton,
+  CCard,
+  CCardBody,
+  CCardTitle,
+  CCol,
+  CContainer,
+  CDataTable,
+  CLabel,
+  CPagination,
+  CRow
+} from '@coreui/react';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
@@ -15,10 +26,10 @@ import { IEvent } from '../../../shared/models/events.model';
 import { RootState } from '../../../shared/reducers';
 import { getEntity } from '../../assets/assets.api';
 import { fetchingEntity, selectEntityById, softReset } from '../../assets/assets.reducer';
-import { getEntities, IEventTrackingFilter } from '../../events/events.api';
+import { deleteEventRecordById, getEntities, IEventTrackingFilter } from '../../events/events.api';
 import { eventsSelectors, fetchingEntities } from '../../events/events.reducer';
 import { baseSetterArgs } from '../../transactions/settersMapping';
-import { deleteExistedTransaction, IProceedTxBody, proceedTransaction } from '../../transactions/transactions.api';
+import { IProceedTxBody, proceedTransaction } from '../../transactions/transactions.api';
 import { fetching } from '../../transactions/transactions.reducer';
 import AddWorkerPermission from './AddWorkerModal';
 
@@ -41,8 +52,8 @@ const WorkerManagement = (props: IWorkersList) => {
   const listing = useSelector(selectEntityById(Number(id)));
   const { signer } = useSelector((state: RootState) => state.wallet);
   const { initialState } = useSelector((state: RootState) => state.events);
-  const { success, submitted, deleteSuccess, eventRecord } = useSelector((state: RootState) => state.transactions);
-  const { totalItems, entitiesLoading } = initialState;
+  const { success, submitted, eventRecord } = useSelector((state: RootState) => state.transactions);
+  const { totalItems, entitiesLoading, deleteSuccess } = initialState;
 
   const { selectAll } = eventsSelectors;
   const events = useSelector(selectAll);
@@ -73,7 +84,7 @@ const WorkerManagement = (props: IWorkersList) => {
   useEffect(() => {
     if (success && entityToDelete !== undefined && eventRecord) {
       dispatch(fetching());
-      dispatch(deleteExistedTransaction({ oldEventId: entityToDelete.eventId, eventRecord }));
+      dispatch(deleteEventRecordById([entityToDelete.eventId, eventRecord.id]));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [success]);
@@ -197,7 +208,10 @@ const WorkerManagement = (props: IWorkersList) => {
                     action: (item: IEvent) => {
                       return (
                         <td>
-                          <CButton className="text-danger p-0" onClick={onEntityRemoval(item.id, item.eventArg?._worker || '_')}>
+                          <CButton
+                            className="text-danger p-0"
+                            onClick={onEntityRemoval(item.id, item.eventArg?._worker || '_')}
+                          >
                             <CIcon name="cil-trash" />
                           </CButton>
                         </td>
@@ -208,13 +222,23 @@ const WorkerManagement = (props: IWorkersList) => {
               </>
             )}
             {totalPages > 1 && (
-              <CPagination disabled={entitiesLoading} activePage={filterState.page + 1} pages={totalPages} onActivePageChange={handlePaginationChange} align="center" className="mt-2" />
+              <CPagination
+                disabled={entitiesLoading}
+                activePage={filterState.page + 1}
+                pages={totalPages}
+                onActivePageChange={handlePaginationChange}
+                align="center"
+                className="mt-2"
+              />
             )}
           </CCol>
         </>
 
         <CCol xs={12} className="d-flex justify-content-center">
-          <CButton className="my-2 px-3 w-100 btn-radius-50 btn-font-style btn-primary" onClick={setRequestListener(true, setAddWorkerPermission)}>
+          <CButton
+            className="my-2 px-3 w-100 btn-radius-50 btn-font-style btn-primary"
+            onClick={setRequestListener(true, setAddWorkerPermission)}
+          >
             Thêm quyền sở hữu
           </CButton>
         </CCol>
@@ -226,8 +250,12 @@ const WorkerManagement = (props: IWorkersList) => {
         title="Hủy quyền khai thác"
         CustomJSX={() => (
           <p>
-            {/* Check  entityToDelete ở ngoài (dùng 3 ngôi) */}
-            Bạn chắc chắn muốn hủy quyền khai thác của {entityToDelete?.eventId} <span className="text-primary">{entityToDelete?.address || '_'}</span>
+            {entityToDelete && (
+              <>
+                Bạn chắc chắn muốn hủy quyền khai thác của {entityToDelete.eventId}{' '}
+                <span className="text-primary">{entityToDelete.address || '_'}</span>
+              </>
+            )}
           </p>
         )}
         onConfirm={onDelMldConfrmed}

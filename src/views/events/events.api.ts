@@ -1,17 +1,19 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { ethers } from 'ethers';
 import { pickBy } from 'lodash';
 import axios from '../../config/axios-interceptor';
 import { LISTING_INSTANCE } from '../../shared/blockchain-helpers';
 import { EventType } from '../../shared/enumeration/eventType';
 import { IGetAllResp, IParams } from '../../shared/models/base.model';
-import { IEvent } from '../../shared/models/events.model';
-import { gettersMapping } from './gettersMapping';
+import { IEventRecord } from '../../shared/models/eventRecord.model';
+import { IEvent, IEventArg } from '../../shared/models/events.model';
+import { TypedEvent } from '../../typechain/common';
+import { eventFilterMapping, handPickEventFilterVariable } from './eventsHelper';
 
 export interface IEventTrackingFilter extends IParams {
   eventType: EventType;
   listingId: number;
 }
+
 const prefix = 'event-trackings';
 
 // APIs calling centralized server
@@ -20,7 +22,7 @@ export const getEntities = createAsyncThunk(`get-all-${prefix}`, async (fields: 
     const params = pickBy(fields);
     const { data } = await axios.get<IGetAllResp<IEvent>>(`${prefix}`, { params });
     // Attemp to fetch blockchain data
-    const listingsPartialInfo = await getListingsPartialInfo(data.results, fields.eventType);
+    const listingsPartialInfo = await getEventPartialInfo(data.results, fields.eventType);
     data.results = listingsPartialInfo;
     return data;
   } catch (error: any) {
@@ -39,11 +41,9 @@ export const getEntity = createAsyncThunk(`get-single-${prefix}`, async (id: num
 });
 
 // Rename function
-const getListingsPartialInfo = async (events: IEvent[], eventType: EventType): Promise<IEvent[]> => {
+const getEventPartialInfo = async (events: IEvent[], eventType: EventType): Promise<IEvent[]> => {
   try {
-    // REMOVE OBSOLETE COMMENTS
-    // Only value and dailyPayment is neccessary
-    const eventPromises: Promise<ethers.Event[]>[] = [];
+    const eventPromises: Promise<Array<TypedEvent<IEventArg>>>[] = [];
 
     for (let index = 0; index < events.length; index++) {
       const { asset, block } = events[index];
@@ -51,33 +51,42 @@ const getListingsPartialInfo = async (events: IEvent[], eventType: EventType): P
       // Không có instance thì throw Error + break luôn
       if (instance) {
         const blockTag: number = Number(block);
-        const filter = gettersMapping(instance, eventType);
+        const filter = eventFilterMapping(instance, eventType);
+
         eventPromises.push(instance.queryFilter(filter, blockTag, blockTag));
+      } else {
+        throw Error('Listing instance error');
       }
     }
 
     // Calling promises
-    // Rename: filterResults
-    const listingEvent = await Promise.all(eventPromises);
+    const filterResults = await Promise.all(eventPromises);
+
     // Mapping new properties based on index
     // https://stackoverflow.com/questions/28066429/promise-all-order-of-resolved-values
     const output: IEvent[] = events.map((e, i) => {
-
-      // Không viết listingEvent[i][0];
-      /*
-        const filterResult = listingEvent[i];
-        const firstEvent = filterResult[0]
-      */ 
-
+      const filterResult = filterResults[i];
+      const firstEvent = filterResult[0];
+      const eventObject = handPickEventFilterVariable(firstEvent.args, eventType);
       return {
         ...e,
-        eventArg: listingEvent[i][0].args, 
+        eventArg: eventObject,
       };
     });
-
     return output;
   } catch (error) {
     console.log(`Error in fetching partialInfo: ${error}`);
     return events;
   }
 };
+
+
+export const deleteEventRecordById = createAsyncThunk('deleteEventRecordById', async (eventIds: Array<number>, thunkAPI) => {
+  try {
+    const { data } = await axios.delete<IEventRecord>(`${prefix}?ids=${eventIds.map((item) => item).join(',')}`);
+    return data;
+  } catch (error: any) {
+    return thunkAPI.rejectWithValue(error);
+  }
+});
+
