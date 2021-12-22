@@ -17,7 +17,7 @@ interface ITxInitialState {
   loading: boolean;
   submitted: boolean;
   success: boolean;
-  deleteSuccess:boolean;
+  deleteSuccess:boolean;  // => Shouldnt be here
   errorMessage: string | undefined;
 }
 
@@ -75,6 +75,8 @@ const { actions, reducer } = createSlice({
       state.errorMessage = payload;
       state.loading = false;
     },
+
+     // Shouldnt be here
     [deleteExistedTransaction.fulfilled.type]: (state, _: PayloadAction<IEventRecord>) => {
       state.deleteSuccess = true;
       state.loading = false;

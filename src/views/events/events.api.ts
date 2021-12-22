@@ -38,15 +38,17 @@ export const getEntity = createAsyncThunk(`get-single-${prefix}`, async (id: num
   }
 });
 
-
+// Rename function
 const getListingsPartialInfo = async (events: IEvent[], eventType: EventType): Promise<IEvent[]> => {
   try {
+    // REMOVE OBSOLETE COMMENTS
     // Only value and dailyPayment is neccessary
     const eventPromises: Promise<ethers.Event[]>[] = [];
 
     for (let index = 0; index < events.length; index++) {
       const { asset, block } = events[index];
       const instance = LISTING_INSTANCE(asset.address);
+      // Không có instance thì throw Error + break luôn
       if (instance) {
         const blockTag: number = Number(block);
         const filter = gettersMapping(instance, eventType);
@@ -55,13 +57,23 @@ const getListingsPartialInfo = async (events: IEvent[], eventType: EventType): P
     }
 
     // Calling promises
+    // Rename: filterResults
     const listingEvent = await Promise.all(eventPromises);
     // Mapping new properties based on index
     // https://stackoverflow.com/questions/28066429/promise-all-order-of-resolved-values
     const output: IEvent[] = events.map((e, i) => {
+      console.log(listingEvent[i], 'listingEvent[i]')
+      console.log(e, 'e')
+
+      // Không viết listingEvent[i][0];
+      /*
+        const filterResult = listingEvent[i];
+        const firstEvent = filterResult[0]
+      */ 
+
       return {
         ...e,
-        eventArg: listingEvent[i][0].args,
+        eventArg: listingEvent[i][0].args, 
       };
     });
 

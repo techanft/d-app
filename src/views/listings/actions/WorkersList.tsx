@@ -46,6 +46,7 @@ const WorkerManagement = (props: IWorkersList) => {
 
   const { selectAll } = eventsSelectors;
   const events = useSelector(selectAll);
+  console.log(events, 'events')
 
   const [filterState, setFilterState] = useState<IEventTrackingFilter>({
     page: 0,
@@ -170,6 +171,7 @@ const WorkerManagement = (props: IWorkersList) => {
               <CCardTitle className="listing-card-title mb-0 px-3 py-2 w-100">
                 <p className="mb-2 text-white content-title">125 - Hoàn Kiếm - Hà Nội</p>
                 <p className="mb-0 text-white detail-title-font">
+                  {/* Sai text */}
                   Hoạt động <b>{totalItems}</b>
                 </p>
               </CCardTitle>
@@ -225,6 +227,7 @@ const WorkerManagement = (props: IWorkersList) => {
         title="Hủy quyền khai thác"
         CustomJSX={() => (
           <p>
+            {/* Check  entityToDelete ở ngoài (dùng 3 ngôi) */}
             Bạn chắc chắn muốn hủy quyền khai thác của {entityToDelete?.eventId} <span className="text-primary">{entityToDelete?.address || '_'}</span>
           </p>
         )}

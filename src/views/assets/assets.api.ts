@@ -111,14 +111,3 @@ const getListingsPartialInfo = async (listings: IAsset[]): Promise<IAsset[]> => 
   }
 };
 
-export const extendOwnership = createAsyncThunk("extendOwnership", async (body: IExtndOwnershipBody, thunkAPI) => {
-  const { contract, tokenAmount } = body;
-  try {
-    const tx = await contract.extendOwnership(tokenAmount);
-    // await result.wait();
-    return tx.hash;
-  } catch (error: any) {
-    return thunkAPI.rejectWithValue(error);
-  }
-});
- 

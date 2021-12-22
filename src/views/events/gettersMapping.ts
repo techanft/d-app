@@ -1,6 +1,11 @@
 import { EventType } from '../../shared/enumeration/eventType';
 import { Listing } from '../../typechain';
 
+/**
+  
+  1. RENAME: eventFilterMapping
+  2. Event is typeable
+ *  */ 
 export const gettersMapping = (contract: Listing, type: EventType) => {
   const mapping = {
     [EventType.CLAIM]: contract.filters.Claim(),

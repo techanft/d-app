@@ -12,6 +12,7 @@ interface ITxData {
   assetId: number;
 }
 
+// Pass 2 cái ID vào thôi
 interface IDeleteTransaction {
   eventRecord: IEventRecord;
   oldEventId: number;
@@ -29,6 +30,7 @@ export const recordTransaction = createAsyncThunk('recordTransaction', async (tr
       assetId: listingId,
     };
 
+    // Consider moving this to events module logic later.
     const { data } = await axios.post<IEventRecord>(`${prefix}`, txData);
 
     return data;
@@ -37,6 +39,8 @@ export const recordTransaction = createAsyncThunk('recordTransaction', async (tr
   }
 });
 
+// Đổi tên: deleteEventRecordById
+// Code sau không cho vào giữa, cho xuống dưới cùng file
 export const deleteExistedTransaction = createAsyncThunk('deleteExistedTransaction', async (body: IDeleteTransaction, thunkAPI) => {
   try {
     const { oldEventId, eventRecord } = body;

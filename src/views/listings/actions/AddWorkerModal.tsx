@@ -26,6 +26,8 @@ interface IIntialValues {
 
 const AddWorkerPermission = (props: ICancelWorkerPermission) => {
   const { visible, setVisible, listingId } = props;
+
+  // FormikRef is type-able https://github.com/jaredpalmer/formik/issues/2290
   const formikRef = useRef<any>();
   const dispatch = useDispatch();
   const listing = useSelector(selectEntityById(listingId));
@@ -52,10 +54,20 @@ const AddWorkerPermission = (props: ICancelWorkerPermission) => {
       }),
   });
 
+  /*
+    Tách & đổi tên function workerExisted thành 1 hàm riêng trong blockchain-helpers
+    something like this
+
+    const checkWorkerStatus = async (listing: Listing, address: string, status: boolean) => {
+      const workerStatus = await listing.workers(address);
+      return workerStatus === status
+    };
+  */ 
+
   const workerExisted = async (listing: Listing, address: string) => {
     return await listing.workers(address);
   };
-
+  
   const handleRawFormValues = async (input: IIntialValues): Promise<IProceedTxBody> => {
     if (!listing?.address) {
       throw Error('Error getting listing address');
@@ -67,7 +79,10 @@ const AddWorkerPermission = (props: ICancelWorkerPermission) => {
     if (!instance) {
       throw Error('Error in generating contract instace');
     }
-
+    /*
+      Hàm handleRawFormValues chỉ để xử lý raw data, không phải để check worker status
+      Call checkWorkerStatus ở dưới {const value = handleRawFormValues(rawValues)} 
+    */
     if (await workerExisted(instance, input.address)) {
       throw Error('Worker Exsisted');
     }
@@ -91,8 +106,13 @@ const AddWorkerPermission = (props: ICancelWorkerPermission) => {
       onSubmit={async (rawValues) => {
         try {
           const value = handleRawFormValues(rawValues);
+          /*
+          Check worker status here
+          const shouldProceed = await checkWorkerStatus(value.listing, listing.address, false)
+          */ 
+
           dispatch(fetching());
-          dispatch(proceedTransaction(await value));
+          dispatch(proceedTransaction(await value)); // The await here looks stupid and is a result of bad practice
         } catch (error) {
           console.log(`Error submitting form ${error}`);
           ToastError(`Error submitting form ${error}`);
@@ -102,6 +122,7 @@ const AddWorkerPermission = (props: ICancelWorkerPermission) => {
     >
       {({ values, errors, touched, handleChange, handleSubmit, handleBlur, resetForm }) => (
         <CForm onSubmit={handleSubmit}>
+           {/* Cho modal ra ngoài formik */}
           <CModal
             show={visible}
             onClose={() => {

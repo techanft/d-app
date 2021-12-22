@@ -88,7 +88,7 @@ const RegisterOwnershipModal = (props: IRegisterOwnershipModal) => {
       <Formik
         enableReinitialize
         initialValues={initialValues}
-        validationSchema={validationSchema}
+        // validationSchema={validationSchema}
         onSubmit={(rawValues) => {
           try {
             const value = handleRawFormValues(rawValues);
