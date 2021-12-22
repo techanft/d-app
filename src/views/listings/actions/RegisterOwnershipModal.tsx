@@ -67,7 +67,7 @@ const RegisterOwnershipModal = (props: IRegisterOwnershipModal) => {
     }
     const instance = LISTING_INSTANCE(listing.address, signer);
     if (!instance) {
-      throw Error('Error in generating contract instace');
+      throw Error('Error in generating contract instance');
     }
 
     const output: IProceedTxBody = {
@@ -88,7 +88,7 @@ const RegisterOwnershipModal = (props: IRegisterOwnershipModal) => {
       <Formik
         enableReinitialize
         initialValues={initialValues}
-        validationSchema={validationSchema}
+        // validationSchema={validationSchema}
         onSubmit={(rawValues) => {
           try {
             const value = handleRawFormValues(rawValues);

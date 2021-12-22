@@ -3,6 +3,7 @@ import axios from '../../config/axios-interceptor';
 import { EventType } from '../../shared/enumeration/eventType';
 import { IEventRecord } from '../../shared/models/eventRecord.model';
 import { Listing } from '../../typechain';
+import { prefix as eventEndpoint} from '../events/events.api';
 import { settersMapping, TBaseSetterArguments } from './settersMapping';
 import { ICTransaction } from './transactions.reducer';
 
@@ -11,8 +12,6 @@ interface ITxData {
   block: number;
   assetId: number;
 }
-
-const prefix = 'event-trackings';
 
 export const recordTransaction = createAsyncThunk('recordTransaction', async (transaction: ICTransaction, thunkAPI) => {
   try {
@@ -26,7 +25,7 @@ export const recordTransaction = createAsyncThunk('recordTransaction', async (tr
     };
 
     // Consider moving this to events module logic later.
-    const { data } = await axios.post<IEventRecord>(`${prefix}`, txData);
+    const { data } = await axios.post<IEventRecord>(`${eventEndpoint}`, txData);
 
     return data;
   } catch (error: any) {

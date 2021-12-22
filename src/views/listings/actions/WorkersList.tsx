@@ -26,7 +26,7 @@ import { IEvent } from '../../../shared/models/events.model';
 import { RootState } from '../../../shared/reducers';
 import { getEntity } from '../../assets/assets.api';
 import { fetchingEntity, selectEntityById, softReset } from '../../assets/assets.reducer';
-import { deleteEventRecordById, getEntities, IEventTrackingFilter } from '../../events/events.api';
+import { deleteMany, getEntities, IEventTrackingFilter } from '../../events/events.api';
 import { eventsSelectors, fetchingEntities } from '../../events/events.reducer';
 import { baseSetterArgs } from '../../transactions/settersMapping';
 import { IProceedTxBody, proceedTransaction } from '../../transactions/transactions.api';
@@ -44,7 +44,19 @@ interface IIntialValues {
 
 interface IWorkersList extends RouteComponentProps<IWorkerListParams> {}
 
-const WorkerManagement = (props: IWorkersList) => {
+const titleTableStyle = {
+  textAlign: 'left',
+  color: '#828282',
+  fontSize: '0.875rem',
+  lineHeight: '16px',
+  fontWeight: '400',
+};
+const fields = [
+  { key: 'address', _style: titleTableStyle, label: 'Address' },
+  { key: 'action', _style: titleTableStyle, label: 'Action' },
+];
+
+const WorkersList = (props: IWorkersList) => {
   const { match } = props;
   const { id } = match.params;
 
@@ -84,7 +96,7 @@ const WorkerManagement = (props: IWorkersList) => {
   useEffect(() => {
     if (success && entityToDelete !== undefined && eventRecord) {
       dispatch(fetching());
-      dispatch(deleteEventRecordById([entityToDelete.eventId, eventRecord.id]));
+      dispatch(deleteMany([entityToDelete.eventId, eventRecord.id]));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [success]);
@@ -103,18 +115,6 @@ const WorkerManagement = (props: IWorkersList) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(filterState), success, deleteSuccess]);
 
-  const titleTableStyle = {
-    textAlign: 'left',
-    color: '#828282',
-    fontSize: '0.875rem',
-    lineHeight: '16px',
-    fontWeight: '400',
-  };
-  const fields = [
-    { key: 'address', _style: titleTableStyle, label: 'Address' },
-    { key: 'action', _style: titleTableStyle, label: 'Action' },
-  ];
-
   const handleRawFormValues = (input: IIntialValues): IProceedTxBody => {
     if (!listing?.address) {
       throw Error('Error getting listing address');
@@ -124,7 +124,7 @@ const WorkerManagement = (props: IWorkersList) => {
     }
     const instance = LISTING_INSTANCE(listing.address, signer);
     if (!instance) {
-      throw Error('Error in generating contract instace');
+      throw Error('Error in generating contract instance');
     }
 
     const output: IProceedTxBody = {
@@ -165,7 +165,9 @@ const WorkerManagement = (props: IWorkersList) => {
 
   const [addWorkerPermission, setAddWorkerPermission] = useState<boolean>(false);
 
-  const setRequestListener = (key: boolean, setRequestState: any) => (): void => setRequestState(key);
+  type TSetAWPModal = React.Dispatch<React.SetStateAction<boolean>>;
+
+  const setRequestListener = (key: boolean, setRequestState: TSetAWPModal) => (): void => setRequestState(key);
 
   return (
     <CContainer fluid className="mx-0 my-2">
@@ -181,7 +183,6 @@ const WorkerManagement = (props: IWorkersList) => {
               <CCardTitle className="listing-card-title mb-0 px-3 py-2 w-100">
                 <p className="mb-2 text-white content-title">125 - Hoàn Kiếm - Hà Nội</p>
                 <p className="mb-0 text-white detail-title-font">
-                  {/* Sai text */}
                   Hoạt động <b>{totalItems}</b>
                 </p>
               </CCardTitle>
@@ -265,4 +266,4 @@ const WorkerManagement = (props: IWorkersList) => {
   );
 };
 
-export default WorkerManagement;
+export default WorkersList;
