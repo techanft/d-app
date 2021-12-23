@@ -67,7 +67,7 @@ const RegisterOwnershipModal = (props: IRegisterOwnershipModal) => {
     }
     const instance = LISTING_INSTANCE(listing.address, signer);
     if (!instance) {
-      throw Error('Error in generating contract instace');
+      throw Error('Error in generating contract instance');
     }
 
     const output: IProceedTxBody = {

@@ -1,6 +1,6 @@
 import { EventType } from '@testing-library/react';
 import { BigNumber, ethers } from 'ethers';
-import { TBaseEventFilterVariable } from '../../views/events/eventsHelper';
+import { TBaseEventFilterVariable } from '../../views/events/events-helper';
 import { IAsset } from './assets.model';
 
 export interface IEventArg extends ethers.utils.Result{

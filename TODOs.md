@@ -8,3 +8,4 @@
 - More details on ownership register modal (Current balance + max button)
 - Refactor TheHeader line 52
 - Toast Error => Info
+- On owner change => Display management button

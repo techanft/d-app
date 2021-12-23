@@ -3,7 +3,7 @@ import { IGetAllResp, IInitialState } from '../../shared/models/base.model';
 import { IEventRecord } from '../../shared/models/eventRecord.model';
 import { IEvent } from '../../shared/models/events.model';
 import { RootState } from '../../shared/reducers';
-import { deleteEventRecordById, getEntities, getEntity } from './events.api';
+import { deleteMany, getEntities, getEntity } from './events.api';
 interface IEventInitialState extends IInitialState {
   deleteSuccess: boolean;
 }
@@ -76,11 +76,11 @@ const { actions, reducer } = createSlice({
       state.initialState.entityLoading = false;
       state.initialState.fetchEntitySuccess = false;
     },
-    [deleteEventRecordById.fulfilled.type]: (state, _: PayloadAction<IEventRecord>) => {
+    [deleteMany.fulfilled.type]: (state, _: PayloadAction<IEventRecord>) => {
       state.initialState.deleteSuccess = true;
       state.initialState.entitiesLoading = false;
     },
-    [deleteEventRecordById.rejected.type]: (state, { payload }) => {
+    [deleteMany.rejected.type]: (state, { payload }) => {
       state.initialState.errorMessage = payload;
       state.initialState.entitiesLoading = false;
     },
