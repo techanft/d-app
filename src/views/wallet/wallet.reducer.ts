@@ -73,7 +73,7 @@ const walletSlice = createSlice({
     },
     [getProviderLogin.rejected.type]: (state, { payload }) => {
       state.getProviderLoginSuccess = false;
-      state.errorMessage = payload;
+      state.errorMessage = payload?.message;
       state.loading = false;
     },
     [getSigner.fulfilled.type]: (state, { payload }: PayloadAction<ethers.providers.JsonRpcSigner>) => {
@@ -84,7 +84,7 @@ const walletSlice = createSlice({
     },
     [getSigner.rejected.type]: (state, { payload }) => {
       state.getSignerSuccess = false;
-      state.errorMessage = payload;
+      state.errorMessage = payload?.message;
       state.loading = false;
     },
     [getContractWithSigner.fulfilled.type]: (state, { payload }: ethers.Contract) => {
@@ -95,7 +95,7 @@ const walletSlice = createSlice({
     },
     [getContractWithSigner.rejected.type]: (state, { payload }) => {
       state.getContractWithSignerSuccess = false;
-      state.errorMessage = payload;
+      state.errorMessage = payload?.message;
       state.loading = false;
     },
     [getAddress.fulfilled.type]: (state, { payload }: PayloadAction<string>) => {
@@ -106,7 +106,7 @@ const walletSlice = createSlice({
     },
     [getAddress.rejected.type]: (state, { payload }) => {
       state.getSignerAddressSuccess = false;
-      state.errorMessage = payload;
+      state.errorMessage = payload?.message;
       state.loading = false;
     },
     [getTransactionReceipt.fulfilled.type]: (state, { payload }: PayloadAction<ethers.providers.TransactionReceipt>) => {
@@ -117,7 +117,7 @@ const walletSlice = createSlice({
     },
     [getTransactionReceipt.rejected.type]: (state, { payload }) => {
       state.getTransactionRecepitSuccess = false;
-      state.errorMessage = payload;
+      state.errorMessage = payload?.message;
       state.loading = false;
     },
   },

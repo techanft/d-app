@@ -22,7 +22,7 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getProvider, TOKEN_INSTANCE } from '../shared/blockchain-helpers';
 import { getEllipsisTxt } from '../shared/casual-helpers';
-import { ToastError } from '../shared/components/Toast';
+import { ToastError, ToastInfo } from '../shared/components/Toast';
 import { RootState } from '../shared/reducers';
 import { getAddress, getContractWithSigner, getProviderLogin, getSigner } from '../views/wallet/wallet.api';
 import { softReset } from '../views/wallet/wallet.reducer';
@@ -31,16 +31,24 @@ declare let window: any;
 const TheHeader = () => {
   const dispatch = useDispatch();
   const provider = getProvider();
-  const { getProviderLoginSuccess, getSignerSuccess, signer, signerAddress } = useSelector(
+  const { getProviderLoginSuccess, getSignerSuccess, signer, signerAddress,errorMessage } = useSelector(
     (state: RootState) => state.wallet
   );
   const onConnectWallet = () => () => {
     if (window.ethereum) {
       dispatch(getProviderLogin(provider));
     } else {
-      ToastError('No provider found');
+      ToastInfo('No provider found');
     }
   };
+
+  useEffect(()=>{
+    if(errorMessage){
+      ToastError(errorMessage);
+      dispatch(softReset())
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[errorMessage])
 
   useEffect(() => {
     if (getProviderLoginSuccess) {

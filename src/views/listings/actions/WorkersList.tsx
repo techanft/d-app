@@ -16,7 +16,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
 import bgImg from '../../../assets/img/registerBonus.svg';
 import { LISTING_INSTANCE } from '../../../shared/blockchain-helpers';
-import { getEllipsisTxt } from '../../../shared/casual-helpers';
+import { getEllipsisTxt, validateOwner } from '../../../shared/casual-helpers';
 import ConfirmModal from '../../../shared/components/ConfirmModal';
 import Loading from '../../../shared/components/Loading';
 import SubmissionModal from '../../../shared/components/SubmissionModal';
@@ -45,12 +45,12 @@ interface IIntialValues {
 interface IWorkersList extends RouteComponentProps<IWorkerListParams> {}
 
 const WorkerManagement = (props: IWorkersList) => {
-  const { match } = props;
+  const { match, history } = props;
   const { id } = match.params;
 
   const dispatch = useDispatch();
   const listing = useSelector(selectEntityById(Number(id)));
-  const { signer } = useSelector((state: RootState) => state.wallet);
+  const { signer, signerAddress } = useSelector((state: RootState) => state.wallet);
   const { initialState } = useSelector((state: RootState) => state.events);
   const { success, submitted, eventRecord } = useSelector((state: RootState) => state.transactions);
   const { totalItems, entitiesLoading, deleteSuccess } = initialState;
@@ -74,6 +74,16 @@ const WorkerManagement = (props: IWorkersList) => {
       setFilterState({ ...filterState, page: page - 1 });
     }
   };
+
+  useEffect(() => {
+    if (listing?.owner && signerAddress) {
+      const viewWorkerPermission = validateOwner(signerAddress, listing);
+      if (!viewWorkerPermission) {
+        history.goBack();
+      }
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [listing,signerAddress]);
 
   useEffect(() => {
     if (submitted) {
