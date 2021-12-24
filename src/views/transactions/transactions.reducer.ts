@@ -59,7 +59,7 @@ const { actions, reducer } = createSlice({
       state.submitted = true;
     },
     [proceedTransaction.rejected.type]: (state, { payload }) => {
-      state.errorMessage = payload;
+      state.errorMessage = payload?.message;
       state.loading = false;
     },
 
@@ -69,7 +69,7 @@ const { actions, reducer } = createSlice({
       state.loading = false;
     },
     [recordTransaction.rejected.type]: (state, { payload }) => {
-      state.errorMessage = payload;
+      state.errorMessage = payload?.message;
       state.loading = false;
     },
 

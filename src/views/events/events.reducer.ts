@@ -81,7 +81,7 @@ const { actions, reducer } = createSlice({
       state.initialState.entitiesLoading = false;
     },
     [deleteMany.rejected.type]: (state, { payload }) => {
-      state.initialState.errorMessage = payload;
+      state.initialState.errorMessage = payload?.message;
       state.initialState.entitiesLoading = false;
     },
   },

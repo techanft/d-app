@@ -1,12 +1,12 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { BigNumber } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 import { pickBy } from 'lodash';
 import axios from '../../config/axios-interceptor';
 import { LISTING_INSTANCE } from '../../shared/blockchain-helpers';
+import { ToastInfo } from '../../shared/components/Toast';
 import { IAsset } from '../../shared/models/assets.model';
-import { IParams, IGetAllResp } from '../../shared/models/base.model';
+import { IGetAllResp, IParams } from '../../shared/models/base.model';
 import { Listing } from '../../typechain';
-import { ethers } from "ethers";
 
 export interface IAssetFilter extends IParams {};
 export interface IExtndOwnrshpIntialValues {
@@ -74,7 +74,7 @@ const getListingCompleteInfo = async (listing: IAsset): Promise<IAsset> => {
       rewardPool: rewardPool as BigNumber,
     };
   } catch (error) {
-    console.log(`Error in fetching complete: ${error}`);
+    ToastInfo(`Error in fetching complete: ${error}`);
     return listing;
   }
 };

@@ -3,7 +3,7 @@ import axios from '../../config/axios-interceptor';
 import { EventType } from '../../shared/enumeration/eventType';
 import { IEventRecord } from '../../shared/models/eventRecord.model';
 import { Listing } from '../../typechain';
-import { prefix as eventEndpoint} from '../events/events.api';
+import { prefix as eventEndpoint } from '../events/events.api';
 import { settersMapping, TBaseSetterArguments } from './settersMapping';
 import { ICTransaction } from './transactions.reducer';
 
@@ -29,7 +29,7 @@ export const recordTransaction = createAsyncThunk('recordTransaction', async (tr
 
     return data;
   } catch (error: any) {
-    return thunkAPI.rejectWithValue(error);
+    return thunkAPI.rejectWithValue(error.response.data);
   }
 });
 

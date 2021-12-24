@@ -80,7 +80,7 @@ export const deleteMany = createAsyncThunk(`deleteMany-${prefix}`, async (eventI
     const { data } = await axios.delete<IEventRecord>(`${prefix}?ids=${eventIds.map((item) => item).join(',')}`);
     return data;
   } catch (error: any) {
-    return thunkAPI.rejectWithValue(error);
+    return thunkAPI.rejectWithValue(error.response.data);
   }
 });
 
