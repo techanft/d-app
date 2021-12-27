@@ -20,7 +20,7 @@ import { faAngleDown } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { TOKEN_INSTANCE } from '../shared/blockchain-helpers';
+import { getProvider, TOKEN_INSTANCE } from '../shared/blockchain-helpers';
 import { getEllipsisTxt } from '../shared/casual-helpers';
 import { ToastError, ToastInfo } from '../shared/components/Toast';
 import { RootState } from '../shared/reducers';
@@ -33,8 +33,7 @@ import { softReset as walletSoftReset } from '../views/wallet/wallet.reducer';
 declare let window: any;
 const TheHeader = () => {
   const dispatch = useDispatch();
-  // const provider = getProvider();
-  let provider: any;
+  const provider = getProvider();
   const {
     getProviderLoginSuccess,
     getSignerSuccess,
