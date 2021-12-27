@@ -4,6 +4,8 @@ import {
   CForm,
   CFormGroup,
   CInput,
+  CInputGroup,
+  CInputGroupAppend,
   CInvalidFeedback,
   CLabel,
   CModal,
@@ -11,14 +13,22 @@ import {
   CModalFooter,
   CModalHeader,
   CModalTitle,
-  CRow,
+  CRow
 } from '@coreui/react';
 import { Formik } from 'formik';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
 import { LISTING_INSTANCE } from '../../../shared/blockchain-helpers';
-import { convertBnToDecimal, convertDecimalToBn, convertUnixToDate, estimateOwnership, formatBNToken, insertCommas, unInsertCommas } from '../../../shared/casual-helpers';
+import {
+  convertBnToDecimal,
+  convertDecimalToBn,
+  convertUnixToDate,
+  estimateOwnership,
+  formatBNToken,
+  insertCommas,
+  unInsertCommas
+} from '../../../shared/casual-helpers';
 import { ToastError } from '../../../shared/components/Toast';
 import { EventType } from '../../../shared/enumeration/eventType';
 import { RootState } from '../../../shared/reducers';
@@ -35,7 +45,7 @@ interface IExtendOwnershipModal {
 }
 
 interface IIntialValues {
-  tokenAmount: number,
+  tokenAmount: number;
 }
 
 const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
@@ -43,6 +53,7 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
   const listing = useSelector(selectEntityById(listingId));
 
   const { submitted } = useSelector((state: RootState) => state.transactions);
+  const { tokenBalance } = useSelector((state: RootState) => state.wallet);
 
   useEffect(() => {
     if (submitted) {
@@ -63,18 +74,18 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
 
   const validationSchema = Yup.object().shape({
     tokenAmount: Yup.number()
-      .test(
-        "dailyPayment-minimum",
-        `Minimum ownership for the listing is 1.0 day`,
-        function (value) {
-          if (!value) return true;
-          if (!listing?.dailyPayment) return false;
-          return value >= Number(convertBnToDecimal(listing.dailyPayment))
-
-        }
-      )
-      .typeError('Số lượng token không hợp lệ')
-      .required('Vui lòng nhập số token muốn nạp'),
+      .test('dailyPayment-minimum', `Minimum ownership for the listing is 1.0 day`, function (value) {
+        if (!value) return true;
+        if (!listing?.dailyPayment) return false;
+        return value >= Number(convertBnToDecimal(listing.dailyPayment));
+      })
+      .test('do-not-exceed-tokenBalance', `Input amount exceeds token balance`, function (value) {
+        if (!value) return true;
+        if (!tokenBalance) return true;
+        return convertDecimalToBn(String(value)).lte(tokenBalance)
+      })
+      .typeError('Incorrect input type!')
+      .required('This field is required!'),
   });
 
   const handleRawFormValues = (input: IIntialValues): IProceedTxBody => {
@@ -93,11 +104,12 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
       listingId,
       contract: instance,
       type: EventType.OWNERSHIP_EXTENSION,
-      args: {...baseSetterArgs, _amount: convertDecimalToBn(input.tokenAmount.toString())}
-    }
+      args: { ...baseSetterArgs, _amount: convertDecimalToBn(input.tokenAmount.toString()) },
+    };
 
-    return output
+    return output;
   };
+
 
   return (
     <CModal show={isVisible} onClose={closeModal()} centered className="border-radius-modal">
@@ -125,37 +137,7 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
             <CModalBody>
               <CRow>
                 <CCol xs={12}>
-                  <CFormGroup row>
-                    <CCol xs={8}>
-                      <CLabel className="recharge-token-title">Chi phí khai thác/ngày</CLabel>
-                    </CCol>
-                    <CCol xs={4}>
-                      <p className="text-primary text-right">{formatBNToken(listing?.dailyPayment, true)}</p>
-                    </CCol>
-                  </CFormGroup>
-                  <CFormGroup row>
-                    <CCol xs={12}>
-                      <CLabel className="recharge-token-title">Số ANFT muốn nạp</CLabel>
-                    </CCol>
-
-                    <CCol>
-                      <CInput
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldValue(`tokenAmount`, unInsertCommas(e.target.value));
-                        }}
-                        id="tokenAmount"
-                        autoComplete="off"
-                        name="tokenAmount"
-                        value={values.tokenAmount ? insertCommas(values.tokenAmount) : ''}
-                        onBlur={handleBlur}
-                        className="btn-radius-50"
-                      />
-                      <CInvalidFeedback className={!!errors.tokenAmount && touched.tokenAmount ? 'd-block' : 'd-none'}>
-                        {errors.tokenAmount}
-                      </CInvalidFeedback>
-                    </CCol>
-                  </CFormGroup>
-                  <CFormGroup row>
+                <CFormGroup row>
                     <CCol xs={6}>
                       <CLabel className="recharge-token-title">Current ownership</CLabel>
                     </CCol>
@@ -166,6 +148,62 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                     ) : (
                       ''
                     )}
+                  </CFormGroup>
+
+                  <CFormGroup row>
+                    <CCol xs={8}>
+                      <CLabel className="recharge-token-title">Daily Payment</CLabel>
+                    </CCol>
+                    <CCol xs={4}>
+                      <p className="text-primary text-right">{formatBNToken(listing?.dailyPayment, true)}</p>
+                    </CCol>
+                  </CFormGroup>
+                  <CFormGroup row>
+                    <CCol xs={6}>
+                      <CLabel className="recharge-token-title">Tokens available</CLabel>
+                    </CCol>
+                    <CCol xs={6}>
+                      <p className="text-primary text-right">{formatBNToken(tokenBalance, true)}</p>
+                    </CCol>
+                  </CFormGroup>
+                  <CFormGroup row>
+                    <CCol xs={12}>
+                      <CLabel className="recharge-token-title">Spend</CLabel>
+                    </CCol>
+                    <CCol xs={12}>
+                      <CInputGroup>
+                        <CInput
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                            setFieldValue(`tokenAmount`, unInsertCommas(e.target.value));
+                          }}
+                          id="tokenAmount"
+                          autoComplete="off"
+                          name="tokenAmount"
+                          value={values.tokenAmount ? insertCommas(values.tokenAmount) : ''}
+                          onBlur={handleBlur}
+                          className="btn-radius-50"
+                        />
+                        <CInputGroupAppend>
+                          {tokenBalance ? (
+                            <CButton
+                              color="primary"
+                              className="btn-register-level"
+                              onClick={() =>
+                                setFieldValue(`tokenAmount`, unInsertCommas(convertBnToDecimal(tokenBalance)))
+                              }
+                              disabled={(convertDecimalToBn(String(values.tokenAmount || 0)).eq(tokenBalance))}
+                            >
+                              MAX
+                            </CButton>
+                          ) : (
+                            ''
+                          )}
+                        </CInputGroupAppend>
+                      </CInputGroup>
+                      <CInvalidFeedback className={!!errors.tokenAmount && touched.tokenAmount ? 'd-block' : 'd-none'}>
+                        {errors.tokenAmount}
+                      </CInvalidFeedback>
+                    </CCol>
                   </CFormGroup>
                   <CFormGroup row>
                     <CCol xs={6}>
