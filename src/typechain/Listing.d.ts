@@ -28,7 +28,7 @@ interface ListingInterface extends ethers.utils.Interface {
     "options(uint256)": FunctionFragment;
     "owner()": FunctionFragment;
     "ownership()": FunctionFragment;
-    "register(uint256,uint256,bool)": FunctionFragment;
+    "register(uint256,uint256)": FunctionFragment;
     "rewardPool()": FunctionFragment;
     "setupOptionReward(uint256,uint256)": FunctionFragment;
     "stakings(uint256,address)": FunctionFragment;
@@ -43,7 +43,7 @@ interface ListingInterface extends ethers.utils.Interface {
     "updatelistingId(uint256)": FunctionFragment;
     "validator()": FunctionFragment;
     "value()": FunctionFragment;
-    "withdraw()": FunctionFragment;
+    "withdraw(uint256)": FunctionFragment;
     "workers(address)": FunctionFragment;
   };
 
@@ -68,7 +68,7 @@ interface ListingInterface extends ethers.utils.Interface {
   encodeFunctionData(functionFragment: "ownership", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "register",
-    values: [BigNumberish, BigNumberish, boolean]
+    values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "rewardPool",
@@ -117,7 +117,10 @@ interface ListingInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "validator", values?: undefined): string;
   encodeFunctionData(functionFragment: "value", values?: undefined): string;
-  encodeFunctionData(functionFragment: "withdraw", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "withdraw",
+    values: [BigNumberish]
+  ): string;
   encodeFunctionData(functionFragment: "workers", values: [string]): string;
 
   decodeFunctionResult(
@@ -178,61 +181,8 @@ interface ListingInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "workers", data: BytesLike): Result;
 
-  events: {
-    "Claim(address,uint256,uint256,uint256)": EventFragment;
-    "OwnershipExtension(address,address,uint256,uint256)": EventFragment;
-    "Register(address,uint256,uint256,uint256)": EventFragment;
-    "Unregister(address,uint256)": EventFragment;
-    "UpdateWorker(address,bool)": EventFragment;
-    "Withdraw(address,uint256)": EventFragment;
-  };
-
-  getEvent(nameOrSignatureOrTopic: "Claim"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "OwnershipExtension"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Register"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Unregister"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "UpdateWorker"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Withdraw"): EventFragment;
+  events: {};
 }
-
-export type ClaimEvent = TypedEvent<
-  [string, BigNumber, BigNumber, BigNumber] & {
-    _stakeholder: string;
-    _reward: BigNumber;
-    _from: BigNumber;
-    _to: BigNumber;
-  }
->;
-
-export type OwnershipExtensionEvent = TypedEvent<
-  [string, string, BigNumber, BigNumber] & {
-    _prevOwner: string;
-    _newOwner: string;
-    _start: BigNumber;
-    _end: BigNumber;
-  }
->;
-
-export type RegisterEvent = TypedEvent<
-  [string, BigNumber, BigNumber, BigNumber] & {
-    _stakeholder: string;
-    _amount: BigNumber;
-    _optionId: BigNumber;
-    _start: BigNumber;
-  }
->;
-
-export type UnregisterEvent = TypedEvent<
-  [string, BigNumber] & { _stakeholder: string; _at: BigNumber }
->;
-
-export type UpdateWorkerEvent = TypedEvent<
-  [string, boolean] & { _worker: string; _isAuthorized: boolean }
->;
-
-export type WithdrawEvent = TypedEvent<
-  [string, BigNumber] & { owner: string; _valueToReturn: BigNumber }
->;
 
 export class Listing extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -310,7 +260,6 @@ export class Listing extends BaseContract {
     register(
       _amount: BigNumberish,
       _optionId: BigNumberish,
-      _increase: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -378,6 +327,7 @@ export class Listing extends BaseContract {
     value(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     withdraw(
+      _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -416,7 +366,6 @@ export class Listing extends BaseContract {
   register(
     _amount: BigNumberish,
     _optionId: BigNumberish,
-    _increase: boolean,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -484,6 +433,7 @@ export class Listing extends BaseContract {
   value(overrides?: CallOverrides): Promise<BigNumber>;
 
   withdraw(
+    _amount: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -522,7 +472,6 @@ export class Listing extends BaseContract {
     register(
       _amount: BigNumberish,
       _optionId: BigNumberish,
-      _increase: boolean,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -580,150 +529,12 @@ export class Listing extends BaseContract {
 
     value(overrides?: CallOverrides): Promise<BigNumber>;
 
-    withdraw(overrides?: CallOverrides): Promise<void>;
+    withdraw(_amount: BigNumberish, overrides?: CallOverrides): Promise<void>;
 
     workers(arg0: string, overrides?: CallOverrides): Promise<boolean>;
   };
 
-  filters: {
-    "Claim(address,uint256,uint256,uint256)"(
-      _stakeholder?: null,
-      _reward?: null,
-      _from?: null,
-      _to?: null
-    ): TypedEventFilter<
-      [string, BigNumber, BigNumber, BigNumber],
-      {
-        _stakeholder: string;
-        _reward: BigNumber;
-        _from: BigNumber;
-        _to: BigNumber;
-      }
-    >;
-
-    Claim(
-      _stakeholder?: null,
-      _reward?: null,
-      _from?: null,
-      _to?: null
-    ): TypedEventFilter<
-      [string, BigNumber, BigNumber, BigNumber],
-      {
-        _stakeholder: string;
-        _reward: BigNumber;
-        _from: BigNumber;
-        _to: BigNumber;
-      }
-    >;
-
-    "OwnershipExtension(address,address,uint256,uint256)"(
-      _prevOwner?: null,
-      _newOwner?: null,
-      _start?: null,
-      _end?: null
-    ): TypedEventFilter<
-      [string, string, BigNumber, BigNumber],
-      {
-        _prevOwner: string;
-        _newOwner: string;
-        _start: BigNumber;
-        _end: BigNumber;
-      }
-    >;
-
-    OwnershipExtension(
-      _prevOwner?: null,
-      _newOwner?: null,
-      _start?: null,
-      _end?: null
-    ): TypedEventFilter<
-      [string, string, BigNumber, BigNumber],
-      {
-        _prevOwner: string;
-        _newOwner: string;
-        _start: BigNumber;
-        _end: BigNumber;
-      }
-    >;
-
-    "Register(address,uint256,uint256,uint256)"(
-      _stakeholder?: null,
-      _amount?: null,
-      _optionId?: null,
-      _start?: null
-    ): TypedEventFilter<
-      [string, BigNumber, BigNumber, BigNumber],
-      {
-        _stakeholder: string;
-        _amount: BigNumber;
-        _optionId: BigNumber;
-        _start: BigNumber;
-      }
-    >;
-
-    Register(
-      _stakeholder?: null,
-      _amount?: null,
-      _optionId?: null,
-      _start?: null
-    ): TypedEventFilter<
-      [string, BigNumber, BigNumber, BigNumber],
-      {
-        _stakeholder: string;
-        _amount: BigNumber;
-        _optionId: BigNumber;
-        _start: BigNumber;
-      }
-    >;
-
-    "Unregister(address,uint256)"(
-      _stakeholder?: null,
-      _at?: null
-    ): TypedEventFilter<
-      [string, BigNumber],
-      { _stakeholder: string; _at: BigNumber }
-    >;
-
-    Unregister(
-      _stakeholder?: null,
-      _at?: null
-    ): TypedEventFilter<
-      [string, BigNumber],
-      { _stakeholder: string; _at: BigNumber }
-    >;
-
-    "UpdateWorker(address,bool)"(
-      _worker?: null,
-      _isAuthorized?: null
-    ): TypedEventFilter<
-      [string, boolean],
-      { _worker: string; _isAuthorized: boolean }
-    >;
-
-    UpdateWorker(
-      _worker?: null,
-      _isAuthorized?: null
-    ): TypedEventFilter<
-      [string, boolean],
-      { _worker: string; _isAuthorized: boolean }
-    >;
-
-    "Withdraw(address,uint256)"(
-      owner?: null,
-      _valueToReturn?: null
-    ): TypedEventFilter<
-      [string, BigNumber],
-      { owner: string; _valueToReturn: BigNumber }
-    >;
-
-    Withdraw(
-      owner?: null,
-      _valueToReturn?: null
-    ): TypedEventFilter<
-      [string, BigNumber],
-      { owner: string; _valueToReturn: BigNumber }
-    >;
-  };
+  filters: {};
 
   estimateGas: {
     claimReward(
@@ -749,7 +560,6 @@ export class Listing extends BaseContract {
     register(
       _amount: BigNumberish,
       _optionId: BigNumberish,
-      _increase: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -811,6 +621,7 @@ export class Listing extends BaseContract {
     value(overrides?: CallOverrides): Promise<BigNumber>;
 
     withdraw(
+      _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -844,7 +655,6 @@ export class Listing extends BaseContract {
     register(
       _amount: BigNumberish,
       _optionId: BigNumberish,
-      _increase: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -906,6 +716,7 @@ export class Listing extends BaseContract {
     value(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     withdraw(
+      _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

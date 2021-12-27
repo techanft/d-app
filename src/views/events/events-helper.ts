@@ -105,7 +105,9 @@ export const handPickEventFilterVariable = (eventArg: IEventArg, eventType: Even
 export type EventFilter = TypedEventFilter<any[], IEventArg>;
 export type TSettterMapping = { [key in EventType]: EventFilter };
 
-export const eventFilterMapping = (contract: Listing, type: EventType) => {
+// These filter will be obsolete soon, so "any" here is ok
+export const eventFilterMapping = (contract: any, type: EventType) => {
+// export const eventFilterMapping = (contract: Listing, type: EventType) => {
   const mapping: TSettterMapping = {
     [EventType.CLAIM]: contract.filters.Claim(),
     [EventType.OWNERSHIP_EXTENSION]: contract.filters.OwnershipExtension(),
