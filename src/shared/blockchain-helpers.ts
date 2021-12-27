@@ -1,8 +1,7 @@
 import { ethers } from "ethers";
 import tokenArtifact from "../assets/contract/ANFTV2.json";
 import listingArtifact from "../assets/contract/ListingV2.json";
-import { Token } from "../typechain";
-import { Listing } from "../typechain";
+import { Listing, Token } from "../typechain";
 
 declare let window:any;
 
@@ -58,4 +57,9 @@ export const getUpdateWorker = (receipt: ethers.providers.TransactionReceipt) =>
   } catch (error:any) {
     return error;
   }
+};
+
+export const checkWorkerStatus = async (listing: Listing, address: string, status: boolean) => {
+  const workerStatus = await listing.workers(address);
+  return workerStatus === status
 };

@@ -1,8 +1,9 @@
 import { CCol, CLabel, CRow } from '@coreui/react';
 import React, { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
 import SubmissionModal from '../../shared/components/SubmissionModal';
+import { RootState } from '../../shared/reducers';
 import { getEntity } from '../assets/assets.api';
 import { fetchingEntity } from '../assets/assets.reducer';
 // import { useGetAssetQuery } from "../../assets/assets.api";
@@ -18,6 +19,7 @@ interface IListingProps extends RouteComponentProps<IListingParams> {}
 
 const Listing = (props: IListingProps) => {
   const dispatch = useDispatch();
+  const { success } = useSelector((state: RootState) => state.transactions);
   const { match } = props;
   const { id } = match.params;
 
@@ -27,8 +29,7 @@ const Listing = (props: IListingProps) => {
       dispatch(getEntity(Number(id)));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
-
+  }, [id, success]);
 
   return (
     <>

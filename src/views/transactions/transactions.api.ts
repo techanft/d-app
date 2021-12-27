@@ -1,18 +1,17 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { BigNumber, BigNumberish, ethers } from 'ethers';
 import axios from '../../config/axios-interceptor';
 import { EventType } from '../../shared/enumeration/eventType';
 import { IEventRecord } from '../../shared/models/eventRecord.model';
 import { Listing } from '../../typechain';
+import { prefix as eventEndpoint } from '../events/events.api';
 import { settersMapping, TBaseSetterArguments } from './settersMapping';
 import { ICTransaction } from './transactions.reducer';
 
 interface ITxData {
-  type: EventType;
-  blockNumber: number;
+  eventType: EventType;
+  block: number;
   assetId: number;
 }
-const prefix = 'event-trackings';
 
 export const recordTransaction = createAsyncThunk('recordTransaction', async (transaction: ICTransaction, thunkAPI) => {
   try {
@@ -20,16 +19,17 @@ export const recordTransaction = createAsyncThunk('recordTransaction', async (tr
     const txReceipt = await contractTransaction.wait();
 
     const txData: ITxData = {
-      type,
-      blockNumber: txReceipt.blockNumber,
+      eventType: type,
+      block: txReceipt.blockNumber,
       assetId: listingId,
     };
 
-    const { data } = await axios.post<IEventRecord>(`${prefix}`, txData);
+    // Consider moving this to events module logic later.
+    const { data } = await axios.post<IEventRecord>(`${eventEndpoint}`, txData);
 
     return data;
   } catch (error: any) {
-    return thunkAPI.rejectWithValue(error);
+    return thunkAPI.rejectWithValue(error.response.data);
   }
 });
 
@@ -37,7 +37,7 @@ export interface IProceedTxBody {
   listingId: number;
   contract: Listing;
   type: EventType;
-  args: TBaseSetterArguments
+  args: TBaseSetterArguments;
 }
 
 export const proceedTransaction = createAsyncThunk('proceedTransaction', async (body: IProceedTxBody, thunkAPI) => {
@@ -45,14 +45,14 @@ export const proceedTransaction = createAsyncThunk('proceedTransaction', async (
   try {
     const setter = settersMapping(contract, type, args);
 
-    if (setter === null) throw ("Insufficient arguments causing contract setter can not be generated");
-  
+    if (setter === null) throw 'Insufficient arguments causing contract setter can not be generated';
+
     const result = await setter();
 
     const payload: ICTransaction = {
       contractTransaction: result,
       type,
-      listingId
+      listingId,
     };
     return payload;
   } catch (error: any) {
