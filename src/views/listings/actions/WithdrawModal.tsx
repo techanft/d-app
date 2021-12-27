@@ -2,7 +2,7 @@ import { CButton, CCol, CModal, CModalBody, CModalFooter, CModalHeader, CModalTi
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { LISTING_INSTANCE } from '../../../shared/blockchain-helpers';
-import { estimateWithdraw, insertCommas } from '../../../shared/casual-helpers';
+import { estimateWithdrawAmount, insertCommas } from '../../../shared/casual-helpers';
 import { EventType } from '../../../shared/enumeration/eventType';
 import { RootState } from '../../../shared/reducers';
 import { selectEntityById } from '../../assets/assets.reducer';
@@ -73,7 +73,7 @@ const WithdrawModal = (props: IWithdrawModal) => {
           <p>
             Bạn chắc chắn muốn rút{' '}
             <span className="text-primary">
-              {insertCommas(estimateWithdraw(listing.dailyPayment, listing.ownership))} ANFT
+              {insertCommas(estimateWithdrawAmount(listing.dailyPayment, listing.ownership))} ANFT
             </span>
           </p>
         ) : (
