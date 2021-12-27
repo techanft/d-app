@@ -1,7 +1,6 @@
 import { BigNumber } from 'ethers';
 import { EventType } from '../../shared/enumeration/eventType';
 import { IEventArg } from '../../shared/models/events.model';
-import { Listing } from '../../typechain';
 import { TypedEventFilter } from '../../typechain/common';
 
 export type TBaseEventFilterVariable = {

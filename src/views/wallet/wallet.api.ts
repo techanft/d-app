@@ -1,5 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { ethers } from 'ethers';
+import { TOKEN_INSTANCE } from '../../shared/blockchain-helpers';
 
 interface IContractSigner {
   contract: ethers.Contract;
@@ -64,3 +65,13 @@ export const getTransactionReceipt = createAsyncThunk(
     }
   }
 );
+
+export const getTokenBalance = createAsyncThunk('getTokenBalance', async (address: string, thunkAPI) => {
+  const tokenContract = TOKEN_INSTANCE();
+  if (!tokenContract) throw String('Error generating token contract');
+  try {
+    return await tokenContract.balanceOf(address);
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error);
+  }
+});

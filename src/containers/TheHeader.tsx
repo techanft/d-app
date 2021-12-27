@@ -14,7 +14,7 @@ import {
   CInputCheckbox,
   CLabel,
   CLink,
-  CRow
+  CRow,
 } from '@coreui/react';
 import { faAngleDown } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -27,7 +27,13 @@ import { RootState } from '../shared/reducers';
 import { softReset as assetsSoftReset } from '../views/assets/assets.reducer';
 import { softReset as eventsSoftReset } from '../views/events/events.reducer';
 import { softReset as transactionsSoftReset } from '../views/transactions/transactions.reducer';
-import { getAddress, getContractWithSigner, getProviderLogin, getSigner } from '../views/wallet/wallet.api';
+import {
+  getAddress,
+  getContractWithSigner,
+  getProviderLogin,
+  getSigner,
+  getTokenBalance,
+} from '../views/wallet/wallet.api';
 import { softReset as walletSoftReset } from '../views/wallet/wallet.reducer';
 
 declare let window: any;
@@ -107,6 +113,13 @@ const TheHeader = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getSignerSuccess]);
+
+  useEffect(() => {
+    if (signerAddress) {
+      dispatch(getTokenBalance(signerAddress));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [signerAddress]);
 
   return (
     <CHeader className="header-container d-block" withSubheader>

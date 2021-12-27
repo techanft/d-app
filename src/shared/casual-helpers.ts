@@ -51,6 +51,7 @@ export const convertBnToDecimal = (input: BigNumber) => {
 };
 export const convertDecimalToBn = (input: string) => {
   const sanitizedInput = input.replace(/[^\d.-]/g, ''); //https://stackoverflow.com/questions/1862130/strip-all-non-numeric-characters-from-string-in-javascript
+  if (!sanitizedInput) return BigNumber.from(0);
   return ethers.utils.parseUnits(sanitizedInput);
 };
 
