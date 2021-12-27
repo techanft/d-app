@@ -1,6 +1,7 @@
 import { ethers } from "ethers";
-import tokenArtifact from "../assets/contract/ANFTV2.json";
-import listingArtifact from "../assets/contract/ListingV2.json";
+import TokenProxy from "../assets/deployments/bsc-testnet/Token_Proxy.json";
+import TokenImplementation from "../assets/deployments/bsc-testnet/Token_Implementation.json";
+import listingArtifact from "../assets/artifacts/Listing.json";
 import { Listing, Token } from "../typechain";
 
 declare let window:any;
@@ -17,8 +18,8 @@ const _provider = getProvider();
 
 export const TOKEN_INSTANCE = (signer?: ethers.providers.JsonRpcSigner ) : Token | null => {
   try {
-    const contractAddress = tokenArtifact.address;
-    const contractABI = tokenArtifact.abi;
+    const contractAddress = TokenProxy.address;
+    const contractABI = TokenImplementation.abi;
     return new ethers.Contract(contractAddress, contractABI, signer || _provider) as Token;
   } catch (error) {
     console.log(`Error getting token instance: ${error}`);
