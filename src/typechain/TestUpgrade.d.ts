@@ -49,6 +49,12 @@ interface TestUpgradeInterface extends ethers.utils.Interface {
     "totalSupply()": FunctionFragment;
     "transfer(address,uint256)": FunctionFragment;
     "transferFrom(address,address,uint256)": FunctionFragment;
+    "triggerClaimEvent(address,uint256,uint256,uint256)": FunctionFragment;
+    "triggerOwnershipExtensionEvent(address,address,uint256,uint256)": FunctionFragment;
+    "triggerRegisterEvent(address,uint256,uint256)": FunctionFragment;
+    "triggerUnregisterEvent(address,uint256)": FunctionFragment;
+    "triggerUpdateWorkerEvent(address,bool)": FunctionFragment;
+    "triggerWithdrawEvent(address,uint256,uint256,uint256)": FunctionFragment;
     "updateStakingAddress(address)": FunctionFragment;
     "upgradeTo(address)": FunctionFragment;
     "upgradeToAndCall(address,bytes)": FunctionFragment;
@@ -145,6 +151,30 @@ interface TestUpgradeInterface extends ethers.utils.Interface {
     values: [string, string, BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "triggerClaimEvent",
+    values: [string, BigNumberish, BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "triggerOwnershipExtensionEvent",
+    values: [string, string, BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "triggerRegisterEvent",
+    values: [string, BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "triggerUnregisterEvent",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "triggerUpdateWorkerEvent",
+    values: [string, boolean]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "triggerWithdrawEvent",
+    values: [string, BigNumberish, BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "updateStakingAddress",
     values: [string]
   ): string;
@@ -221,6 +251,30 @@ interface TestUpgradeInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "triggerClaimEvent",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "triggerOwnershipExtensionEvent",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "triggerRegisterEvent",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "triggerUnregisterEvent",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "triggerUpdateWorkerEvent",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "triggerWithdrawEvent",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "updateStakingAddress",
     data: BytesLike
   ): Result;
@@ -234,25 +288,37 @@ interface TestUpgradeInterface extends ethers.utils.Interface {
     "AdminChanged(address,address)": EventFragment;
     "Approval(address,address,uint256)": EventFragment;
     "BeaconUpgraded(address)": EventFragment;
+    "Claim(address,address,uint256,uint256,uint256)": EventFragment;
     "ListingCreation(address,address,address)": EventFragment;
+    "OwnershipExtension(address,address,address,uint256,uint256)": EventFragment;
+    "Register(address,address,uint256,uint256)": EventFragment;
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
     "RoleRevoked(bytes32,address,address)": EventFragment;
     "Transfer(address,address,uint256)": EventFragment;
+    "Unregister(address,address,uint256)": EventFragment;
     "UpdateStakingAddr(address)": EventFragment;
+    "UpdateWorker(address,address,bool)": EventFragment;
     "Upgraded(address)": EventFragment;
+    "Withdraw(address,address,uint256,uint256,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "AdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Approval"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "BeaconUpgraded"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Claim"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ListingCreation"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "OwnershipExtension"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Register"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Unregister"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "UpdateStakingAddr"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "UpdateWorker"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Upgraded"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Withdraw"): EventFragment;
 }
 
 export type AdminChangedEvent = TypedEvent<
@@ -269,11 +335,40 @@ export type ApprovalEvent = TypedEvent<
 
 export type BeaconUpgradedEvent = TypedEvent<[string] & { beacon: string }>;
 
+export type ClaimEvent = TypedEvent<
+  [string, string, BigNumber, BigNumber, BigNumber] & {
+    _listing: string;
+    _stakeholder: string;
+    _reward: BigNumber;
+    _from: BigNumber;
+    _to: BigNumber;
+  }
+>;
+
 export type ListingCreationEvent = TypedEvent<
   [string, string, string] & {
     _validator: string;
     _owner: string;
     _listingAddress: string;
+  }
+>;
+
+export type OwnershipExtensionEvent = TypedEvent<
+  [string, string, string, BigNumber, BigNumber] & {
+    _listing: string;
+    _prevOwner: string;
+    _newOwner: string;
+    _start: BigNumber;
+    _end: BigNumber;
+  }
+>;
+
+export type RegisterEvent = TypedEvent<
+  [string, string, BigNumber, BigNumber] & {
+    _listing: string;
+    _stakeholder: string;
+    _amount: BigNumber;
+    _optionId: BigNumber;
   }
 >;
 
@@ -297,11 +392,37 @@ export type TransferEvent = TypedEvent<
   [string, string, BigNumber] & { from: string; to: string; value: BigNumber }
 >;
 
+export type UnregisterEvent = TypedEvent<
+  [string, string, BigNumber] & {
+    _listing: string;
+    _stakeholder: string;
+    _optionId: BigNumber;
+  }
+>;
+
 export type UpdateStakingAddrEvent = TypedEvent<
   [string] & { _stakingAddr: string }
 >;
 
+export type UpdateWorkerEvent = TypedEvent<
+  [string, string, boolean] & {
+    _listing: string;
+    _worker: string;
+    _isAuthorized: boolean;
+  }
+>;
+
 export type UpgradedEvent = TypedEvent<[string] & { implementation: string }>;
+
+export type WithdrawEvent = TypedEvent<
+  [string, string, BigNumber, BigNumber, BigNumber] & {
+    _listing: string;
+    owner: string;
+    _amount: BigNumber;
+    _initOwnership: BigNumber;
+    _newOwnership: BigNumber;
+  }
+>;
 
 export class TestUpgrade extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -466,6 +587,49 @@ export class TestUpgrade extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    triggerClaimEvent(
+      _stakeholder: string,
+      _reward: BigNumberish,
+      _from: BigNumberish,
+      _to: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    triggerOwnershipExtensionEvent(
+      _prevOwner: string,
+      _newOwner: string,
+      _start: BigNumberish,
+      _end: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    triggerRegisterEvent(
+      _stakeholder: string,
+      _amount: BigNumberish,
+      _optionId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    triggerUnregisterEvent(
+      _stakeholder: string,
+      _optionId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    triggerUpdateWorkerEvent(
+      _worker: string,
+      _isAuthorized: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    triggerWithdrawEvent(
+      _owner: string,
+      _amount: BigNumberish,
+      _initOwnership: BigNumberish,
+      _newOwnership: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     updateStakingAddress(
       _stakingAddr: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -602,6 +766,49 @@ export class TestUpgrade extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  triggerClaimEvent(
+    _stakeholder: string,
+    _reward: BigNumberish,
+    _from: BigNumberish,
+    _to: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  triggerOwnershipExtensionEvent(
+    _prevOwner: string,
+    _newOwner: string,
+    _start: BigNumberish,
+    _end: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  triggerRegisterEvent(
+    _stakeholder: string,
+    _amount: BigNumberish,
+    _optionId: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  triggerUnregisterEvent(
+    _stakeholder: string,
+    _optionId: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  triggerUpdateWorkerEvent(
+    _worker: string,
+    _isAuthorized: boolean,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  triggerWithdrawEvent(
+    _owner: string,
+    _amount: BigNumberish,
+    _initOwnership: BigNumberish,
+    _newOwnership: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   updateStakingAddress(
     _stakingAddr: string,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -732,6 +939,49 @@ export class TestUpgrade extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    triggerClaimEvent(
+      _stakeholder: string,
+      _reward: BigNumberish,
+      _from: BigNumberish,
+      _to: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    triggerOwnershipExtensionEvent(
+      _prevOwner: string,
+      _newOwner: string,
+      _start: BigNumberish,
+      _end: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    triggerRegisterEvent(
+      _stakeholder: string,
+      _amount: BigNumberish,
+      _optionId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    triggerUnregisterEvent(
+      _stakeholder: string,
+      _optionId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    triggerUpdateWorkerEvent(
+      _worker: string,
+      _isAuthorized: boolean,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    triggerWithdrawEvent(
+      _owner: string,
+      _amount: BigNumberish,
+      _initOwnership: BigNumberish,
+      _newOwnership: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     updateStakingAddress(
       _stakingAddr: string,
       overrides?: CallOverrides
@@ -792,6 +1042,40 @@ export class TestUpgrade extends BaseContract {
       beacon?: string | null
     ): TypedEventFilter<[string], { beacon: string }>;
 
+    "Claim(address,address,uint256,uint256,uint256)"(
+      _listing?: null,
+      _stakeholder?: null,
+      _reward?: null,
+      _from?: null,
+      _to?: null
+    ): TypedEventFilter<
+      [string, string, BigNumber, BigNumber, BigNumber],
+      {
+        _listing: string;
+        _stakeholder: string;
+        _reward: BigNumber;
+        _from: BigNumber;
+        _to: BigNumber;
+      }
+    >;
+
+    Claim(
+      _listing?: null,
+      _stakeholder?: null,
+      _reward?: null,
+      _from?: null,
+      _to?: null
+    ): TypedEventFilter<
+      [string, string, BigNumber, BigNumber, BigNumber],
+      {
+        _listing: string;
+        _stakeholder: string;
+        _reward: BigNumber;
+        _from: BigNumber;
+        _to: BigNumber;
+      }
+    >;
+
     "ListingCreation(address,address,address)"(
       _validator?: null,
       _owner?: null,
@@ -808,6 +1092,70 @@ export class TestUpgrade extends BaseContract {
     ): TypedEventFilter<
       [string, string, string],
       { _validator: string; _owner: string; _listingAddress: string }
+    >;
+
+    "OwnershipExtension(address,address,address,uint256,uint256)"(
+      _listing?: null,
+      _prevOwner?: null,
+      _newOwner?: null,
+      _start?: null,
+      _end?: null
+    ): TypedEventFilter<
+      [string, string, string, BigNumber, BigNumber],
+      {
+        _listing: string;
+        _prevOwner: string;
+        _newOwner: string;
+        _start: BigNumber;
+        _end: BigNumber;
+      }
+    >;
+
+    OwnershipExtension(
+      _listing?: null,
+      _prevOwner?: null,
+      _newOwner?: null,
+      _start?: null,
+      _end?: null
+    ): TypedEventFilter<
+      [string, string, string, BigNumber, BigNumber],
+      {
+        _listing: string;
+        _prevOwner: string;
+        _newOwner: string;
+        _start: BigNumber;
+        _end: BigNumber;
+      }
+    >;
+
+    "Register(address,address,uint256,uint256)"(
+      _listing?: null,
+      _stakeholder?: null,
+      _amount?: null,
+      _optionId?: null
+    ): TypedEventFilter<
+      [string, string, BigNumber, BigNumber],
+      {
+        _listing: string;
+        _stakeholder: string;
+        _amount: BigNumber;
+        _optionId: BigNumber;
+      }
+    >;
+
+    Register(
+      _listing?: null,
+      _stakeholder?: null,
+      _amount?: null,
+      _optionId?: null
+    ): TypedEventFilter<
+      [string, string, BigNumber, BigNumber],
+      {
+        _listing: string;
+        _stakeholder: string;
+        _amount: BigNumber;
+        _optionId: BigNumber;
+      }
     >;
 
     "RoleAdminChanged(bytes32,bytes32,bytes32)"(
@@ -882,6 +1230,24 @@ export class TestUpgrade extends BaseContract {
       { from: string; to: string; value: BigNumber }
     >;
 
+    "Unregister(address,address,uint256)"(
+      _listing?: null,
+      _stakeholder?: null,
+      _optionId?: null
+    ): TypedEventFilter<
+      [string, string, BigNumber],
+      { _listing: string; _stakeholder: string; _optionId: BigNumber }
+    >;
+
+    Unregister(
+      _listing?: null,
+      _stakeholder?: null,
+      _optionId?: null
+    ): TypedEventFilter<
+      [string, string, BigNumber],
+      { _listing: string; _stakeholder: string; _optionId: BigNumber }
+    >;
+
     "UpdateStakingAddr(address)"(
       _stakingAddr?: null
     ): TypedEventFilter<[string], { _stakingAddr: string }>;
@@ -890,6 +1256,24 @@ export class TestUpgrade extends BaseContract {
       _stakingAddr?: null
     ): TypedEventFilter<[string], { _stakingAddr: string }>;
 
+    "UpdateWorker(address,address,bool)"(
+      _listing?: null,
+      _worker?: null,
+      _isAuthorized?: null
+    ): TypedEventFilter<
+      [string, string, boolean],
+      { _listing: string; _worker: string; _isAuthorized: boolean }
+    >;
+
+    UpdateWorker(
+      _listing?: null,
+      _worker?: null,
+      _isAuthorized?: null
+    ): TypedEventFilter<
+      [string, string, boolean],
+      { _listing: string; _worker: string; _isAuthorized: boolean }
+    >;
+
     "Upgraded(address)"(
       implementation?: string | null
     ): TypedEventFilter<[string], { implementation: string }>;
@@ -897,6 +1281,40 @@ export class TestUpgrade extends BaseContract {
     Upgraded(
       implementation?: string | null
     ): TypedEventFilter<[string], { implementation: string }>;
+
+    "Withdraw(address,address,uint256,uint256,uint256)"(
+      _listing?: null,
+      owner?: null,
+      _amount?: null,
+      _initOwnership?: null,
+      _newOwnership?: null
+    ): TypedEventFilter<
+      [string, string, BigNumber, BigNumber, BigNumber],
+      {
+        _listing: string;
+        owner: string;
+        _amount: BigNumber;
+        _initOwnership: BigNumber;
+        _newOwnership: BigNumber;
+      }
+    >;
+
+    Withdraw(
+      _listing?: null,
+      owner?: null,
+      _amount?: null,
+      _initOwnership?: null,
+      _newOwnership?: null
+    ): TypedEventFilter<
+      [string, string, BigNumber, BigNumber, BigNumber],
+      {
+        _listing: string;
+        owner: string;
+        _amount: BigNumber;
+        _initOwnership: BigNumber;
+        _newOwnership: BigNumber;
+      }
+    >;
   };
 
   estimateGas: {
@@ -1016,6 +1434,49 @@ export class TestUpgrade extends BaseContract {
       sender: string,
       recipient: string,
       amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    triggerClaimEvent(
+      _stakeholder: string,
+      _reward: BigNumberish,
+      _from: BigNumberish,
+      _to: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    triggerOwnershipExtensionEvent(
+      _prevOwner: string,
+      _newOwner: string,
+      _start: BigNumberish,
+      _end: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    triggerRegisterEvent(
+      _stakeholder: string,
+      _amount: BigNumberish,
+      _optionId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    triggerUnregisterEvent(
+      _stakeholder: string,
+      _optionId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    triggerUpdateWorkerEvent(
+      _worker: string,
+      _isAuthorized: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    triggerWithdrawEvent(
+      _owner: string,
+      _amount: BigNumberish,
+      _initOwnership: BigNumberish,
+      _newOwnership: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1161,6 +1622,49 @@ export class TestUpgrade extends BaseContract {
       sender: string,
       recipient: string,
       amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    triggerClaimEvent(
+      _stakeholder: string,
+      _reward: BigNumberish,
+      _from: BigNumberish,
+      _to: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    triggerOwnershipExtensionEvent(
+      _prevOwner: string,
+      _newOwner: string,
+      _start: BigNumberish,
+      _end: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    triggerRegisterEvent(
+      _stakeholder: string,
+      _amount: BigNumberish,
+      _optionId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    triggerUnregisterEvent(
+      _stakeholder: string,
+      _optionId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    triggerUpdateWorkerEvent(
+      _worker: string,
+      _isAuthorized: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    triggerWithdrawEvent(
+      _owner: string,
+      _amount: BigNumberish,
+      _initOwnership: BigNumberish,
+      _newOwnership: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

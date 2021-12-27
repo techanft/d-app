@@ -32,7 +32,6 @@ interface ListingStorageInterface extends ethers.utils.Interface {
     "updateOwner(address)": FunctionFragment;
     "updateValidator(address)": FunctionFragment;
     "updateValue(uint256)": FunctionFragment;
-    "updateWorker(address)": FunctionFragment;
     "updatelistingId(uint256)": FunctionFragment;
     "validator()": FunctionFragment;
     "value()": FunctionFragment;
@@ -70,10 +69,6 @@ interface ListingStorageInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "updateValue",
     values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "updateWorker",
-    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "updatelistingId",
@@ -116,10 +111,6 @@ interface ListingStorageInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "updateWorker",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "updatelistingId",
     data: BytesLike
   ): Result;
@@ -127,16 +118,8 @@ interface ListingStorageInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "value", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "workers", data: BytesLike): Result;
 
-  events: {
-    "UpdateWorker(address,bool)": EventFragment;
-  };
-
-  getEvent(nameOrSignatureOrTopic: "UpdateWorker"): EventFragment;
+  events: {};
 }
-
-export type UpdateWorkerEvent = TypedEvent<
-  [string, boolean] & { _worker: string; _isAuthorized: boolean }
->;
 
 export class ListingStorage extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -229,11 +212,6 @@ export class ListingStorage extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    updateWorker(
-      _worker: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     updatelistingId(
       _listingId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -293,11 +271,6 @@ export class ListingStorage extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  updateWorker(
-    _worker: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   updatelistingId(
     _listingId: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -351,8 +324,6 @@ export class ListingStorage extends BaseContract {
 
     updateValue(_value: BigNumberish, overrides?: CallOverrides): Promise<void>;
 
-    updateWorker(_worker: string, overrides?: CallOverrides): Promise<void>;
-
     updatelistingId(
       _listingId: BigNumberish,
       overrides?: CallOverrides
@@ -365,23 +336,7 @@ export class ListingStorage extends BaseContract {
     workers(arg0: string, overrides?: CallOverrides): Promise<boolean>;
   };
 
-  filters: {
-    "UpdateWorker(address,bool)"(
-      _worker?: null,
-      _isAuthorized?: null
-    ): TypedEventFilter<
-      [string, boolean],
-      { _worker: string; _isAuthorized: boolean }
-    >;
-
-    UpdateWorker(
-      _worker?: null,
-      _isAuthorized?: null
-    ): TypedEventFilter<
-      [string, boolean],
-      { _worker: string; _isAuthorized: boolean }
-    >;
-  };
+  filters: {};
 
   estimateGas: {
     dailyPayment(overrides?: CallOverrides): Promise<BigNumber>;
@@ -419,11 +374,6 @@ export class ListingStorage extends BaseContract {
 
     updateValue(
       _value: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    updateWorker(
-      _worker: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -478,11 +428,6 @@ export class ListingStorage extends BaseContract {
 
     updateValue(
       _value: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    updateWorker(
-      _worker: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
