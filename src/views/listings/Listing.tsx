@@ -11,13 +11,13 @@ import Primary from './info/Primary';
 import Secondary from './info/Secondary';
 import Listings from './Listings';
 
-interface IListingDetailsViewParams {
+interface IListingParams {
   [x: string]: string;
 }
 
-interface IListingDetailsView extends RouteComponentProps<IListingDetailsViewParams> {}
+interface IListingProps extends RouteComponentProps<IListingParams> {}
 
-const ListingDetailsView = (props: IListingDetailsView) => {
+const Listing = (props: IListingProps) => {
   const dispatch = useDispatch();
   const { success } = useSelector((state: RootState) => state.transactions);
   const { match } = props;
@@ -49,4 +49,4 @@ const ListingDetailsView = (props: IListingDetailsView) => {
   );
 };
 
-export default ListingDetailsView;
+export default Listing;

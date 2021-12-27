@@ -1,12 +1,36 @@
 import CIcon from '@coreui/icons-react';
-import { CButton, CCard, CCardBody, CCol, CCollapse, CContainer, CDataTable, CLink, CPagination, CRow, CTooltip } from '@coreui/react';
-import { faArrowAltCircleDown, faArrowAltCircleUp, faClipboard, faDonate, faEdit, faIdBadge } from '@fortawesome/free-solid-svg-icons';
+import {
+  CButton,
+  CCard,
+  CCardBody,
+  CCol,
+  CCollapse,
+  CContainer,
+  CDataTable,
+  CLink,
+  CPagination,
+  CRow,
+  CTooltip
+} from '@coreui/react';
+import {
+  faArrowAltCircleDown,
+  faArrowAltCircleUp,
+  faClipboard,
+  faDonate,
+  faEdit,
+  faIdBadge
+} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import { useDispatch, useSelector } from 'react-redux';
 import { TOKEN_SYMBOL } from '../../../config/constants';
-import { checkOwnershipExpired, convertUnixToDate, formatBNToken, getEllipsisTxt } from '../../../shared/casual-helpers';
+import {
+  checkOwnershipExpired,
+  convertUnixToDate,
+  formatBNToken,
+  getEllipsisTxt
+} from '../../../shared/casual-helpers';
 import InfoLoader from '../../../shared/components/InfoLoader';
 import { ToastError } from '../../../shared/components/Toast';
 import { EventType } from '../../../shared/enumeration/eventType';
@@ -20,7 +44,6 @@ import { fetchingEntity, selectEntityById } from '../../assets/assets.reducer';
 import { getEntities, IEventTrackingFilter } from '../../events/events.api';
 import { eventsSelectors, fetchingEntities } from '../../events/events.reducer';
 import ExtendOwnershipModal from '../actions/ExtendOwnershipModal';
-import RegisterOwnershipModal from '../actions/RegisterOwnershipModal';
 import WithdrawTokenModal from '../actions/WithdrawModal';
 import '../index.scss';
 
@@ -181,7 +204,11 @@ const ListingInfo = (props: IListingInfoProps) => {
           </CCol>
 
           <CCol xs={6} className=" mb-3">
-            {!entityLoading && listing?.ownership ? ownershipText(signerAddress, listing) : <InfoLoader width={300} height={29} />}
+            {!entityLoading && listing?.ownership ? (
+              ownershipText(signerAddress, listing)
+            ) : (
+              <InfoLoader width={300} height={29} />
+            )}
           </CCol>
         </CRow>
         <CRow className="p-0 m-0">
@@ -226,7 +253,9 @@ const ListingInfo = (props: IListingInfoProps) => {
           <CCol xs={6}>
             <p className="detail-title-font my-2">Sở hữu tới </p>
             {!entityLoading && listing?.ownership ? (
-              <p className={`my-2 value-text ${ownershipExpired ? 'text-danger' : 'text-success'}`}>{convertUnixToDate(listing.ownership.toNumber())}</p>
+              <p className={`my-2 value-text ${ownershipExpired ? 'text-danger' : 'text-success'}`}>
+                {convertUnixToDate(listing.ownership.toNumber())}
+              </p>
             ) : (
               <InfoLoader width={155} height={27} />
             )}
@@ -292,13 +321,23 @@ const ListingInfo = (props: IListingInfoProps) => {
                 </CCol>
               </CRow>
               {totalPages > 1 && (
-                <CPagination disabled={entitiesLoading} activePage={filterState.page + 1} pages={totalPages} onActivePageChange={handlePaginationChange} align="center" className="mt-2" />
+                <CPagination
+                  disabled={entitiesLoading}
+                  activePage={filterState.page + 1}
+                  pages={totalPages}
+                  onActivePageChange={handlePaginationChange}
+                  align="center"
+                  className="mt-2"
+                />
               )}
             </CCollapse>
           </CCol>
 
           <CCol xs={12} className="mt-2 ">
-            <CButton className="px-3 w-100 btn-radius-50 btn-font-style btn btn-outline-primary" onClick={toggleCollapseVisibility(CollapseType.INVESTMENT)}>
+            <CButton
+              className="px-3 w-100 btn-radius-50 btn-font-style btn btn-outline-primary"
+              onClick={toggleCollapseVisibility(CollapseType.INVESTMENT)}
+            >
               Hoạt động đầu tư
             </CButton>
           </CCol>
@@ -308,12 +347,15 @@ const ListingInfo = (props: IListingInfoProps) => {
               <CCard className="activities-card mt-2 mb-0">
                 <CCardBody className="p-2">
                   <CRow className="mx-0">
-                    <p onClick={() => handleModalVisibility(ModalType.OWNERSHIP_REGISTER, true)} className={`m-0 text-primary`}>
+                    <p
+                      onClick={() => handleModalVisibility(ModalType.OWNERSHIP_REGISTER, true)}
+                      className={`m-0 text-primary`}
+                    >
                       <FontAwesomeIcon icon={faEdit} /> Đăng ký sở hữu
                     </p>
                   </CRow>
                   <CRow className="mt-2 mx-0">
-                    <CLink to="/register">
+                    <CLink to={`/listings/${listingId}/register`}>
                       <FontAwesomeIcon icon={faDonate} /> Đăng ký nhận thưởng
                     </CLink>
                   </CRow>
@@ -323,7 +365,12 @@ const ListingInfo = (props: IListingInfoProps) => {
           </CCol>
 
           <CCol xs={12} className="mt-2">
-            <CButton className={`px-3 w-100 btn-radius-50 btn-font-style btn btn-primary ${viewerIsOwner ? 'd-block' : 'd-none'}`} onClick={toggleCollapseVisibility(CollapseType.MANAGEMENT)}>
+            <CButton
+              className={`px-3 w-100 btn-radius-50 btn-font-style btn btn-primary ${
+                viewerIsOwner ? 'd-block' : 'd-none'
+              }`}
+              onClick={toggleCollapseVisibility(CollapseType.MANAGEMENT)}
+            >
               Quản lý sở hữu
             </CButton>
           </CCol>
@@ -333,12 +380,19 @@ const ListingInfo = (props: IListingInfoProps) => {
               <CCard className="mt-2 activities-card mb-0">
                 <CCardBody className="p-2">
                   <CRow className="mx-0">
-                    <CLink href="#" target="_blank" onClick={() => handleModalVisibility(ModalType.OWNERSHIP_WITHDRAW, true)}>
+                    <CLink
+                      href="#"
+                      target="_blank"
+                      onClick={() => handleModalVisibility(ModalType.OWNERSHIP_WITHDRAW, true)}
+                    >
                       <FontAwesomeIcon icon={faArrowAltCircleUp} /> Rút ANFT
                     </CLink>
                   </CRow>
                   <CRow className="my-2 mx-0">
-                    <p onClick={() => handleModalVisibility(ModalType.OWNERSHIP_EXTENSION, true)} className={`m-0 text-primary`}>
+                    <p
+                      onClick={() => handleModalVisibility(ModalType.OWNERSHIP_EXTENSION, true)}
+                      className={`m-0 text-primary`}
+                    >
                       <FontAwesomeIcon icon={faArrowAltCircleDown} /> Nạp thêm
                     </p>
                   </CRow>
@@ -352,13 +406,23 @@ const ListingInfo = (props: IListingInfoProps) => {
             </CCollapse>
           </CCol>
 
-          <RegisterOwnershipModal
+          <ExtendOwnershipModal
             listingId={listingId}
             isVisible={modalsVisibility[ModalType.OWNERSHIP_REGISTER]}
             setVisibility={(key: boolean) => handleModalVisibility(ModalType.OWNERSHIP_REGISTER, key)}
+            title="Đăng ký sở hữu"
           />
-          <ExtendOwnershipModal isVisible={modalsVisibility[ModalType.OWNERSHIP_EXTENSION]} setVisibility={(key: boolean) => handleModalVisibility(ModalType.OWNERSHIP_EXTENSION, key)} />
-          <WithdrawTokenModal isVisible={modalsVisibility[ModalType.OWNERSHIP_WITHDRAW]} setVisibility={(key: boolean) => handleModalVisibility(ModalType.OWNERSHIP_WITHDRAW, key)} />
+          <ExtendOwnershipModal
+            listingId={listingId}
+            isVisible={modalsVisibility[ModalType.OWNERSHIP_EXTENSION]}
+            setVisibility={(key: boolean) => handleModalVisibility(ModalType.OWNERSHIP_EXTENSION, key)}
+            title="Nạp ANFT"
+          />
+          <WithdrawTokenModal
+            listingId={listingId}
+            isVisible={modalsVisibility[ModalType.OWNERSHIP_WITHDRAW]}
+            setVisibility={(key: boolean) => handleModalVisibility(ModalType.OWNERSHIP_WITHDRAW, key)}
+          />
         </CRow>
       </CCol>
     </CContainer>

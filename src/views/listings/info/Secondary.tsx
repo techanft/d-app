@@ -64,7 +64,7 @@ const ListingDetails = () => {
       </CRow>
       <CRow className="m-0 p-0">
       <CCol xs={12} className="text-center mt-3">
-            <CLink to="/activity_logs">
+            <CLink to="/activity-logs">
               <CIcon name="cil-history" /> <u>Activity Logs</u>
             </CLink>
           </CCol>

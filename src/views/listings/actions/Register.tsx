@@ -15,18 +15,45 @@ import {
   CInputGroupAppend,
   CLabel,
   CLink,
-  CRow
+  CRow,
 } from '@coreui/react';
 import { faClipboardCheck } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { id } from 'ethers/lib/utils';
 import { Formik } from 'formik';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { RouteComponentProps } from 'react-router-dom';
 import bgImg from '../../../assets/img/registerBonus.svg';
 import ConfirmModal from '../../../shared/components/ConfirmModal';
+import InfoLoader from '../../../shared/components/InfoLoader';
+import { ToastError } from '../../../shared/components/Toast';
+import useWindowDimensions from '../../../shared/hooks/useWindowDimensions';
 import { IListingActivity } from '../../../shared/models/listingActivity.model';
+import { RootState } from '../../../shared/reducers';
+import { getEntity } from '../../assets/assets.api';
+import { fetchingEntity, selectEntityById } from '../../assets/assets.reducer';
 import '../index.scss';
 
-const RegisterReward = () => {
+interface IRegisterParams {
+  [x: string]: string;
+}
+
+interface IRegisterProps extends RouteComponentProps<IRegisterParams> {}
+
+const Register = (props: IRegisterProps) => {
+  const { match } = props;
+  const { id } = match.params;
+
+  const dispatch = useDispatch();
+  const { signerAddress } = useSelector((state: RootState) => state.wallet);
+
+  const { initialState } = useSelector((state: RootState) => state.assets);
+  const { entityLoading } = initialState;
+  const listing = useSelector(selectEntityById(Number(id)));
+
+  const { width: screenWidth } = useWindowDimensions();
+
   const titleTableStyle = {
     textAlign: 'left',
     color: '#828282',
@@ -55,43 +82,43 @@ const RegisterReward = () => {
 
   const activitiesList: IListingActivity[] = [
     {
-      activityName: 'Lorem is pum 100000000000000000000000',
-      bonusRate: '0.3%',
+      activityName: 'HỆ SINH THÁI BĐS SỐ 4.0',
+      bonusRate: '0.2%',
       registerLevel: '300',
-      reward: '500',
+      reward: '',
       createdDate: '',
     },
     {
-      activityName: 'Lorem is pum 2 ',
-      bonusRate: '0.3%',
+      activityName: 'QUẢN LÝ TÀI SẢN BĐS NFT',
+      bonusRate: '0.1%',
       registerLevel: '',
       reward: '',
       createdDate: '',
     },
     {
-      activityName: 'Lorem is pum 3 ',
-      bonusRate: '0.3%',
+      activityName: 'QUỸ ĐẦU TƯ BĐS "ETF"',
+      bonusRate: '0.2%',
       registerLevel: '',
       reward: '',
       createdDate: '',
     },
     {
-      activityName: 'Lorem is pum 4 ',
-      bonusRate: '0.3%',
+      activityName: 'SÀN GIAO DỊCH BĐS 4.0',
+      bonusRate: '0.2%',
       registerLevel: '',
       reward: '',
       createdDate: '',
     },
     {
-      activityName: 'Lorem is pum 5 ',
-      bonusRate: '0.3%',
+      activityName: 'ĐỐI TÁC VÀ CHUYÊN GIA',
+      bonusRate: '0.1%',
       registerLevel: '',
       reward: '',
       createdDate: '',
     },
     {
-      activityName: 'Lorem is pum 6 ',
-      bonusRate: '0.3%',
+      activityName: 'ĐÀO TẠO ĐẦU TƯ BĐS',
+      bonusRate: '0.2%',
       registerLevel: '',
       reward: '',
       createdDate: '',
@@ -101,6 +128,7 @@ const RegisterReward = () => {
   const [details, setDetails] = useState<string[]>([]);
 
   const toggleDetails = (reqId: string) => {
+    if (!signerAddress) return ToastError('Bạn chưa liên kết với ví của mình');
     const position = details.indexOf(reqId);
     let newDetails = details.slice();
     if (position !== -1) {
@@ -120,7 +148,16 @@ const RegisterReward = () => {
   const onCloseModal = () => {
     setUnregister(false);
     setClaimReward(false);
-  }
+  };
+
+  useEffect(() => {
+    if (id) {
+      dispatch(fetchingEntity());
+      dispatch(getEntity(Number(id)));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
+
 
   return (
     <CContainer fluid className="mx-0 my-2">
@@ -130,10 +167,15 @@ const RegisterReward = () => {
         </CCol>
         <CCol xs={12}>
           <CCard className="m-0 listing-img-card">
-            <img src={bgImg} alt="listingImg" className="w-100 h-100" />
+            {!entityLoading && listing ? (
+              <img src={listing.images} alt="listingImg" className="w-100 h-100" />
+            ) : (
+              // Ensuring 16:9 ratio for image and image loader
+              <InfoLoader width={screenWidth} height={screenWidth / 1.77} />
+            )}
             <CCardBody className="p-0 listing-card-body">
               <CCardTitle className="listing-card-title mb-0 px-3 py-2 w-100">
-                <p className="mb-2 text-white content-title">125 - Hoàn Kiếm - Hà Nội</p>
+                <p className="mb-2 text-white content-title">202 Yên Sở - Hoàng Mai - Hà Nội</p>
                 <p className="mb-0 text-white detail-title-font">
                   Hoạt động <b>{activitiesList.length}</b>
                 </p>
@@ -155,7 +197,7 @@ const RegisterReward = () => {
                       toggleDetails(item.activityName);
                     }}
                   >
-                    <span className="text-primary d-inline-block text-truncate" style={{ maxWidth: '80px' }}>
+                    <span className="text-primary d-inline-block text-truncate" style={{ maxWidth: '100px' }}>
                       {item.activityName ? item.activityName : '_'}
                     </span>
                   </td>
@@ -208,7 +250,7 @@ const RegisterReward = () => {
                                         />
                                         <CInputGroupAppend>
                                           <CButton type="submit" color="primary" className="btn-register-level">
-                                            <FontAwesomeIcon icon={faClipboardCheck}/>
+                                            <FontAwesomeIcon icon={faClipboardCheck} />
                                           </CButton>
                                         </CInputGroupAppend>
                                       </CInputGroup>
@@ -243,7 +285,7 @@ const RegisterReward = () => {
                                         )}
                                         onConfirm={() => {}}
                                         onAbort={onCloseModal}
-                                        />
+                                      />
                                       <ConfirmModal
                                         isVisible={unregister}
                                         color="danger"
@@ -257,19 +299,7 @@ const RegisterReward = () => {
                                         )}
                                         onConfirm={() => {}}
                                         onAbort={onCloseModal}
-                                        />
-                                      {/* <ClaimRewardModal
-                                        visible={claimReward}
-                                        setVisible={setClaimReward}
-                                        reward={values.reward}
-                                        activityName={values.activityName}
                                       />
-                                      <UnregisterModal
-                                        visible={unregister}
-                                        setVisible={setUnregister}
-                                        registerLevel={values.registerLevel}
-                                        activityName={values.activityName}
-                                      /> */}
                                     </CCol>
                                   </CFormGroup>
                                 </CCol>
@@ -298,4 +328,4 @@ const RegisterReward = () => {
   );
 };
 
-export default RegisterReward;
+export default Register;

@@ -20,7 +20,7 @@ const routes = [
     component: Listing
   },
   {
-    path: '/register',
+    path: '/listings/:id/register',
     name: 'Register',
     component: Register,
     exact: true,

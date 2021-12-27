@@ -20,20 +20,36 @@ import { faAngleDown } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getProvider, TOKEN_INSTANCE } from '../shared/blockchain-helpers';
+import { TOKEN_INSTANCE } from '../shared/blockchain-helpers';
 import { getEllipsisTxt } from '../shared/casual-helpers';
 import { ToastError, ToastInfo } from '../shared/components/Toast';
 import { RootState } from '../shared/reducers';
+import { softReset as assetsSoftReset } from '../views/assets/assets.reducer';
+import { softReset as eventsSoftReset } from '../views/events/events.reducer';
+import { softReset as transactionsSoftReset } from '../views/transactions/transactions.reducer';
 import { getAddress, getContractWithSigner, getProviderLogin, getSigner } from '../views/wallet/wallet.api';
-import { softReset } from '../views/wallet/wallet.reducer';
+import { softReset as walletSoftReset } from '../views/wallet/wallet.reducer';
 
 declare let window: any;
 const TheHeader = () => {
   const dispatch = useDispatch();
-  const provider = getProvider();
-  const { getProviderLoginSuccess, getSignerSuccess, signer, signerAddress,errorMessage } = useSelector(
-    (state: RootState) => state.wallet
-  );
+  // const provider = getProvider();
+  let provider: any;
+  const {
+    getProviderLoginSuccess,
+    getSignerSuccess,
+    signer,
+    signerAddress,
+    errorMessage: walletErrorMessage,
+  } = useSelector((state: RootState) => state.wallet);
+  const { initialState: assetsInitialState } = useSelector((state: RootState) => state.assets);
+  const { errorMessage: assetErrorMessage } = assetsInitialState;
+
+  const { initialState: eventsInitialState } = useSelector((state: RootState) => state.events);
+  const { errorMessage: eventErrorMessage } = eventsInitialState;
+
+  const { errorMessage: transactionErrorMessage } = useSelector((state: RootState) => state.transactions);
+
   const onConnectWallet = () => () => {
     if (window.ethereum) {
       dispatch(getProviderLogin(provider));
@@ -42,13 +58,37 @@ const TheHeader = () => {
     }
   };
 
-  useEffect(()=>{
-    if(errorMessage){
-      ToastError(errorMessage);
-      dispatch(softReset())
+  useEffect(() => {
+    if (transactionErrorMessage) {
+      ToastError(transactionErrorMessage);
+      dispatch(transactionsSoftReset());
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[errorMessage])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [transactionErrorMessage]);
+
+  useEffect(() => {
+    if (eventErrorMessage) {
+      ToastError(eventErrorMessage);
+      dispatch(eventsSoftReset());
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [eventErrorMessage]);
+
+  useEffect(() => {
+    if (assetErrorMessage) {
+      ToastError(assetErrorMessage);
+      dispatch(assetsSoftReset());
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [assetErrorMessage]);
+
+  useEffect(() => {
+    if (walletErrorMessage) {
+      ToastError(walletErrorMessage);
+      dispatch(walletSoftReset());
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [walletErrorMessage]);
 
   useEffect(() => {
     if (getProviderLoginSuccess) {
@@ -64,7 +104,7 @@ const TheHeader = () => {
       const body = { contract: TokenContract, signer };
       dispatch(getAddress(signer));
       dispatch(getContractWithSigner(body));
-      dispatch(softReset());
+      dispatch(walletSoftReset());
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getSignerSuccess]);
