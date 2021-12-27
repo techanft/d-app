@@ -1,20 +1,26 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { ethers } from "ethers";
-import { getAddress, getContractWithSigner, getProviderLogin, getSigner, getTransactionReceipt } from "./wallet.api";
+import { BigNumber, ethers } from "ethers";
+import { getAddress, getContractWithSigner, getProviderLogin, getSigner, getTokenBalance, getTransactionReceipt } from "./wallet.api";
 
 interface IAuthenticationState {
   transactionReceipt:ethers.providers.TransactionReceipt|null;
   getTransactionRecepitSuccess:boolean;
+
   signerAddress: string | undefined;
   getSignerAddressSuccess: boolean;
+
   contractWithSigner: ethers.Contract | null;
   getContractWithSignerSuccess: boolean;
+
   signer: ethers.providers.JsonRpcSigner | null;
   getSignerSuccess: boolean;
+
   getProviderLoginSuccess: boolean;
+  getTokenBalanceSuccess: boolean;
+  tokenBalance: BigNumber | undefined;
+
   loading: boolean;
   user: any | null;
-  token: string | null;
   errorMessage: string | null;
 }
 
@@ -29,8 +35,9 @@ const initialState: IAuthenticationState = {
   getSignerSuccess: false,
   getProviderLoginSuccess: false,
   loading: false,
+  getTokenBalanceSuccess: false,
   user: null,
-  token: null,
+  tokenBalance: undefined,
   errorMessage: null,
 };
 
@@ -53,7 +60,7 @@ const walletSlice = createSlice({
       state.getProviderLoginSuccess = false;
       state.loading = false;
       state.user = null;
-      state.token = null;
+      state.tokenBalance = undefined;
       state.errorMessage = null;
     },
     softReset(state) {
@@ -118,6 +125,17 @@ const walletSlice = createSlice({
     [getTransactionReceipt.rejected.type]: (state, { payload }) => {
       state.getTransactionRecepitSuccess = false;
       state.errorMessage = payload?.message;
+      state.loading = false;
+    },
+    [getTokenBalance.fulfilled.type]: (state, { payload }: PayloadAction<BigNumber>) => {
+      state.tokenBalance = payload;
+      state.getTokenBalanceSuccess = true;
+      state.errorMessage = null;
+      state.loading = false;
+    },
+    [getTokenBalance.rejected.type]: (state, { payload }) => {
+      state.errorMessage = payload?.message;
+      state.getTokenBalanceSuccess = false;
       state.loading = false;
     },
   },
