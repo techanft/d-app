@@ -45,7 +45,6 @@ interface IWithdrawModal {
 interface IIntialValues {
   tokenAmount: number;
 }
-const currentUnix = dayjs().unix();
 
 const WithdrawModal = (props: IWithdrawModal) => {
   const { isVisible, setVisibility, listingId } = props;
@@ -87,10 +86,13 @@ const WithdrawModal = (props: IWithdrawModal) => {
     return output;
   };
 
-  const [maxTokenWithdraw, setMaxTokenWithdraw] = useState<number | string>(0);
+  const [maximumWithdrawable, setMaximumWithdrawable] = useState<undefined | number>(undefined);
 
-  const getMaximumWithdrawAmount = () => {
-    setMaxTokenWithdraw(withdrawTokenAmount);
+  const resetMaximumWithdrawable = () => {
+    if (!listing?.dailyPayment || !listing.ownership) return undefined;
+    const currentUnix = dayjs().unix();
+    const result = estimateWithdrawAmount(listing.dailyPayment, listing.ownership.sub(120), currentUnix);
+    setMaximumWithdrawable(result);
   };
 
   useEffect(() => {
@@ -100,38 +102,38 @@ const WithdrawModal = (props: IWithdrawModal) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [submitted]);
 
-  const [curretUnix, setCurrntUnix] = useState<number>(currentUnix);
-
   useEffect(() => {
-    setCurrntUnix(dayjs().unix());
+    if (isVisible) {
+      resetMaximumWithdrawable();
+      setTimeLeft(5);
+    } else {
+      setTimeLeft(undefined);
+      setMaximumWithdrawable(undefined);
+    }
   }, [isVisible]);
 
-  const withdrawTokenAmount =
-    listing?.dailyPayment && listing.ownership
-      ? insertCommas(estimateWithdrawAmount(listing.dailyPayment, listing.ownership.sub(120), curretUnix))
-      : '_';
+  const [timeLeft, setTimeLeft] = useState<undefined | number>(undefined);
 
-  const initialSeconds = 60;
-  const [seconds, setSeconds] = useState<number>(initialSeconds);
+  useEffect(() => {
+    // exit early when we reach 0
+    if (!timeLeft) return;
 
-  // useEffect(() => {
-  //   let myInterval = setInterval(() => {
-  //     if (seconds > 0) {
-  //       setSeconds(seconds - 1);
-  //     }
-  //     // if (seconds === 0) {
-  //     //   setIsSubmitDisable(true);
-  //     // }
-  //   }, 1000);
-  //   return () => {
-  //     clearInterval(myInterval);
-  //   };
-  // });
-  
+    // save intervalId to clear the interval when the
+    // component re-renders
+    const intervalId = setInterval(() => {
+      setTimeLeft(timeLeft - 1);
+    }, 1000);
+
+    // clear interval on re-render to avoid memory leaks
+    return () => clearInterval(intervalId);
+    // add timeLeft as a dependency to re-rerun the effect
+    // when we update it
+  }, [timeLeft]);
+
   return (
     <CModal show={isVisible} onClose={closeModal()} centered className="border-radius-modal">
       <CModalHeader className="justify-content-center">
-        <CModalTitle className="modal-title-style">Rút ANFT</CModalTitle>
+        <CModalTitle className="modal-title-style">Withdraw Token</CModalTitle>
       </CModalHeader>
       <Formik
         enableReinitialize
@@ -148,17 +150,17 @@ const WithdrawModal = (props: IWithdrawModal) => {
           }
         }}
       >
-        {({ values, errors, touched, handleChange, handleSubmit, handleBlur, setFieldValue }) => (
+        {({ values, errors, touched, handleSubmit, handleBlur, setFieldValue, submitForm }) => (
           <CForm onSubmit={handleSubmit}>
             <CModalBody>
               <CRow>
                 <CCol xs={12}>
                   <CFormGroup row>
                     <CCol xs={8}>
-                      <CLabel className="withdraw-token-title">Số ANFT Tối đa bạn rút</CLabel>
+                      <CLabel className="withdraw-token-title">Maximum Withdrawable</CLabel>
                     </CCol>
                     <CCol xs={4}>
-                      <p className="text-primary text-right">{withdrawTokenAmount}</p>
+                      <p className="text-primary text-right">{insertCommas(maximumWithdrawable)}</p>
                     </CCol>
                   </CFormGroup>
                   <CFormGroup row>
@@ -174,7 +176,7 @@ const WithdrawModal = (props: IWithdrawModal) => {
                           id="tokenAmount"
                           autoComplete="off"
                           name="tokenAmount"
-                          value={values.tokenAmount || maxTokenWithdraw || ''}
+                          value={values.tokenAmount || ''}
                           onBlur={handleBlur}
                           className="btn-radius-50"
                           type="number"
@@ -183,7 +185,7 @@ const WithdrawModal = (props: IWithdrawModal) => {
                           <CButton
                             color="primary"
                             className="btn-register-level"
-                            onClick={() => getMaximumWithdrawAmount()}
+                            onClick={() => setFieldValue(`tokenAmount`, maximumWithdrawable)}
                           >
                             MAX
                           </CButton>
@@ -208,12 +210,17 @@ const WithdrawModal = (props: IWithdrawModal) => {
                 </CButton>
               </CCol>
               <CCol>
-                {seconds !== 0 ? (
-                  <CButton className="px-2 w-100 btn btn-primary btn-font-style btn-radius-50" type="submit">
-                    XÁC NHẬN {`(${seconds}s)`}
+                {timeLeft ? (
+                  <CButton className="px-2 w-100 btn btn-primary btn-font-style btn-radius-50" onClick={submitForm}>
+                    XÁC NHẬN {`(${timeLeft}s)`}
                   </CButton>
                 ) : (
-                  <CButton className="px-2 w-100 btn btn-primary btn-font-style btn-radius-50">REFRESH</CButton>
+                  <CButton
+                    className="px-2 w-100 btn btn-warning btn-font-style btn-radius-50"
+                    onClick={() => resetMaximumWithdrawable()}
+                  >
+                    REFRESH
+                  </CButton>
                 )}
               </CCol>
             </CModalFooter>

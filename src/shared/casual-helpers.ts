@@ -75,8 +75,7 @@ export const getEllipsisTxt = (str: string, n = 5) => {
   return '';
 };
 
-export const estimateWithdrawAmount = (dailyPayment: BigNumber, currentOwnership: BigNumber) => {
-  const currentUnix = dayjs().unix();
+export const estimateWithdrawAmount = (dailyPayment: BigNumber, currentOwnership: BigNumber, currentUnix: number) => {
   if (currentOwnership.toNumber() > currentUnix) {
     const amount = ((currentOwnership.toNumber() - currentUnix) * Number(convertBnToDecimal(dailyPayment))) / 86400;
     return amount;
