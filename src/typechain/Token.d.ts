@@ -48,7 +48,7 @@ interface TokenInterface extends ethers.utils.Interface {
     "transfer(address,uint256)": FunctionFragment;
     "transferFrom(address,address,uint256)": FunctionFragment;
     "triggerClaimEvent(address,uint256,uint256,uint256)": FunctionFragment;
-    "triggerOwnershipExtensionEvent(address,address,uint256,uint256)": FunctionFragment;
+    "triggerOwnershipExtensionEvent(address,address,uint256,uint256,uint256)": FunctionFragment;
     "triggerRegisterEvent(address,uint256,uint256)": FunctionFragment;
     "triggerUnregisterEvent(address,uint256)": FunctionFragment;
     "triggerUpdateWorkerEvent(address,bool)": FunctionFragment;
@@ -146,7 +146,7 @@ interface TokenInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "triggerOwnershipExtensionEvent",
-    values: [string, string, BigNumberish, BigNumberish]
+    values: [string, string, BigNumberish, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "triggerRegisterEvent",
@@ -278,7 +278,7 @@ interface TokenInterface extends ethers.utils.Interface {
     "BeaconUpgraded(address)": EventFragment;
     "Claim(address,address,uint256,uint256,uint256)": EventFragment;
     "ListingCreation(address,address,address)": EventFragment;
-    "OwnershipExtension(address,address,address,uint256,uint256)": EventFragment;
+    "OwnershipExtension(address,address,address,uint256,uint256,uint256)": EventFragment;
     "Register(address,address,uint256,uint256)": EventFragment;
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
@@ -342,12 +342,13 @@ export type ListingCreationEvent = TypedEvent<
 >;
 
 export type OwnershipExtensionEvent = TypedEvent<
-  [string, string, string, BigNumber, BigNumber] & {
+  [string, string, string, BigNumber, BigNumber, BigNumber] & {
     _listing: string;
     _prevOwner: string;
     _newOwner: string;
     _start: BigNumber;
     _end: BigNumber;
+    _amount: BigNumber;
   }
 >;
 
@@ -581,6 +582,7 @@ export class Token extends BaseContract {
       _newOwner: string,
       _start: BigNumberish,
       _end: BigNumberish,
+      _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -753,6 +755,7 @@ export class Token extends BaseContract {
     _newOwner: string,
     _start: BigNumberish,
     _end: BigNumberish,
+    _amount: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -922,6 +925,7 @@ export class Token extends BaseContract {
       _newOwner: string,
       _start: BigNumberish,
       _end: BigNumberish,
+      _amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1064,20 +1068,22 @@ export class Token extends BaseContract {
       { _validator: string; _owner: string; _listingAddress: string }
     >;
 
-    "OwnershipExtension(address,address,address,uint256,uint256)"(
+    "OwnershipExtension(address,address,address,uint256,uint256,uint256)"(
       _listing?: null,
       _prevOwner?: null,
       _newOwner?: null,
       _start?: null,
-      _end?: null
+      _end?: null,
+      _amount?: null
     ): TypedEventFilter<
-      [string, string, string, BigNumber, BigNumber],
+      [string, string, string, BigNumber, BigNumber, BigNumber],
       {
         _listing: string;
         _prevOwner: string;
         _newOwner: string;
         _start: BigNumber;
         _end: BigNumber;
+        _amount: BigNumber;
       }
     >;
 
@@ -1086,15 +1092,17 @@ export class Token extends BaseContract {
       _prevOwner?: null,
       _newOwner?: null,
       _start?: null,
-      _end?: null
+      _end?: null,
+      _amount?: null
     ): TypedEventFilter<
-      [string, string, string, BigNumber, BigNumber],
+      [string, string, string, BigNumber, BigNumber, BigNumber],
       {
         _listing: string;
         _prevOwner: string;
         _newOwner: string;
         _start: BigNumber;
         _end: BigNumber;
+        _amount: BigNumber;
       }
     >;
 
@@ -1413,6 +1421,7 @@ export class Token extends BaseContract {
       _newOwner: string,
       _start: BigNumberish,
       _end: BigNumberish,
+      _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1594,6 +1603,7 @@ export class Token extends BaseContract {
       _newOwner: string,
       _start: BigNumberish,
       _end: BigNumberish,
+      _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

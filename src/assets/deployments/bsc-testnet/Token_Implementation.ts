@@ -1,4 +1,4 @@
-{
+export default {
   "address": "0x400470b2Ff8b6e68F5883cE587E689A33c8ec203",
   "abi": [
     {
