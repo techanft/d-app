@@ -13,7 +13,7 @@ import {
   CModalFooter,
   CModalHeader,
   CModalTitle,
-  CRow
+  CRow,
 } from '@coreui/react';
 import { Formik } from 'formik';
 import React, { useEffect } from 'react';
@@ -27,7 +27,7 @@ import {
   estimateOwnership,
   formatBNToken,
   insertCommas,
-  unInsertCommas
+  unInsertCommas,
 } from '../../../shared/casual-helpers';
 import { ToastError } from '../../../shared/components/Toast';
 import { EventType } from '../../../shared/enumeration/eventType';
@@ -82,7 +82,7 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
       .test('do-not-exceed-tokenBalance', `Input amount exceeds token balance`, function (value) {
         if (!value) return true;
         if (!tokenBalance) return true;
-        return convertDecimalToBn(String(value)).lte(tokenBalance)
+        return convertDecimalToBn(String(value)).lte(tokenBalance);
       })
       .typeError('Incorrect input type!')
       .required('This field is required!'),
@@ -110,7 +110,6 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
     return output;
   };
 
-
   return (
     <CModal show={isVisible} onClose={closeModal()} centered className="border-radius-modal">
       <CModalHeader className="justify-content-center">
@@ -137,7 +136,7 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
             <CModalBody>
               <CRow>
                 <CCol xs={12}>
-                <CFormGroup row>
+                  <CFormGroup row>
                     <CCol xs={6}>
                       <CLabel className="recharge-token-title">Current ownership</CLabel>
                     </CCol>
@@ -191,7 +190,7 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                               onClick={() =>
                                 setFieldValue(`tokenAmount`, unInsertCommas(convertBnToDecimal(tokenBalance)))
                               }
-                              disabled={(convertDecimalToBn(String(values.tokenAmount || 0)).eq(tokenBalance))}
+                              disabled={convertDecimalToBn(String(values.tokenAmount || 0)).eq(tokenBalance)}
                             >
                               MAX
                             </CButton>
@@ -205,11 +204,11 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                       </CInvalidFeedback>
                     </CCol>
                   </CFormGroup>
-                  <CFormGroup row>
-                    <CCol xs={6}>
-                      <CLabel className="recharge-token-title">Ownership Estimation</CLabel>
-                    </CCol>
-                    {listing?.dailyPayment && listing?.ownership && values.tokenAmount ? (
+                  {!errors.tokenAmount && listing?.dailyPayment && listing?.ownership && values.tokenAmount ? (
+                    <CFormGroup row className={`mt-4`}>
+                      <CCol xs={6}>
+                        <CLabel className="recharge-token-title">Ownership Estimation</CLabel>
+                      </CCol>
                       <CCol xs={6}>
                         <p className="text-primary text-right">
                           {estimateOwnership(
@@ -219,10 +218,10 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                           )}
                         </p>
                       </CCol>
-                    ) : (
-                      ''
-                    )}
-                  </CFormGroup>
+                    </CFormGroup>
+                  ) : (
+                    ''
+                  )}
                 </CCol>
               </CRow>
             </CModalBody>
