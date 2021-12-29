@@ -6,18 +6,18 @@ import { LISTING_INSTANCE } from '../../shared/blockchain-helpers';
 import { ToastInfo } from '../../shared/components/Toast';
 import { IAsset } from '../../shared/models/assets.model';
 import { IGetAllResp, IParams } from '../../shared/models/base.model';
+import { baseOptions, IOption, IStake } from '../../shared/models/options.model';
 import { Listing } from '../../typechain';
 
-export interface IAssetFilter extends IParams {};
+export interface IAssetFilter extends IParams {}
 export interface IExtndOwnrshpIntialValues {
   listingAddress: string | undefined;
   tokenAmount: number;
 }
-export interface IExtndOwnershipBody extends Omit<IExtndOwnrshpIntialValues, "tokenAmount"> {
+export interface IExtndOwnershipBody extends Omit<IExtndOwnrshpIntialValues, 'tokenAmount'> {
   contract: Listing;
   tokenAmount: ethers.BigNumber;
 }
-
 
 const prefix = 'assets';
 
@@ -48,7 +48,9 @@ export const getEntity = createAsyncThunk(`get-single-${prefix}`, async (id: num
 const getListingCompleteInfo = async (listing: IAsset): Promise<IAsset> => {
   try {
     const instance = LISTING_INSTANCE(listing.address);
+
     if (!instance) return listing;
+
     const promises = [
       instance.ownership(),
       instance.value(),
@@ -88,7 +90,7 @@ const getListingsPartialInfo = async (listings: IAsset[]): Promise<IAsset[]> => 
     for (let index = 0; index < listings.length; index++) {
       const { address } = listings[index];
       const instance = LISTING_INSTANCE(address);
-      if ( instance ) {
+      if (instance) {
         valuePromises.push(instance.value());
         paymentPromises.push(instance.dailyPayment());
       }
@@ -111,3 +113,68 @@ const getListingsPartialInfo = async (listings: IAsset[]): Promise<IAsset[]> => 
   }
 };
 
+export const getEntityOptions = createAsyncThunk(`get-${prefix}-options`, async (listing: IAsset, thunkAPI) => {
+  try {
+    const instance = LISTING_INSTANCE(listing.address);
+    if (!instance) throw 'Error in generating listing instance';
+    const options = await getAndMapOptions(instance);
+    return { ...listing, options };
+  } catch (error: any) {
+    return thunkAPI.rejectWithValue(error.response.data);
+  }
+});
+
+const getAndMapOptions = async (contract: Listing) => {
+  const optionsPromises = baseOptions.map(({ id }) => contract.options(id));
+  const results = await Promise.all(optionsPromises);
+
+  const options: IOption[] = baseOptions.map((initialOption, i) => ({
+    ...initialOption,
+    reward: results[i]._reward,
+    totalStake: results[i]._totalStake,
+    isSet: results[i]._isSet,
+  }));
+  const activeOptions = options.filter((e) => e.reward?.toNumber() !== 0);
+  return activeOptions;
+};
+
+export interface IGetSHStakes {
+  listingContract: Listing;
+  storedListing: IAsset;
+  stakeholder: string;
+}
+
+export interface ISHListingStakes {
+  optionId: number;
+  start: BigNumber;
+  amount: BigNumber;
+  active: boolean;
+}
+
+export const getStakeholderListingStakes = createAsyncThunk(
+  'get-stakeholder-listing-stakes',
+  async (body: IGetSHStakes, thunkAPI) => {
+    try {
+      const { listingContract, storedListing, stakeholder } = body;
+      const logPromises = storedListing.options.map(({ id }) => listingContract.stakings(id, stakeholder));
+      const results = await Promise.all(logPromises);
+
+      const optionsWithStakes: IOption[] = storedListing.options.map((e, i) => {
+        
+        const {_active, _start, _amount} = results[i];
+        const stake: IStake = {
+          start: _start,
+          amount: _amount,
+          active: _active
+        } 
+        return {...e, stake}
+      })
+
+      const listingWithStakes: IAsset = {...storedListing, options: optionsWithStakes}
+
+      return listingWithStakes;
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
