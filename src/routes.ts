@@ -26,7 +26,7 @@ const routes = [
     exact: true,
   },
   {
-    path: '/activity-logs',
+    path: '/:id/activity-logs',
     name: 'ActivityLogs',
     component: ActivityLogs,
     exact: true,

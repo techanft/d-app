@@ -36,7 +36,7 @@ const Listing = (props: IListingProps) => {
       <SubmissionModal />
 
       <Primary listingId={Number(id)} />
-      <Secondary />
+      <Secondary listingId={Number(id)}/>
       <CRow className="mx-0">
         <CCol xs={12}>
           <CLabel className="text-primary content-title mt-3">More listing</CLabel>

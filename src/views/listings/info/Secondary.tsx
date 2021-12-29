@@ -4,7 +4,13 @@ import React from 'react';
 import { IListingDetails } from '../../../shared/models/listingDetails.model';
 import '../index.scss';
 
-const ListingDetails = () => {
+interface IListingDetailProps {
+  listingId: number;
+}
+
+const ListingDetails = (props: IListingDetailProps) => {
+  const { listingId } = props;
+
   const demoListingDetails: IListingDetails = {
     address: 'Ciputra Hanoi',
     type: 'Thuê Biệt Thự/Nhà Ciputra Hanoi',
@@ -63,11 +69,11 @@ const ListingDetails = () => {
         </CCol>
       </CRow>
       <CRow className="m-0 p-0">
-      <CCol xs={12} className="text-center mt-3">
-            <CLink to="/activity-logs">
-              <CIcon name="cil-history" /> <u>Activity Logs</u>
-            </CLink>
-          </CCol>
+        <CCol xs={12} className="text-center mt-3">
+          <CLink to={`/${listingId}/activity-logs`}>
+            <CIcon name="cil-history" /> <u>Activity Logs</u>
+          </CLink>
+        </CCol>
       </CRow>
     </CContainer>
   );

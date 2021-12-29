@@ -15,16 +15,14 @@ import {
   CInputGroupAppend,
   CLabel,
   CLink,
-  CRow,
+  CRow
 } from '@coreui/react';
 import { faClipboardCheck } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { id } from 'ethers/lib/utils';
 import { Formik } from 'formik';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
-import bgImg from '../../../assets/img/registerBonus.svg';
 import ConfirmModal from '../../../shared/components/ConfirmModal';
 import InfoLoader from '../../../shared/components/InfoLoader';
 import { ToastError } from '../../../shared/components/Toast';

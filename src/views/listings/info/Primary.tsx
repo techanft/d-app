@@ -33,16 +33,16 @@ import {
 } from '../../../shared/casual-helpers';
 import InfoLoader from '../../../shared/components/InfoLoader';
 import { ToastError } from '../../../shared/components/Toast';
-import { EventType } from '../../../shared/enumeration/eventType';
 import { CollapseType, ModalType, TCollapseVisibility, TModalsVisibility } from '../../../shared/enumeration/modalType';
 import useWindowDimensions from '../../../shared/hooks/useWindowDimensions';
 import { IAsset } from '../../../shared/models/assets.model';
-import { IEvent } from '../../../shared/models/events.model';
+import { IParams } from '../../../shared/models/base.model';
+import { IRecordWorker } from '../../../shared/models/record.model';
 import { RootState } from '../../../shared/reducers';
 import { getEntity } from '../../assets/assets.api';
 import { fetchingEntity, selectEntityById } from '../../assets/assets.reducer';
-import { getEntities, IEventTrackingFilter } from '../../events/events.api';
-import { eventsSelectors, fetchingEntities } from '../../events/events.reducer';
+import { getWorkersRecord } from '../../records/records.api';
+import { fetchingWorker, softResetWorker } from '../../records/records.reducer';
 import ExtendOwnershipModal from '../actions/ExtendOwnershipModal';
 import WithdrawTokenModal from '../actions/WithdrawModal';
 import '../index.scss';
@@ -108,19 +108,16 @@ const ListingInfo = (props: IListingInfoProps) => {
   const { listingId } = props;
   const dispatch = useDispatch();
   //get worker list
-  const { initialState: eventInitialState } = useSelector((state: RootState) => state.events);
-  const { totalItems, entitiesLoading } = eventInitialState;
-  const { selectAll } = eventsSelectors;
-  const events = useSelector(selectAll);
-  const [filterState, setFilterState] = useState<IEventTrackingFilter>({
+  const { initialState: recordInitialState } = useSelector((state: RootState) => state.records);
+  const { loading, workers, errorMessage: workerErrorMessage } = recordInitialState.workerInitialState;
+  const listing = useSelector(selectEntityById(listingId));
+  const [filterState, setFilterState] = useState<IParams>({
     page: 0,
     size: 10,
     sort: 'createdDate,desc',
-    eventType: EventType.UPDATE_WORKER,
-    listingId,
   });
 
-  const totalPages = Math.ceil(totalItems / filterState.size);
+  const totalPages = Math.ceil((workers?.count || 0) / filterState.size);
 
   const handlePaginationChange = (page: number) => {
     if (page !== 0) {
@@ -128,6 +125,14 @@ const ListingInfo = (props: IListingInfoProps) => {
       setFilterState({ ...filterState, page: page - 1 });
     }
   };
+
+  useEffect(() => {
+    if (workerErrorMessage) {
+      ToastError(workerErrorMessage);
+      dispatch(softResetWorker());
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [workerErrorMessage]);
 
   const { signerAddress } = useSelector((state: RootState) => state.wallet);
 
@@ -138,7 +143,6 @@ const ListingInfo = (props: IListingInfoProps) => {
 
   const { initialState } = useSelector((state: RootState) => state.assets);
   const { entityLoading } = initialState;
-  const listing = useSelector(selectEntityById(listingId));
 
   const ownershipExpired = listing?.ownership ? checkOwnershipExpired(listing.ownership.toNumber()) : false;
   const viewerIsOwner = signerAddress && signerAddress === listing?.owner;
@@ -170,10 +174,14 @@ const ListingInfo = (props: IListingInfoProps) => {
   }, [listingId]);
 
   useEffect(() => {
-    dispatch(fetchingEntities());
-    dispatch(getEntities(filterState));
+    if (listing?.address) {
+      const filter = { ...filterState, listingAddress: listing.address };
+      dispatch(fetchingWorker());
+      dispatch(getWorkersRecord(filter));
+    }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [JSON.stringify(filterState)]);
+  }, [JSON.stringify(filterState), listing?.address]);
 
   // listing
   return (
@@ -307,14 +315,14 @@ const ListingInfo = (props: IListingInfoProps) => {
                 <CCol xs={12}>
                   <CDataTable
                     striped
-                    items={events}
+                    items={workers?.results}
                     fields={workerFields}
                     responsive
                     hover
                     header
                     scopedSlots={{
-                      address: (item: IEvent) => {
-                        return <td>{item.eventArg?._worker || '_'}</td>;
+                      address: (item: IRecordWorker) => {
+                        return <td>{getEllipsisTxt(item.worker, 10) || '_'}</td>;
                       },
                     }}
                   />
@@ -322,7 +330,7 @@ const ListingInfo = (props: IListingInfoProps) => {
               </CRow>
               {totalPages > 1 && (
                 <CPagination
-                  disabled={entitiesLoading}
+                  disabled={loading}
                   activePage={filterState.page + 1}
                   pages={totalPages}
                   onActivePageChange={handlePaginationChange}

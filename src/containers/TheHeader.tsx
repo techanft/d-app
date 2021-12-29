@@ -14,7 +14,7 @@ import {
   CInputCheckbox,
   CLabel,
   CLink,
-  CRow,
+  CRow
 } from '@coreui/react';
 import { faAngleDown } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -25,14 +25,13 @@ import { getEllipsisTxt } from '../shared/casual-helpers';
 import { ToastError, ToastInfo } from '../shared/components/Toast';
 import { RootState } from '../shared/reducers';
 import { softReset as assetsSoftReset } from '../views/assets/assets.reducer';
-import { softReset as eventsSoftReset } from '../views/events/events.reducer';
 import { softReset as transactionsSoftReset } from '../views/transactions/transactions.reducer';
 import {
   getAddress,
   getContractWithSigner,
   getProviderLogin,
   getSigner,
-  getTokenBalance,
+  getTokenBalance
 } from '../views/wallet/wallet.api';
 import { softReset as walletSoftReset } from '../views/wallet/wallet.reducer';
 
@@ -49,9 +48,6 @@ const TheHeader = () => {
   } = useSelector((state: RootState) => state.wallet);
   const { initialState: assetsInitialState } = useSelector((state: RootState) => state.assets);
   const { errorMessage: assetErrorMessage } = assetsInitialState;
-
-  const { initialState: eventsInitialState } = useSelector((state: RootState) => state.events);
-  const { errorMessage: eventErrorMessage } = eventsInitialState;
 
   const { errorMessage: transactionErrorMessage } = useSelector((state: RootState) => state.transactions);
 
@@ -71,13 +67,6 @@ const TheHeader = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [transactionErrorMessage]);
 
-  useEffect(() => {
-    if (eventErrorMessage) {
-      ToastError(eventErrorMessage);
-      dispatch(eventsSoftReset());
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [eventErrorMessage]);
 
   useEffect(() => {
     if (assetErrorMessage) {

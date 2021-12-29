@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { SCAN_URL } from '../../config/constants';
 import { recordTransaction } from '../../views/transactions/transactions.api';
-import { fetching, hardReset, softReset } from '../../views/transactions/transactions.reducer';
+import { fetching, softReset } from '../../views/transactions/transactions.reducer';
 import { RootState } from '../reducers';
 
 const SubmissionModal = () => {
@@ -25,7 +25,7 @@ const SubmissionModal = () => {
   useEffect(() => {
     if (success) {
       setVisibility(false);
-      dispatch(hardReset());
+      // dispatch(hardReset());
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [success]);
