@@ -1,4 +1,3 @@
-import CIcon from '@coreui/icons-react';
 import {
   CButton,
   CCard,
@@ -10,7 +9,6 @@ import {
   CLink,
   CPagination,
   CRow,
-  CTooltip
 } from '@coreui/react';
 import {
   faArrowAltCircleDown,
@@ -18,19 +16,14 @@ import {
   faClipboard,
   faDonate,
   faEdit,
-  faIdBadge
+  faIdBadge,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
-import CopyToClipboard from 'react-copy-to-clipboard';
 import { useDispatch, useSelector } from 'react-redux';
 import { TOKEN_SYMBOL } from '../../../config/constants';
-import {
-  checkOwnershipExpired,
-  convertUnixToDate,
-  formatBNToken,
-  getEllipsisTxt
-} from '../../../shared/casual-helpers';
+import { checkOwnershipExpired, convertUnixToDate, formatBNToken } from '../../../shared/casual-helpers';
+import CopyTextToClipBoard from '../../../shared/components/CopyTextToClipboard';
 import InfoLoader from '../../../shared/components/InfoLoader';
 import { ToastError } from '../../../shared/components/Toast';
 import { EventType } from '../../../shared/enumeration/eventType';
@@ -143,14 +136,18 @@ const ListingInfo = (props: IListingInfoProps) => {
   const ownershipExpired = listing?.ownership ? checkOwnershipExpired(listing.ownership.toNumber()) : false;
   const viewerIsOwner = signerAddress && signerAddress === listing?.owner;
 
-  const [modalsVisibility, setModalVisibility] = useState<TModalsVisibility>({
+  const initialModalState: TModalsVisibility = {
     [ModalType.OWNERSHIP_EXTENSION]: false,
     [ModalType.OWNERSHIP_WITHDRAW]: false,
     [ModalType.OWNERSHIP_REGISTER]: false,
-  });
+    [ModalType.REWARD_CLAIM]: false,
+    [ModalType.REWARD_UNREGISTER]: false,
+  };
+
+  const [modalsVisibility, setModalVisibility] = useState<TModalsVisibility>(initialModalState);
 
   const handleModalVisibility = (type: ModalType, isVisible: boolean) => {
-    setModalVisibility({ ...modalsVisibility, [type]: isVisible });
+    setModalVisibility({ ...initialModalState, [type]: isVisible });
   };
 
   const [collapseVisibility, setCollapseVisibility] = useState<TCollapseVisibility>(initialCollapseState);
@@ -216,16 +213,7 @@ const ListingInfo = (props: IListingInfoProps) => {
             <p className="detail-title-font my-2">Blockchain address</p>
 
             {!entityLoading && listing?.address ? (
-              <CTooltip content="Copied" placement="bottom">
-                <CopyToClipboard text={listing.address}>
-                  <p className="my-2 value-text copy-address">
-                    {getEllipsisTxt(listing.address)}
-                    <CButton className="p-0 pb-3 ml-1">
-                      <CIcon name="cil-copy" size="sm" />
-                    </CButton>
-                  </p>
-                </CopyToClipboard>
-              </CTooltip>
+              <CopyTextToClipBoard text={listing.address} />
             ) : (
               <InfoLoader width={155} height={27} />
             )}
@@ -235,16 +223,7 @@ const ListingInfo = (props: IListingInfoProps) => {
             <p className="detail-title-font my-2">The current owner</p>
 
             {!entityLoading && listing?.owner ? (
-              <CTooltip content="Copied" placement="bottom">
-                <CopyToClipboard text={listing.owner || ''}>
-                  <p className="my-2 value-text copy-address">
-                    {getEllipsisTxt(listing.owner || '')}
-                    <CButton className="p-0 pb-3 ml-1">
-                      <CIcon name="cil-copy" size="sm" />
-                    </CButton>
-                  </p>
-                </CopyToClipboard>
-              </CTooltip>
+              <CopyTextToClipBoard text={listing.owner} />
             ) : (
               <InfoLoader width={155} height={27} />
             )}
