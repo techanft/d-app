@@ -16,7 +16,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
 import bgImg from '../../../assets/img/registerBonus.svg';
 import { LISTING_INSTANCE } from '../../../shared/blockchain-helpers';
-import { getEllipsisTxt, validateOwner } from '../../../shared/casual-helpers';
+import { getEllipsisTxt } from '../../../shared/casual-helpers';
 import ConfirmModal from '../../../shared/components/ConfirmModal';
 import Loading from '../../../shared/components/Loading';
 import SubmissionModal from '../../../shared/components/SubmissionModal';
@@ -38,10 +38,6 @@ interface IWorkerListParams {
   [x: string]: string;
 }
 
-interface IIntialValues {
-  address: string;
-  eventId: number; // This is obsolete
-}
 
 interface IWorkersList extends RouteComponentProps<IWorkerListParams> {}
 
@@ -58,12 +54,12 @@ const fields = [
 ];
 
 const WorkersList = (props: IWorkersList) => {
-  const { match, history } = props;
+  const { match } = props;
   const { id } = match.params;
 
   const dispatch = useDispatch();
   const listing = useSelector(selectEntityById(Number(id)));
-  const { signer, signerAddress } = useSelector((state: RootState) => state.wallet);
+  const { signer } = useSelector((state: RootState) => state.wallet);
   const { initialState } = useSelector((state: RootState) => state.records);
   const { success, submitted } = useSelector((state: RootState) => state.transactions);
   const { loading, workers, errorMessage: workerErrorMessage } = initialState.workerInitialState;
@@ -90,18 +86,6 @@ const WorkersList = (props: IWorkersList) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [workerErrorMessage]);
-
-  useEffect(() => {
-    if (listing?.owner && signerAddress) {
-      const viewWorkerPermission = validateOwner(signerAddress, listing);
-      if (!viewWorkerPermission) {
-        history.goBack();
-      }
-    } else {
-      history.goBack();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [listing, signerAddress]);
 
   useEffect(() => {
     if (submitted) {
@@ -139,7 +123,7 @@ const WorkersList = (props: IWorkersList) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(filterState), listing?.address]);
 
-  const handleRawFormValues = (input: IIntialValues): IProceedTxBody => {
+  const handleRawFormValues = (input: string): IProceedTxBody => {
     if (!listing?.address) {
       throw Error('Error getting listing address');
     }
@@ -155,14 +139,14 @@ const WorkersList = (props: IWorkersList) => {
       listingId: Number(id),
       contract: instance,
       type: EventType.UPDATE_WORKER,
-      args: { ...baseSetterArgs, _worker: input.address },
+      args: { ...baseSetterArgs, _worker: input },
     };
 
     return output;
   };
 
   // Tại sao entityToDelete lại có cả eventId
-  const [entityToDelete, setEntityToDelete] = useState<IIntialValues | undefined>(undefined);
+  const [entityToDelete, setEntityToDelete] = useState<string>("");
   const [delAlrtMdl, setDeltAlrtMdl] = useState<boolean>(false);
 
   const onDelMldConfrmed = () => {
@@ -178,13 +162,13 @@ const WorkersList = (props: IWorkersList) => {
     }
   };
   const onDelMldAbort = () => {
-    setEntityToDelete(undefined);
+    setEntityToDelete("");
     setDeltAlrtMdl(false);
   };
 
-  const onEntityRemoval = (eventId: number, address: string) => (): void => {
+  const onEntityRemoval = (address: string) => (): void => {
     setDeltAlrtMdl(true);
-    setEntityToDelete({ eventId, address });
+    setEntityToDelete(address);
   };
 
   const [addWorkerPermission, setAddWorkerPermission] = useState<boolean>(false);
@@ -233,7 +217,7 @@ const WorkersList = (props: IWorkersList) => {
                     action: (item: IRecordWorker) => {
                       return (
                         <td>
-                          <CButton className="text-danger p-0" onClick={onEntityRemoval(item.id, item.worker || '_')}>
+                          <CButton className="text-danger p-0" onClick={onEntityRemoval(item.worker || '_')}>
                             <CIcon name="cil-trash" />
                           </CButton>
                         </td>
@@ -275,7 +259,7 @@ const WorkersList = (props: IWorkersList) => {
             {entityToDelete && (
               <>
                 Bạn chắc chắn muốn hủy quyền khai thác của
-                <span className="text-primary">{getEllipsisTxt(entityToDelete.address,6) || '_'}</span>
+                <span className="text-primary">{getEllipsisTxt(entityToDelete,6) || '_'}</span>
               </>
             )}
           </p>

@@ -1,25 +1,25 @@
 import {
   CCol,
-  CContainer,
-  CDataTable,
-  CLabel,
+  CContainer, CLabel,
   CNav,
   CNavItem,
-  CNavLink,
-  CPagination,
-  CRow,
+  CNavLink, CRow,
   CTabContent,
   CTabPane
 } from '@coreui/react';
 import { ActionCreatorWithoutPayload, AsyncThunk } from '@reduxjs/toolkit';
-import dayjs from 'dayjs';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
-import { APP_DATE_FORMAT } from '../../../config/constants';
-import { getEllipsisTxt, insertCommas } from '../../../shared/casual-helpers';
 import { RecordType } from '../../../shared/enumeration/recordType';
-import { IRecordClaim, IRecordOwnership, IRecordRegister, IRecordUnRegister, IRecordWithdraw } from '../../../shared/models/record.model';
+import {
+  IRecordClaim,
+  IRecordOwnership,
+  IRecordRegister,
+  IRecordUnRegister,
+  IRecordWithdraw,
+  IRecordWorker
+} from '../../../shared/models/record.model';
 import { RootState } from '../../../shared/reducers';
 import { getEntity } from '../../assets/assets.api';
 import { fetchingEntity, selectEntityById } from '../../assets/assets.reducer';
@@ -40,17 +40,28 @@ import {
   fetchingWorker
 } from '../../records/records.reducer';
 import '../index.scss';
+import ActivityLogsTable from './ActivityLogsTable';
 
 interface IActivityLogsParams {
   [x: string]: string;
 }
+
+export type TRecordTypeArray =
+  | IRecordClaim
+  | IRecordOwnership
+  | IRecordRegister
+  | IRecordUnRegister
+  | IRecordWorker
+  | IRecordWithdraw;
 
 type TRecordTypeMappingApi = { [key in RecordType]: AsyncThunk<unknown, IRecordParams, {}> };
 
 type TRecordTypeMappingFetch = { [key in RecordType]: ActionCreatorWithoutPayload<string> };
 
 // Just number, no undefined here
-type TRecordTypeMappingTotal = { [key in RecordType]: number | undefined };
+type TRecordTypeMappingTotal = { [key in RecordType]: number };
+
+type TRecordTypeMappingResult = { [key in RecordType]: Array<TRecordTypeArray> };
 
 const recordTypeMapingApi: TRecordTypeMappingApi = {
   [RecordType.REGISTER]: getRegisterRecord,
@@ -70,7 +81,7 @@ const recordTypeMapingFetching: TRecordTypeMappingFetch = {
   [RecordType.UPDATE_WORKER]: fetchingWorker,
 };
 
-enum TableType {
+export enum TableType {
   OWNER = 'OWNER',
   REWARD = 'REWARD', // It should be Ownership & Investment (Hoạt động đầu tư & Hoạt động sở hữu)
 }
@@ -112,7 +123,7 @@ const ActivityLogs = (props: IActivityLogs) => {
 
   const [ownerFilterState, setOwnerFilterState] = useState<IRecordParams>({
     page: 0,
-    size: 10,
+    size: 1,
     sort: 'createdDate,desc',
   });
 
@@ -121,13 +132,21 @@ const ActivityLogs = (props: IActivityLogs) => {
     [TableType.REWARD]: setRewardFilterState,
   };
 
-  // Use || 0 here
+  const recordResultMapping: TRecordTypeMappingResult = {
+    [RecordType.REGISTER]: registers?.results || [],
+    [RecordType.UNREGISTER]: unregisters?.results || [],
+    [RecordType.CLAIM]: claims?.results || [],
+    [RecordType.WITHDRAW]: withdraws?.results || [],
+    [RecordType.OWNERSHIP_EXTENSION]: ownerships?.results || [],
+    [RecordType.UPDATE_WORKER]: [],
+  };
+
   const totalRecordMapping: TRecordTypeMappingTotal = {
-    [RecordType.REGISTER]: registers?.count,
-    [RecordType.UNREGISTER]: unregisters?.count,
-    [RecordType.CLAIM]: claims?.count,
-    [RecordType.WITHDRAW]: withdraws?.count,
-    [RecordType.OWNERSHIP_EXTENSION]: ownerships?.count,
+    [RecordType.REGISTER]: registers?.count || 0,
+    [RecordType.UNREGISTER]: unregisters?.count || 0,
+    [RecordType.CLAIM]: claims?.count || 0,
+    [RecordType.WITHDRAW]: withdraws?.count || 0,
+    [RecordType.OWNERSHIP_EXTENSION]: ownerships?.count || 0,
     [RecordType.UPDATE_WORKER]: 0,
   };
 
@@ -166,80 +185,33 @@ const ActivityLogs = (props: IActivityLogs) => {
   }, [id]);
 
   useEffect(() => {
-    if (listing?.address) {
-      const filter = { ...rewardFilterState, listingAddress: listing.address };
-      dispatch(recordTypeMapingFetching[rewardActiveTab]());
-      dispatch(recordTypeMapingApi[rewardActiveTab](filter));
-    }
+    if (!listing?.address || !signerAddress) return;
+    const additionalRewardFilterParams = {
+      ...rewardFilterState,
+      listingAddress: listing.address,
+      stakeholder: signerAddress,
+    };
+    const recordFetchingFunc = recordTypeMapingFetching[rewardActiveTab];
+    const recordApiFunc = recordTypeMapingApi[rewardActiveTab];
+    dispatch(recordFetchingFunc());
+    dispatch(recordApiFunc(additionalRewardFilterParams));
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [JSON.stringify(rewardFilterState), listing?.address, rewardActiveTab]);
+  }, [JSON.stringify(rewardFilterState), listing?.address, rewardActiveTab, signerAddress]);
 
   useEffect(() => {
-    /*
     if (!listing?.address || !signerAddress) return;
     const additionalOwnerFilterParams =
-    ownerActiveTab === RecordType.OWNERSHIP_EXTENSION
-      ? { previousOwner: signerAddress, newOwner: signerAddress }
-      : { owner: signerAddress };
-      const filter = { ...ownerFilterState, ...additionalOwnerFilterParams };
-      const recordFetchingFunc = recordTypeMapingFetching[ownerActiveTab];
-      const recordApiFunc = recordTypeMapingApi[ownerActiveTab];
-      dispatch(recordFetchingFunc());
-      dispatch(recordApiFunc(filter));
-    */
-
-    if (listing?.address && signerAddress) {
-      // ownerFilter => additionalOwnerFilterParams
-      const ownerFilter =
-        ownerActiveTab === RecordType.OWNERSHIP_EXTENSION
-          ? { previousOwner: signerAddress, newOwner: signerAddress }
-          : { owner: signerAddress };
-      const filter = { ...ownerFilterState, ...ownerFilter };
-      dispatch(recordTypeMapingFetching[ownerActiveTab]());
-      dispatch(recordTypeMapingApi[ownerActiveTab](filter));
-    }
+      ownerActiveTab === RecordType.OWNERSHIP_EXTENSION
+        ? { previousOwner: signerAddress, newOwner: signerAddress }
+        : { owner: signerAddress };
+    const filter = { ...ownerFilterState, ...additionalOwnerFilterParams };
+    const recordFetchingFunc = recordTypeMapingFetching[ownerActiveTab];
+    const recordApiFunc = recordTypeMapingApi[ownerActiveTab];
+    dispatch(recordFetchingFunc());
+    dispatch(recordApiFunc(filter));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(ownerFilterState), listing?.address, ownerActiveTab, signerAddress]);
-
-  const titleTableStyle = {
-    textAlign: 'left',
-    color: '#828282',
-    fontSize: '0.875rem',
-    lineHeight: '16px',
-    fontWeight: '400',
-  };
-
-  const registerField = [
-    { key: 'stakeholder', _style: titleTableStyle, label: 'Stakeholder' },
-    { key: 'optionId', _style: titleTableStyle, label: 'optionId' },
-    { key: 'amount', _style: titleTableStyle, label: 'amount' },
-  ];
-
-  const unregisterField = [
-    { key: 'stakeholder', _style: titleTableStyle, label: 'Stakeholder' },
-    { key: 'optionId', _style: titleTableStyle, label: 'optionId' },
-  ];
-
-  const claimField = [
-    { key: 'stakeholder', _style: titleTableStyle, label: 'Stakeholder' },
-    { key: 'amount', _style: titleTableStyle, label: 'amount' },
-    { key: 'from', _style: titleTableStyle, label: 'From' },
-    { key: 'to', _style: titleTableStyle, label: 'To' },
-  ];
-
-  const withdrawField = [
-    { key: 'owner', _style: titleTableStyle, label: 'Owner' },
-    { key: 'amount', _style: titleTableStyle, label: 'amount' },
-    { key: 'initialOwnership', _style: titleTableStyle, label: 'Initial Ownership' },
-    { key: 'newOwnership', _style: titleTableStyle, label: 'New Ownership' },
-  ];
-
-  const ownershipField = [
-    { key: 'previousOwner', _style: titleTableStyle, label: 'Previous Owner' },
-    { key: 'newOwner', _style: titleTableStyle, label: 'New Owner' },
-    { key: 'from', _style: titleTableStyle, label: 'From' },
-    { key: 'to', _style: titleTableStyle, label: 'To' },
-  ];
 
   return (
     <CContainer fluid className="mx-0 my-2">
@@ -278,152 +250,38 @@ const ActivityLogs = (props: IActivityLogs) => {
             </CNavItem>
           </CNav>
           <CTabContent>
-            {/* 
-            
-              create a shared CDataTable with differents properties according to tabType
-            
-            */}
             <CTabPane active={rewardActiveTab === RecordType.REGISTER}>
-              <CDataTable
-                noItemsView={{
-                  noItems: 'No Item',
-                }}
-                striped
-                // registers?.results || [] ; hoặc tốt nhất là check { registers.result?.length bên ngoài }
-                items={registers?.results}
-                fields={registerField}
-                responsive
-                hover
-                header
-                scopedSlots={{
-                  stakeholder: (item: IRecordRegister) => {
-                    return (
-                      <td>
-                        <span className="d-inline-block ">{getEllipsisTxt(item.stakeholder, 5)}</span>
-                      </td>
-                    );
-                  },
-                  amount: (item: IRecordRegister) => {
-                    return (
-                      <td>
-                        <span className="d-inline-block">{insertCommas(item.amount || '')}</span>
-                      </td>
-                    );
-                  },
-                }}
+              <ActivityLogsTable
+                results={recordResultMapping[RecordType.REGISTER]}
+                filterState={rewardFilterState}
+                recordType={RecordType.REGISTER}
+                totalPages={totalRewardPages}
+                loading={registerLoading}
+                tableType={TableType.REWARD}
+                handlePaginationChange={handlePaginationChange}
               />
-              {totalRewardPages > 1 && (
-                <CPagination
-                  disabled={registerLoading}
-                  activePage={rewardFilterState.page + 1}
-                  pages={totalRewardPages}
-                  onActivePageChange={(page: number) => handlePaginationChange(page, TableType.REWARD)}
-                  align="center"
-                  className="mt-2"
-                />
-              )}
             </CTabPane>
             <CTabPane active={rewardActiveTab === RecordType.UNREGISTER}>
-              <CDataTable
-              // create an object noItemsViewTable = { noItems: 'No Item'} and use it globally
-                noItemsView={{
-                  noItems: 'No Item',
-                }}
-                striped
-                items={unregisters?.results}
-                fields={unregisterField}
-                responsive
-                hover
-                header
-                scopedSlots={{
-                  stakeholder: (item: IRecordUnRegister) => {
-                    return (
-                      <td>
-                        <span className="d-inline-block ">{getEllipsisTxt(item.stakeholder, 5)}</span>
-                      </td>
-                    );
-                  },
-                  optionId: (item: IRecordUnRegister) => {
-                    return (
-                      <td>
-                        <span className="d-inline-block ">{getEllipsisTxt(item.optionId, 5)}</span>
-                      </td>
-                    );
-                  },
-                }}
+              <ActivityLogsTable
+                results={recordResultMapping[RecordType.UNREGISTER]}
+                filterState={rewardFilterState}
+                recordType={RecordType.UNREGISTER}
+                totalPages={totalRewardPages}
+                loading={unregisterLoading}
+                tableType={TableType.REWARD}
+                handlePaginationChange={handlePaginationChange}
               />
-              {totalRewardPages > 1 && (
-                <CPagination
-                  disabled={unregisterLoading}
-                  activePage={rewardFilterState.page + 1}
-                  pages={totalRewardPages}
-                  onActivePageChange={(page: number) => handlePaginationChange(page, TableType.REWARD)}
-                  align="center"
-                  className="mt-2"
-                />
-              )}
             </CTabPane>
             <CTabPane active={rewardActiveTab === RecordType.CLAIM}>
-              <CDataTable
-                noItemsView={{
-                  noItems: 'No Item',
-                }}
-                striped
-                items={claims?.results} // same as above
-                fields={claimField}
-                responsive
-                hover
-                header
-                scopedSlots={{
-                  // value: (item: IRegisterRewardHistory) => {
-                  //   return (
-                  //     <td>
-                  //       <span className="d-inline-block text-truncate" style={{ maxWidth: '60px' }}>
-                  //         {item.reward ? item.reward : '_'}
-                  //       </span>
-                  //     </td>
-                  //   );
-                  // },
-                  stakeholder: (item: IRecordClaim) => {
-                    return (
-                      <td>
-                        <span className="d-inline-block ">{getEllipsisTxt(item.stakeholder, 4)}</span>
-                      </td>
-                    );
-                  },
-                  amount: (item: IRecordClaim) => {
-                    return (
-                      <td>
-                        <span className="d-inline-block">{insertCommas(item.amount || '')}</span>
-                      </td>
-                    );
-                  },
-                  from: ({ from }: IRecordClaim) => {
-                    return (
-                      <td>
-                        <span className="d-inline-block">{from ? dayjs(from).format(APP_DATE_FORMAT) : '_'}</span>
-                      </td>
-                    );
-                  },
-                  to: ({ to }: IRecordClaim) => {
-                    return (
-                      <td>
-                        <span className="d-inline-block">{to ? dayjs(to).format(APP_DATE_FORMAT) : '_'}</span>
-                      </td>
-                    );
-                  },
-                }}
+              <ActivityLogsTable
+                results={recordResultMapping[RecordType.CLAIM]}
+                filterState={rewardFilterState}
+                recordType={RecordType.CLAIM}
+                totalPages={totalRewardPages}
+                loading={claimLoading}
+                tableType={TableType.REWARD}
+                handlePaginationChange={handlePaginationChange}
               />
-              {totalRewardPages > 1 && (
-                <CPagination
-                  disabled={claimLoading}
-                  activePage={rewardFilterState.page + 1}
-                  pages={totalRewardPages}
-                  onActivePageChange={(page: number) => handlePaginationChange(page, TableType.REWARD)}
-                  align="center"
-                  className="mt-2"
-                />
-              )}
             </CTabPane>
           </CTabContent>
         </CCol>
@@ -457,114 +315,26 @@ const ActivityLogs = (props: IActivityLogs) => {
           </CNav>
           <CTabContent>
             <CTabPane active={ownerActiveTab === RecordType.WITHDRAW}>
-              <CDataTable
-                noItemsView={{
-                  noItems: 'No Item',
-                }}
-                striped
-                items={withdraws?.results}
-                fields={withdrawField}
-                responsive
-                hover
-                header
-                scopedSlots={{
-                  owner: (item: IRecordWithdraw) => {
-                    return (
-                      <td>
-                        <span className="d-inline-block ">{getEllipsisTxt(item.owner, 4)}</span>
-                      </td>
-                    );
-                  },
-                  amount: (item: IRecordWithdraw) => {
-                    return (
-                      <td>
-                        <span className="d-inline-block ">{insertCommas(item.amount || '')}</span>
-                      </td>
-                    );
-                  },
-                  initialOwnership: ({ initialOwnership }: IRecordWithdraw) => {
-                    return (
-                      <td>
-                        <span className="d-inline-block ">
-                          {initialOwnership ? dayjs.unix(Number(initialOwnership)).format(APP_DATE_FORMAT) : '_'}
-                        </span>
-                      </td>
-                    );
-                  },
-                  newOwnership: ({ newOwnership }: IRecordWithdraw) => {
-                    return (
-                      <td>
-                        <span className="d-inline-block ">
-                          {newOwnership ? dayjs.unix(Number(newOwnership)).format(APP_DATE_FORMAT) : '_'}
-                        </span>
-                      </td>
-                    );
-                  },
-                }}
+              <ActivityLogsTable
+                results={recordResultMapping[RecordType.WITHDRAW]}
+                filterState={ownerFilterState}
+                recordType={RecordType.WITHDRAW}
+                totalPages={totalOwnerPages}
+                loading={withdrawLoading}
+                tableType={TableType.OWNER}
+                handlePaginationChange={handlePaginationChange}
               />
-              {totalOwnerPages > 1 && (
-                <CPagination
-                  disabled={withdrawLoading}
-                  activePage={ownerFilterState.page + 1}
-                  pages={totalOwnerPages}
-                  onActivePageChange={(page: number) => handlePaginationChange(page, TableType.OWNER)}
-                  align="center"
-                  className="mt-2"
-                />
-              )}
             </CTabPane>
             <CTabPane active={ownerActiveTab === RecordType.OWNERSHIP_EXTENSION}>
-              <CDataTable
-                noItemsView={{
-                  noItems: 'No Item',
-                }}
-                striped
-                items={ownerships?.results}
-                fields={ownershipField}
-                responsive
-                hover
-                header
-                scopedSlots={{
-                  previousOwner: (item: IRecordOwnership) => {
-                    return (
-                      <td>
-                        <span className="d-inline-block ">{getEllipsisTxt(item.previousOwner, 4)}</span>
-                      </td>
-                    );
-                  },
-                  newOwner: (item: IRecordOwnership) => {
-                    return (
-                      <td>
-                        <span className="d-inline-block ">{getEllipsisTxt(item.newOwner, 4)}</span>
-                      </td>
-                    );
-                  },
-                  from: ({ from }: IRecordOwnership) => {
-                    return (
-                      <td>
-                        <span className="d-inline-block">{from ? dayjs(from).format(APP_DATE_FORMAT) : '_'}</span>
-                      </td>
-                    );
-                  },
-                  to: ({ to }: IRecordOwnership) => {
-                    return (
-                      <td>
-                        <span className="d-inline-block">{to ? dayjs(to).format(APP_DATE_FORMAT) : '_'}</span>
-                      </td>
-                    );
-                  },
-                }}
+              <ActivityLogsTable
+                results={recordResultMapping[RecordType.OWNERSHIP_EXTENSION]}
+                filterState={ownerFilterState}
+                recordType={RecordType.OWNERSHIP_EXTENSION}
+                totalPages={totalOwnerPages}
+                loading={ownershipLoading}
+                tableType={TableType.OWNER}
+                handlePaginationChange={handlePaginationChange}
               />
-              {totalOwnerPages > 1 && (
-                <CPagination
-                  disabled={ownershipLoading}
-                  activePage={ownerFilterState.page + 1}
-                  pages={totalOwnerPages}
-                  onActivePageChange={(page: number) => handlePaginationChange(page, TableType.OWNER)}
-                  align="center"
-                  className="mt-2"
-                />
-              )}
             </CTabPane>
           </CTabContent>
         </CCol>
