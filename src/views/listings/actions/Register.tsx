@@ -16,7 +16,7 @@ import {
   CInvalidFeedback,
   CLabel,
   CLink,
-  CRow,
+  CRow
 } from '@coreui/react';
 import { faClipboardCheck } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';

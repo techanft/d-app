@@ -1,112 +1,216 @@
 import {
-  CBadge,
   CCol,
-  CContainer,
-  CDataTable,
-  CLabel,
+  CContainer, CLabel,
   CNav,
   CNavItem,
-  CNavLink,
-  CRow,
+  CNavLink, CRow,
   CTabContent,
-  CTabPane,
-  CTabs,
+  CTabPane
 } from '@coreui/react';
-import React from 'react';
-import { mapStatus, mapStatusBadge, Status } from '../../../shared/enumeration/status';
-import { mapWorkerStatusBadge, WorkerStatus } from '../../../shared/enumeration/workerStatus';
-import { IRegisterRewardHistory } from '../../../shared/models/listingActivity.model';
-import { IWorkerPermission } from '../../../shared/models/workerPermission.model';
+import { ActionCreatorWithoutPayload, AsyncThunk } from '@reduxjs/toolkit';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { RouteComponentProps } from 'react-router-dom';
+import { RecordType } from '../../../shared/enumeration/recordType';
+import {
+  IRecordClaim,
+  IRecordOwnership,
+  IRecordRegister,
+  IRecordUnRegister,
+  IRecordWithdraw,
+  IRecordWorker
+} from '../../../shared/models/record.model';
+import { RootState } from '../../../shared/reducers';
+import { getEntity } from '../../assets/assets.api';
+import { fetchingEntity, selectEntityById } from '../../assets/assets.reducer';
+import {
+  getClaimsRecord,
+  getOwnershipExtensionRecord,
+  getRegisterRecord,
+  getUnRegisterRecord,
+  getWithdrawRecord,
+  getWorkersRecord,
+  IRecordParams
+} from '../../records/records.api';
+import {
+  fetchingClaim,
+  fetchingOwnership,
+  fetchingRegister,
+  fetchingWithdraw,
+  fetchingWorker
+} from '../../records/records.reducer';
 import '../index.scss';
+import ActivityLogsTable from './ActivityLogsTable';
 
-const ActivityLogs = () => {
-  const titleTableStyle = {
-    textAlign: 'left',
-    color: '#828282',
-    fontSize: '0.875rem',
-    lineHeight: '16px',
-    fontWeight: '400',
+interface IActivityLogsParams {
+  [x: string]: string;
+}
+
+export type TRecordTypeArray =
+  | IRecordClaim
+  | IRecordOwnership
+  | IRecordRegister
+  | IRecordUnRegister
+  | IRecordWorker
+  | IRecordWithdraw;
+
+type TRecordTypeMappingApi = { [key in RecordType]: AsyncThunk<unknown, IRecordParams, {}> };
+
+type TRecordTypeMappingFetch = { [key in RecordType]: ActionCreatorWithoutPayload<string> };
+
+type TRecordTypeMappingTotal = { [key in RecordType]: number };
+
+type TRecordTypeMappingResult = { [key in RecordType]: Array<TRecordTypeArray> };
+
+const recordTypeMapingApi: TRecordTypeMappingApi = {
+  [RecordType.REGISTER]: getRegisterRecord,
+  [RecordType.UNREGISTER]: getUnRegisterRecord,
+  [RecordType.CLAIM]: getClaimsRecord,
+  [RecordType.WITHDRAW]: getWithdrawRecord,
+  [RecordType.OWNERSHIP_EXTENSION]: getOwnershipExtensionRecord,
+  [RecordType.UPDATE_WORKER]: getWorkersRecord,
+};
+
+const recordTypeMapingFetching: TRecordTypeMappingFetch = {
+  [RecordType.REGISTER]: fetchingRegister,
+  [RecordType.UNREGISTER]: fetchingRegister,
+  [RecordType.CLAIM]: fetchingClaim,
+  [RecordType.WITHDRAW]: fetchingWithdraw,
+  [RecordType.OWNERSHIP_EXTENSION]: fetchingOwnership,
+  [RecordType.UPDATE_WORKER]: fetchingWorker,
+};
+
+export enum TableType {
+  OWNERSHIP = 'OWNERSHIP',
+  INVESTMENT = 'INVESTMENT',
+}
+
+type TTableMappingSetFilter = { [key in TableType]: React.Dispatch<React.SetStateAction<IRecordParams>> };
+
+type TTableMappingSetTab = { [key in TableType]: React.Dispatch<React.SetStateAction<RecordType>> };
+
+interface IActivityLogs extends RouteComponentProps<IActivityLogsParams> {}
+
+const ActivityLogs = (props: IActivityLogs) => {
+  const { match } = props;
+  const { id } = match.params;
+  const dispatch = useDispatch();
+  const listing = useSelector(selectEntityById(Number(id)));
+  const { signerAddress } = useSelector((state: RootState) => state.wallet);
+
+  const { initialState } = useSelector((state: RootState) => state.records);
+
+  const { loading: registerLoading, registers } = initialState.registerInitialState;
+  const { loading: unregisterLoading, unregisters } = initialState.unregisterInitialState;
+  const { loading: claimLoading, claims } = initialState.claimInitialState;
+  const { loading: withdrawLoading, withdraws } = initialState.withdrawInitialState;
+  const { loading: ownershipLoading, ownerships } = initialState.ownershipInitialState;
+
+  const [investmentActiveTab, setInvestmentActiveTab] = useState<RecordType>(RecordType.REGISTER);
+  const [ownershipActiveTab, setOwnershipActiveTab] = useState<RecordType>(RecordType.WITHDRAW);
+
+  const activeTabMappingChange: TTableMappingSetTab = {
+    [TableType.OWNERSHIP]: setOwnershipActiveTab,
+    [TableType.INVESTMENT]: setInvestmentActiveTab,
   };
 
-  const fields = [
-    { key: 'activityName', _style: titleTableStyle, label: 'Activity' },
-    { key: 'createdDate', _style: titleTableStyle, label: 'Time' },
-    { key: 'value', _style: titleTableStyle, label: 'Value' },
-  ];
+  const [investmentFilterState, setInvestmentFilterState] = useState<IRecordParams>({
+    page: 0,
+    size: 10,
+    sort: 'createdDate,desc',
+  });
 
-  const exchangeWallet = [
-    { key: 'createdDate', _style: titleTableStyle, label: 'Time' },
-    { key: 'amount', _style: titleTableStyle, label: 'Amount' },
-  ];
+  const [ownershipFilterState, setOwnershipFilterState] = useState<IRecordParams>({
+    page: 0,
+    size: 10,
+    sort: 'createdDate,desc',
+  });
 
-  const workerPermission = [
-    { key: 'address', _style: titleTableStyle, label: 'Address Wallet' },
-    { key: 'createdDate', _style: titleTableStyle, label: 'Time' },
-    { key: 'status', _style: titleTableStyle, label: 'Status' },
-  ];
+  const filterMappingChange: TTableMappingSetFilter = {
+    [TableType.OWNERSHIP]: setOwnershipFilterState,
+    [TableType.INVESTMENT]: setInvestmentFilterState,
+  };
 
-  const demoHistoryActivityLogs: IRegisterRewardHistory[] = [
-    {
-      activityName: 'Lorem is pum 1',
-      createdDate: '17:10- 29/11/2021',
-      status: Status.REGISTER,
-      bonusRate: '',
-      registerLevel: '1.00000000000',
-      reward: '',
-    },
-    {
-      activityName: 'Lorem is pum 1',
-      createdDate: '',
-      status: Status.UNREGISTER,
-      bonusRate: '',
-      registerLevel: '2.000',
-      reward: '',
-    },
-    {
-      activityName: 'Lorem is pum 1',
-      createdDate: '',
-      status: Status.CLAIMREWARD,
-      bonusRate: '',
-      registerLevel: '1.000',
-      reward: '500',
-    },
-  ];
+  const recordResultMapping: TRecordTypeMappingResult = {
+    [RecordType.REGISTER]: registers?.results || [],
+    [RecordType.UNREGISTER]: unregisters?.results || [],
+    [RecordType.CLAIM]: claims?.results || [],
+    [RecordType.WITHDRAW]: withdraws?.results || [],
+    [RecordType.OWNERSHIP_EXTENSION]: ownerships?.results || [],
+    [RecordType.UPDATE_WORKER]: [],
+  };
 
-  const demoExchangeWallet = [
-    {
-      createdDate: '17:10- 29/11/2021',
-      amount: '1.000',
-      type: 'withdraw',
-    },
-    {
-      createdDate: '17:10- 29/11/2021',
-      amount: '500',
-      type: 'withdraw',
-    },
-    {
-      createdDate: '17:10- 29/11/2021',
-      amount: '2.000',
-      type: 'recharge',
-    },
-  ];
+  const totalRecordMapping: TRecordTypeMappingTotal = {
+    [RecordType.REGISTER]: registers?.count || 0,
+    [RecordType.UNREGISTER]: unregisters?.count || 0,
+    [RecordType.CLAIM]: claims?.count || 0,
+    [RecordType.WITHDRAW]: withdraws?.count || 0,
+    [RecordType.OWNERSHIP_EXTENSION]: ownerships?.count || 0,
+    [RecordType.UPDATE_WORKER]: 0,
+  };
 
-  const demoWorkerPermission: IWorkerPermission[] = [
-    {
-      createdDate: '17:10- 29/11/2021',
-      status: WorkerStatus.true,
-      address: '0xda3ac...9999',
-    },
-    {
-      createdDate: '17:10- 29/11/2021',
-      status: WorkerStatus.true,
-      address: '0xda3ac...9999',
-    },
-    {
-      createdDate: '17:10- 29/11/2021',
-      status: WorkerStatus.false,
-      address: '0xda3ac...9999',
-    },
-  ];
+  const totalInvestmentPages = Math.ceil((totalRecordMapping[investmentActiveTab]) / investmentFilterState.size);
+
+  const totalOwnershipPages = Math.ceil((totalRecordMapping[ownershipActiveTab]) / ownershipFilterState.size);
+
+  const handlePaginationChange = (page: number, type: TableType) => {
+    if (page !== 0) {
+      window.scrollTo(0, 0);
+      filterMappingChange[type]((prevState) => {
+        return {
+          ...prevState,
+          page: page - 1,
+        };
+      });
+    }
+  };
+
+  const onTabChange = (recordType: RecordType, tableType: TableType) => () => {
+    filterMappingChange[tableType]((prevState) => {
+      return {
+        ...prevState,
+        page: 0,
+      };
+    });
+    activeTabMappingChange[tableType](recordType);
+  };
+
+  useEffect(() => {
+    if (id) {
+      dispatch(fetchingEntity());
+      dispatch(getEntity(Number(id)));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
+
+  useEffect(() => {
+    if (!listing?.address || !signerAddress) return;
+    const additionalInvestmentFilterParams = {
+      ...investmentFilterState,
+      listingAddress: listing.address,
+      stakeholder: signerAddress,
+    };
+    const recordFetchingFunc = recordTypeMapingFetching[investmentActiveTab];
+    const recordApiFunc = recordTypeMapingApi[investmentActiveTab];
+    dispatch(recordFetchingFunc());
+    dispatch(recordApiFunc(additionalInvestmentFilterParams));
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(investmentFilterState), listing?.address, investmentActiveTab, signerAddress]);
+
+  useEffect(() => {
+    if (!listing?.address || !signerAddress) return;
+    const additionalOwnerFilterParams =
+      ownershipActiveTab === RecordType.OWNERSHIP_EXTENSION
+        ? { previousOwner: signerAddress, newOwner: signerAddress }
+        : { owner: signerAddress };
+    const filter = { ...ownershipFilterState, ...additionalOwnerFilterParams };
+    const recordFetchingFunc = recordTypeMapingFetching[ownershipActiveTab];
+    const recordApiFunc = recordTypeMapingApi[ownershipActiveTab];
+    dispatch(recordFetchingFunc());
+    dispatch(recordApiFunc(filter));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(ownershipFilterState), listing?.address, ownershipActiveTab, signerAddress]);
 
   return (
     <CContainer fluid className="mx-0 my-2">
@@ -115,165 +219,70 @@ const ActivityLogs = () => {
           <CLabel className="text-primary content-title">Reward</CLabel>
         </CCol>
         <CCol xs={12}>
-          <CTabs activeTab="register-reward-history">
-            <CNav variant="tabs">
-              <CNavItem className="col-4 p-0">
-                <CNavLink
-                  data-tab="register-reward-history"
-                  className="detail-title-font px-0 text-center text-primary"
-                >
-                  Register
-                </CNavLink>
-              </CNavItem>
-              <CNavItem className="col-4 p-0">
-                <CNavLink
-                  data-tab="unregister-reward-history"
-                  className="detail-title-font px-0 text-center text-primary"
-                >
-                  Unregister
-                </CNavLink>
-              </CNavItem>
-              <CNavItem className="col-4 p-0">
-                <CNavLink data-tab="claim-reward-history" className="detail-title-font px-0 text-center text-primary">
-                  Claim Reward
-                </CNavLink>
-              </CNavItem>
-            </CNav>
-            <CTabContent>
-              <CTabPane data-tab="register-reward-history">
-                <CDataTable
-                  striped
-                  items={demoHistoryActivityLogs.filter((e) => e.status === Status.REGISTER)}
-                  fields={fields}
-                  responsive
-                  hover
-                  header
-                  scopedSlots={{
-                    activityName: (item: IRegisterRewardHistory) => {
-                      return (
-                        <td>
-                          <span className="d-inline-block text-truncate" style={{ maxWidth: '60px' }}>
-                            {item.activityName ? item.activityName : '_'}
-                          </span>
-                        </td>
-                      );
-                    },
-                    createdDate: (item: IRegisterRewardHistory) => {
-                      return <td>{item.createdDate ? item.createdDate : '_'}</td>;
-                    },
-                    status: (item: IRegisterRewardHistory) => {
-                      return (
-                        <td>
-                          {
-                            <CBadge color={mapStatusBadge[item.status]}>
-                              {item.status ? mapStatus[item.status] : '_'}
-                            </CBadge>
-                          }
-                        </td>
-                      );
-                    },
-                    value: (item: IRegisterRewardHistory) => {
-                      return (
-                        <td>
-                          <span className="d-inline-block text-truncate" style={{ maxWidth: '60px' }}>
-                            {item.registerLevel ? item.registerLevel : '_'}
-                          </span>
-                        </td>
-                      );
-                    },
-                  }}
-                />
-              </CTabPane>
-              <CTabPane data-tab="unregister-reward-history">
-                <CDataTable
-                  striped
-                  items={demoHistoryActivityLogs.filter((e) => e.status === Status.UNREGISTER)}
-                  fields={fields}
-                  responsive
-                  hover
-                  header
-                  scopedSlots={{
-                    activityName: (item: IRegisterRewardHistory) => {
-                      return (
-                        <td>
-                          <span className="d-inline-block text-truncate" style={{ maxWidth: '60px' }}>
-                            {item.activityName ? item.activityName : '_'}
-                          </span>
-                        </td>
-                      );
-                    },
-                    createdDate: (item: IRegisterRewardHistory) => {
-                      return <td>{item.createdDate ? item.createdDate : '_'}</td>;
-                    },
-                    status: (item: IRegisterRewardHistory) => {
-                      return (
-                        <td>
-                          {
-                            <CBadge color={mapStatusBadge[item.status]}>
-                              {item.status ? mapStatus[item.status] : '_'}
-                            </CBadge>
-                          }
-                        </td>
-                      );
-                    },
-                    value: (item: IRegisterRewardHistory) => {
-                      return (
-                        <td>
-                          <span className="d-inline-block text-truncate" style={{ maxWidth: '60px' }}>
-                            {item.registerLevel ? item.registerLevel : '_'}
-                          </span>
-                        </td>
-                      );
-                    },
-                  }}
-                />
-              </CTabPane>
-              <CTabPane data-tab="claim-reward-history">
-                <CDataTable
-                  striped
-                  items={demoHistoryActivityLogs.filter((e) => e.status === Status.CLAIMREWARD)}
-                  fields={fields}
-                  responsive
-                  hover
-                  header
-                  scopedSlots={{
-                    activityName: (item: IRegisterRewardHistory) => {
-                      return (
-                        <td>
-                          <span className="d-inline-block text-truncate" style={{ maxWidth: '60px' }}>
-                            {item.activityName ? item.activityName : '_'}
-                          </span>
-                        </td>
-                      );
-                    },
-                    createdDate: (item: IRegisterRewardHistory) => {
-                      return <td>{item.createdDate ? item.createdDate : '_'}</td>;
-                    },
-                    status: (item: IRegisterRewardHistory) => {
-                      return (
-                        <td>
-                          {
-                            <CBadge color={mapStatusBadge[item.status]}>
-                              {item.status ? mapStatus[item.status] : '_'}
-                            </CBadge>
-                          }
-                        </td>
-                      );
-                    },
-                    value: (item: IRegisterRewardHistory) => {
-                      return (
-                        <td>
-                          <span className="d-inline-block text-truncate" style={{ maxWidth: '60px' }}>
-                            {item.reward ? item.reward : '_'}
-                          </span>
-                        </td>
-                      );
-                    },
-                  }}
-                />
-              </CTabPane>
-            </CTabContent>
-          </CTabs>
+          <CNav variant="tabs">
+            <CNavItem className="col-4 p-0">
+              <CNavLink
+                onClick={onTabChange(RecordType.REGISTER, TableType.INVESTMENT)}
+                active={investmentActiveTab === RecordType.REGISTER}
+                className="detail-title-font px-0 text-center text-primary"
+              >
+                Register
+              </CNavLink>
+            </CNavItem>
+            <CNavItem className="col-4 p-0">
+              <CNavLink
+                onClick={onTabChange(RecordType.UNREGISTER, TableType.INVESTMENT)}
+                active={investmentActiveTab === RecordType.UNREGISTER}
+                className="detail-title-font px-0 text-center text-primary"
+              >
+                Unregister
+              </CNavLink>
+            </CNavItem>
+            <CNavItem className="col-4 p-0">
+              <CNavLink
+                onClick={onTabChange(RecordType.CLAIM, TableType.INVESTMENT)}
+                active={investmentActiveTab === RecordType.CLAIM}
+                className="detail-title-font px-0 text-center text-primary"
+              >
+                Claim Reward
+              </CNavLink>
+            </CNavItem>
+          </CNav>
+          <CTabContent>
+            <CTabPane active={investmentActiveTab === RecordType.REGISTER}>
+              <ActivityLogsTable
+                results={recordResultMapping[RecordType.REGISTER]}
+                filterState={investmentFilterState}
+                recordType={RecordType.REGISTER}
+                totalPages={totalInvestmentPages}
+                loading={registerLoading}
+                tableType={TableType.INVESTMENT}
+                handlePaginationChange={handlePaginationChange}
+              />
+            </CTabPane>
+            <CTabPane active={investmentActiveTab === RecordType.UNREGISTER}>
+              <ActivityLogsTable
+                results={recordResultMapping[RecordType.UNREGISTER]}
+                filterState={investmentFilterState}
+                recordType={RecordType.UNREGISTER}
+                totalPages={totalInvestmentPages}
+                loading={unregisterLoading}
+                tableType={TableType.INVESTMENT}
+                handlePaginationChange={handlePaginationChange}
+              />
+            </CTabPane>
+            <CTabPane active={investmentActiveTab === RecordType.CLAIM}>
+              <ActivityLogsTable
+                results={recordResultMapping[RecordType.CLAIM]}
+                filterState={investmentFilterState}
+                recordType={RecordType.CLAIM}
+                totalPages={totalInvestmentPages}
+                loading={claimLoading}
+                tableType={TableType.INVESTMENT}
+                handlePaginationChange={handlePaginationChange}
+              />
+            </CTabPane>
+          </CTabContent>
         </CCol>
       </CRow>
 
@@ -283,68 +292,50 @@ const ActivityLogs = () => {
           <CLabel className="text-primary content-title">Ownership</CLabel>
         </CCol>
         <CCol xs={12}>
-          <CTabs activeTab="withdraw-token-history">
-            <CNav variant="tabs">
-              <CNavItem className="col-4 p-0">
-                <CNavLink data-tab="withdraw-token-history" className="detail-title-font px-0 text-center text-primary">
-                  Withdraw Token
-                </CNavLink>
-              </CNavItem>
-              <CNavItem className="col-4 p-0">
-                <CNavLink data-tab="recharge-token-history" className="detail-title-font px-0 text-center text-primary">
-                  Recharge Token
-                </CNavLink>
-              </CNavItem>
-              <CNavItem className="col-4 p-0">
-                <CNavLink data-tab="worker-permission" className="detail-title-font px-0 text-center text-primary">
-                  Worker Permission
-                </CNavLink>
-              </CNavItem>
-            </CNav>
-            <CTabContent>
-              <CTabPane data-tab="withdraw-token-history">
-                <CDataTable
-                  striped
-                  items={demoExchangeWallet.filter((e) => e.type === 'withdraw')}
-                  fields={exchangeWallet}
-                  responsive
-                  hover
-                  header
-                  scopedSlots={{}}
-                />
-              </CTabPane>
-              <CTabPane data-tab="recharge-token-history">
-                <CDataTable
-                  striped
-                  items={demoExchangeWallet.filter((e) => e.type === 'recharge')}
-                  fields={exchangeWallet}
-                  responsive
-                  hover
-                  header
-                  scopedSlots={{}}
-                />
-              </CTabPane>
-              <CTabPane data-tab="worker-permission">
-                <CDataTable
-                  striped
-                  items={demoWorkerPermission}
-                  fields={workerPermission}
-                  responsive
-                  hover
-                  header
-                  scopedSlots={{
-                    status: (item: IWorkerPermission) => {
-                      return (
-                        <td>
-                          {<CBadge color={mapWorkerStatusBadge[item.status]}>{item.status ? item.status : '_'}</CBadge>}
-                        </td>
-                      );
-                    },
-                  }}
-                />
-              </CTabPane>
-            </CTabContent>
-          </CTabs>
+          <CNav variant="tabs">
+            <CNavItem className="col-4 p-0">
+              <CNavLink
+                onClick={onTabChange(RecordType.WITHDRAW, TableType.OWNERSHIP)}
+                active={ownershipActiveTab === RecordType.WITHDRAW}
+                className="detail-title-font px-0 text-center text-primary"
+              >
+                Withdraw Token
+              </CNavLink>
+            </CNavItem>
+            <CNavItem className="col-4 p-0">
+              <CNavLink
+                onClick={onTabChange(RecordType.OWNERSHIP_EXTENSION, TableType.OWNERSHIP)}
+                active={ownershipActiveTab === RecordType.OWNERSHIP_EXTENSION}
+                className="detail-title-font px-0 text-center text-primary"
+              >
+                Recharge Token
+              </CNavLink>
+            </CNavItem>
+          </CNav>
+          <CTabContent>
+            <CTabPane active={ownershipActiveTab === RecordType.WITHDRAW}>
+              <ActivityLogsTable
+                results={recordResultMapping[RecordType.WITHDRAW]}
+                filterState={ownershipFilterState}
+                recordType={RecordType.WITHDRAW}
+                totalPages={totalOwnershipPages}
+                loading={withdrawLoading}
+                tableType={TableType.OWNERSHIP}
+                handlePaginationChange={handlePaginationChange}
+              />
+            </CTabPane>
+            <CTabPane active={ownershipActiveTab === RecordType.OWNERSHIP_EXTENSION}>
+              <ActivityLogsTable
+                results={recordResultMapping[RecordType.OWNERSHIP_EXTENSION]}
+                filterState={ownershipFilterState}
+                recordType={RecordType.OWNERSHIP_EXTENSION}
+                totalPages={totalOwnershipPages}
+                loading={ownershipLoading}
+                tableType={TableType.OWNERSHIP}
+                handlePaginationChange={handlePaginationChange}
+              />
+            </CTabPane>
+          </CTabContent>
         </CCol>
       </CRow>
     </CContainer>
