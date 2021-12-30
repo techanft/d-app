@@ -58,7 +58,6 @@ type TRecordTypeMappingApi = { [key in RecordType]: AsyncThunk<unknown, IRecordP
 
 type TRecordTypeMappingFetch = { [key in RecordType]: ActionCreatorWithoutPayload<string> };
 
-// Just number, no undefined here
 type TRecordTypeMappingTotal = { [key in RecordType]: number };
 
 type TRecordTypeMappingResult = { [key in RecordType]: Array<TRecordTypeArray> };
@@ -82,8 +81,8 @@ const recordTypeMapingFetching: TRecordTypeMappingFetch = {
 };
 
 export enum TableType {
-  OWNER = 'OWNER',
-  REWARD = 'REWARD', // It should be Ownership & Investment (Hoạt động đầu tư & Hoạt động sở hữu)
+  OWNERSHIP = 'OWNERSHIP',
+  INVESTMENT = 'INVESTMENT',
 }
 
 type TTableMappingSetFilter = { [key in TableType]: React.Dispatch<React.SetStateAction<IRecordParams>> };
@@ -111,8 +110,8 @@ const ActivityLogs = (props: IActivityLogs) => {
   const [ownerActiveTab, setOwnerActiveTab] = useState<RecordType>(RecordType.WITHDRAW);
 
   const activeTabMappingChange: TTableMappingSetTab = {
-    [TableType.OWNER]: setOwnerActiveTab,
-    [TableType.REWARD]: setRewardActiveTab,
+    [TableType.OWNERSHIP]: setOwnerActiveTab,
+    [TableType.INVESTMENT]: setRewardActiveTab,
   };
 
   const [rewardFilterState, setRewardFilterState] = useState<IRecordParams>({
@@ -123,13 +122,13 @@ const ActivityLogs = (props: IActivityLogs) => {
 
   const [ownerFilterState, setOwnerFilterState] = useState<IRecordParams>({
     page: 0,
-    size: 1,
+    size: 10,
     sort: 'createdDate,desc',
   });
 
   const filterMappingChange: TTableMappingSetFilter = {
-    [TableType.OWNER]: setOwnerFilterState,
-    [TableType.REWARD]: setRewardFilterState,
+    [TableType.OWNERSHIP]: setOwnerFilterState,
+    [TableType.INVESTMENT]: setRewardFilterState,
   };
 
   const recordResultMapping: TRecordTypeMappingResult = {
@@ -150,9 +149,9 @@ const ActivityLogs = (props: IActivityLogs) => {
     [RecordType.UPDATE_WORKER]: 0,
   };
 
-  const totalRewardPages = Math.ceil((totalRecordMapping[rewardActiveTab] || 0) / rewardFilterState.size);
+  const totalRewardPages = Math.ceil((totalRecordMapping[rewardActiveTab]) / rewardFilterState.size);
 
-  const totalOwnerPages = Math.ceil((totalRecordMapping[ownerActiveTab] || 0) / ownerFilterState.size);
+  const totalOwnerPages = Math.ceil((totalRecordMapping[ownerActiveTab]) / ownerFilterState.size);
 
   const handlePaginationChange = (page: number, type: TableType) => {
     if (page !== 0) {
@@ -223,7 +222,7 @@ const ActivityLogs = (props: IActivityLogs) => {
           <CNav variant="tabs">
             <CNavItem className="col-4 p-0">
               <CNavLink
-                onClick={onTabChange(RecordType.REGISTER, TableType.REWARD)}
+                onClick={onTabChange(RecordType.REGISTER, TableType.INVESTMENT)}
                 active={rewardActiveTab === RecordType.REGISTER}
                 className="detail-title-font px-0 text-center text-primary"
               >
@@ -232,7 +231,7 @@ const ActivityLogs = (props: IActivityLogs) => {
             </CNavItem>
             <CNavItem className="col-4 p-0">
               <CNavLink
-                onClick={onTabChange(RecordType.UNREGISTER, TableType.REWARD)}
+                onClick={onTabChange(RecordType.UNREGISTER, TableType.INVESTMENT)}
                 active={rewardActiveTab === RecordType.UNREGISTER}
                 className="detail-title-font px-0 text-center text-primary"
               >
@@ -241,7 +240,7 @@ const ActivityLogs = (props: IActivityLogs) => {
             </CNavItem>
             <CNavItem className="col-4 p-0">
               <CNavLink
-                onClick={onTabChange(RecordType.CLAIM, TableType.REWARD)}
+                onClick={onTabChange(RecordType.CLAIM, TableType.INVESTMENT)}
                 active={rewardActiveTab === RecordType.CLAIM}
                 className="detail-title-font px-0 text-center text-primary"
               >
@@ -257,7 +256,7 @@ const ActivityLogs = (props: IActivityLogs) => {
                 recordType={RecordType.REGISTER}
                 totalPages={totalRewardPages}
                 loading={registerLoading}
-                tableType={TableType.REWARD}
+                tableType={TableType.INVESTMENT}
                 handlePaginationChange={handlePaginationChange}
               />
             </CTabPane>
@@ -268,7 +267,7 @@ const ActivityLogs = (props: IActivityLogs) => {
                 recordType={RecordType.UNREGISTER}
                 totalPages={totalRewardPages}
                 loading={unregisterLoading}
-                tableType={TableType.REWARD}
+                tableType={TableType.INVESTMENT}
                 handlePaginationChange={handlePaginationChange}
               />
             </CTabPane>
@@ -279,7 +278,7 @@ const ActivityLogs = (props: IActivityLogs) => {
                 recordType={RecordType.CLAIM}
                 totalPages={totalRewardPages}
                 loading={claimLoading}
-                tableType={TableType.REWARD}
+                tableType={TableType.INVESTMENT}
                 handlePaginationChange={handlePaginationChange}
               />
             </CTabPane>
@@ -296,7 +295,7 @@ const ActivityLogs = (props: IActivityLogs) => {
           <CNav variant="tabs">
             <CNavItem className="col-4 p-0">
               <CNavLink
-                onClick={onTabChange(RecordType.WITHDRAW, TableType.OWNER)}
+                onClick={onTabChange(RecordType.WITHDRAW, TableType.OWNERSHIP)}
                 active={ownerActiveTab === RecordType.WITHDRAW}
                 className="detail-title-font px-0 text-center text-primary"
               >
@@ -305,7 +304,7 @@ const ActivityLogs = (props: IActivityLogs) => {
             </CNavItem>
             <CNavItem className="col-4 p-0">
               <CNavLink
-                onClick={onTabChange(RecordType.OWNERSHIP_EXTENSION, TableType.OWNER)}
+                onClick={onTabChange(RecordType.OWNERSHIP_EXTENSION, TableType.OWNERSHIP)}
                 active={ownerActiveTab === RecordType.OWNERSHIP_EXTENSION}
                 className="detail-title-font px-0 text-center text-primary"
               >
@@ -321,7 +320,7 @@ const ActivityLogs = (props: IActivityLogs) => {
                 recordType={RecordType.WITHDRAW}
                 totalPages={totalOwnerPages}
                 loading={withdrawLoading}
-                tableType={TableType.OWNER}
+                tableType={TableType.OWNERSHIP}
                 handlePaginationChange={handlePaginationChange}
               />
             </CTabPane>
@@ -332,7 +331,7 @@ const ActivityLogs = (props: IActivityLogs) => {
                 recordType={RecordType.OWNERSHIP_EXTENSION}
                 totalPages={totalOwnerPages}
                 loading={ownershipLoading}
-                tableType={TableType.OWNER}
+                tableType={TableType.OWNERSHIP}
                 handlePaginationChange={handlePaginationChange}
               />
             </CTabPane>

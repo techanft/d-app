@@ -1,16 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { ethers } from 'ethers';
+import { ContractReceipt, ethers } from 'ethers';
 import { EventType } from '../../shared/enumeration/eventType';
-import { IEventRecord } from '../../shared/models/eventRecord.model';
 import { awaitTransaction, proceedTransaction } from './transactions.api';
-
 export interface ICTransaction {
   contractTransaction: ethers.ContractTransaction;
   type: EventType;
   listingId: number;
 }
-
-
 interface ITxInitialState {
   transaction: ICTransaction | undefined;
   loading: boolean;
@@ -60,7 +56,7 @@ const { actions, reducer } = createSlice({
       state.loading = false;
     },
 
-    [awaitTransaction.fulfilled.type]: (state, {payload}: PayloadAction<IEventRecord>) => {
+    [awaitTransaction.fulfilled.type]: (state, _: PayloadAction<ContractReceipt>) => {
       state.success = true;
       state.loading = false;
     },
