@@ -16,31 +16,28 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
 import bgImg from '../../../assets/img/registerBonus.svg';
 import { LISTING_INSTANCE } from '../../../shared/blockchain-helpers';
-import { getEllipsisTxt, validateOwner } from '../../../shared/casual-helpers';
+import { getEllipsisTxt } from '../../../shared/casual-helpers';
 import ConfirmModal from '../../../shared/components/ConfirmModal';
 import Loading from '../../../shared/components/Loading';
 import SubmissionModal from '../../../shared/components/SubmissionModal';
 import { ToastError } from '../../../shared/components/Toast';
 import { EventType } from '../../../shared/enumeration/eventType';
-import { IEvent } from '../../../shared/models/events.model';
+import { IParams } from '../../../shared/models/base.model';
+import { IRecordWorker } from '../../../shared/models/record.model';
 import { RootState } from '../../../shared/reducers';
 import { getEntity } from '../../assets/assets.api';
 import { fetchingEntity, selectEntityById, softReset } from '../../assets/assets.reducer';
-import { deleteMany, getEntities, IEventTrackingFilter } from '../../events/events.api';
-import { eventsSelectors, fetchingEntities } from '../../events/events.reducer';
+import { getWorkersRecord } from '../../records/records.api';
+import { fetchingWorker, softResetWorker } from '../../records/records.reducer';
 import { baseSetterArgs } from '../../transactions/settersMapping';
 import { IProceedTxBody, proceedTransaction } from '../../transactions/transactions.api';
-import { fetching } from '../../transactions/transactions.reducer';
+import { fetching, hardReset } from '../../transactions/transactions.reducer';
 import AddWorkerPermission from './AddWorkerModal';
 
 interface IWorkerListParams {
   [x: string]: string;
 }
 
-interface IIntialValues {
-  address: string;
-  eventId: number;
-}
 
 interface IWorkersList extends RouteComponentProps<IWorkerListParams> {}
 
@@ -57,28 +54,23 @@ const fields = [
 ];
 
 const WorkersList = (props: IWorkersList) => {
-  const { match,history } = props;
+  const { match } = props;
   const { id } = match.params;
 
   const dispatch = useDispatch();
   const listing = useSelector(selectEntityById(Number(id)));
-  const { signer, signerAddress } = useSelector((state: RootState) => state.wallet);
-  const { initialState } = useSelector((state: RootState) => state.events);
-  const { success, submitted, eventRecord } = useSelector((state: RootState) => state.transactions);
-  const { totalItems, entitiesLoading, deleteSuccess } = initialState;
+  const { signer } = useSelector((state: RootState) => state.wallet);
+  const { initialState } = useSelector((state: RootState) => state.records);
+  const { success, submitted } = useSelector((state: RootState) => state.transactions);
+  const { loading, workers, errorMessage: workerErrorMessage } = initialState.workerInitialState;
 
-  const { selectAll } = eventsSelectors;
-  const events = useSelector(selectAll);
-
-  const [filterState, setFilterState] = useState<IEventTrackingFilter>({
+  const [filterState, setFilterState] = useState<IParams>({
     page: 0,
     size: 10,
     sort: 'createdDate,desc',
-    eventType: EventType.UPDATE_WORKER,
-    listingId: Number(id),
   });
 
-  const totalPages = Math.ceil(totalItems / filterState.size);
+  const totalPages = Math.ceil((workers?.count || 0) / filterState.size);
 
   const handlePaginationChange = (page: number) => {
     if (page !== 0) {
@@ -88,28 +80,18 @@ const WorkersList = (props: IWorkersList) => {
   };
 
   useEffect(() => {
-    if (listing?.owner && signerAddress) {
-      const viewWorkerPermission = validateOwner(signerAddress, listing);
-      if (!viewWorkerPermission) {
-        history.goBack();
-      }
+    if (workerErrorMessage) {
+      ToastError(workerErrorMessage);
+      dispatch(softResetWorker());
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [listing,signerAddress]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [workerErrorMessage]);
 
   useEffect(() => {
     if (submitted) {
       setDeltAlrtMdl(false);
     }
   }, [submitted]);
-
-  useEffect(() => {
-    if (success && entityToDelete !== undefined && eventRecord) {
-      dispatch(fetching());
-      dispatch(deleteMany([entityToDelete.eventId, eventRecord.id]));
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [success]);
 
   useEffect(() => {
     if (id) {
@@ -120,12 +102,28 @@ const WorkersList = (props: IWorkersList) => {
   }, [id]);
 
   useEffect(() => {
-    dispatch(fetchingEntities());
-    dispatch(getEntities(filterState));
+    if (success && listing?.address) {
+      const refetchTimer = window.setTimeout(() => {
+        const filter = { ...filterState, listingAddress: listing.address };
+        dispatch(fetchingWorker());
+        dispatch(getWorkersRecord(filter));
+        dispatch(hardReset());
+      }, 5000);
+      return () => window.clearTimeout(refetchTimer);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [JSON.stringify(filterState), success, deleteSuccess]);
+  }, [success]);
 
-  const handleRawFormValues = (input: IIntialValues): IProceedTxBody => {
+  useEffect(() => {
+    if (listing?.address) {
+      const filter = { ...filterState, listingAddress: listing.address };
+      dispatch(fetchingWorker());
+      dispatch(getWorkersRecord(filter));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(filterState), listing?.address]);
+
+  const handleRawFormValues = (input: string): IProceedTxBody => {
     if (!listing?.address) {
       throw Error('Error getting listing address');
     }
@@ -141,13 +139,14 @@ const WorkersList = (props: IWorkersList) => {
       listingId: Number(id),
       contract: instance,
       type: EventType.UPDATE_WORKER,
-      args: { ...baseSetterArgs, _worker: input.address },
+      args: { ...baseSetterArgs, _worker: input },
     };
 
     return output;
   };
 
-  const [entityToDelete, setEntityToDelete] = useState<IIntialValues | undefined>(undefined);
+  // Tại sao entityToDelete lại có cả eventId
+  const [entityToDelete, setEntityToDelete] = useState<string>("");
   const [delAlrtMdl, setDeltAlrtMdl] = useState<boolean>(false);
 
   const onDelMldConfrmed = () => {
@@ -157,20 +156,19 @@ const WorkersList = (props: IWorkersList) => {
         dispatch(fetching());
         dispatch(proceedTransaction(value));
       } catch (error) {
-        console.log(`Error submitting form ${error}`);
         ToastError(`Error submitting form ${error}`);
         dispatch(softReset());
       }
     }
   };
   const onDelMldAbort = () => {
-    setEntityToDelete(undefined);
+    setEntityToDelete("");
     setDeltAlrtMdl(false);
   };
 
-  const onEntityRemoval = (eventId: number, address: string) => (): void => {
+  const onEntityRemoval = (address: string) => (): void => {
     setDeltAlrtMdl(true);
-    setEntityToDelete({ eventId, address });
+    setEntityToDelete(address);
   };
 
   const [addWorkerPermission, setAddWorkerPermission] = useState<boolean>(false);
@@ -193,7 +191,7 @@ const WorkersList = (props: IWorkersList) => {
               <CCardTitle className="listing-card-title mb-0 px-3 py-2 w-100">
                 <p className="mb-2 text-white content-title">125 - Hoàn Kiếm - Hà Nội</p>
                 <p className="mb-0 text-white detail-title-font">
-                  Hoạt động <b>{totalItems}</b>
+                  Hoạt động <b>{workers?.count || 0}</b>
                 </p>
               </CCardTitle>
             </CCardBody>
@@ -201,28 +199,25 @@ const WorkersList = (props: IWorkersList) => {
         </CCol>
         <>
           <CCol xs={12}>
-            {entitiesLoading && !events.length ? (
+            {loading && !workers?.results.length ? (
               <Loading />
             ) : (
               <>
                 <CDataTable
                   striped
-                  items={events}
+                  items={workers?.results}
                   fields={fields}
                   responsive
                   hover
                   header
                   scopedSlots={{
-                    address: (item: IEvent) => {
-                      return <td>{getEllipsisTxt(item.eventArg?._worker || '_', 10)}</td>;
+                    address: (item: IRecordWorker) => {
+                      return <td>{getEllipsisTxt(item.worker || '_', 10)}</td>;
                     },
-                    action: (item: IEvent) => {
+                    action: (item: IRecordWorker) => {
                       return (
                         <td>
-                          <CButton
-                            className="text-danger p-0"
-                            onClick={onEntityRemoval(item.id, item.eventArg?._worker || '_')}
-                          >
+                          <CButton className="text-danger p-0" onClick={onEntityRemoval(item.worker || '_')}>
                             <CIcon name="cil-trash" />
                           </CButton>
                         </td>
@@ -234,7 +229,7 @@ const WorkersList = (props: IWorkersList) => {
             )}
             {totalPages > 1 && (
               <CPagination
-                disabled={entitiesLoading}
+                disabled={loading}
                 activePage={filterState.page + 1}
                 pages={totalPages}
                 onActivePageChange={handlePaginationChange}
@@ -263,8 +258,8 @@ const WorkersList = (props: IWorkersList) => {
           <p>
             {entityToDelete && (
               <>
-                Bạn chắc chắn muốn hủy quyền khai thác của {entityToDelete.eventId}{' '}
-                <span className="text-primary">{entityToDelete.address || '_'}</span>
+                Bạn chắc chắn muốn hủy quyền khai thác của
+                <span className="text-primary">{getEllipsisTxt(entityToDelete,6) || '_'}</span>
               </>
             )}
           </p>
