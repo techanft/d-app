@@ -45,7 +45,7 @@ export const proceedTransaction = createAsyncThunk('proceedTransaction', async (
   try {
     const setter = settersMapping(contract, type, args);
 
-    if (setter === null) throw 'Insufficient arguments causing contract setter can not be generated';
+    if (setter === null) throw String('Insufficient arguments causing contract setter can not be generated');
 
     const result = await setter();
 
