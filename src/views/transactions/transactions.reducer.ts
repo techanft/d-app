@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { ethers } from 'ethers';
 import { EventType } from '../../shared/enumeration/eventType';
 import { IEventRecord } from '../../shared/models/eventRecord.model';
-import { proceedTransaction, recordTransaction } from './transactions.api';
+import { awaitTransaction, proceedTransaction } from './transactions.api';
 
 export interface ICTransaction {
   contractTransaction: ethers.ContractTransaction;
@@ -12,7 +12,6 @@ export interface ICTransaction {
 
 
 interface ITxInitialState {
-  eventRecord: IEventRecord | undefined
   transaction: ICTransaction | undefined;
   loading: boolean;
   submitted: boolean;
@@ -21,7 +20,6 @@ interface ITxInitialState {
 }
 
 const initialState: ITxInitialState = {
-  eventRecord:undefined,
   transaction: undefined,
   submitted: false,
   loading: false,
@@ -39,7 +37,6 @@ const { actions, reducer } = createSlice({
       state.loading = true;
     },
     hardReset(state) {
-      state.eventRecord = undefined;
       state.transaction = undefined;
       state.submitted = false;
       state.loading = false;
@@ -63,12 +60,11 @@ const { actions, reducer } = createSlice({
       state.loading = false;
     },
 
-    [recordTransaction.fulfilled.type]: (state, {payload}: PayloadAction<IEventRecord>) => {
-      state.eventRecord = payload
+    [awaitTransaction.fulfilled.type]: (state, {payload}: PayloadAction<IEventRecord>) => {
       state.success = true;
       state.loading = false;
     },
-    [recordTransaction.rejected.type]: (state, { payload }) => {
+    [awaitTransaction.rejected.type]: (state, { payload }) => {
       state.errorMessage = payload?.message;
       state.loading = false;
     },

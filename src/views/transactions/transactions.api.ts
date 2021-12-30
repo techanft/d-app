@@ -4,27 +4,11 @@ import { Listing } from '../../typechain';
 import { settersMapping, TBaseSetterArguments } from './settersMapping';
 import { ICTransaction } from './transactions.reducer';
 
-interface ITxData {
-  eventType: EventType;
-  block: number;
-  assetId: number;
-}
-
 // Remove this since recording is obsolete
-export const recordTransaction = createAsyncThunk('recordTransaction', async (transaction: ICTransaction, thunkAPI) => {
+export const awaitTransaction = createAsyncThunk('awaitTransaction', async (transaction: ICTransaction, thunkAPI) => {
   try {
     const { contractTransaction } = transaction;
     const txReceipt = await contractTransaction.wait();
-
-    // const txData: ITxData = {
-    //   eventType: type,
-    //   block: txReceipt.blockNumber,
-    //   assetId: listingId,
-    // };
-
-    // // Consider moving this to events module logic later.
-    // const { data } = await axios.post<IEventRecord>(`${eventEndpoint}`, txData);
-
     return txReceipt;
   } catch (error: any) {
     return thunkAPI.rejectWithValue(error.response.data);

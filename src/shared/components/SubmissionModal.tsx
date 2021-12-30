@@ -3,7 +3,7 @@ import { CButton, CLabel, CLink, CModal, CModalBody, CModalFooter, CModalHeader,
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { SCAN_URL } from '../../config/constants';
-import { recordTransaction } from '../../views/transactions/transactions.api';
+import { awaitTransaction } from '../../views/transactions/transactions.api';
 import { fetching, softReset } from '../../views/transactions/transactions.reducer';
 import { RootState } from '../reducers';
 
@@ -18,7 +18,7 @@ const SubmissionModal = () => {
     if (submitted && transaction) {
       setVisibility(true);
       dispatch(fetching());
-      dispatch(recordTransaction(transaction));
+      dispatch(awaitTransaction(transaction));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [submitted, transaction]);
@@ -26,7 +26,6 @@ const SubmissionModal = () => {
   useEffect(() => {
     if (success) {
       setVisibility(false);
-      // dispatch(hardReset());
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [success]);
