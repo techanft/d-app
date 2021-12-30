@@ -1,9 +1,8 @@
 import { BigNumber, ethers } from 'ethers';
-import TokenProxy from '../assets/deployments/bsc-testnet/Token_Proxy.json';
-import TokenImplementation from '../assets/deployments/bsc-testnet/Token_Implementation.json';
 import listingArtifact from '../assets/artifacts/Listing.json';
+import TokenImplementation from '../assets/deployments/bsc-testnet/Token_Implementation.json';
+import TokenProxy from '../assets/deployments/bsc-testnet/Token_Proxy.json';
 import { Listing, Token } from '../typechain';
-import { convertBnToDecimal } from './casual-helpers';
 import { IAsset } from './models/assets.model';
 
 declare let window: any;
@@ -82,7 +81,8 @@ export const calculateStakeHolderReward = async ({
 }: ICalSHReward) => {
   const { ownership, totalStake, dailyPayment, value } = storedListing;
   if (!ownership || !totalStake || !dailyPayment || !value) return BigNumber.from(0);
-  
+  if (totalStake.eq(0)) return BigNumber.from(0);
+
   const userStake = await instance.stakings(optionId, stakeholder);
   const optionInfo = await instance.options(optionId);
 
@@ -103,7 +103,6 @@ export const calculateStakeHolderReward = async ({
   const above = RTd.mul(optionInfo._reward.toNumber()).div(100);
   const At = optionInfo._totalStake;
   const Ax = userStake._amount;
-
   const Ar = above.mul(Ax).div(At);
 
   const Sd = currentUnix.sub(userStake._start);

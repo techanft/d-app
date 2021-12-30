@@ -12,7 +12,7 @@ export interface IOption {
     reward: BigNumber | undefined;
     totalStake: BigNumber | undefined;
     isSet: boolean;
-    stake: IStake | null
+    stake: IStake | undefined
 }
 
 export const baseOptions : IOption[] = [
@@ -22,7 +22,7 @@ export const baseOptions : IOption[] = [
         reward: undefined,
         totalStake: undefined,
         isSet: false,
-        stake: null
+        stake: undefined
     },
     {
         id: 1,
@@ -30,7 +30,7 @@ export const baseOptions : IOption[] = [
         reward: undefined,
         totalStake: undefined,
         isSet: false,
-        stake: null
+        stake: undefined
     },
     {
         id: 2,
@@ -38,7 +38,7 @@ export const baseOptions : IOption[] = [
         reward: undefined,
         totalStake: undefined,
         isSet: false,
-        stake: null
+        stake: undefined
     },
     {
         id: 3,
@@ -46,7 +46,7 @@ export const baseOptions : IOption[] = [
         reward: undefined,
         totalStake: undefined,
         isSet: false,
-        stake: null
+        stake: undefined
     },
     {
         id: 4,
@@ -54,7 +54,7 @@ export const baseOptions : IOption[] = [
         reward: undefined,
         totalStake: undefined,
         isSet: false,
-        stake: null
+        stake: undefined
     },
     {
         id: 5,
@@ -62,12 +62,6 @@ export const baseOptions : IOption[] = [
         reward: undefined,
         totalStake: undefined,
         isSet: false,
-        stake: null
+        stake: undefined
     },
-] 
- 
-export interface ICompleteOption extends IOption {
-    start: BigNumber
-    amount: BigNumber
-    active: boolean;
-}
+]

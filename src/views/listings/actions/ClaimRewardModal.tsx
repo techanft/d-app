@@ -4,7 +4,8 @@ import { BigNumber } from 'ethers';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { calculateStakeHolderReward, ICalSHReward, LISTING_INSTANCE } from '../../../shared/blockchain-helpers';
-import { convertDecimalToBn, formatBNToken } from '../../../shared/casual-helpers';
+import { formatBNToken } from '../../../shared/casual-helpers';
+import { ToastError } from '../../../shared/components/Toast';
 import { EventType } from '../../../shared/enumeration/eventType';
 import { RootState } from '../../../shared/reducers';
 import { selectEntityById } from '../../assets/assets.reducer';
@@ -16,8 +17,9 @@ interface IClaimRewardModal {
   isVisible: boolean;
   setVisibility: (visible: boolean) => void;
   listingId: number;
-  optionId: number | undefined;
+  optionId: number;
 }
+
 const currentUnix = dayjs().unix();
 
 const ClaimRewardModal = (props: IClaimRewardModal) => {
@@ -61,46 +63,40 @@ const ClaimRewardModal = (props: IClaimRewardModal) => {
   };
 
   const onClaimRewardCnfrm = () => {
-    dispatch(fetching());
-    const body = handleConfirmValues();
-    dispatch(proceedTransaction(body));
+    try {
+      dispatch(fetching());
+      const body = handleConfirmValues();
+      dispatch(proceedTransaction(body));
+    } catch (error) {
+      console.log(`Error submitting form ${error}`);
+      ToastError(`Error submitting form ${error}`);
+    }
   };
-
-  const { initialState } = useSelector((state: RootState) => state.assets);
-  // const { registerLogs } = initialState;
 
   const [amountToReturn, setAmountToReturn] = useState<BigNumber | undefined>(undefined);
 
   const proceedCalculation = async () => {
-
     if (!listing || !signer || !signerAddress) return;
     const instance = LISTING_INSTANCE(listing.address, signer);
-
     if (!instance) return;
-    // if (!registerLogs) return;
-    if (optionId === undefined) return;
 
     const value: ICalSHReward = {
       instance: instance,
       optionId: optionId,
       stakeholder: signerAddress,
       currentUnix: BigNumber.from(currentUnix),
-      storedListing: listing
-      // stakeStart: registerLogs[optionId]?._start,
+      storedListing: listing,
     };
 
     const result = await calculateStakeHolderReward(value);
     setAmountToReturn(result);
     return result;
   };
-  
+
   useEffect(() => {
-    if (!listing || !signer || !signerAddress) return;
-
-  }, [listing, signer, signerAddress])
-
-
-  // caculateRewardValue();
+    proceedCalculation();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [optionId]);
 
   return (
     <CModal show={isVisible} onClose={closeModal()} centered className="border-radius-modal">
@@ -112,7 +108,7 @@ const ClaimRewardModal = (props: IClaimRewardModal) => {
           Bạn chắc chắn muốn nhận thưởng{' '}
           <span className="text-primary"> {amountToReturn ? formatBNToken(amountToReturn, true) : 0} </span>
           của hoạt động{' '}
-          <span className="text-primary">“{optionId !== undefined ? listing?.options[optionId].name : ''}”</span>
+          <span className="text-primary">“{listing?.options ? listing?.options[optionId].name : ''}”</span>
         </p>
       </CModalBody>
       <CModalFooter className="justify-content-between">
