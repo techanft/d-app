@@ -106,29 +106,29 @@ const ActivityLogs = (props: IActivityLogs) => {
   const { loading: withdrawLoading, withdraws } = initialState.withdrawInitialState;
   const { loading: ownershipLoading, ownerships } = initialState.ownershipInitialState;
 
-  const [rewardActiveTab, setRewardActiveTab] = useState<RecordType>(RecordType.REGISTER);
-  const [ownerActiveTab, setOwnerActiveTab] = useState<RecordType>(RecordType.WITHDRAW);
+  const [investmentActiveTab, setInvestmentActiveTab] = useState<RecordType>(RecordType.REGISTER);
+  const [ownershipActiveTab, setOwnershipActiveTab] = useState<RecordType>(RecordType.WITHDRAW);
 
   const activeTabMappingChange: TTableMappingSetTab = {
-    [TableType.OWNERSHIP]: setOwnerActiveTab,
-    [TableType.INVESTMENT]: setRewardActiveTab,
+    [TableType.OWNERSHIP]: setOwnershipActiveTab,
+    [TableType.INVESTMENT]: setInvestmentActiveTab,
   };
 
-  const [rewardFilterState, setRewardFilterState] = useState<IRecordParams>({
+  const [investmentFilterState, setInvestmentFilterState] = useState<IRecordParams>({
     page: 0,
     size: 10,
     sort: 'createdDate,desc',
   });
 
-  const [ownerFilterState, setOwnerFilterState] = useState<IRecordParams>({
+  const [ownershipFilterState, setOwnershipFilterState] = useState<IRecordParams>({
     page: 0,
     size: 10,
     sort: 'createdDate,desc',
   });
 
   const filterMappingChange: TTableMappingSetFilter = {
-    [TableType.OWNERSHIP]: setOwnerFilterState,
-    [TableType.INVESTMENT]: setRewardFilterState,
+    [TableType.OWNERSHIP]: setOwnershipFilterState,
+    [TableType.INVESTMENT]: setInvestmentFilterState,
   };
 
   const recordResultMapping: TRecordTypeMappingResult = {
@@ -149,9 +149,9 @@ const ActivityLogs = (props: IActivityLogs) => {
     [RecordType.UPDATE_WORKER]: 0,
   };
 
-  const totalRewardPages = Math.ceil((totalRecordMapping[rewardActiveTab]) / rewardFilterState.size);
+  const totalInvestmentPages = Math.ceil((totalRecordMapping[investmentActiveTab]) / investmentFilterState.size);
 
-  const totalOwnerPages = Math.ceil((totalRecordMapping[ownerActiveTab]) / ownerFilterState.size);
+  const totalOwnershipPages = Math.ceil((totalRecordMapping[ownershipActiveTab]) / ownershipFilterState.size);
 
   const handlePaginationChange = (page: number, type: TableType) => {
     if (page !== 0) {
@@ -185,32 +185,32 @@ const ActivityLogs = (props: IActivityLogs) => {
 
   useEffect(() => {
     if (!listing?.address || !signerAddress) return;
-    const additionalRewardFilterParams = {
-      ...rewardFilterState,
+    const additionalInvestmentFilterParams = {
+      ...investmentFilterState,
       listingAddress: listing.address,
       stakeholder: signerAddress,
     };
-    const recordFetchingFunc = recordTypeMapingFetching[rewardActiveTab];
-    const recordApiFunc = recordTypeMapingApi[rewardActiveTab];
+    const recordFetchingFunc = recordTypeMapingFetching[investmentActiveTab];
+    const recordApiFunc = recordTypeMapingApi[investmentActiveTab];
     dispatch(recordFetchingFunc());
-    dispatch(recordApiFunc(additionalRewardFilterParams));
+    dispatch(recordApiFunc(additionalInvestmentFilterParams));
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [JSON.stringify(rewardFilterState), listing?.address, rewardActiveTab, signerAddress]);
+  }, [JSON.stringify(investmentFilterState), listing?.address, investmentActiveTab, signerAddress]);
 
   useEffect(() => {
     if (!listing?.address || !signerAddress) return;
     const additionalOwnerFilterParams =
-      ownerActiveTab === RecordType.OWNERSHIP_EXTENSION
+      ownershipActiveTab === RecordType.OWNERSHIP_EXTENSION
         ? { previousOwner: signerAddress, newOwner: signerAddress }
         : { owner: signerAddress };
-    const filter = { ...ownerFilterState, ...additionalOwnerFilterParams };
-    const recordFetchingFunc = recordTypeMapingFetching[ownerActiveTab];
-    const recordApiFunc = recordTypeMapingApi[ownerActiveTab];
+    const filter = { ...ownershipFilterState, ...additionalOwnerFilterParams };
+    const recordFetchingFunc = recordTypeMapingFetching[ownershipActiveTab];
+    const recordApiFunc = recordTypeMapingApi[ownershipActiveTab];
     dispatch(recordFetchingFunc());
     dispatch(recordApiFunc(filter));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [JSON.stringify(ownerFilterState), listing?.address, ownerActiveTab, signerAddress]);
+  }, [JSON.stringify(ownershipFilterState), listing?.address, ownershipActiveTab, signerAddress]);
 
   return (
     <CContainer fluid className="mx-0 my-2">
@@ -223,7 +223,7 @@ const ActivityLogs = (props: IActivityLogs) => {
             <CNavItem className="col-4 p-0">
               <CNavLink
                 onClick={onTabChange(RecordType.REGISTER, TableType.INVESTMENT)}
-                active={rewardActiveTab === RecordType.REGISTER}
+                active={investmentActiveTab === RecordType.REGISTER}
                 className="detail-title-font px-0 text-center text-primary"
               >
                 Register
@@ -232,7 +232,7 @@ const ActivityLogs = (props: IActivityLogs) => {
             <CNavItem className="col-4 p-0">
               <CNavLink
                 onClick={onTabChange(RecordType.UNREGISTER, TableType.INVESTMENT)}
-                active={rewardActiveTab === RecordType.UNREGISTER}
+                active={investmentActiveTab === RecordType.UNREGISTER}
                 className="detail-title-font px-0 text-center text-primary"
               >
                 Unregister
@@ -241,7 +241,7 @@ const ActivityLogs = (props: IActivityLogs) => {
             <CNavItem className="col-4 p-0">
               <CNavLink
                 onClick={onTabChange(RecordType.CLAIM, TableType.INVESTMENT)}
-                active={rewardActiveTab === RecordType.CLAIM}
+                active={investmentActiveTab === RecordType.CLAIM}
                 className="detail-title-font px-0 text-center text-primary"
               >
                 Claim Reward
@@ -249,34 +249,34 @@ const ActivityLogs = (props: IActivityLogs) => {
             </CNavItem>
           </CNav>
           <CTabContent>
-            <CTabPane active={rewardActiveTab === RecordType.REGISTER}>
+            <CTabPane active={investmentActiveTab === RecordType.REGISTER}>
               <ActivityLogsTable
                 results={recordResultMapping[RecordType.REGISTER]}
-                filterState={rewardFilterState}
+                filterState={investmentFilterState}
                 recordType={RecordType.REGISTER}
-                totalPages={totalRewardPages}
+                totalPages={totalInvestmentPages}
                 loading={registerLoading}
                 tableType={TableType.INVESTMENT}
                 handlePaginationChange={handlePaginationChange}
               />
             </CTabPane>
-            <CTabPane active={rewardActiveTab === RecordType.UNREGISTER}>
+            <CTabPane active={investmentActiveTab === RecordType.UNREGISTER}>
               <ActivityLogsTable
                 results={recordResultMapping[RecordType.UNREGISTER]}
-                filterState={rewardFilterState}
+                filterState={investmentFilterState}
                 recordType={RecordType.UNREGISTER}
-                totalPages={totalRewardPages}
+                totalPages={totalInvestmentPages}
                 loading={unregisterLoading}
                 tableType={TableType.INVESTMENT}
                 handlePaginationChange={handlePaginationChange}
               />
             </CTabPane>
-            <CTabPane active={rewardActiveTab === RecordType.CLAIM}>
+            <CTabPane active={investmentActiveTab === RecordType.CLAIM}>
               <ActivityLogsTable
                 results={recordResultMapping[RecordType.CLAIM]}
-                filterState={rewardFilterState}
+                filterState={investmentFilterState}
                 recordType={RecordType.CLAIM}
-                totalPages={totalRewardPages}
+                totalPages={totalInvestmentPages}
                 loading={claimLoading}
                 tableType={TableType.INVESTMENT}
                 handlePaginationChange={handlePaginationChange}
@@ -296,7 +296,7 @@ const ActivityLogs = (props: IActivityLogs) => {
             <CNavItem className="col-4 p-0">
               <CNavLink
                 onClick={onTabChange(RecordType.WITHDRAW, TableType.OWNERSHIP)}
-                active={ownerActiveTab === RecordType.WITHDRAW}
+                active={ownershipActiveTab === RecordType.WITHDRAW}
                 className="detail-title-font px-0 text-center text-primary"
               >
                 Withdraw Token
@@ -305,7 +305,7 @@ const ActivityLogs = (props: IActivityLogs) => {
             <CNavItem className="col-4 p-0">
               <CNavLink
                 onClick={onTabChange(RecordType.OWNERSHIP_EXTENSION, TableType.OWNERSHIP)}
-                active={ownerActiveTab === RecordType.OWNERSHIP_EXTENSION}
+                active={ownershipActiveTab === RecordType.OWNERSHIP_EXTENSION}
                 className="detail-title-font px-0 text-center text-primary"
               >
                 Recharge Token
@@ -313,23 +313,23 @@ const ActivityLogs = (props: IActivityLogs) => {
             </CNavItem>
           </CNav>
           <CTabContent>
-            <CTabPane active={ownerActiveTab === RecordType.WITHDRAW}>
+            <CTabPane active={ownershipActiveTab === RecordType.WITHDRAW}>
               <ActivityLogsTable
                 results={recordResultMapping[RecordType.WITHDRAW]}
-                filterState={ownerFilterState}
+                filterState={ownershipFilterState}
                 recordType={RecordType.WITHDRAW}
-                totalPages={totalOwnerPages}
+                totalPages={totalOwnershipPages}
                 loading={withdrawLoading}
                 tableType={TableType.OWNERSHIP}
                 handlePaginationChange={handlePaginationChange}
               />
             </CTabPane>
-            <CTabPane active={ownerActiveTab === RecordType.OWNERSHIP_EXTENSION}>
+            <CTabPane active={ownershipActiveTab === RecordType.OWNERSHIP_EXTENSION}>
               <ActivityLogsTable
                 results={recordResultMapping[RecordType.OWNERSHIP_EXTENSION]}
-                filterState={ownerFilterState}
+                filterState={ownershipFilterState}
                 recordType={RecordType.OWNERSHIP_EXTENSION}
-                totalPages={totalOwnerPages}
+                totalPages={totalOwnershipPages}
                 loading={ownershipLoading}
                 tableType={TableType.OWNERSHIP}
                 handlePaginationChange={handlePaginationChange}
