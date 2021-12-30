@@ -18,7 +18,15 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
 import { LISTING_INSTANCE } from '../../../shared/blockchain-helpers';
-import { convertBnToDecimal, convertDecimalToBn, convertUnixToDate, estimateOwnership, formatBNToken, insertCommas, unInsertCommas } from '../../../shared/casual-helpers';
+import {
+  convertBnToDecimal,
+  convertDecimalToBn,
+  convertUnixToDate,
+  estimateOwnership,
+  formatBNToken,
+  insertCommas,
+  unInsertCommas,
+} from '../../../shared/casual-helpers';
 import { ToastError } from '../../../shared/components/Toast';
 import { EventType } from '../../../shared/enumeration/eventType';
 import { RootState } from '../../../shared/reducers';
@@ -35,14 +43,18 @@ interface IExtendOwnershipModal {
 }
 
 interface IIntialValues {
-  tokenAmount: number,
+  tokenAmount: number;
 }
 
 const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
   const { isVisible, setVisibility, listingId, title } = props;
-  const listing = useSelector(selectEntityById(listingId));
+  const dispatch = useDispatch();
 
+  const listing = useSelector(selectEntityById(listingId));
+  const { signer } = useSelector((state: RootState) => state.wallet);
   const { submitted } = useSelector((state: RootState) => state.transactions);
+
+  const closeModal = () => (): void => setVisibility(false);
 
   useEffect(() => {
     if (submitted) {
@@ -51,30 +63,21 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [submitted]);
 
-  const dispatch = useDispatch();
-  const closeModal = () => (): void => setVisibility(false);
-
-  const { signer } = useSelector((state: RootState) => state.wallet);
-
   const initialValues: IIntialValues = {
     tokenAmount: 0,
-    // listingId
   };
 
   const validationSchema = Yup.object().shape({
     tokenAmount: Yup.number()
-      .test(
-        "dailyPayment-minimum",
-        `Minimum ownership for the listing is 1.0 day`,
-        function (value) {
-          if (!value) return true;
-          if (!listing?.dailyPayment) return false;
-          return value >= Number(convertBnToDecimal(listing.dailyPayment))
-
-        }
-      )
+      .test('dailyPayment-minimum', `Minimum ownership for the listing is 1.0 day`, 
+      function (value) {
+        if (!value) return true;
+        if (!listing?.dailyPayment) return false;
+        return value >= Number(convertBnToDecimal(listing.dailyPayment));
+      })
       .typeError('Số lượng token không hợp lệ')
-      .required('Vui lòng nhập số token muốn nạp'),
+      .required('Vui lòng nhập số token muốn nạp')
+      .min(1, 'Số lượng token không hợp lệ'),
   });
 
   const handleRawFormValues = (input: IIntialValues): IProceedTxBody => {
@@ -93,10 +96,10 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
       listingId,
       contract: instance,
       type: EventType.OWNERSHIP_EXTENSION,
-      args: {...baseSetterArgs, _amount: convertDecimalToBn(input.tokenAmount.toString())}
-    }
+      args: { ...baseSetterArgs, _amount: convertDecimalToBn(input.tokenAmount.toString()) },
+    };
 
-    return output
+    return output;
   };
 
   return (
@@ -138,7 +141,7 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                       <CLabel className="recharge-token-title">Số ANFT muốn nạp</CLabel>
                     </CCol>
 
-                    <CCol>
+                    <CCol xs={12}>
                       <CInput
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                           setFieldValue(`tokenAmount`, unInsertCommas(e.target.value));
@@ -174,11 +177,13 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                     {listing?.dailyPayment && listing?.ownership && values.tokenAmount ? (
                       <CCol xs={6}>
                         <p className="text-primary text-right">
-                          {estimateOwnership(
-                            convertDecimalToBn(String(values.tokenAmount)),
-                            listing.dailyPayment,
-                            listing.ownership
-                          )}
+                          {values.tokenAmount > 0
+                            ? estimateOwnership(
+                                convertDecimalToBn(String(values.tokenAmount)),
+                                listing.dailyPayment,
+                                listing.ownership
+                              )
+                            : ''}
                         </p>
                       </CCol>
                     ) : (
