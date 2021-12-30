@@ -49,6 +49,7 @@ type TRecordTypeMappingApi = { [key in RecordType]: AsyncThunk<unknown, IRecordP
 
 type TRecordTypeMappingFetch = { [key in RecordType]: ActionCreatorWithoutPayload<string> };
 
+// Just number, no undefined here
 type TRecordTypeMappingTotal = { [key in RecordType]: number | undefined };
 
 const recordTypeMapingApi: TRecordTypeMappingApi = {
@@ -71,7 +72,7 @@ const recordTypeMapingFetching: TRecordTypeMappingFetch = {
 
 enum TableType {
   OWNER = 'OWNER',
-  REWARD = 'REWARD',
+  REWARD = 'REWARD', // It should be Ownership & Investment (Hoạt động đầu tư & Hoạt động sở hữu)
 }
 
 type TTableMappingSetFilter = { [key in TableType]: React.Dispatch<React.SetStateAction<IRecordParams>> };
@@ -120,6 +121,7 @@ const ActivityLogs = (props: IActivityLogs) => {
     [TableType.REWARD]: setRewardFilterState,
   };
 
+  // Use || 0 here
   const totalRecordMapping: TRecordTypeMappingTotal = {
     [RecordType.REGISTER]: registers?.count,
     [RecordType.UNREGISTER]: unregisters?.count,
@@ -173,7 +175,21 @@ const ActivityLogs = (props: IActivityLogs) => {
   }, [JSON.stringify(rewardFilterState), listing?.address, rewardActiveTab]);
 
   useEffect(() => {
+    /*
+    if (!listing?.address || !signerAddress) return;
+    const additionalOwnerFilterParams =
+    ownerActiveTab === RecordType.OWNERSHIP_EXTENSION
+      ? { previousOwner: signerAddress, newOwner: signerAddress }
+      : { owner: signerAddress };
+      const filter = { ...ownerFilterState, ...additionalOwnerFilterParams };
+      const recordFetchingFunc = recordTypeMapingFetching[ownerActiveTab];
+      const recordApiFunc = recordTypeMapingApi[ownerActiveTab];
+      dispatch(recordFetchingFunc());
+      dispatch(recordApiFunc(filter));
+    */
+
     if (listing?.address && signerAddress) {
+      // ownerFilter => additionalOwnerFilterParams
       const ownerFilter =
         ownerActiveTab === RecordType.OWNERSHIP_EXTENSION
           ? { previousOwner: signerAddress, newOwner: signerAddress }
@@ -262,12 +278,18 @@ const ActivityLogs = (props: IActivityLogs) => {
             </CNavItem>
           </CNav>
           <CTabContent>
+            {/* 
+            
+              create a shared CDataTable with differents properties according to tabType
+            
+            */}
             <CTabPane active={rewardActiveTab === RecordType.REGISTER}>
               <CDataTable
                 noItemsView={{
                   noItems: 'No Item',
                 }}
                 striped
+                // registers?.results || [] ; hoặc tốt nhất là check { registers.result?.length bên ngoài }
                 items={registers?.results}
                 fields={registerField}
                 responsive
@@ -303,6 +325,7 @@ const ActivityLogs = (props: IActivityLogs) => {
             </CTabPane>
             <CTabPane active={rewardActiveTab === RecordType.UNREGISTER}>
               <CDataTable
+              // create an object noItemsViewTable = { noItems: 'No Item'} and use it globally
                 noItemsView={{
                   noItems: 'No Item',
                 }}
@@ -346,7 +369,7 @@ const ActivityLogs = (props: IActivityLogs) => {
                   noItems: 'No Item',
                 }}
                 striped
-                items={claims?.results}
+                items={claims?.results} // same as above
                 fields={claimField}
                 responsive
                 hover

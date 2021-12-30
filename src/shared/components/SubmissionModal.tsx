@@ -13,6 +13,7 @@ const SubmissionModal = () => {
 
   const [visibility, setVisibility] = useState(false);
 
+  // Remove this since recording is obsolete
   useEffect(() => {
     if (submitted && transaction) {
       setVisibility(true);

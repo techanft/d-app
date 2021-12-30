@@ -40,7 +40,7 @@ interface IWorkerListParams {
 
 interface IIntialValues {
   address: string;
-  eventId: number;
+  eventId: number; // This is obsolete
 }
 
 interface IWorkersList extends RouteComponentProps<IWorkerListParams> {}
@@ -161,6 +161,7 @@ const WorkersList = (props: IWorkersList) => {
     return output;
   };
 
+  // Tại sao entityToDelete lại có cả eventId
   const [entityToDelete, setEntityToDelete] = useState<IIntialValues | undefined>(undefined);
   const [delAlrtMdl, setDeltAlrtMdl] = useState<boolean>(false);
 

@@ -10,6 +10,7 @@ interface ITxData {
   assetId: number;
 }
 
+// Remove this since recording is obsolete
 export const recordTransaction = createAsyncThunk('recordTransaction', async (transaction: ICTransaction, thunkAPI) => {
   try {
     const { contractTransaction } = transaction;
