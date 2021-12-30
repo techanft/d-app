@@ -13,12 +13,11 @@ import {
   CModalFooter,
   CModalHeader,
   CModalTitle,
-  CRow,
+  CRow
 } from '@coreui/react';
 import dayjs from 'dayjs';
-import { BigNumber } from 'ethers';
 import { Formik } from 'formik';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
 import { LISTING_INSTANCE } from '../../../shared/blockchain-helpers';
@@ -26,7 +25,7 @@ import {
   convertDecimalToBn,
   estimateWithdrawAmount,
   insertCommas,
-  unInsertCommas,
+  unInsertCommas
 } from '../../../shared/casual-helpers';
 import { ToastError } from '../../../shared/components/Toast';
 import { EventType } from '../../../shared/enumeration/eventType';
@@ -61,7 +60,10 @@ const WithdrawModal = (props: IWithdrawModal) => {
   };
 
   const validationSchema = Yup.object().shape({
-    tokenAmount: Yup.number().typeError('Số lượng token không hợp lệ').required('Vui lòng nhập số token muốn nạp'),
+    tokenAmount: Yup.number()
+      .typeError('Số lượng token không hợp lệ')
+      .required('Vui lòng nhập số token muốn nạp')
+      .min(1, 'Số lượng token không hợp lệ'),
   });
 
   const handleRawFormValues = (input: IIntialValues): IProceedTxBody => {
@@ -88,11 +90,12 @@ const WithdrawModal = (props: IWithdrawModal) => {
 
   const [maximumWithdrawable, setMaximumWithdrawable] = useState<undefined | number>(undefined);
 
-  const resetMaximumWithdrawable = () => {
+  const resetMaximumWithdrawableAndCountdown = () => {
     if (!listing?.dailyPayment || !listing.ownership) return undefined;
     const currentUnix = dayjs().unix();
-    const result = estimateWithdrawAmount(listing.dailyPayment, listing.ownership.sub(120), currentUnix);
-    setMaximumWithdrawable(result);
+    const maximum = estimateWithdrawAmount(listing.dailyPayment, listing.ownership.sub(120), currentUnix);
+    setMaximumWithdrawable(maximum);
+    setTimeLeft(60);
   };
 
   useEffect(() => {
@@ -104,12 +107,12 @@ const WithdrawModal = (props: IWithdrawModal) => {
 
   useEffect(() => {
     if (isVisible) {
-      resetMaximumWithdrawable();
-      setTimeLeft(5);
+      resetMaximumWithdrawableAndCountdown();
     } else {
       setTimeLeft(undefined);
       setMaximumWithdrawable(undefined);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isVisible]);
 
   const [timeLeft, setTimeLeft] = useState<undefined | number>(undefined);
@@ -179,13 +182,12 @@ const WithdrawModal = (props: IWithdrawModal) => {
                           value={values.tokenAmount || ''}
                           onBlur={handleBlur}
                           className="btn-radius-50"
-                          type="number"
                         />
                         <CInputGroupAppend>
                           <CButton
                             color="primary"
                             className="btn-register-level"
-                            onClick={() => setFieldValue(`tokenAmount`, maximumWithdrawable)}
+                            onClick={() => setFieldValue(`tokenAmount`, insertCommas(maximumWithdrawable))}
                           >
                             MAX
                           </CButton>
@@ -217,7 +219,7 @@ const WithdrawModal = (props: IWithdrawModal) => {
                 ) : (
                   <CButton
                     className="px-2 w-100 btn btn-warning btn-font-style btn-radius-50"
-                    onClick={() => resetMaximumWithdrawable()}
+                    onClick={() => resetMaximumWithdrawableAndCountdown()}
                   >
                     REFRESH
                   </CButton>
