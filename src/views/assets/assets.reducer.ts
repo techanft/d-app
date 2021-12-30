@@ -2,10 +2,7 @@ import { createEntityAdapter, createSelector, createSlice, PayloadAction } from 
 import { IAsset } from '../../shared/models/assets.model';
 import { IGetAllResp, IInitialState } from '../../shared/models/base.model';
 import { RootState } from '../../shared/reducers';
-import { getEntities, getEntity, getStakeholderListingStakes, getEntityOptions } from './assets.api';
-import { cloneDeep } from 'lodash';
-import { deepCopy } from 'ethers/lib/utils';
-// import { assetsApi } from "./assets.api";
+import { getEntities, getEntity, getOptionsWithStakes } from './assets.api';
 
 const initialState: IInitialState = {
   fetchEntitiesSuccess: false,
@@ -73,40 +70,12 @@ const { actions, reducer } = createSlice({
       state.initialState.entityLoading = false;
       state.initialState.fetchEntitySuccess = false;
     },
-    [getEntityOptions.fulfilled.type]: (state, { payload }: PayloadAction<IAsset>) => {
+    [getOptionsWithStakes.fulfilled.type]: (state, { payload }: PayloadAction<IAsset>) => {
       assetsAdapter.upsertOne(state, payload);
       state.initialState.fetchEntitySuccess = true;
       state.initialState.entityLoading = false;
     },
-    [getEntityOptions.rejected.type]: (state, { payload }: PayloadAction<any>) => {
-      state.initialState.errorMessage = payload?.message;
-      state.initialState.entityLoading = false;
-      state.initialState.fetchEntitySuccess = false;
-    },
-    [getStakeholderListingStakes.fulfilled.type]: (state, { payload }: PayloadAction<IAsset>) => {
-      // const{id} = payload
-      // // const options = [...payload.options];
-      // // const modifiedPayload = {...payload};
-      // // console.log(state.entities, 'st')
-      // let a = deepCopy(state.entities)
-      // // console.log(a, 'a');
-      
-      // console.log(a,'a')
-      // let b = {...a, [id]: payload};
-      // console.log(b, 'b')
-      // state.entities = {};
-      // state.entities = {...b};
-      // state.entities = Object.assign(a, {})
-      // modifiedPayload.options = options
-      // console.log(modifiedPayload, 'modifiedPayload')
-      // assetsAdapter.removeAll(state);
-      // assetsAdapter.addOne(state, {...payload, options});
-      assetsAdapter.upsertOne(state, payload);
-
-      state.initialState.fetchEntitySuccess = true;
-      state.initialState.entityLoading = false;
-    },
-    [getStakeholderListingStakes.rejected.type]: (state, { payload }: PayloadAction<any>) => {
+    [getOptionsWithStakes.rejected.type]: (state, { payload }: PayloadAction<any>) => {
       state.initialState.errorMessage = payload?.message;
       state.initialState.entityLoading = false;
       state.initialState.fetchEntitySuccess = false;
@@ -118,7 +87,7 @@ const { actions, reducer } = createSlice({
 export default reducer;
 export const { fetchingEntities, fetchingEntity, hardReset, softReset } = actions;
 
-const { selectById, selectAll } = assetsAdapter.getSelectors();
+const { selectById } = assetsAdapter.getSelectors();
 
 const getAssetState = (rootState: RootState) => rootState.assets;
 
