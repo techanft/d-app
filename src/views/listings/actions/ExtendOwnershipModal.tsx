@@ -88,6 +88,7 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
       })
       .typeError('Incorrect input type!')
       .required('This field is required!')
+      // Wrong message
       .min(1, 'Incorrect input type!'),
   });
 
@@ -100,7 +101,7 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
     }
     const instance = LISTING_INSTANCE({address: listing.address, signer});
     if (!instance) {
-      throw Error('Error in generating contract instace');
+      throw Error('Error in generating contract instance');
     }
 
     const output: IProceedTxBody = {
@@ -128,7 +129,6 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
             const value = handleRawFormValues(rawValues);
             dispatch(fetching());
             dispatch(proceedTransaction(value));
-            // setVisibility(false);
           } catch (error) {
             console.log(`Error submitting form ${error}`);
             ToastError(`Error submitting form ${error}`);
@@ -144,7 +144,7 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                     <CCol xs={6}>
                       <CLabel className="recharge-token-title">Current ownership</CLabel>
                     </CCol>
-                    {listing?.dailyPayment && listing?.ownership ? (
+                    {listing?.ownership ? (
                       <CCol xs={6}>
                         <p className="text-primary text-right">{convertUnixToDate(listing.ownership.toNumber())}</p>
                       </CCol>
