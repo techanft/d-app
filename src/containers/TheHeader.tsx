@@ -14,13 +14,13 @@ import {
   CInputCheckbox,
   CLabel,
   CLink,
-  CRow
+  CRow,
 } from '@coreui/react';
 import { faAngleDown } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getProvider, TOKEN_INSTANCE } from '../shared/blockchain-helpers';
+import { TOKEN_INSTANCE } from '../shared/blockchain-helpers';
 import { getEllipsisTxt } from '../shared/casual-helpers';
 import { ToastError, ToastInfo } from '../shared/components/Toast';
 import { RootState } from '../shared/reducers';
@@ -31,19 +31,19 @@ import {
   getContractWithSigner,
   getProviderLogin,
   getSigner,
-  getTokenBalance
+  getTokenBalance,
 } from '../views/wallet/wallet.api';
 import { softReset as walletSoftReset } from '../views/wallet/wallet.reducer';
 
-declare let window: any;
 const TheHeader = () => {
   const dispatch = useDispatch();
-  const provider = getProvider();
+
   const {
     getProviderLoginSuccess,
     getSignerSuccess,
     signer,
     signerAddress,
+    provider,
     errorMessage: walletErrorMessage,
   } = useSelector((state: RootState) => state.wallet);
   const { initialState: assetsInitialState } = useSelector((state: RootState) => state.assets);
@@ -52,11 +52,8 @@ const TheHeader = () => {
   const { errorMessage: transactionErrorMessage } = useSelector((state: RootState) => state.transactions);
 
   const onConnectWallet = () => () => {
-    if (window.ethereum) {
-      dispatch(getProviderLogin(provider));
-    } else {
-      ToastInfo('No provider found');
-    }
+    if (!provider) return ToastInfo('No provider found');
+    dispatch(getProviderLogin(provider));
   };
 
   useEffect(() => {
@@ -66,7 +63,6 @@ const TheHeader = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [transactionErrorMessage]);
-
 
   useEffect(() => {
     if (assetErrorMessage) {
@@ -85,7 +81,7 @@ const TheHeader = () => {
   }, [walletErrorMessage]);
 
   useEffect(() => {
-    if (getProviderLoginSuccess) {
+    if (getProviderLoginSuccess && provider) {
       dispatch(getSigner(provider));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -93,7 +89,7 @@ const TheHeader = () => {
 
   useEffect(() => {
     if (getSignerSuccess && signer !== null) {
-      const TokenContract = TOKEN_INSTANCE();
+      const TokenContract = TOKEN_INSTANCE({ signer });
       if (!TokenContract) return;
       const body = { contract: TokenContract, signer };
       dispatch(getAddress(signer));
@@ -104,8 +100,8 @@ const TheHeader = () => {
   }, [getSignerSuccess]);
 
   useEffect(() => {
-    if (signerAddress) {
-      dispatch(getTokenBalance(signerAddress));
+    if (signerAddress && provider) {
+      dispatch(getTokenBalance({ address: signerAddress, provider }));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [signerAddress]);

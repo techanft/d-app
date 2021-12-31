@@ -21,19 +21,17 @@ interface IListingProps extends RouteComponentProps<IListingParams> {}
 const Listing = (props: IListingProps) => {
   const dispatch = useDispatch();
   const { success } = useSelector((state: RootState) => state.transactions);
-  const { match, history } = props;
+  const { provider } = useSelector((state: RootState) => state.wallet);
+  const { match,history } = props;
   const { id } = match.params;
   const { initialState } = useSelector((state: RootState) => state.assets);
   const { entityLoading, errorMessage } = initialState;
   const listing = useSelector(selectEntityById(Number(id)));
 
   useEffect(() => {
-    if (id) {
-      console.log('count getListing');
-
-      dispatch(fetchingEntity());
-      dispatch(getEntity(Number(id)));
-    }
+    if (!id || !provider) return;
+    dispatch(fetchingEntity());
+    dispatch(getEntity({ id: Number(id), provider }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, success]);
 

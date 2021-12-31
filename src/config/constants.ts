@@ -1,3 +1,5 @@
+import { IWindowEth } from "../shared/models/base.model";
+
 export const APP_DATE_FORMAT = "HH:mm - DD/MM/YY";
 export const APP_TIMESTAMP_FORMAT = "DD/MM/YY HH:mm:ss";
 export const APP_LOCAL_DATE_FORMAT = "DD/MM/YYYY";
@@ -12,3 +14,5 @@ export const MAX_SUPPLY = 1232000000;
 export const TOKEN_SYMBOL = "ANFT";
 export const SERVER_API_URL = 'https://dapp-dev.anft.vn/api/';
 export const SCAN_URL = 'https://testnet.bscscan.com/';
+
+export const _window = window as unknown as IWindowEth

@@ -15,7 +15,7 @@ import {
   CInputGroupAppend,
   CLabel,
   CLink,
-  CRow
+  CRow,
 } from '@coreui/react';
 import { faClipboardCheck } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -44,7 +44,7 @@ const Register = (props: IRegisterProps) => {
   const { id } = match.params;
 
   const dispatch = useDispatch();
-  const { signerAddress } = useSelector((state: RootState) => state.wallet);
+  const { signerAddress, provider } = useSelector((state: RootState) => state.wallet);
 
   const { initialState } = useSelector((state: RootState) => state.assets);
   const { entityLoading } = initialState;
@@ -149,13 +149,16 @@ const Register = (props: IRegisterProps) => {
   };
 
   useEffect(() => {
-    if (id) {
-      dispatch(fetchingEntity());
-      dispatch(getEntity(Number(id)));
-    }
+    if (!id || !provider) return;
+    dispatch(fetchingEntity());
+    dispatch(
+      getEntity({
+        id: Number(id),
+        provider,
+      })
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
-
 
   return (
     <CContainer fluid className="mx-0 my-2">
