@@ -36,6 +36,7 @@ const Listings = ({routingProps}: IListingsProps) => {
   // const {  totalItems } = useSelector((state: RootState) => state.assets);
   const dispatch = useDispatch();
   const { initialState } = useSelector((state: RootState) => state.assets);
+  const { provider } = useSelector((state: RootState) => state.wallet);
   const { totalItems, entitiesLoading } = initialState;
   const assets = useSelector(assetsSelectors.selectAll);
 
@@ -58,8 +59,9 @@ const Listings = ({routingProps}: IListingsProps) => {
   // console.log(loading, 'loading many')
 
   useEffect(() => {
+    if (!provider) return;
     dispatch(fetchingEntities());
-    dispatch(getEntities(filterState));
+    dispatch(getEntities({fields: filterState, provider }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(filterState)]);
 

@@ -1,12 +1,4 @@
-import {
-  CCol,
-  CContainer, CLabel,
-  CNav,
-  CNavItem,
-  CNavLink, CRow,
-  CTabContent,
-  CTabPane
-} from '@coreui/react';
+import { CCol, CContainer, CLabel, CNav, CNavItem, CNavLink, CRow, CTabContent, CTabPane } from '@coreui/react';
 import { ActionCreatorWithoutPayload, AsyncThunk } from '@reduxjs/toolkit';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -18,7 +10,7 @@ import {
   IRecordRegister,
   IRecordUnRegister,
   IRecordWithdraw,
-  IRecordWorker
+  IRecordWorker,
 } from '../../../shared/models/record.model';
 import { RootState } from '../../../shared/reducers';
 import { getEntity } from '../../assets/assets.api';
@@ -30,14 +22,14 @@ import {
   getUnRegisterRecord,
   getWithdrawRecord,
   getWorkersRecord,
-  IRecordParams
+  IRecordParams,
 } from '../../records/records.api';
 import {
   fetchingClaim,
   fetchingOwnership,
   fetchingRegister,
   fetchingWithdraw,
-  fetchingWorker
+  fetchingWorker,
 } from '../../records/records.reducer';
 import '../index.scss';
 import ActivityLogsTable from './ActivityLogsTable';
@@ -96,7 +88,7 @@ const ActivityLogs = (props: IActivityLogs) => {
   const { id } = match.params;
   const dispatch = useDispatch();
   const listing = useSelector(selectEntityById(Number(id)));
-  const { signerAddress } = useSelector((state: RootState) => state.wallet);
+  const { signerAddress, provider } = useSelector((state: RootState) => state.wallet);
 
   const { initialState } = useSelector((state: RootState) => state.records);
 
@@ -149,9 +141,9 @@ const ActivityLogs = (props: IActivityLogs) => {
     [RecordType.UPDATE_WORKER]: 0,
   };
 
-  const totalInvestmentPages = Math.ceil((totalRecordMapping[investmentActiveTab]) / investmentFilterState.size);
+  const totalInvestmentPages = Math.ceil(totalRecordMapping[investmentActiveTab] / investmentFilterState.size);
 
-  const totalOwnershipPages = Math.ceil((totalRecordMapping[ownershipActiveTab]) / ownershipFilterState.size);
+  const totalOwnershipPages = Math.ceil(totalRecordMapping[ownershipActiveTab] / ownershipFilterState.size);
 
   const handlePaginationChange = (page: number, type: TableType) => {
     if (page !== 0) {
@@ -176,10 +168,9 @@ const ActivityLogs = (props: IActivityLogs) => {
   };
 
   useEffect(() => {
-    if (id) {
-      dispatch(fetchingEntity());
-      dispatch(getEntity(Number(id)));
-    }
+    if (!id || !provider) return;
+    dispatch(fetchingEntity());
+    dispatch(getEntity({ id: Number(id), provider }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 

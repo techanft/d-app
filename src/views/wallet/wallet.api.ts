@@ -1,5 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { ethers } from 'ethers';
+import { _window } from '../../config/constants';
 import { TOKEN_INSTANCE } from '../../shared/blockchain-helpers';
 
 interface IContractSigner {
@@ -10,7 +11,7 @@ interface ITransactionReceipt {
   provider: ethers.providers.Web3Provider;
   transactionHash: string;
 }
-
+ 
 export const getProviderLogin = createAsyncThunk(
   'getProviderLogin',
   async (provider: ethers.providers.Web3Provider, thunkAPI) => {
@@ -66,11 +67,24 @@ export const getTransactionReceipt = createAsyncThunk(
   }
 );
 
-export const getTokenBalance = createAsyncThunk('getTokenBalance', async (address: string, thunkAPI) => {
-  const tokenContract = TOKEN_INSTANCE();
+interface IGetTokenBalance {
+  address: string,
+  provider: ethers.providers.Web3Provider
+}
+export const getTokenBalance = createAsyncThunk('getTokenBalance', async ({address, provider}: IGetTokenBalance, thunkAPI) => {
+  const tokenContract = TOKEN_INSTANCE({provider, signer: undefined});
   if (!tokenContract) throw String('Error generating token contract');
   try {
     return await tokenContract.balanceOf(address);
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error);
+  }
+});
+
+export const getProvider = createAsyncThunk('getProvider', async (_, thunkAPI) => {
+  try {
+    const provider = new ethers.providers.Web3Provider(_window.ethereum);
+    return provider
   } catch (error) {
     return thunkAPI.rejectWithValue(error);
   }

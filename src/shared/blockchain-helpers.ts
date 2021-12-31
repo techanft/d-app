@@ -4,33 +4,32 @@ import TokenImplementation from "../assets/deployments/bsc-testnet/Token_Impleme
 import listingArtifact from "../assets/artifacts/Listing.json";
 import { Listing, Token } from "../typechain";
 
-declare let window:any;
+interface ITokenInstance {
+  signer?: ethers.providers.JsonRpcSigner,
+  provider?: ethers.providers.Web3Provider
+}
 
-export const getProvider = ():ethers.providers.Web3Provider => {
-  try {
-    return new ethers.providers.Web3Provider(window.ethereum);
-  } catch (error:any) {
-    return error;
-  }
-};
-
-const _provider = getProvider();
-
-export const TOKEN_INSTANCE = (signer?: ethers.providers.JsonRpcSigner ) : Token | null => {
+export const TOKEN_INSTANCE = ({signer, provider}: ITokenInstance ) : Token | null => {
   try {
     const contractAddress = TokenProxy.address;
+    if (!signer && !provider) throw String("requires either signer or provider to generate a instance"); 
     const contractABI = TokenImplementation.abi;
-    return new ethers.Contract(contractAddress, contractABI, signer || _provider) as Token;
+    return new ethers.Contract(contractAddress, contractABI, signer || provider) as Token;
   } catch (error) {
     console.log(`Error getting token instance: ${error}`);
     return null;
   }
 }
 
-export const LISTING_INSTANCE = (listingAdrr: string, signer?: ethers.providers.JsonRpcSigner) :  Listing | null => {
+interface IListingInstance extends ITokenInstance  {
+  address: string
+}
+
+export const LISTING_INSTANCE = ({address, signer, provider} : IListingInstance) :  Listing | null => {
   try {
     const contractABI = listingArtifact.abi;
-    return new ethers.Contract(listingAdrr, contractABI, signer || _provider) as Listing;
+    if (!signer && !provider) throw String("requires either signer or provider to generate a instance"); 
+    return new ethers.Contract(address, contractABI, signer || provider) as Listing;
   } catch (error) {
     console.log(`Error getting listing instance: ${error}`);
     return null;

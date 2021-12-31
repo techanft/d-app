@@ -22,12 +22,16 @@ export interface IExtndOwnershipBody extends Omit<IExtndOwnrshpIntialValues, "to
 const prefix = 'assets';
 
 // APIs calling centralized server
-export const getEntities = createAsyncThunk(`get-all-${prefix}`, async (fields: IAssetFilter, thunkAPI) => {
+interface IGetEntities {
+  fields: IAssetFilter
+  provider: ethers.providers.Web3Provider;
+}
+export const getEntities = createAsyncThunk(`get-all-${prefix}`, async ({fields, provider}: IGetEntities, thunkAPI) => {
   try {
     const params = pickBy(fields);
     const { data } = await axios.get<IGetAllResp<IAsset>>(`${prefix}`, { params });
     // Attemp to fetch blockchain data
-    const listingsPartialInfo = await getListingsPartialInfo(data.results);
+    const listingsPartialInfo = await getListingsPartialInfo(data.results, provider);
     data.results = listingsPartialInfo;
     return data;
   } catch (error: any) {
@@ -35,19 +39,23 @@ export const getEntities = createAsyncThunk(`get-all-${prefix}`, async (fields: 
   }
 });
 
-export const getEntity = createAsyncThunk(`get-single-${prefix}`, async (id: number, thunkAPI) => {
+interface IGetEntity {
+  id: number;
+  provider: ethers.providers.Web3Provider;
+}
+export const getEntity = createAsyncThunk(`get-single-${prefix}`, async ({id, provider}: IGetEntity, thunkAPI) => {
   try {
     const { data } = await axios.get<IAsset>(`${prefix}/${id}`);
-    return await getListingCompleteInfo(data);
+    return await getListingCompleteInfo(data, provider);
   } catch (error: any) {
     return thunkAPI.rejectWithValue(error.response.data);
   }
 });
 
 // APIs calling blockchain
-const getListingCompleteInfo = async (listing: IAsset): Promise<IAsset> => {
+const getListingCompleteInfo = async (listing: IAsset, provider: ethers.providers.Web3Provider): Promise<IAsset> => {
   try {
-    const instance = LISTING_INSTANCE(listing.address);
+    const instance = LISTING_INSTANCE({address: listing.address, provider});
     if (!instance) return listing;
     const promises = [
       instance.ownership(),
@@ -79,7 +87,7 @@ const getListingCompleteInfo = async (listing: IAsset): Promise<IAsset> => {
   }
 };
 
-const getListingsPartialInfo = async (listings: IAsset[]): Promise<IAsset[]> => {
+const getListingsPartialInfo = async (listings: IAsset[], provider: ethers.providers.Web3Provider): Promise<IAsset[]> => {
   try {
     // Only value and dailyPayment is neccessary
     const valuePromises: Promise<BigNumber | undefined>[] = [];
@@ -87,7 +95,7 @@ const getListingsPartialInfo = async (listings: IAsset[]): Promise<IAsset[]> => 
 
     for (let index = 0; index < listings.length; index++) {
       const { address } = listings[index];
-      const instance = LISTING_INSTANCE(address);
+      const instance = LISTING_INSTANCE({address, provider});
       if ( instance ) {
         valuePromises.push(instance.value());
         paymentPromises.push(instance.dailyPayment());

@@ -10,7 +10,7 @@ import {
   CLink,
   CPagination,
   CRow,
-  CTooltip
+  CTooltip,
 } from '@coreui/react';
 import {
   faArrowAltCircleDown,
@@ -18,7 +18,7 @@ import {
   faClipboard,
   faDonate,
   faEdit,
-  faIdBadge
+  faIdBadge,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
@@ -29,7 +29,7 @@ import {
   checkOwnershipExpired,
   convertUnixToDate,
   formatBNToken,
-  getEllipsisTxt
+  getEllipsisTxt,
 } from '../../../shared/casual-helpers';
 import InfoLoader from '../../../shared/components/InfoLoader';
 import { ToastError } from '../../../shared/components/Toast';
@@ -109,6 +109,7 @@ const ListingInfo = (props: IListingInfoProps) => {
   const dispatch = useDispatch();
   //get worker list
   const { initialState: recordInitialState } = useSelector((state: RootState) => state.records);
+  const { provider } = useSelector((state: RootState) => state.wallet);
   const { loading, workers, errorMessage: workerErrorMessage } = recordInitialState.workerInitialState;
   const listing = useSelector(selectEntityById(listingId));
   const [filterState, setFilterState] = useState<IParams>({
@@ -166,10 +167,10 @@ const ListingInfo = (props: IListingInfoProps) => {
   };
 
   useEffect(() => {
-    if (listingId) {
-      dispatch(fetchingEntity());
-      dispatch(getEntity(Number(listingId)));
-    }
+    if (!listingId || !provider) return;
+    dispatch(fetchingEntity());
+    dispatch(getEntity({ provider, id: Number(listingId) }));
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [listingId]);
 

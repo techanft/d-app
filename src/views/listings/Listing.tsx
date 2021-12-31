@@ -20,14 +20,14 @@ interface IListingProps extends RouteComponentProps<IListingParams> {}
 const Listing = (props: IListingProps) => {
   const dispatch = useDispatch();
   const { success } = useSelector((state: RootState) => state.transactions);
+  const { provider } = useSelector((state: RootState) => state.wallet);
   const { match } = props;
   const { id } = match.params;
 
   useEffect(() => {
-    if (id) {
-      dispatch(fetchingEntity());
-      dispatch(getEntity(Number(id)));
-    }
+    if (!id || !provider) return;
+    dispatch(fetchingEntity());
+    dispatch(getEntity({ id: Number(id), provider }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, success]);
 
@@ -36,7 +36,7 @@ const Listing = (props: IListingProps) => {
       <SubmissionModal />
 
       <Primary listingId={Number(id)} />
-      <Secondary listingId={Number(id)}/>
+      <Secondary listingId={Number(id)} />
       <CRow className="mx-0">
         <CCol xs={12}>
           <CLabel className="text-primary content-title mt-3">More listing</CLabel>
