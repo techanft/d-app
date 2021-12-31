@@ -17,10 +17,9 @@ const App = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(getProvider());
+      dispatch(getProvider());    
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
 
   return (
     <HashRouter>
