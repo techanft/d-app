@@ -442,7 +442,17 @@ const Register = (props: IRegisterProps) => {
                                               </CButton>
                                             </CInputGroupAppend>
                                           ) : (
-                                            ''
+                                            <CInputGroupAppend>
+                                            <CButton
+                                              color="primary"
+                                              className="btn-radius-50 px-2"
+                                              onClick={() =>
+                                                setFieldValue(`registerAmount`, unInsertCommas(convertBnToDecimal(tokenBalance!)))
+                                              }
+                                            >
+                                              MAX
+                                            </CButton>
+                                          </CInputGroupAppend>
                                           )}
                                         </CInputGroup>
                                         {isEditingRegister || item.stake?.amount.eq(0) ? (
