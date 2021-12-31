@@ -1,7 +1,7 @@
 import { ethers } from "ethers";
-import TokenProxy from "../assets/deployments/bsc-testnet/Token_Proxy.json";
-import TokenImplementation from "../assets/deployments/bsc-testnet/Token_Implementation.json";
 import listingArtifact from "../assets/artifacts/Listing.json";
+import TokenImplementation from "../assets/deployments/bsc-testnet/Token_Implementation.json";
+import TokenProxy from "../assets/deployments/bsc-testnet/Token_Proxy.json";
 import { Listing, Token } from "../typechain";
 
 declare let window:any;

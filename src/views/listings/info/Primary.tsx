@@ -39,8 +39,6 @@ import { IAsset } from '../../../shared/models/assets.model';
 import { IParams } from '../../../shared/models/base.model';
 import { IRecordWorker } from '../../../shared/models/record.model';
 import { RootState } from '../../../shared/reducers';
-import { getEntity } from '../../assets/assets.api';
-import { fetchingEntity, selectEntityById } from '../../assets/assets.reducer';
 import { getWorkersRecord } from '../../records/records.api';
 import { fetchingWorker, softResetWorker } from '../../records/records.reducer';
 import ExtendOwnershipModal from '../actions/ExtendOwnershipModal';
@@ -74,7 +72,7 @@ const ownershipText = (viewerAddr: string | undefined, listingInfo: IAsset) => {
   return <p className={`ownership-checked m-0 ${textClassname}`}>{textContent}</p>;
 };
 interface IListingInfoProps {
-  listingId: number;
+  listing: IAsset;
 }
 
 const titleTableStyle = {
@@ -105,12 +103,12 @@ const initialCollapseState: TCollapseVisibility = {
 };
 
 const ListingInfo = (props: IListingInfoProps) => {
-  const { listingId } = props;
+  const { listing } = props;
   const dispatch = useDispatch();
   //get worker list
   const { initialState: recordInitialState } = useSelector((state: RootState) => state.records);
   const { loading, workers, errorMessage: workerErrorMessage } = recordInitialState.workerInitialState;
-  const listing = useSelector(selectEntityById(listingId));
+
   const [filterState, setFilterState] = useState<IParams>({
     page: 0,
     size: 10,
@@ -166,20 +164,11 @@ const ListingInfo = (props: IListingInfoProps) => {
   };
 
   useEffect(() => {
-    if (listingId) {
-      dispatch(fetchingEntity());
-      dispatch(getEntity(Number(listingId)));
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [listingId]);
-
-  useEffect(() => {
     if (listing?.address) {
       const filter = { ...filterState, listingAddress: listing.address };
       dispatch(fetchingWorker());
       dispatch(getWorkersRecord(filter));
     }
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(filterState), listing?.address]);
 
@@ -363,7 +352,7 @@ const ListingInfo = (props: IListingInfoProps) => {
                     </p>
                   </CRow>
                   <CRow className="mt-2 mx-0">
-                    <CLink to={`/listings/${listingId}/register`}>
+                    <CLink to={`/listings/${listing.id}/register`}>
                       <FontAwesomeIcon icon={faDonate} /> Đăng ký nhận thưởng
                     </CLink>
                   </CRow>
@@ -405,7 +394,7 @@ const ListingInfo = (props: IListingInfoProps) => {
                     </p>
                   </CRow>
                   <CRow className="mx-0">
-                    <CLink to={`/${listingId}/workers-list`}>
+                    <CLink to={`/${listing.id}/workers-list`}>
                       <FontAwesomeIcon icon={faClipboard} /> Quản lý quyền khai thác
                     </CLink>
                   </CRow>
@@ -415,19 +404,19 @@ const ListingInfo = (props: IListingInfoProps) => {
           </CCol>
 
           <ExtendOwnershipModal
-            listingId={listingId}
+            listingId={listing.id}
             isVisible={modalsVisibility[ModalType.OWNERSHIP_REGISTER]}
             setVisibility={(key: boolean) => handleModalVisibility(ModalType.OWNERSHIP_REGISTER, key)}
             title="Đăng ký sở hữu"
           />
           <ExtendOwnershipModal
-            listingId={listingId}
+            listingId={listing.id}
             isVisible={modalsVisibility[ModalType.OWNERSHIP_EXTENSION]}
             setVisibility={(key: boolean) => handleModalVisibility(ModalType.OWNERSHIP_EXTENSION, key)}
             title="Nạp ANFT"
           />
           <WithdrawTokenModal
-            listingId={listingId}
+            listingId={listing.id}
             isVisible={modalsVisibility[ModalType.OWNERSHIP_WITHDRAW]}
             setVisibility={(key: boolean) => handleModalVisibility(ModalType.OWNERSHIP_WITHDRAW, key)}
           />

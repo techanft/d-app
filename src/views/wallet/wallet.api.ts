@@ -53,19 +53,6 @@ export const getAddress = createAsyncThunk('getAddress', async (signer: ethers.p
   }
 });
 
-export const getTransactionReceipt = createAsyncThunk(
-  'getTransactionReceipt',
-  async (body: ITransactionReceipt, thunkAPI) => {
-    const { provider, transactionHash } = body;
-    try {
-      const receipt = await provider.getTransactionReceipt(transactionHash);
-      return receipt;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error);
-    }
-  }
-);
-
 export const getTokenBalance = createAsyncThunk('getTokenBalance', async (address: string, thunkAPI) => {
   const tokenContract = TOKEN_INSTANCE();
   if (!tokenContract) throw String('Error generating token contract');

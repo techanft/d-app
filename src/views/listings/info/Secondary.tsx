@@ -1,15 +1,16 @@
 import CIcon from '@coreui/icons-react';
 import { CCol, CContainer, CLabel, CLink, CRow } from '@coreui/react';
 import React from 'react';
+import { IAsset } from '../../../shared/models/assets.model';
 import { IListingDetails } from '../../../shared/models/listingDetails.model';
 import '../index.scss';
 
 interface IListingDetailProps {
-  listingId: number;
+  listing: IAsset;
 }
 
 const ListingDetails = (props: IListingDetailProps) => {
-  const { listingId } = props;
+  const { listing } = props;
 
   const demoListingDetails: IListingDetails = {
     address: 'Ciputra Hanoi',
@@ -70,7 +71,7 @@ const ListingDetails = (props: IListingDetailProps) => {
       </CRow>
       <CRow className="m-0 p-0">
         <CCol xs={12} className="text-center mt-3">
-          <CLink to={`/${listingId}/activity-logs`}>
+          <CLink to={`/${listing.id}/activity-logs`}>
             <CIcon name="cil-history" /> <u>Activity Logs</u>
           </CLink>
         </CCol>
