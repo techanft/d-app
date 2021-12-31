@@ -67,7 +67,7 @@ const WithdrawModal = (props: IWithdrawModal) => {
     tokenAmount: Yup.number()
       .typeError('Incorrect input type!')
       .required('This field is required!')
-      .min(1, 'Incorrect input type!'),
+      .min(1, 'Minimum withdraw for the listing is 1.0 token!'),
   });
 
   const handleRawFormValues = (input: IIntialValues): IProceedTxBody => {

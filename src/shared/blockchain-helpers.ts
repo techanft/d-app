@@ -5,6 +5,7 @@ import listingArtifact from '../assets/artifacts/Listing.json';
 import { Listing, Token } from '../typechain';
 import { BLOCKCHAIN_NETWORK, _window } from '../config/constants';
 import { IAsset } from './models/assets.model';
+import { IOption } from './models/options.model';
 
 interface ITokenInstance {
   signer?: ethers.providers.JsonRpcSigner;
@@ -64,7 +65,7 @@ export const checkWorkerStatus = async (listing: Listing, address: string, statu
 };
 export interface ICalSHReward {
   instance: Listing;
-  optionId: number;
+  optionInfo: IOption;
   stakeholder: string;
   storedListing: IAsset;
   currentUnix: BigNumber;
@@ -72,7 +73,7 @@ export interface ICalSHReward {
 
 export const calculateStakeHolderReward = async ({
   instance,
-  optionId,
+  optionInfo,
   stakeholder,
   currentUnix,
   storedListing,
@@ -81,8 +82,7 @@ export const calculateStakeHolderReward = async ({
   if (!ownership || !totalStake || !dailyPayment || !value) return BigNumber.from(0);
   if (totalStake.eq(0)) return BigNumber.from(0);
 
-  const userStake = await instance.stakings(optionId, stakeholder);
-  const optionInfo = await instance.options(optionId);
+  const userStake = await instance.stakings(optionInfo.id, stakeholder);
 
   let T = totalStake.mul(100).div(value);
 
@@ -98,8 +98,8 @@ export const calculateStakeHolderReward = async ({
   }
 
   const RTd = dailyPayment.mul(T).div(100);
-  const above = RTd.mul(optionInfo._reward.toNumber()).div(100);
-  const At = optionInfo._totalStake.eq(0) ? 1 : optionInfo._totalStake;
+  const above = RTd.mul(optionInfo.reward!.toNumber()).div(100);
+  const At = optionInfo.totalStake!.eq(0) ? 1 : optionInfo.totalStake!;
   const Ax = userStake._amount;
   const Ar = above.mul(Ax).div(At);
 

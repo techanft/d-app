@@ -56,8 +56,6 @@ const Listings = ({routingProps}: IListingsProps) => {
     }
   };
 
-  // console.log(loading, 'loading many')
-
   useEffect(() => {
     if (!provider) return;
     dispatch(fetchingEntities());

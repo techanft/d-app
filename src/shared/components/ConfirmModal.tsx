@@ -1,7 +1,5 @@
 import { CButton, CCol, CModal, CModalBody, CModalFooter, CModalHeader, CModalTitle } from '@coreui/react';
-import React, { useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import { RootState } from '../reducers';
+import React from 'react';
 
 interface IConfirmModal {
   color: 'danger' | 'success' | 'info' | 'warning' | 'primary';
@@ -9,7 +7,7 @@ interface IConfirmModal {
   content?: string;
   isVisible: boolean;
   onConfirm: () => void;
-  onAbort: (visible: boolean) => void;
+  onAbort: () => void;
   CustomJSX?: () => JSX.Element;
   hideFooter?: boolean;
   disableCloseBackdrop?: boolean;

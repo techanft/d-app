@@ -34,7 +34,7 @@ import {
   convertUnixToDate,
   formatBNToken,
   insertCommas,
-  unInsertCommas
+  unInsertCommas,
 } from '../../../shared/casual-helpers';
 import ConfirmModal from '../../../shared/components/ConfirmModal';
 import InfoLoader from '../../../shared/components/InfoLoader';
@@ -59,6 +59,32 @@ interface IRegister {
   registerAmount: number;
 }
 
+const titleTableStyle = {
+  textAlign: 'left',
+  color: '#828282',
+  fontSize: '0.875rem',
+  lineHeight: '16px',
+  fontWeight: '400',
+};
+
+const registerView = [
+  {
+    key: 'activityName',
+    _style: titleTableStyle,
+    label: 'Hoạt động',
+  },
+  {
+    key: 'reward',
+    _style: titleTableStyle,
+    label: 'Tỉ lệ thưởng',
+  },
+  {
+    key: 'registerAmount',
+    _style: titleTableStyle,
+    label: 'Mức đăng ký',
+  },
+];
+
 interface IRegisterProps extends RouteComponentProps<IRegisterParams> {}
 
 const Register = (props: IRegisterProps) => {
@@ -66,57 +92,25 @@ const Register = (props: IRegisterProps) => {
   const { id } = match.params;
 
   const dispatch = useDispatch();
-  const [initialRegisterAmount, setInitialRegisterAmount] = useState<number | undefined>(undefined);
-
   const formikRef = useRef<FormikProps<IRegister>>(null);
 
   const { signerAddress, signer, provider } = useSelector((state: RootState) => state.wallet);
 
   const { initialState } = useSelector((state: RootState) => state.assets);
   const { tokenBalance } = useSelector((state: RootState) => state.wallet);
-  const { success } = useSelector((state: RootState) => state.transactions);
+  const { success, submitted } = useSelector((state: RootState) => state.transactions);
 
   const { entityLoading } = initialState;
 
-  const listingId = Number(id);
-  const listing = useSelector(selectEntityById(listingId));
+  const listing = useSelector(selectEntityById(Number(id)));
 
   const { width: screenWidth } = useWindowDimensions();
-
-  // Move non-state constant outside the componet
-  const titleTableStyle = {
-    textAlign: 'left',
-    color: '#828282',
-    fontSize: '0.875rem',
-    lineHeight: '16px',
-    fontWeight: '400',
-  };
-
-  const registerView = [
-    {
-      key: 'activityName',
-      _style: titleTableStyle,
-      label: 'Hoạt động',
-    },
-    {
-      key: 'reward',
-      _style: titleTableStyle,
-      label: 'Tỉ lệ thưởng',
-    },
-    {
-      key: 'registerAmount',
-      _style: titleTableStyle,
-      label: 'Mức đăng ký',
-    },
-  ];
 
   const [details, setDetails] = useState<string[]>([]);
 
   const toggleDetails = (reqId: string) => {
     if (!signerAddress) return ToastError('Bạn chưa liên kết với ví của mình');
-    
-    // This is an async function
-    proceedCalculation(Number(reqId));
+    proceedCalculation(Number(reqId)).then((res) => setAmountToReturn(res));
 
     const position = details.indexOf(reqId);
     let newDetails = details.slice();
@@ -154,13 +148,13 @@ const Register = (props: IRegisterProps) => {
     if (!signer) {
       throw Error('No Signer found');
     }
-    const instance = LISTING_INSTANCE({address: listing.address, signer});
+    const instance = LISTING_INSTANCE({ address: listing.address, signer });
     if (!instance) {
       throw Error('Error in generating contract instace');
     }
 
     const output: IProceedTxBody = {
-      listingId,
+      listingId: Number(id),
       contract: instance,
       type: EventType.REGISTER,
       args: {
@@ -185,25 +179,25 @@ const Register = (props: IRegisterProps) => {
       })
       .typeError('Incorrect input type!')
       .required('This field is required!')
-      .min(1, 'Incorrect input type!'),
+      .min(1, 'Minimum register for the listing is 1.0 token!'),
   });
 
-  const handleUnregisterValues = (optionId: number) => {
+  const handleClaimAndUnregisterValues = (optionId: number, type: EventType) => {
     if (!listing?.address) {
       throw Error('Error getting listing address');
     }
     if (!signer) {
       throw Error('No Signer found');
     }
-    const instance = LISTING_INSTANCE({address: listing.address, signer});
+    const instance = LISTING_INSTANCE({ address: listing.address, signer });
     if (!instance) {
       throw Error('Error in generating contract instace');
     }
 
     const output: IProceedTxBody = {
-      listingId,
+      listingId: Number(id),
       contract: instance,
-      type: EventType.UNREGISTER,
+      type: type,
       args: { ...baseSetterArgs, _optionId: optionId },
     };
 
@@ -212,13 +206,30 @@ const Register = (props: IRegisterProps) => {
 
   const onUnregisterCnfrm = (id: number) => {
     dispatch(fetching());
-    const body = handleUnregisterValues(id);
+    const body = handleClaimAndUnregisterValues(id, EventType.UNREGISTER);
     dispatch(proceedTransaction(body));
   };
 
-  // Replace id with listingId
+  const onClaimRewardCnfrm = (id: number) => {
+    dispatch(fetching());
+    const body = handleClaimAndUnregisterValues(id, EventType.CLAIM);
+    dispatch(proceedTransaction(body));
+  };
+
   useEffect(() => {
-      if (!id || !provider) return;
+    if (!id || !provider) return;
+    dispatch(fetchingEntity());
+    dispatch(
+      getEntity({
+        id: Number(id),
+        provider,
+      })
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
+
+  useEffect(() => {
+    if (success && id && provider) {
       dispatch(fetchingEntity());
       dispatch(
         getEntity({
@@ -226,16 +237,6 @@ const Register = (props: IRegisterProps) => {
           provider,
         })
       );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
-
-  useEffect(() => {
-    if (success && id && provider) {
-      dispatch(fetchingEntity());
-      dispatch( getEntity({
-        id: Number(id),
-        provider,
-      }));
       dispatch(hardReset());
       setDetails([]);
     }
@@ -254,6 +255,13 @@ const Register = (props: IRegisterProps) => {
     registerAmount: 0,
   };
 
+  useEffect(() => {
+    if (submitted) {
+      setModalVisibility(initialModalState);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [submitted]);
+
   const createInitialValues = (item: IOption): IRegister => {
     if (!item.stake?.amount) return initialValues;
     return { ...initialValues, registerAmount: Number(convertBnToDecimal(item.stake.amount)) };
@@ -262,35 +270,32 @@ const Register = (props: IRegisterProps) => {
   const [amountToReturn, setAmountToReturn] = useState<BigNumber | undefined>(undefined);
 
   const proceedCalculation = async (optionId: number) => {
-    if (!listing || !signer || !signerAddress) return;
-    const instance = LISTING_INSTANCE({address: listing.address, signer});
-    if (!instance) return;
+    if (!listing || !signer || !signerAddress || !listing.options) return BigNumber.from(0);
+    const instance = LISTING_INSTANCE({ address: listing.address, signer });
+    if (!instance) return BigNumber.from(0);
+    const optionInfo = listing.options.find(({ id }) => id === optionId);
 
     const currentUnix = dayjs().unix();
 
     const value: ICalSHReward = {
       instance: instance,
-      optionId: optionId,
+      optionInfo: optionInfo!,
       stakeholder: signerAddress,
       currentUnix: BigNumber.from(currentUnix),
       storedListing: listing,
     };
 
     const result = await calculateStakeHolderReward(value);
-    
-    setAmountToReturn(result); 
-    
-    // Why return here?
-    // Is {proceedCalculation} a calculating function or a setting function?
+
     return result;
   };
 
   const onRefreshAmountToReturn = (optionId: number) => (): void => {
-    proceedCalculation(optionId);
+    proceedCalculation(optionId).then((res) => setAmountToReturn(res));
   };
 
   const [isEditingRegister, setIsEditingRegister] = useState<boolean>(false);
-  // const [initialRegisterAmount, setInitialRegisterAmount] = useState<number | undefined>(undefined);
+  const [initialRegisterAmount, setInitialRegisterAmount] = useState<number | undefined>(undefined);
   const [chosenOptionId, setChosenOptionId] = useState<number | undefined>(undefined);
 
   const onEditingRegister = (registerAmount: number) => () => {
@@ -367,6 +372,14 @@ const Register = (props: IRegisterProps) => {
                         <CCardBody className="px-3">
                           <CRow className="align-items-center">
                             <CCol xs={12}>
+                              <CFormGroup row>
+                                <CCol xs={6}>
+                                  <CLabel className="font-weight-bold my-2">Tokens available: </CLabel>
+                                </CCol>
+                                <CCol xs={6}>
+                                  <p className="text-primary my-2">{formatBNToken(tokenBalance, true)}</p>
+                                </CCol>
+                              </CFormGroup>
                               {item.stake?.start && !item.stake.start.eq(0) ? (
                                 <CFormGroup row>
                                   <CCol xs={6}>
@@ -541,15 +554,15 @@ const Register = (props: IRegisterProps) => {
             title="Nhận thưởng hoạt động"
             CustomJSX={() => {
               if (chosenOptionId === undefined || !listing?.options) return <></>;
-                return (
-                  <p>
-                    Bạn chắc chắn muốn nhận thưởng của hoạt động{' '}
-                    <span className="text-primary">“{listing.options[chosenOptionId].name}”</span>
-                  </p>
-                );
+              return (
+                <p>
+                  Bạn chắc chắn muốn nhận thưởng của hoạt động{' '}
+                  <span className="text-primary">“{listing.options[chosenOptionId].name}”</span>
+                </p>
+              );
             }}
-            onConfirm={() => onUnregisterCnfrm(listing?.options ? listing.options[chosenOptionId!].id : 0)}
-            onAbort={(key: boolean) => handleModalVisibility(ModalType.REWARD_UNREGISTER, key)}
+            onConfirm={() => onClaimRewardCnfrm(listing?.options ? listing.options[chosenOptionId!].id : 0)}
+            onAbort={() => handleModalVisibility(ModalType.REWARD_CLAIM, false)}
           />
           <ConfirmModal
             isVisible={modalsVisibility[ModalType.REWARD_UNREGISTER]}
@@ -557,24 +570,24 @@ const Register = (props: IRegisterProps) => {
             title="Xác nhận hủy đăng ký"
             CustomJSX={() => {
               if (chosenOptionId === undefined || !listing?.options) return <></>;
-                return (
-                  <p>
-                    Bạn chắc chắn muốn hủy{' '}
-                    <span className="text-primary">“{listing.options[chosenOptionId].name}”</span> với đăng ký{' '}
-                    <span className="text-primary">
-                      {formatBNToken(listing.options[chosenOptionId].stake?.amount, true)}
-                    </span>
-                  </p>
-                );
+              return (
+                <p>
+                  Bạn chắc chắn muốn hủy <span className="text-primary">“{listing.options[chosenOptionId].name}”</span>{' '}
+                  với đăng ký{' '}
+                  <span className="text-primary">
+                    {formatBNToken(listing.options[chosenOptionId].stake?.amount, true)}
+                  </span>
+                </p>
+              );
             }}
             onConfirm={() => onUnregisterCnfrm(listing?.options ? listing.options[chosenOptionId!].id : 0)}
-            onAbort={(key: boolean) => handleModalVisibility(ModalType.REWARD_UNREGISTER, key)}
+            onAbort={() => handleModalVisibility(ModalType.REWARD_UNREGISTER, false)}
           />
           <CCol xs={12} className="px-0">
             <i className="detail-title-font">*Lựa chọn Hoạt động bạn muốn SỬA hoặc HỦY đăng ký</i>
           </CCol>
           <CCol xs={12} className="text-center my-2">
-            <CLink to={`/${listingId}/activity-logs`}>
+            <CLink to={`/${Number(id)}/activity-logs`}>
               <CIcon name="cil-history" /> Activity Logs
             </CLink>
           </CCol>
