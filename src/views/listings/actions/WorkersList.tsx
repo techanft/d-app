@@ -9,7 +9,7 @@ import {
   CDataTable,
   CLabel,
   CPagination,
-  CRow
+  CRow,
 } from '@coreui/react';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -38,7 +38,6 @@ interface IWorkerListParams {
   [x: string]: string;
 }
 
-
 interface IWorkersList extends RouteComponentProps<IWorkerListParams> {}
 
 const titleTableStyle = {
@@ -59,7 +58,7 @@ const WorkersList = (props: IWorkersList) => {
 
   const dispatch = useDispatch();
   const listing = useSelector(selectEntityById(Number(id)));
-  const { signer } = useSelector((state: RootState) => state.wallet);
+  const { signer, provider } = useSelector((state: RootState) => state.wallet);
   const { initialState } = useSelector((state: RootState) => state.records);
   const { success, submitted } = useSelector((state: RootState) => state.transactions);
   const { loading, workers, errorMessage: workerErrorMessage } = initialState.workerInitialState;
@@ -94,10 +93,10 @@ const WorkersList = (props: IWorkersList) => {
   }, [submitted]);
 
   useEffect(() => {
-    if (id) {
-      dispatch(fetchingEntity());
-      dispatch(getEntity(Number(id)));
-    }
+    if (!id || !provider) return;
+    dispatch(fetchingEntity());
+    dispatch(getEntity({ id: Number(id), provider }));
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
@@ -130,7 +129,7 @@ const WorkersList = (props: IWorkersList) => {
     if (!signer) {
       throw Error('No Signer found');
     }
-    const instance = LISTING_INSTANCE(listing.address, signer);
+    const instance = LISTING_INSTANCE({address: listing.address, signer});
     if (!instance) {
       throw Error('Error in generating contract instance');
     }
@@ -146,7 +145,7 @@ const WorkersList = (props: IWorkersList) => {
   };
 
   // Tại sao entityToDelete lại có cả eventId
-  const [entityToDelete, setEntityToDelete] = useState<string>("");
+  const [entityToDelete, setEntityToDelete] = useState<string>('');
   const [delAlrtMdl, setDeltAlrtMdl] = useState<boolean>(false);
 
   const onDelMldConfrmed = () => {
@@ -162,7 +161,7 @@ const WorkersList = (props: IWorkersList) => {
     }
   };
   const onDelMldAbort = () => {
-    setEntityToDelete("");
+    setEntityToDelete('');
     setDeltAlrtMdl(false);
   };
 
@@ -259,7 +258,7 @@ const WorkersList = (props: IWorkersList) => {
             {entityToDelete && (
               <>
                 Bạn chắc chắn muốn hủy quyền khai thác của
-                <span className="text-primary">{getEllipsisTxt(entityToDelete,6) || '_'}</span>
+                <span className="text-primary">{getEllipsisTxt(entityToDelete, 6) || '_'}</span>
               </>
             )}
           </p>

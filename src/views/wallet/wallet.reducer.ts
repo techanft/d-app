@@ -1,10 +1,18 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { BigNumber, ethers } from "ethers";
-import { getAddress, getContractWithSigner, getProviderLogin, getSigner, getTokenBalance, getTransactionReceipt } from "./wallet.api";
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { BigNumber, ethers } from 'ethers';
+import {
+  getAddress,
+  getContractWithSigner,
+  getProviderLogin,
+  getSigner,
+  getTokenBalance,
+  getTransactionReceipt,
+  getProvider,
+} from './wallet.api';
 
-interface IAuthenticationState {
-  transactionReceipt:ethers.providers.TransactionReceipt|null;
-  getTransactionRecepitSuccess:boolean;
+interface IWalletState {
+  transactionReceipt: ethers.providers.TransactionReceipt | null;
+  getTransactionRecepitSuccess: boolean;
 
   signerAddress: string | undefined;
   getSignerAddressSuccess: boolean;
@@ -19,14 +27,17 @@ interface IAuthenticationState {
   getTokenBalanceSuccess: boolean;
   tokenBalance: BigNumber | undefined;
 
+  provider: undefined | ethers.providers.Web3Provider;
+  providerErrorMessage: null | string;
+
   loading: boolean;
   user: any | null;
   errorMessage: string | null;
 }
 
-const initialState: IAuthenticationState = {
-  transactionReceipt:null,
-  getTransactionRecepitSuccess:false,
+const initialState: IWalletState = {
+  transactionReceipt: null,
+  getTransactionRecepitSuccess: false,
   signerAddress: undefined,
   getSignerAddressSuccess: false,
   contractWithSigner: null,
@@ -34,24 +45,26 @@ const initialState: IAuthenticationState = {
   signer: null,
   getSignerSuccess: false,
   getProviderLoginSuccess: false,
+  provider: undefined,
   loading: false,
   getTokenBalanceSuccess: false,
   user: null,
   tokenBalance: undefined,
   errorMessage: null,
+  providerErrorMessage: null
 };
 
 // export type IAuthentication = Readonly<typeof initialState>;
 
 const walletSlice = createSlice({
-  name: "walletSlice",
+  name: 'walletSlice',
   initialState,
   reducers: {
     fetching(state) {
       state.loading = true;
     },
     reset(state) {
-      state.signerAddress = "";
+      state.signerAddress = '';
       state.getSignerAddressSuccess = false;
       state.contractWithSigner = null;
       state.getContractWithSignerSuccess = false;
@@ -62,6 +75,7 @@ const walletSlice = createSlice({
       state.user = null;
       state.tokenBalance = undefined;
       state.errorMessage = null;
+      state.providerErrorMessage = null;
     },
     softReset(state) {
       state.getSignerAddressSuccess = false;
@@ -70,6 +84,9 @@ const walletSlice = createSlice({
       state.getProviderLoginSuccess = false;
       state.loading = false;
       state.errorMessage = null;
+    },
+    setProviderError(state, action: PayloadAction<string | null>) {
+      state.providerErrorMessage = action.payload
     },
   },
   extraReducers: {
@@ -116,7 +133,10 @@ const walletSlice = createSlice({
       state.errorMessage = payload?.message;
       state.loading = false;
     },
-    [getTransactionReceipt.fulfilled.type]: (state, { payload }: PayloadAction<ethers.providers.TransactionReceipt>) => {
+    [getTransactionReceipt.fulfilled.type]: (
+      state,
+      { payload }: PayloadAction<ethers.providers.TransactionReceipt>
+    ) => {
       state.transactionReceipt = payload;
       state.getTransactionRecepitSuccess = true;
       state.errorMessage = null;
@@ -138,8 +158,14 @@ const walletSlice = createSlice({
       state.getTokenBalanceSuccess = false;
       state.loading = false;
     },
+    [getProvider.fulfilled.type]: (state, { payload }: PayloadAction<ethers.providers.Web3Provider>) => {
+      state.provider = payload;
+    },
+    [getProvider.rejected.type]: (state, { payload }) => {
+      state.providerErrorMessage = payload?.message;
+    },
   },
 });
 
 export default walletSlice.reducer;
-export const { fetching, reset, softReset } = walletSlice.actions;
+export const { fetching, reset, softReset, setProviderError } = walletSlice.actions;
