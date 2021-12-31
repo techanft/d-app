@@ -336,7 +336,7 @@ const ListingInfo = (props: IListingInfoProps) => {
                 <CCardBody className="p-2">
                   <CRow className="mx-0">
                     <p
-                      onClick={() => handleModalVisibility(ModalType.OWNERSHIP_REGISTER, true)}
+                      onClick={() => viewerIsOwner || !ownershipExpired ? "" :  handleModalVisibility(ModalType.OWNERSHIP_REGISTER, true)}
                       className={`m-0 text-primary`}
                     >
                       <FontAwesomeIcon icon={faEdit} /> Đăng ký sở hữu
