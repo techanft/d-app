@@ -14,7 +14,7 @@ import {
   CInputCheckbox,
   CLabel,
   CLink,
-  CRow,
+  CRow
 } from '@coreui/react';
 import { faAngleDown } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -31,7 +31,7 @@ import {
   getContractWithSigner,
   getProviderLogin,
   getSigner,
-  getTokenBalance,
+  getTokenBalance
 } from '../views/wallet/wallet.api';
 import { softReset as walletSoftReset } from '../views/wallet/wallet.reducer';
 

@@ -25,6 +25,7 @@ export const getProviderLogin = createAsyncThunk(
 
 export const getSigner = createAsyncThunk('getSigner', async (provider: ethers.providers.Web3Provider, thunkAPI) => {
   try {
+    console.log("run")
     const result = provider.getSigner();
     return result;
   } catch (error) {
@@ -82,8 +83,10 @@ export const getTokenBalance = createAsyncThunk('getTokenBalance', async ({addre
 });
 
 export const getProvider = createAsyncThunk('getProvider', async (_, thunkAPI) => {
+  if (!_window.ethereum) throw String("Ethereum is not initialized");
   try {
     const provider = new ethers.providers.Web3Provider(_window.ethereum);
+    console.log(provider, 'provider')
     return provider
   } catch (error) {
     return thunkAPI.rejectWithValue(error);

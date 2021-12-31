@@ -156,6 +156,7 @@ const walletSlice = createSlice({
     },
     [getProvider.fulfilled.type]: (state, { payload }: PayloadAction<ethers.providers.Web3Provider>) => {
       state.provider = payload;
+      
       state.getProviderSuccess = true;
     },
     [getProvider.rejected.type]: (state, { payload }) => {
