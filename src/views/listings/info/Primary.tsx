@@ -22,7 +22,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { TOKEN_SYMBOL } from '../../../config/constants';
-import { checkOwnershipExpired, convertUnixToDate, formatBNToken } from '../../../shared/casual-helpers';
+import { checkOwnershipExpired, convertUnixToDate, formatBNToken, getEllipsisTxt } from '../../../shared/casual-helpers';
 import CopyTextToClipBoard from '../../../shared/components/CopyTextToClipboard';
 import InfoLoader from '../../../shared/components/InfoLoader';
 import { ToastError } from '../../../shared/components/Toast';

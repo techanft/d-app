@@ -61,9 +61,9 @@ const WithdrawModal = (props: IWithdrawModal) => {
 
   const validationSchema = Yup.object().shape({
     tokenAmount: Yup.number()
-      .typeError('Số lượng token không hợp lệ')
-      .required('Vui lòng nhập số token muốn nạp')
-      .min(1, 'Số lượng token không hợp lệ'),
+    .typeError('Incorrect input type!')
+    .required('This field is required!')
+    .min(1, 'Incorrect input type!'),
   });
 
   const handleRawFormValues = (input: IIntialValues): IProceedTxBody => {
@@ -179,14 +179,14 @@ const WithdrawModal = (props: IWithdrawModal) => {
                           id="tokenAmount"
                           autoComplete="off"
                           name="tokenAmount"
-                          value={values.tokenAmount || ''}
+                          value={values.tokenAmount ? insertCommas(values.tokenAmount) : ''}
                           onBlur={handleBlur}
                           className="btn-radius-50"
                         />
                         <CInputGroupAppend>
                           <CButton
                             color="primary"
-                            className="btn-register-level"
+                            className="btn-radius-50"
                             onClick={() => setFieldValue(`tokenAmount`, insertCommas(maximumWithdrawable))}
                           >
                             MAX

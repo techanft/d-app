@@ -84,8 +84,7 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
       })
       .typeError('Incorrect input type!')
       .required('This field is required!')
-
-      ,
+      .min(1, 'Incorrect input type!'),
   });
 
   const handleRawFormValues = (input: IIntialValues): IProceedTxBody => {
@@ -186,7 +185,7 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                           {tokenBalance ? (
                             <CButton
                               color="primary"
-                              className="btn-register-level"
+                              className="btn-radius-50"
                               onClick={() =>
                                 setFieldValue(`tokenAmount`, unInsertCommas(convertBnToDecimal(tokenBalance)))
                               }

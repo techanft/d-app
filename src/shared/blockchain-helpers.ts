@@ -101,7 +101,7 @@ export const calculateStakeHolderReward = async ({
 
   const RTd = dailyPayment.mul(T).div(100);
   const above = RTd.mul(optionInfo._reward.toNumber()).div(100);
-  const At = optionInfo._totalStake;
+  const At = optionInfo._totalStake.eq(0) ? 1 : optionInfo._totalStake;
   const Ax = userStake._amount;
   const Ar = above.mul(Ax).div(At);
 
