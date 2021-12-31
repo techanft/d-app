@@ -62,7 +62,7 @@ interface IRegister {
 const titleTableStyle = {
   textAlign: 'left',
   color: '#828282',
-  fontSize: '0.875rem',
+  fontSize: '0.95rem',
   lineHeight: '16px',
   fontWeight: '400',
 };
@@ -182,7 +182,7 @@ const Register = (props: IRegisterProps) => {
       .min(1, 'Minimum register for the listing is 1.0 token!'),
   });
 
-  const handleClaimAndUnregisterValues = (optionId: number, type: EventType) => {
+  const createTxBodyBaseOnType = (optionId: number, type: EventType) => {
     if (!listing?.address) {
       throw Error('Error getting listing address');
     }
@@ -206,13 +206,13 @@ const Register = (props: IRegisterProps) => {
 
   const onUnregisterCnfrm = (id: number) => {
     dispatch(fetching());
-    const body = handleClaimAndUnregisterValues(id, EventType.UNREGISTER);
+    const body = createTxBodyBaseOnType(id, EventType.UNREGISTER);
     dispatch(proceedTransaction(body));
   };
 
   const onClaimRewardCnfrm = (id: number) => {
     dispatch(fetching());
-    const body = handleClaimAndUnregisterValues(id, EventType.CLAIM);
+    const body = createTxBodyBaseOnType(id, EventType.CLAIM);
     dispatch(proceedTransaction(body));
   };
 
@@ -285,9 +285,7 @@ const Register = (props: IRegisterProps) => {
       storedListing: listing,
     };
 
-    const result = await calculateStakeHolderReward(value);
-
-    return result;
+    return await calculateStakeHolderReward(value);
   };
 
   const onRefreshAmountToReturn = (optionId: number) => (): void => {
@@ -373,25 +371,13 @@ const Register = (props: IRegisterProps) => {
                           <CRow className="align-items-center">
                             <CCol xs={12}>
                               <CFormGroup row>
-                                <CCol xs={6}>
-                                  <CLabel className="font-weight-bold my-2">Tokens available: </CLabel>
+                                <CCol xs={5}>
+                                  <CLabel className="font-weight-bold my-2">Tokens Balance </CLabel>
                                 </CCol>
-                                <CCol xs={6}>
+                                <CCol xs={7}>
                                   <p className="text-primary my-2">{formatBNToken(tokenBalance, true)}</p>
                                 </CCol>
                               </CFormGroup>
-                              {item.stake?.start && !item.stake.start.eq(0) ? (
-                                <CFormGroup row>
-                                  <CCol xs={6}>
-                                    <p className="font-weight-bold my-2">Ngày đăng ký: </p>
-                                  </CCol>
-                                  <CCol xs={6}>
-                                    <p className="my-2">{convertUnixToDate(item.stake?.start.toNumber())}</p>
-                                  </CCol>
-                                </CFormGroup>
-                              ) : (
-                                ''
-                              )}
                               <Formik
                                 innerRef={formikRef}
                                 enableReinitialize
@@ -411,10 +397,10 @@ const Register = (props: IRegisterProps) => {
                                 {({ values, errors, touched, handleBlur, handleSubmit, setFieldValue, submitForm }) => (
                                   <CForm className="form-horizontal" onSubmit={handleSubmit}>
                                     <CFormGroup row>
-                                      <CCol xs={6}>
-                                        <p className="font-weight-bold my-2">Mức đăng ký: </p>
+                                      <CCol xs={5}>
+                                        <p className="font-weight-bold my-2">Amount</p>
                                       </CCol>
-                                      <CCol xs={6}>
+                                      <CCol xs={7}>
                                         <CInputGroup>
                                           <CInput
                                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -425,7 +411,7 @@ const Register = (props: IRegisterProps) => {
                                             name="registerAmount"
                                             value={values.registerAmount ? insertCommas(values.registerAmount) : ''}
                                             onBlur={handleBlur}
-                                            placeholder="Mức đăng ký..."
+                                            placeholder="Registered amount..."
                                             className="btn-radius-50"
                                             disabled={!isEditingRegister && !item.stake?.amount.eq(0)}
                                           />
@@ -443,16 +429,19 @@ const Register = (props: IRegisterProps) => {
                                             </CInputGroupAppend>
                                           ) : (
                                             <CInputGroupAppend>
-                                            <CButton
-                                              color="primary"
-                                              className="btn-radius-50 px-2"
-                                              onClick={() =>
-                                                setFieldValue(`registerAmount`, unInsertCommas(convertBnToDecimal(tokenBalance!)))
-                                              }
-                                            >
-                                              MAX
-                                            </CButton>
-                                          </CInputGroupAppend>
+                                              <CButton
+                                                color="primary"
+                                                className="btn-radius-50 px-2"
+                                                onClick={() =>
+                                                  setFieldValue(
+                                                    `registerAmount`,
+                                                    unInsertCommas(convertBnToDecimal(tokenBalance!))
+                                                  )
+                                                }
+                                              >
+                                                MAX
+                                              </CButton>
+                                            </CInputGroupAppend>
                                           )}
                                         </CInputGroup>
                                         {isEditingRegister || item.stake?.amount.eq(0) ? (
@@ -472,10 +461,10 @@ const Register = (props: IRegisterProps) => {
                                       !item.stake.amount.eq(0) ? (
                                         <>
                                           <CFormGroup row>
-                                            <CCol xs={6}>
-                                              <p className="font-weight-bold my-2">Mức nhận thưởng: </p>
+                                            <CCol xs={5}>
+                                              <p className="font-weight-bold my-2">Reward</p>
                                             </CCol>
-                                            <CCol xs={6}>
+                                            <CCol xs={7}>
                                               <p className="text-primary my-2">
                                                 {amountToReturn ? formatBNToken(amountToReturn, true) : 0}
                                                 <CButton
@@ -487,6 +476,20 @@ const Register = (props: IRegisterProps) => {
                                               </p>
                                             </CCol>
                                           </CFormGroup>
+                                          {item.stake?.start && !item.stake.start.eq(0) ? (
+                                            <CFormGroup row>
+                                              <CCol xs={5}>
+                                                <p className="font-weight-bold my-2">Stake start </p>
+                                              </CCol>
+                                              <CCol xs={7}>
+                                                <p className="my-2">
+                                                  {convertUnixToDate(item.stake?.start.toNumber())}
+                                                </p>
+                                              </CCol>
+                                            </CFormGroup>
+                                          ) : (
+                                            ''
+                                          )}
                                           {isEditingRegister ? (
                                             <CFormGroup row>
                                               <CCol xs={12} className="d-flex justify-content-center mt-3">
