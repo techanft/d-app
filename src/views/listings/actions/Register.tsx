@@ -83,6 +83,7 @@ const Register = (props: IRegisterProps) => {
 
   const { width: screenWidth } = useWindowDimensions();
 
+  // Move non-state constant outside the componet
   const titleTableStyle = {
     textAlign: 'left',
     color: '#828282',
@@ -113,6 +114,8 @@ const Register = (props: IRegisterProps) => {
 
   const toggleDetails = (reqId: string) => {
     if (!signerAddress) return ToastError('Bạn chưa liên kết với ví của mình');
+    
+    // This is an async function
     proceedCalculation(Number(reqId));
 
     const position = details.indexOf(reqId);
@@ -213,6 +216,7 @@ const Register = (props: IRegisterProps) => {
     dispatch(proceedTransaction(body));
   };
 
+  // Replace id with listingId
   useEffect(() => {
     if (id) {
       dispatch(fetchingEntity());
@@ -266,7 +270,11 @@ const Register = (props: IRegisterProps) => {
     };
 
     const result = await calculateStakeHolderReward(value);
-    setAmountToReturn(result);
+    
+    setAmountToReturn(result); 
+    
+    // Why return here?
+    // Is {proceedCalculation} a calculating function or a setting function?
     return result;
   };
 
@@ -525,9 +533,7 @@ const Register = (props: IRegisterProps) => {
             color="success"
             title="Nhận thưởng hoạt động"
             CustomJSX={() => {
-              if (chosenOptionId === undefined || !listing?.options) {
-                return <></>;
-              } else
+              if (chosenOptionId === undefined || !listing?.options) return <></>;
                 return (
                   <p>
                     Bạn chắc chắn muốn nhận thưởng của hoạt động{' '}
@@ -543,9 +549,7 @@ const Register = (props: IRegisterProps) => {
             color="danger"
             title="Xác nhận hủy đăng ký"
             CustomJSX={() => {
-              if (chosenOptionId === undefined || !listing?.options) {
-                return <></>;
-              } else
+              if (chosenOptionId === undefined || !listing?.options) return <></>;
                 return (
                   <p>
                     Bạn chắc chắn muốn hủy{' '}

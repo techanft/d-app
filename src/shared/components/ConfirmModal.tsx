@@ -19,6 +19,7 @@ const ConfirmModal = (props: IConfirmModal) => {
 
   const closeModal = () => (): void => onAbort(false);
 
+  // Move this somewhere else
   useEffect(() => {
     if (submitted) {
       onAbort(false);
