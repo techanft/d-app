@@ -21,3 +21,6 @@ export interface IParams {
   page: number;
   sort?: string;
 }
+export interface IWindowEth extends Window {
+  ethereum: any;
+}

@@ -16,7 +16,7 @@ import {
   CInvalidFeedback,
   CLabel,
   CLink,
-  CRow
+  CRow,
 } from '@coreui/react';
 import { faPen, faSyncAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -70,7 +70,7 @@ const Register = (props: IRegisterProps) => {
 
   const formikRef = useRef<FormikProps<IRegister>>(null);
 
-  const { signerAddress, signer } = useSelector((state: RootState) => state.wallet);
+  const { signerAddress, signer, provider } = useSelector((state: RootState) => state.wallet);
 
   const { initialState } = useSelector((state: RootState) => state.assets);
   const { tokenBalance } = useSelector((state: RootState) => state.wallet);
@@ -151,7 +151,7 @@ const Register = (props: IRegisterProps) => {
     if (!signer) {
       throw Error('No Signer found');
     }
-    const instance = LISTING_INSTANCE(listing.address, signer);
+    const instance = LISTING_INSTANCE({address: listing.address, signer});
     if (!instance) {
       throw Error('Error in generating contract instace');
     }
@@ -192,7 +192,7 @@ const Register = (props: IRegisterProps) => {
     if (!signer) {
       throw Error('No Signer found');
     }
-    const instance = LISTING_INSTANCE(listing.address, signer);
+    const instance = LISTING_INSTANCE({address: listing.address, signer});
     if (!instance) {
       throw Error('Error in generating contract instace');
     }
@@ -214,17 +214,24 @@ const Register = (props: IRegisterProps) => {
   };
 
   useEffect(() => {
-    if (id) {
+      if (!id || !provider) return;
       dispatch(fetchingEntity());
-      dispatch(getEntity(listingId));
-    }
+      dispatch(
+        getEntity({
+          id: Number(id),
+          provider,
+        })
+      );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   useEffect(() => {
-    if (success && id) {
+    if (success && id && provider) {
       dispatch(fetchingEntity());
-      dispatch(getEntity(listingId));
+      dispatch( getEntity({
+        id: Number(id),
+        provider,
+      }));
       dispatch(hardReset());
       setDetails([]);
     }
@@ -232,9 +239,9 @@ const Register = (props: IRegisterProps) => {
   }, [success]);
 
   useEffect(() => {
-    if (listing && signerAddress) {
+    if (listing && signerAddress && provider) {
       dispatch(fetchingEntity());
-      dispatch(getOptionsWithStakes({ listing, stakeholder: signerAddress }));
+      dispatch(getOptionsWithStakes({ listing, stakeholder: signerAddress, provider }));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(listing), signerAddress]);
@@ -252,7 +259,7 @@ const Register = (props: IRegisterProps) => {
 
   const proceedCalculation = async (optionId: number) => {
     if (!listing || !signer || !signerAddress) return;
-    const instance = LISTING_INSTANCE(listing.address, signer);
+    const instance = LISTING_INSTANCE({address: listing.address, signer});
     if (!instance) return;
 
     const currentUnix = dayjs().unix();

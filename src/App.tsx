@@ -1,29 +1,25 @@
-import React from "react";
-import { useDispatch } from "react-redux";
-import { HashRouter, Route, Switch } from "react-router-dom";
-import "./scss/style.scss";
-import { getProvider } from "./shared/blockchain-helpers";
-import { getSigner } from "./views/wallet/wallet.api";
+import React, { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { HashRouter, Route, Switch } from 'react-router-dom';
+import './scss/style.scss';
+import { getProvider } from './views/wallet/wallet.api';
+
 
 const loading = (
   <div className="pt-3 text-center">
     <div className="sk-spinner sk-spinner-pulse"></div>
-  </div> 
+  </div>
 );
 
-// Containers
-const TheLayout = React.lazy(() => import("./containers/TheLayout"));
-declare let window: any;
+const TheLayout = React.lazy(() => import('./containers/TheLayout'));
 
 const App = () => {
   const dispatch = useDispatch();
 
-  if (window.ethereum) {
-    window.ethereum.on("accountsChanged", async function (accounts: any) {
-      const provider = getProvider();
-      dispatch(getSigner(provider));
-    });
-  }
+  useEffect(() => {
+      dispatch(getProvider());    
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <HashRouter>

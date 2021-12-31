@@ -98,7 +98,7 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
     if (!signer) {
       throw Error('No Signer found');
     }
-    const instance = LISTING_INSTANCE(listing.address, signer);
+    const instance = LISTING_INSTANCE({address: listing.address, signer});
     if (!instance) {
       throw Error('Error in generating contract instace');
     }
