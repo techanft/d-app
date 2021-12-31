@@ -124,7 +124,7 @@ export const getOptionsWithStakes = createAsyncThunk(
     try {
       const { listing, stakeholder } = body;
       const instance = LISTING_INSTANCE(listing.address);
-      if (!instance) throw 'Error in generating listing instance';
+      if (!instance) throw String('Error in generating listing instance');
       const options = await getOptionsOverview(instance);
       const optionsWithStakesPromises = options.map(({ id }) => getOptionStake(instance, id, stakeholder));
       const results = await Promise.all(optionsWithStakesPromises);

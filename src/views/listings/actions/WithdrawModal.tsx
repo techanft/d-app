@@ -13,11 +13,11 @@ import {
   CModalFooter,
   CModalHeader,
   CModalTitle,
-  CRow
+  CRow,
 } from '@coreui/react';
 import dayjs from 'dayjs';
-import { Formik } from 'formik';
-import React, { useEffect, useState } from 'react';
+import { Formik, FormikProps } from 'formik';
+import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
 import { LISTING_INSTANCE } from '../../../shared/blockchain-helpers';
@@ -25,7 +25,7 @@ import {
   convertDecimalToBn,
   estimateWithdrawAmount,
   insertCommas,
-  unInsertCommas
+  unInsertCommas,
 } from '../../../shared/casual-helpers';
 import { ToastError } from '../../../shared/components/Toast';
 import { EventType } from '../../../shared/enumeration/eventType';
@@ -48,12 +48,16 @@ interface IIntialValues {
 const WithdrawModal = (props: IWithdrawModal) => {
   const { isVisible, setVisibility, listingId } = props;
   const dispatch = useDispatch();
+  const formikRef = useRef<FormikProps<IIntialValues>>(null);
 
   const listing = useSelector(selectEntityById(listingId));
   const { signer } = useSelector((state: RootState) => state.wallet);
   const { submitted } = useSelector((state: RootState) => state.transactions);
 
-  const closeModal = () => (): void => setVisibility(false);
+  const closeModal = () => () => {
+    setVisibility(false);
+    formikRef.current?.resetForm();
+  };
 
   const initialValues: IIntialValues = {
     tokenAmount: 0,
@@ -61,9 +65,9 @@ const WithdrawModal = (props: IWithdrawModal) => {
 
   const validationSchema = Yup.object().shape({
     tokenAmount: Yup.number()
-    .typeError('Incorrect input type!')
-    .required('This field is required!')
-    .min(1, 'Incorrect input type!'),
+      .typeError('Incorrect input type!')
+      .required('This field is required!')
+      .min(1, 'Incorrect input type!'),
   });
 
   const handleRawFormValues = (input: IIntialValues): IProceedTxBody => {
@@ -139,6 +143,7 @@ const WithdrawModal = (props: IWithdrawModal) => {
         <CModalTitle className="modal-title-style">Withdraw Token</CModalTitle>
       </CModalHeader>
       <Formik
+        innerRef={formikRef}
         enableReinitialize
         initialValues={initialValues}
         validationSchema={validationSchema}

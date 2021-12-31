@@ -16,14 +16,14 @@ import {
   CInvalidFeedback,
   CLabel,
   CLink,
-  CRow,
+  CRow
 } from '@coreui/react';
 import { faPen, faSyncAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import dayjs from 'dayjs';
 import { BigNumber } from 'ethers';
-import { Formik } from 'formik';
-import React, { useEffect, useState } from 'react';
+import { Formik, FormikProps } from 'formik';
+import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
 import * as Yup from 'yup';
@@ -34,7 +34,7 @@ import {
   convertUnixToDate,
   formatBNToken,
   insertCommas,
-  unInsertCommas,
+  unInsertCommas
 } from '../../../shared/casual-helpers';
 import ConfirmModal from '../../../shared/components/ConfirmModal';
 import InfoLoader from '../../../shared/components/InfoLoader';
@@ -66,6 +66,10 @@ const Register = (props: IRegisterProps) => {
   const { id } = match.params;
 
   const dispatch = useDispatch();
+  const [initialRegisterAmount, setInitialRegisterAmount] = useState<number | undefined>(undefined);
+
+  const formikRef = useRef<FormikProps<IRegister>>(null);
+
   const { signerAddress, signer } = useSelector((state: RootState) => state.wallet);
 
   const { initialState } = useSelector((state: RootState) => state.assets);
@@ -123,6 +127,7 @@ const Register = (props: IRegisterProps) => {
     setChosenOptionId(undefined);
     setIsEditingRegister(false);
     setInitialRegisterAmount(undefined);
+    formikRef.current?.resetForm();
   };
 
   const initialModalState: TModalsVisibility = {
@@ -223,6 +228,7 @@ const Register = (props: IRegisterProps) => {
       dispatch(hardReset());
       setDetails([]);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [success]);
 
   useEffect(() => {
@@ -241,8 +247,6 @@ const Register = (props: IRegisterProps) => {
     if (!item.stake?.amount) return initialValues;
     return { ...initialValues, registerAmount: Number(convertBnToDecimal(item.stake.amount)) };
   };
-
-  const [chosenOptionId, setChosenOptionId] = useState<number | undefined>(undefined);
 
   const [amountToReturn, setAmountToReturn] = useState<BigNumber | undefined>(undefined);
 
@@ -271,8 +275,23 @@ const Register = (props: IRegisterProps) => {
   };
 
   const [isEditingRegister, setIsEditingRegister] = useState<boolean>(false);
+  // const [initialRegisterAmount, setInitialRegisterAmount] = useState<number | undefined>(undefined);
+  const [chosenOptionId, setChosenOptionId] = useState<number | undefined>(undefined);
 
-  const [initialRegisterAmount, setInitialRegisterAmount] = useState<number | undefined>(undefined);
+  const onEditingRegister = (registerAmount: number) => () => {
+    setIsEditingRegister(true);
+    setInitialRegisterAmount(registerAmount);
+  };
+
+  const onCancelEditingRegister = (setFieldValue: (field: string, value: any) => void) => () => {
+    setIsEditingRegister(false);
+    setFieldValue(`registerAmount`, initialRegisterAmount);
+  };
+
+  const onClaimRewardOrUnregister = (optionId: number, type: ModalType) => () => {
+    handleModalVisibility(type, true);
+    setChosenOptionId(optionId);
+  };
 
   return (
     <CContainer fluid className="mx-0 my-2">
@@ -346,6 +365,7 @@ const Register = (props: IRegisterProps) => {
                                 ''
                               )}
                               <Formik
+                                innerRef={formikRef}
                                 enableReinitialize
                                 initialValues={createInitialValues(item)}
                                 validationSchema={validationSchema}
@@ -383,18 +403,15 @@ const Register = (props: IRegisterProps) => {
                                           />
                                           {item.stake?.amount && !item.stake.amount.eq(0) && !isEditingRegister ? (
                                             <CInputGroupAppend>
-                                                <CButton
-                                                  color="primary"
-                                                  className="btn-radius-50"
-                                                  onClick={() => (
-                                                    setIsEditingRegister(true),
-                                                    setInitialRegisterAmount(
-                                                      Number(convertBnToDecimal(item.stake!.amount))
-                                                    )
-                                                  )}
-                                                >
-                                                  <FontAwesomeIcon icon={faPen} />
-                                                </CButton>
+                                              <CButton
+                                                color="primary"
+                                                className="btn-radius-50"
+                                                onClick={onEditingRegister(
+                                                  Number(convertBnToDecimal(item.stake.amount))
+                                                )}
+                                              >
+                                                <FontAwesomeIcon icon={faPen} />
+                                              </CButton>
                                             </CInputGroupAppend>
                                           ) : (
                                             ''
@@ -444,10 +461,7 @@ const Register = (props: IRegisterProps) => {
                                                 <CButton
                                                   className="btn-radius-50 btn btn-sm btn-outline-danger ml-2"
                                                   variant="ghost"
-                                                  onClick={() => (
-                                                    setIsEditingRegister(false),
-                                                    setFieldValue(`registerAmount`, initialRegisterAmount)
-                                                  )}
+                                                  onClick={onCancelEditingRegister(setFieldValue)}
                                                 >
                                                   Cancel
                                                 </CButton>
@@ -458,19 +472,16 @@ const Register = (props: IRegisterProps) => {
                                               <CCol xs={12} className="d-flex justify-content-center mt-3">
                                                 <CButton
                                                   className="btn-radius-50 btn btn-sm btn-success mr-2"
-                                                  onClick={() => (
-                                                    handleModalVisibility(ModalType.REWARD_CLAIM, true),
-                                                    setChosenOptionId(item.id)
-                                                  )}
+                                                  onClick={onClaimRewardOrUnregister(item.id, ModalType.REWARD_CLAIM)}
                                                 >
                                                   Claim Reward
                                                 </CButton>
                                                 <CButton
                                                   className="btn-radius-50 btn btn-sm btn-outline-danger ml-2"
                                                   variant="ghost"
-                                                  onClick={() => (
-                                                    handleModalVisibility(ModalType.REWARD_UNREGISTER, true),
-                                                    setChosenOptionId(item.id)
+                                                  onClick={onClaimRewardOrUnregister(
+                                                    item.id,
+                                                    ModalType.REWARD_UNREGISTER
                                                   )}
                                                 >
                                                   Unregister
@@ -552,7 +563,7 @@ const Register = (props: IRegisterProps) => {
             <i className="detail-title-font">*Lựa chọn Hoạt động bạn muốn SỬA hoặc HỦY đăng ký</i>
           </CCol>
           <CCol xs={12} className="text-center my-2">
-            <CLink to = {`/${listingId}/activity-logs`}>
+            <CLink to={`/${listingId}/activity-logs`}>
               <CIcon name="cil-history" /> Activity Logs
             </CLink>
           </CCol>

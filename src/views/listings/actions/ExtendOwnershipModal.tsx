@@ -15,8 +15,8 @@ import {
   CModalTitle,
   CRow,
 } from '@coreui/react';
-import { Formik } from 'formik';
-import React, { useEffect } from 'react';
+import { Formik, FormikProps } from 'formik';
+import React, { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
 import { LISTING_INSTANCE } from '../../../shared/blockchain-helpers';
@@ -51,13 +51,17 @@ interface IIntialValues {
 const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
   const { isVisible, setVisibility, listingId, title } = props;
   const dispatch = useDispatch();
-
+  const formikRef = useRef<FormikProps<IIntialValues>>(null);
+ 
   const listing = useSelector(selectEntityById(listingId));
   const { signer } = useSelector((state: RootState) => state.wallet);
   const { submitted } = useSelector((state: RootState) => state.transactions);
   const { tokenBalance } = useSelector((state: RootState) => state.wallet);
 
-  const closeModal = () => (): void => setVisibility(false);
+  const closeModal = () => () => {
+    setVisibility(false);
+    formikRef.current?.resetForm();
+  };
 
   useEffect(() => {
     if (submitted) {
@@ -115,6 +119,7 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
         <CModalTitle className="modal-title-style">{title}</CModalTitle>
       </CModalHeader>
       <Formik
+        innerRef={formikRef}
         enableReinitialize
         initialValues={initialValues}
         validationSchema={validationSchema}
