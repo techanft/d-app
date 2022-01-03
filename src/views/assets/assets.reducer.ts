@@ -2,7 +2,7 @@ import { createEntityAdapter, createSelector, createSlice, PayloadAction } from 
 import { IAsset } from '../../shared/models/assets.model';
 import { IGetAllResp, IInitialState } from '../../shared/models/base.model';
 import { RootState } from '../../shared/reducers';
-import { getEntities, getEntity, getOptionsWithStakes, IGetEntitiesResp } from './assets.api';
+import { getEntities, getEntity, getOptionsWithStakes } from './assets.api';
 
 const initialState: IInitialState = {
   fetchEntitiesSuccess: false,
@@ -48,12 +48,8 @@ const { actions, reducer } = createSlice({
     },
   },
   extraReducers: {
-    [getEntities.fulfilled.type]: (state, { payload }: PayloadAction<IGetEntitiesResp>) => {
-      if (payload.upsert) {
-        assetsAdapter.upsertMany(state, payload.results);
-      } else {
-        assetsAdapter.setAll(state, payload.results);
-      }
+    [getEntities.fulfilled.type]: (state, { payload }: PayloadAction<IGetAllResp<IAsset>>) => {
+      assetsAdapter.setAll(state, payload.results);
       state.initialState.totalItems = payload.count;
       state.initialState.fetchEntitiesSuccess = true;
       state.initialState.entitiesLoading = false;

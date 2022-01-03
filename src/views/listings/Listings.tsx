@@ -32,7 +32,7 @@ interface IListingsProps {
 const Listings = ({ routingProps }: IListingsProps) => {
   const { history, match } = routingProps;
 
-  const shouldUpsertEntities = match.path.includes('detail');
+  const insideDetailView = match.path.includes('detail');
 
   // const {  totalItems } = useSelector((state: RootState) => state.assets);
   const dispatch = useDispatch();
@@ -50,10 +50,8 @@ const Listings = ({ routingProps }: IListingsProps) => {
   const totalPages = Math.ceil(totalItems / filterState.size);
 
   const handlePaginationChange = (page: number) => {
-    if (!shouldUpsertEntities) {
-      window.scrollTo(0, 0);
-    }
     if (page !== 0) {
+      window.scrollTo(0, 0);
       setFilterState({ ...filterState, page: page - 1 });
     }
   };
@@ -61,7 +59,7 @@ const Listings = ({ routingProps }: IListingsProps) => {
   useEffect(() => {
     if (!provider) return;
     dispatch(fetchingEntities());
-    dispatch(getEntities({ fields: filterState, provider, upsert: shouldUpsertEntities }));
+    dispatch(getEntities({ fields: filterState, provider }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(filterState)]);
 
@@ -97,7 +95,7 @@ const Listings = ({ routingProps }: IListingsProps) => {
               </CCol>
             ))}
           </CRow>
-          {totalPages > 1 && (
+          {totalPages > 1 && !insideDetailView ? (
             <CPagination
               disabled={entitiesLoading}
               activePage={filterState.page + 1}
@@ -106,7 +104,7 @@ const Listings = ({ routingProps }: IListingsProps) => {
               align="center"
               className="mt-2"
             />
-          )}
+          ) : ''}
         </>
       )}
     </>

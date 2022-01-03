@@ -25,21 +25,15 @@ const prefix = 'assets';
 interface IGetEntities {
   fields: IAssetFilter
   provider: ethers.providers.Web3Provider;
-  upsert: boolean; // The upsert property decides if the adapter perform an "upsert" or "set" operation
 }
 
-export interface IGetEntitiesResp extends IGetAllResp<IAsset> {
-  upsert: boolean
-}
-
-export const getEntities = createAsyncThunk(`get-all-${prefix}`, async ({fields, provider, upsert}: IGetEntities, thunkAPI) => {
+export const getEntities = createAsyncThunk(`get-all-${prefix}`, async ({fields, provider}: IGetEntities, thunkAPI) => {
   try {
     const params = pickBy(fields);
-    const { data } = await axios.get<IGetEntitiesResp>(`${prefix}`, { params });
+    const { data } = await axios.get<IGetAllResp<IAsset> >(`${prefix}`, { params });
     // Attemp to fetch blockchain data
     const listingsPartialInfo = await getListingsPartialInfo(data.results, provider);
     data.results = listingsPartialInfo;
-    data.upsert = upsert
     return data;
   } catch (error: any) {
     return thunkAPI.rejectWithValue(error.response.data);
