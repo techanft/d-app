@@ -101,7 +101,6 @@ const ListingInfo = (props: IListingInfoProps) => {
   const dispatch = useDispatch();
   //get worker list
   const { initialState: recordInitialState } = useSelector((state: RootState) => state.records);
-  const { provider } = useSelector((state: RootState) => state.wallet);
   const { loading, workers, errorMessage: workerErrorMessage } = recordInitialState.workerInitialState;
   const listing = useSelector(selectEntityById(listingId));
   const [filterState, setFilterState] = useState<IParams>({
@@ -172,7 +171,7 @@ const ListingInfo = (props: IListingInfoProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(filterState), listing?.address]);
 
-  // listing
+
   return (
     <CContainer fluid className="px-0">
       <CCol xs={12} className="p-0">
