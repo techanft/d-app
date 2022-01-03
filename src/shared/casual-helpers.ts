@@ -84,20 +84,22 @@ export const estimateWithdrawAmount = (dailyPayment: BigNumber, currentOwnership
   return 0;
 };
 
-export const validateOwner = (viewerAddr: string | undefined, listingInfo: IAsset) => {
+// Returns true if viewer is the listing owner AND ownership is not expired
+export const validateOwnership = (viewerAddr: string | undefined, listingInfo: IAsset) => {
   const { ownership, owner } = listingInfo;
   if (!ownership || !owner) {
     return false;
   }
   const viewerIsOwner = viewerAddr === owner;
   const ownershipExpired = checkOwnershipExpired(ownership.toNumber());
-  if (!viewerIsOwner) {
-    return false;
-  } else {
-    if (!ownershipExpired) {
-      return true;
-    } else {
-      return false;
-    }
-  }
+
+  if (!viewerIsOwner) return false;
+
+  // console.log(ownershipExpired, 'ownershipExpired')
+
+  return !ownershipExpired;
+};
+
+export const formatLocalDatetime = (input: string | Date | undefined): string => {
+  return dayjs(input).format(APP_DATE_FORMAT);
 };

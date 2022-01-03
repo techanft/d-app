@@ -8,7 +8,7 @@ import {
   CDataTable,
   CLink,
   CPagination,
-  CRow,
+  CRow
 } from '@coreui/react';
 import {
   faArrowAltCircleDown,
@@ -16,13 +16,13 @@ import {
   faClipboard,
   faDonate,
   faEdit,
-  faIdBadge,
+  faIdBadge
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { TOKEN_SYMBOL } from '../../../config/constants';
-import { checkOwnershipExpired, convertUnixToDate, formatBNToken, getEllipsisTxt } from '../../../shared/casual-helpers';
+import { checkOwnershipExpired, convertUnixToDate, formatBNToken, formatLocalDatetime, getEllipsisTxt } from '../../../shared/casual-helpers';
 import CopyTextToClipBoard from '../../../shared/components/CopyTextToClipboard';
 import InfoLoader from '../../../shared/components/InfoLoader';
 import { ToastError } from '../../../shared/components/Toast';
@@ -32,8 +32,7 @@ import { IAsset } from '../../../shared/models/assets.model';
 import { IParams } from '../../../shared/models/base.model';
 import { IRecordWorker } from '../../../shared/models/record.model';
 import { RootState } from '../../../shared/reducers';
-import { getEntity } from '../../assets/assets.api';
-import { fetchingEntity, selectEntityById } from '../../assets/assets.reducer';
+import { selectEntityById } from '../../assets/assets.reducer';
 import { getWorkersRecord } from '../../records/records.api';
 import { fetchingWorker, softResetWorker } from '../../records/records.reducer';
 import ExtendOwnershipModal from '../actions/ExtendOwnershipModal';
@@ -82,13 +81,13 @@ const workerFields = [
   {
     key: 'address',
     _style: titleTableStyle,
-    label: 'Address Wallet',
+    label: 'Address',
   },
-  // {
-  //   key: 'createdDate',
-  //   _style: titleTableStyle,
-  //   label: 'Thời gian bắt đầu',
-  // },
+  {
+    key: 'createdDate',
+    _style: titleTableStyle,
+    label: 'Since',
+  },
 ];
 
 const initialCollapseState: TCollapseVisibility = {
@@ -158,18 +157,10 @@ const ListingInfo = (props: IListingInfoProps) => {
   const [collapseVisibility, setCollapseVisibility] = useState<TCollapseVisibility>(initialCollapseState);
 
   const toggleCollapseVisibility = (type: CollapseType) => () => {
-    if (!signerAddress) return ToastError('Bạn chưa liên kết với ví của mình');
-
+    const viewingWorkerList = type === CollapseType.WORKER_LIST; // Doesnt require wallet connection to view worker list
+    if (!signerAddress && !viewingWorkerList) return ToastError('Please connect your wallet!');
     setCollapseVisibility({ ...initialCollapseState, [type]: !collapseVisibility[type] });
   };
-
-  useEffect(() => {
-    if (!listingId || !provider) return;
-    dispatch(fetchingEntity());
-    dispatch(getEntity({ provider, id: Number(listingId) }));
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [listingId]);
 
   useEffect(() => {
     if (listing?.address) {
@@ -303,6 +294,9 @@ const ListingInfo = (props: IListingInfoProps) => {
                     scopedSlots={{
                       address: (item: IRecordWorker) => {
                         return <td>{getEllipsisTxt(item.worker, 10) || '_'}</td>;
+                      },
+                      createdDate: (item: IRecordWorker) => {
+                        return <td>{formatLocalDatetime(item.createdDate) }</td>;
                       },
                     }}
                   />
