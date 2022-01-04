@@ -62,7 +62,7 @@ interface IRegister {
 const titleTableStyle = {
   textAlign: 'left',
   color: '#828282',
-  fontSize: '0.95rem',
+  fontSize: '0.875rem',
   lineHeight: '16px',
   fontWeight: '400',
 };
@@ -229,14 +229,9 @@ const Register = (props: IRegisterProps) => {
   }, [id]);
 
   useEffect(() => {
-    if (success && id && provider) {
+    if (success && provider && listing && signerAddress) {
       dispatch(fetchingEntity());
-      dispatch(
-        getEntity({
-          id: Number(id),
-          provider,
-        })
-      );
+      dispatch(getOptionsWithStakes({ listing, stakeholder: signerAddress, provider }));
       dispatch(hardReset());
       setDetails([]);
     }
@@ -245,7 +240,7 @@ const Register = (props: IRegisterProps) => {
 
   useEffect(() => {
     // Only fetch listing option stakes if that stakes info is missing
-    const listingHasOptions = Boolean(listing?.options?.length)
+    const listingHasOptions = Boolean(listing?.options?.length);
     if (listing && !listingHasOptions && signerAddress && provider) {
       dispatch(fetchingEntity());
       dispatch(getOptionsWithStakes({ listing, stakeholder: signerAddress, provider }));
@@ -363,7 +358,15 @@ const Register = (props: IRegisterProps) => {
                   return <td>{item.reward ? `${item.reward.toString()}%` : '_'}</td>;
                 },
                 registerAmount: (item: IOption) => {
-                  return <td>{item.stake?.amount ? formatBNToken(item.stake?.amount, true) : '_'}</td>;
+                  return (
+                    <td>
+                      {item.stake?.amount.eq(0) ? (
+                        <span className="text-danger">Chưa đăng ký</span>
+                      ) : (
+                        formatBNToken(item.stake?.amount, true)
+                      )}
+                    </td>
+                  );
                 },
                 details: (item: IOption) => {
                   return (

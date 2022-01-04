@@ -247,7 +247,7 @@ const WorkersList = (props: IWorkersList) => {
             onClick={setRequestListener(true, setAddWorkerPermission)}
             disabled={listing ? !validateOwnership(signerAddress, listing) : true}
           >
-            Thêm quyền sở hữu
+            Thêm quyền khai thác
           </CButton>
         </CCol>
         <AddWorkerPermission listingId={Number(id)} visible={addWorkerPermission} setVisible={setAddWorkerPermission} />

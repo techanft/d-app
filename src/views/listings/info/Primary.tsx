@@ -200,7 +200,7 @@ const ListingInfo = (props: IListingInfoProps) => {
             )}
           </CCol>
 
-          <CCol xs={6} className=" mb-3">
+          <CCol xs={12} className=" mb-3">
             {!entityLoading && listing?.ownership ? (
               ownershipText(signerAddress, listing)
             ) : (
