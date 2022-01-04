@@ -22,7 +22,7 @@ const Listing = (props: IListingProps) => {
   const dispatch = useDispatch();
   const { success } = useSelector((state: RootState) => state.transactions);
   const { provider } = useSelector((state: RootState) => state.wallet);
-  const { match,history } = props;
+  const { match, history } = props;
   const { id } = match.params;
   const { initialState } = useSelector((state: RootState) => state.assets);
   const { entityLoading, errorMessage } = initialState;
@@ -36,7 +36,8 @@ const Listing = (props: IListingProps) => {
   }, [id, success]);
 
   useEffect(() => {
-    if (errorMessage) {
+    const messageIfEntityDoesNotExist = 'Not Found';
+    if (errorMessage === messageIfEntityDoesNotExist) {
       history.push('/');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
