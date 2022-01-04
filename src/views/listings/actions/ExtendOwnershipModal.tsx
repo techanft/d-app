@@ -52,7 +52,7 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
   const { isVisible, setVisibility, listingId, title } = props;
   const dispatch = useDispatch();
   const formikRef = useRef<FormikProps<IIntialValues>>(null);
- 
+
   const listing = useSelector(selectEntityById(listingId));
   const { signer } = useSelector((state: RootState) => state.wallet);
   const { submitted } = useSelector((state: RootState) => state.transactions);
@@ -60,8 +60,14 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
 
   const closeModal = () => () => {
     setVisibility(false);
-    formikRef.current?.resetForm();
   };
+
+  useEffect(() => {
+    if (!isVisible) {
+      formikRef.current?.resetForm();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isVisible]);
 
   useEffect(() => {
     if (submitted) {
@@ -99,7 +105,7 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
     if (!signer) {
       throw Error('No Signer found');
     }
-    const instance = LISTING_INSTANCE({address: listing.address, signer});
+    const instance = LISTING_INSTANCE({ address: listing.address, signer });
     if (!instance) {
       throw Error('Error in generating contract instance');
     }
