@@ -244,12 +244,14 @@ const Register = (props: IRegisterProps) => {
   }, [success]);
 
   useEffect(() => {
-    if (listing && signerAddress && provider) {
+    // Only fetch listing option stakes if that stakes info is missing
+    const listingHasOptions = Boolean(listing?.options?.length)
+    if (listing && !listingHasOptions && signerAddress && provider) {
       dispatch(fetchingEntity());
       dispatch(getOptionsWithStakes({ listing, stakeholder: signerAddress, provider }));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [JSON.stringify(listing), signerAddress]);
+  }, [listing, signerAddress]);
 
   const initialValues: IRegister = {
     registerAmount: 0,
