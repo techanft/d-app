@@ -21,15 +21,21 @@ const Listing = (props: IListingProps) => {
   const dispatch = useDispatch();
   const { success } = useSelector((state: RootState) => state.transactions);
   const { provider } = useSelector((state: RootState) => state.wallet);
+  const { initialState } = useSelector((state: RootState) => state.assets);
+  const { fetchEntitiesSuccess } = initialState;
   const { match } = props;
   const { id } = match.params;
 
   useEffect(() => {
-    if (!id || !provider) return;
+    /**
+     * Only fetch single entity (with complete info) after fetching entities (with partial info) successfuly
+     * to avoid partial info overriding complete info
+     */
+    if (!id || !provider || !fetchEntitiesSuccess) return;
     dispatch(fetchingEntity());
     dispatch(getEntity({ id: Number(id), provider }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id, success]);
+  }, [id, success, fetchEntitiesSuccess]);
 
   return (
     <>

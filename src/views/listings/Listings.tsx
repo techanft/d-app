@@ -12,7 +12,7 @@ import { getEntities } from '../assets/assets.api';
 import { assetsSelectors, fetchingEntities } from '../assets/assets.reducer';
 // import { useGetAssetsQuery } from '../assets/assets.api';
 import './index.scss';
- 
+
 export interface IListingShortInfo {
   id: number;
   infoImg: string;
@@ -29,10 +29,11 @@ interface IListingsProps {
   routingProps: RouteComponentProps;
 }
 
-const Listings = ({routingProps}: IListingsProps) => {
+const Listings = ({ routingProps }: IListingsProps) => {
+  const { history, match } = routingProps;
 
-  const {history} = routingProps
-  
+  const insideDetailView = match.path.includes('detail');
+
   // const {  totalItems } = useSelector((state: RootState) => state.assets);
   const dispatch = useDispatch();
   const { initialState } = useSelector((state: RootState) => state.assets);
@@ -46,7 +47,6 @@ const Listings = ({routingProps}: IListingsProps) => {
     sort: 'createdDate,desc',
   });
 
-  // const { isLoading, data: dataAssets, refetch } = useGetAssetsQuery(filterState);
   const totalPages = Math.ceil(totalItems / filterState.size);
 
   const handlePaginationChange = (page: number) => {
@@ -56,22 +56,19 @@ const Listings = ({routingProps}: IListingsProps) => {
     }
   };
 
-  // console.log(loading, 'loading many')
-
   useEffect(() => {
     if (!provider) return;
     dispatch(fetchingEntities());
-    dispatch(getEntities({fields: filterState, provider }));
+    dispatch(getEntities({ fields: filterState, provider }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(filterState)]);
 
-
   const onRedirecting = (path: string) => {
-    window.scrollTo(0, 0); 
     return () => {
+      window.scrollTo(0, 0);
       history.push(path);
-    }
-  }
+    };
+  };
 
   return (
     <>
@@ -82,23 +79,23 @@ const Listings = ({routingProps}: IListingsProps) => {
           <CRow className="mx-0">
             {assets.map((item, index) => (
               <CCol xs={12} key={`listing-${index}`} className="px-0">
-                  <div className="media info-box bg-white mx-3 my-2 p-2 align-items-center rounded shadow-sm" onClick={onRedirecting(`/listings/${item.id}/detail`)}>
-                    <img src={item.images} alt="realEstateImg" className="rounded" />
-                    <div className="media-body align-items-around ml-2">
-                      <span className="info-box-text text-dark">{`${item.id} Yên Sở - Hoàng Mai - Hà Nội`}</span>
-                      <p className={`info-box-token text-primary mt-2 mb-0`}>
-                        Value: {formatBNToken(item.value, true)}
-                      </p>
-                      <p className={`info-box-commissionRate text-success mt-2 mb-0`}>
-                        <CIcon name="cil-flower" />{' '}
-                        {formatBNToken(item.dailyPayment, true)}
-                      </p>
-                    </div>
+                <div
+                  className="media info-box bg-white mx-3 my-2 p-2 align-items-center rounded shadow-sm"
+                  onClick={onRedirecting(`/listings/${item.id}/detail`)}
+                >
+                  <img src={item.images} alt="realEstateImg" className="rounded" />
+                  <div className="media-body align-items-around ml-2">
+                    <span className="info-box-text text-dark">{`${item.id} Yên Sở - Hoàng Mai - Hà Nội`}</span>
+                    <p className={`info-box-token text-primary mt-2 mb-0`}>Value: {formatBNToken(item.value, true)}</p>
+                    <p className={`info-box-commissionRate text-success mt-2 mb-0`}>
+                      <CIcon name="cil-flower" /> {formatBNToken(item.dailyPayment, true)}
+                    </p>
                   </div>
+                </div>
               </CCol>
             ))}
           </CRow>
-          {totalPages > 1 && (
+          {totalPages > 1 && !insideDetailView ? (
             <CPagination
               disabled={entitiesLoading}
               activePage={filterState.page + 1}
@@ -107,7 +104,7 @@ const Listings = ({routingProps}: IListingsProps) => {
               align="center"
               className="mt-2"
             />
-          )}
+          ) : ''}
         </>
       )}
     </>

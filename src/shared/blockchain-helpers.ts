@@ -1,9 +1,11 @@
-import { ethers, providers } from 'ethers';
+import { BigNumber, ethers, providers } from 'ethers';
 import TokenProxy from '../assets/deployments/bsc-testnet/Token_Proxy.json';
 import TokenImplementation from '../assets/deployments/bsc-testnet/Token_Implementation.json';
 import listingArtifact from '../assets/artifacts/Listing.json';
 import { Listing, Token } from '../typechain';
 import { BLOCKCHAIN_NETWORK, _window } from '../config/constants';
+import { IAsset } from './models/assets.model';
+import { IOption } from './models/options.model';
 
 interface ITokenInstance {
   signer?: ethers.providers.JsonRpcSigner;
@@ -60,4 +62,50 @@ const promptUserToSwitchChain = () => {
 export const checkWorkerStatus = async (listing: Listing, address: string, status: boolean) => {
   const workerStatus = await listing.workers(address);
   return workerStatus === status;
+};
+export interface ICalSHReward {
+  instance: Listing;
+  optionInfo: IOption;
+  stakeholder: string;
+  storedListing: IAsset;
+  currentUnix: BigNumber;
+}
+
+export const calculateStakeHolderReward = async ({
+  instance,
+  optionInfo,
+  stakeholder,
+  currentUnix,
+  storedListing,
+}: ICalSHReward) => {
+  const { ownership, totalStake, dailyPayment, value } = storedListing;
+  if (!ownership || !totalStake || !dailyPayment || !value) return BigNumber.from(0);
+  if (totalStake.eq(0)) return BigNumber.from(0);
+
+  const userStake = await instance.stakings(optionInfo.id, stakeholder);
+
+  let T = totalStake.mul(100).div(value);
+
+  const T_Threshold = BigNumber.from(86);
+  const expiredOwnershipThreshold = BigNumber.from(50);
+
+  if (T.gt(T_Threshold)) {
+    T = T_Threshold;
+  }
+
+  if (ownership < currentUnix && T.gt(expiredOwnershipThreshold)) {
+    T = expiredOwnershipThreshold;
+  }
+
+  const RTd = dailyPayment.mul(T).div(100);
+  const above = RTd.mul(optionInfo.reward!.toNumber()).div(100);
+  const At = optionInfo.totalStake!.eq(0) ? 1 : optionInfo.totalStake!;
+  const Ax = userStake._amount;
+  const Ar = above.mul(Ax).div(At);
+
+  const Sd = currentUnix.sub(userStake._start);
+
+  const amountToReturn = Ar.mul(Sd).div(86400);
+
+  return amountToReturn;
 };

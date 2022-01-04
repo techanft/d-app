@@ -1,4 +1,5 @@
 import { BigNumber } from 'ethers';
+import { IOption } from './options.model';
 
 export interface IAsset {
   id: number;
@@ -13,4 +14,5 @@ export interface IAsset {
   validator: string | undefined;
   totalStake: BigNumber | undefined;
   rewardPool: BigNumber | undefined;
+  options: IOption[];
 }

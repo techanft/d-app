@@ -6,18 +6,18 @@ import { LISTING_INSTANCE } from '../../shared/blockchain-helpers';
 import { ToastInfo } from '../../shared/components/Toast';
 import { IAsset } from '../../shared/models/assets.model';
 import { IGetAllResp, IParams } from '../../shared/models/base.model';
+import { baseOptions, IOption, IStake } from '../../shared/models/options.model';
 import { Listing } from '../../typechain';
 
-export interface IAssetFilter extends IParams {};
+export interface IAssetFilter extends IParams {}
 export interface IExtndOwnrshpIntialValues {
   listingAddress: string | undefined;
   tokenAmount: number;
 }
-export interface IExtndOwnershipBody extends Omit<IExtndOwnrshpIntialValues, "tokenAmount"> {
+export interface IExtndOwnershipBody extends Omit<IExtndOwnrshpIntialValues, 'tokenAmount'> {
   contract: Listing;
   tokenAmount: ethers.BigNumber;
 }
-
 
 const prefix = 'assets';
 
@@ -26,10 +26,11 @@ interface IGetEntities {
   fields: IAssetFilter
   provider: ethers.providers.Web3Provider;
 }
+
 export const getEntities = createAsyncThunk(`get-all-${prefix}`, async ({fields, provider}: IGetEntities, thunkAPI) => {
   try {
     const params = pickBy(fields);
-    const { data } = await axios.get<IGetAllResp<IAsset>>(`${prefix}`, { params });
+    const { data } = await axios.get<IGetAllResp<IAsset> >(`${prefix}`, { params });
     // Attemp to fetch blockchain data
     const listingsPartialInfo = await getListingsPartialInfo(data.results, provider);
     data.results = listingsPartialInfo;
@@ -57,6 +58,7 @@ const getListingCompleteInfo = async (listing: IAsset, provider: ethers.provider
   try {
     const instance = LISTING_INSTANCE({address: listing.address, provider});
     if (!instance) return listing;
+
     const promises = [
       instance.ownership(),
       instance.value(),
@@ -119,3 +121,58 @@ const getListingsPartialInfo = async (listings: IAsset[], provider: ethers.provi
   }
 };
 
+interface IGetOptionsWithStakes {
+  listing: IAsset;
+  stakeholder: string;
+  provider: ethers.providers.Web3Provider
+}
+
+export const getOptionsWithStakes = createAsyncThunk(
+  `get-${prefix}-options`,
+  async (body: IGetOptionsWithStakes, thunkAPI) => {
+    try {
+      const { listing, stakeholder, provider } = body;
+      const instance = LISTING_INSTANCE({address: listing.address, provider});
+      if (!instance) throw String('Error in generating listing instance');
+      const options = await getOptionsOverview(instance);
+      const optionsWithStakesPromises = options.map(({ id }) => getOptionStake(instance, id, stakeholder));
+      const results = await Promise.all(optionsWithStakesPromises);
+
+      const optionsWithStakes: IOption[] = options.map((e, i) => ({
+        ...e,
+        stake: results[i],
+      }));
+
+      return { ...listing, options: optionsWithStakes };
+    } catch (error: any) {
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  }
+);
+
+const getOptionsOverview = async (contract: Listing) => {
+  const optionsPromises = baseOptions.map(({ id }) => contract.options(id));
+
+  const results = await Promise.all(optionsPromises);
+
+  const options: IOption[] = baseOptions.map((initialOption, i) => ({
+    ...initialOption,
+    reward: results[i]._reward,
+    totalStake: results[i]._totalStake,
+    isSet: results[i]._isSet,
+  }));
+  const activeOptions = options.filter((e) => e.reward?.toNumber() !== 0);
+  return activeOptions;
+};
+
+const getOptionStake = async (listingContract: Listing, optionId: number, stakeholder: string) => {
+  const stakePromise = listingContract.stakings(optionId, stakeholder);
+  const result = await stakePromise;
+
+  const stake: IStake = {
+    start: result._start,
+    amount: result._amount,
+    active: result._active,
+  };
+  return stake;
+};

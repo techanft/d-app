@@ -1,4 +1,3 @@
-import CIcon from '@coreui/icons-react';
 import {
   CButton,
   CCard,
@@ -9,8 +8,7 @@ import {
   CDataTable,
   CLink,
   CPagination,
-  CRow,
-  CTooltip,
+  CRow
 } from '@coreui/react';
 import {
   faArrowAltCircleDown,
@@ -18,19 +16,14 @@ import {
   faClipboard,
   faDonate,
   faEdit,
-  faIdBadge,
+  faIdBadge
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
-import CopyToClipboard from 'react-copy-to-clipboard';
 import { useDispatch, useSelector } from 'react-redux';
 import { TOKEN_SYMBOL } from '../../../config/constants';
-import {
-  checkOwnershipExpired,
-  convertUnixToDate,
-  formatBNToken,
-  getEllipsisTxt,
-} from '../../../shared/casual-helpers';
+import { checkOwnershipExpired, convertUnixToDate, formatBNToken, formatLocalDatetime, getEllipsisTxt } from '../../../shared/casual-helpers';
+import CopyTextToClipBoard from '../../../shared/components/CopyTextToClipboard';
 import InfoLoader from '../../../shared/components/InfoLoader';
 import { ToastError } from '../../../shared/components/Toast';
 import { CollapseType, ModalType, TCollapseVisibility, TModalsVisibility } from '../../../shared/enumeration/modalType';
@@ -39,8 +32,7 @@ import { IAsset } from '../../../shared/models/assets.model';
 import { IParams } from '../../../shared/models/base.model';
 import { IRecordWorker } from '../../../shared/models/record.model';
 import { RootState } from '../../../shared/reducers';
-import { getEntity } from '../../assets/assets.api';
-import { fetchingEntity, selectEntityById } from '../../assets/assets.reducer';
+import { selectEntityById } from '../../assets/assets.reducer';
 import { getWorkersRecord } from '../../records/records.api';
 import { fetchingWorker, softResetWorker } from '../../records/records.reducer';
 import ExtendOwnershipModal from '../actions/ExtendOwnershipModal';
@@ -89,13 +81,13 @@ const workerFields = [
   {
     key: 'address',
     _style: titleTableStyle,
-    label: 'Address Wallet',
+    label: 'Address',
   },
-  // {
-  //   key: 'createdDate',
-  //   _style: titleTableStyle,
-  //   label: 'Thời gian bắt đầu',
-  // },
+  {
+    key: 'createdDate',
+    _style: titleTableStyle,
+    label: 'Since',
+  },
 ];
 
 const initialCollapseState: TCollapseVisibility = {
@@ -109,7 +101,6 @@ const ListingInfo = (props: IListingInfoProps) => {
   const dispatch = useDispatch();
   //get worker list
   const { initialState: recordInitialState } = useSelector((state: RootState) => state.records);
-  const { provider } = useSelector((state: RootState) => state.wallet);
   const { loading, workers, errorMessage: workerErrorMessage } = recordInitialState.workerInitialState;
   const listing = useSelector(selectEntityById(listingId));
   const [filterState, setFilterState] = useState<IParams>({
@@ -148,31 +139,27 @@ const ListingInfo = (props: IListingInfoProps) => {
   const ownershipExpired = listing?.ownership ? checkOwnershipExpired(listing.ownership.toNumber()) : false;
   const viewerIsOwner = signerAddress && signerAddress === listing?.owner;
 
-  const [modalsVisibility, setModalVisibility] = useState<TModalsVisibility>({
+  const initialModalState: TModalsVisibility = {
     [ModalType.OWNERSHIP_EXTENSION]: false,
     [ModalType.OWNERSHIP_WITHDRAW]: false,
     [ModalType.OWNERSHIP_REGISTER]: false,
-  });
+    [ModalType.REWARD_CLAIM]: false,
+    [ModalType.REWARD_UNREGISTER]: false,
+  };
+
+  const [modalsVisibility, setModalVisibility] = useState<TModalsVisibility>(initialModalState);
 
   const handleModalVisibility = (type: ModalType, isVisible: boolean) => {
-    setModalVisibility({ ...modalsVisibility, [type]: isVisible });
+    setModalVisibility({ ...initialModalState, [type]: isVisible });
   };
 
   const [collapseVisibility, setCollapseVisibility] = useState<TCollapseVisibility>(initialCollapseState);
 
   const toggleCollapseVisibility = (type: CollapseType) => () => {
-    if (!signerAddress) return ToastError('Bạn chưa liên kết với ví của mình');
-
+    const viewingWorkerList = type === CollapseType.WORKER_LIST; // Doesnt require wallet connection to view worker list
+    if (!signerAddress && !viewingWorkerList) return ToastError('Please connect your wallet!');
     setCollapseVisibility({ ...initialCollapseState, [type]: !collapseVisibility[type] });
   };
-
-  useEffect(() => {
-    if (!listingId || !provider) return;
-    dispatch(fetchingEntity());
-    dispatch(getEntity({ provider, id: Number(listingId) }));
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [listingId]);
 
   useEffect(() => {
     if (listing?.address) {
@@ -184,7 +171,7 @@ const ListingInfo = (props: IListingInfoProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(filterState), listing?.address]);
 
-  // listing
+
   return (
     <CContainer fluid className="px-0">
       <CCol xs={12} className="p-0">
@@ -225,16 +212,7 @@ const ListingInfo = (props: IListingInfoProps) => {
             <p className="detail-title-font my-2">Blockchain address</p>
 
             {!entityLoading && listing?.address ? (
-              <CTooltip content="Copied" placement="bottom">
-                <CopyToClipboard text={listing.address}>
-                  <p className="my-2 value-text copy-address">
-                    {getEllipsisTxt(listing.address)}
-                    <CButton className="p-0 pb-3 ml-1">
-                      <CIcon name="cil-copy" size="sm" />
-                    </CButton>
-                  </p>
-                </CopyToClipboard>
-              </CTooltip>
+              <CopyTextToClipBoard text={listing.address} />
             ) : (
               <InfoLoader width={155} height={27} />
             )}
@@ -244,16 +222,7 @@ const ListingInfo = (props: IListingInfoProps) => {
             <p className="detail-title-font my-2">The current owner</p>
 
             {!entityLoading && listing?.owner ? (
-              <CTooltip content="Copied" placement="bottom">
-                <CopyToClipboard text={listing.owner || ''}>
-                  <p className="my-2 value-text copy-address">
-                    {getEllipsisTxt(listing.owner || '')}
-                    <CButton className="p-0 pb-3 ml-1">
-                      <CIcon name="cil-copy" size="sm" />
-                    </CButton>
-                  </p>
-                </CopyToClipboard>
-              </CTooltip>
+              <CopyTextToClipBoard text={listing.owner} />
             ) : (
               <InfoLoader width={155} height={27} />
             )}
@@ -325,6 +294,9 @@ const ListingInfo = (props: IListingInfoProps) => {
                       address: (item: IRecordWorker) => {
                         return <td>{getEllipsisTxt(item.worker, 10) || '_'}</td>;
                       },
+                      createdDate: (item: IRecordWorker) => {
+                        return <td>{formatLocalDatetime(item.createdDate) }</td>;
+                      },
                     }}
                   />
                 </CCol>
@@ -357,7 +329,7 @@ const ListingInfo = (props: IListingInfoProps) => {
                 <CCardBody className="p-2">
                   <CRow className="mx-0">
                     <p
-                      onClick={() => handleModalVisibility(ModalType.OWNERSHIP_REGISTER, true)}
+                      onClick={() => viewerIsOwner || !ownershipExpired ? "" :  handleModalVisibility(ModalType.OWNERSHIP_REGISTER, true)}
                       className={`m-0 text-primary`}
                     >
                       <FontAwesomeIcon icon={faEdit} /> Đăng ký sở hữu

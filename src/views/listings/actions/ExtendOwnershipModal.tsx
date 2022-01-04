@@ -15,8 +15,8 @@ import {
   CModalTitle,
   CRow,
 } from '@coreui/react';
-import { Formik } from 'formik';
-import React, { useEffect } from 'react';
+import { Formik, FormikProps } from 'formik';
+import React, { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
 import { LISTING_INSTANCE } from '../../../shared/blockchain-helpers';
@@ -50,10 +50,18 @@ interface IIntialValues {
 
 const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
   const { isVisible, setVisibility, listingId, title } = props;
+  const dispatch = useDispatch();
+  const formikRef = useRef<FormikProps<IIntialValues>>(null);
+ 
   const listing = useSelector(selectEntityById(listingId));
-
+  const { signer } = useSelector((state: RootState) => state.wallet);
   const { submitted } = useSelector((state: RootState) => state.transactions);
   const { tokenBalance } = useSelector((state: RootState) => state.wallet);
+
+  const closeModal = () => () => {
+    setVisibility(false);
+    formikRef.current?.resetForm();
+  };
 
   useEffect(() => {
     if (submitted) {
@@ -62,14 +70,8 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [submitted]);
 
-  const dispatch = useDispatch();
-  const closeModal = () => (): void => setVisibility(false);
-
-  const { signer } = useSelector((state: RootState) => state.wallet);
-
   const initialValues: IIntialValues = {
     tokenAmount: 0,
-    // listingId
   };
 
   const validationSchema = Yup.object().shape({
@@ -85,7 +87,9 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
         return convertDecimalToBn(String(value)).lte(tokenBalance);
       })
       .typeError('Incorrect input type!')
-      .required('This field is required!'),
+      .required('This field is required!')
+      // Wrong message
+      .min(1, 'Minimum ownership for the listing is 1.0 day!'),
   });
 
   const handleRawFormValues = (input: IIntialValues): IProceedTxBody => {
@@ -97,7 +101,7 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
     }
     const instance = LISTING_INSTANCE({address: listing.address, signer});
     if (!instance) {
-      throw Error('Error in generating contract instace');
+      throw Error('Error in generating contract instance');
     }
 
     const output: IProceedTxBody = {
@@ -116,6 +120,7 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
         <CModalTitle className="modal-title-style">{title}</CModalTitle>
       </CModalHeader>
       <Formik
+        innerRef={formikRef}
         enableReinitialize
         initialValues={initialValues}
         validationSchema={validationSchema}
@@ -124,7 +129,6 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
             const value = handleRawFormValues(rawValues);
             dispatch(fetching());
             dispatch(proceedTransaction(value));
-            // setVisibility(false);
           } catch (error) {
             console.log(`Error submitting form ${error}`);
             ToastError(`Error submitting form ${error}`);
@@ -140,7 +144,7 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                     <CCol xs={6}>
                       <CLabel className="recharge-token-title">Current ownership</CLabel>
                     </CCol>
-                    {listing?.dailyPayment && listing?.ownership ? (
+                    {listing?.ownership ? (
                       <CCol xs={6}>
                         <p className="text-primary text-right">{convertUnixToDate(listing.ownership.toNumber())}</p>
                       </CCol>
@@ -186,7 +190,7 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                           {tokenBalance ? (
                             <CButton
                               color="primary"
-                              className="btn-register-level"
+                              className="btn-radius-50"
                               onClick={() =>
                                 setFieldValue(`tokenAmount`, unInsertCommas(convertBnToDecimal(tokenBalance)))
                               }
@@ -211,11 +215,13 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                       </CCol>
                       <CCol xs={6}>
                         <p className="text-primary text-right">
-                          {estimateOwnership(
-                            convertDecimalToBn(String(values.tokenAmount)),
-                            listing.dailyPayment,
-                            listing.ownership
-                          )}
+                          {values.tokenAmount > 0
+                            ? estimateOwnership(
+                                convertDecimalToBn(String(values.tokenAmount)),
+                                listing.dailyPayment,
+                                listing.ownership
+                              )
+                            : ''}
                         </p>
                       </CCol>
                     </CFormGroup>
