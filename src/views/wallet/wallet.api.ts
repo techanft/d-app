@@ -54,19 +54,6 @@ export const getAddress = createAsyncThunk('getAddress', async (signer: ethers.p
   }
 });
 
-export const getTransactionReceipt = createAsyncThunk(
-  'getTransactionReceipt',
-  async (body: ITransactionReceipt, thunkAPI) => {
-    const { provider, transactionHash } = body;
-    try {
-      const receipt = await provider.getTransactionReceipt(transactionHash);
-      return receipt;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error);
-    }
-  }
-);
-
 interface IGetTokenBalance {
   address: string,
   provider: ethers.providers.Web3Provider

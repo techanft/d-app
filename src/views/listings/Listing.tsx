@@ -23,8 +23,9 @@ const Listing = (props: IListingProps) => {
   const { provider } = useSelector((state: RootState) => state.wallet);
   const { initialState } = useSelector((state: RootState) => state.assets);
   const { fetchEntitiesSuccess } = initialState;
-  const { match } = props;
+  const { match, history } = props;
   const { id } = match.params;
+  const { errorMessage } = initialState;
 
   useEffect(() => {
     /**
@@ -36,6 +37,14 @@ const Listing = (props: IListingProps) => {
     dispatch(getEntity({ id: Number(id), provider }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, success, fetchEntitiesSuccess]);
+
+  useEffect(() => {
+    const messageIfEntityDoesNotExist = 'Not Found';
+    if (errorMessage === messageIfEntityDoesNotExist) {
+      history.push('/');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [errorMessage]);
 
   return (
     <>

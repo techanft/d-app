@@ -102,6 +102,8 @@ const ListingInfo = (props: IListingInfoProps) => {
   //get worker list
   const { initialState: recordInitialState } = useSelector((state: RootState) => state.records);
   const { loading, workers, errorMessage: workerErrorMessage } = recordInitialState.workerInitialState;
+
+  
   const listing = useSelector(selectEntityById(listingId));
   const [filterState, setFilterState] = useState<IParams>({
     page: 0,
@@ -167,7 +169,6 @@ const ListingInfo = (props: IListingInfoProps) => {
       dispatch(fetchingWorker());
       dispatch(getWorkersRecord(filter));
     }
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(filterState), listing?.address]);
 

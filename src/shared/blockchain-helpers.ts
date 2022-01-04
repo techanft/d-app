@@ -1,9 +1,9 @@
-import { BigNumber, ethers, providers } from 'ethers';
-import TokenProxy from '../assets/deployments/bsc-testnet/Token_Proxy.json';
-import TokenImplementation from '../assets/deployments/bsc-testnet/Token_Implementation.json';
+import { BigNumber, ethers } from 'ethers';
 import listingArtifact from '../assets/artifacts/Listing.json';
-import { Listing, Token } from '../typechain';
+import TokenImplementation from '../assets/deployments/bsc-testnet/Token_Implementation.json';
+import TokenProxy from '../assets/deployments/bsc-testnet/Token_Proxy.json';
 import { BLOCKCHAIN_NETWORK, _window } from '../config/constants';
+import { Listing, Token } from '../typechain';
 import { IAsset } from './models/assets.model';
 import { IOption } from './models/options.model';
 

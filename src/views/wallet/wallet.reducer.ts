@@ -2,18 +2,12 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { BigNumber, ethers } from 'ethers';
 import {
   getAddress,
-  getContractWithSigner,
-  getProviderLogin,
+  getContractWithSigner, getProvider, getProviderLogin,
   getSigner,
-  getTokenBalance,
-  getTransactionReceipt,
-  getProvider,
+  getTokenBalance
 } from './wallet.api';
 
 interface IWalletState {
-  transactionReceipt: ethers.providers.TransactionReceipt | null;
-  getTransactionRecepitSuccess: boolean;
-
   signerAddress: string | undefined;
   getSignerAddressSuccess: boolean;
 
@@ -36,8 +30,6 @@ interface IWalletState {
 }
 
 const initialState: IWalletState = {
-  transactionReceipt: null,
-  getTransactionRecepitSuccess: false,
   signerAddress: undefined,
   getSignerAddressSuccess: false,
   contractWithSigner: null,
@@ -130,20 +122,6 @@ const walletSlice = createSlice({
     },
     [getAddress.rejected.type]: (state, { payload }) => {
       state.getSignerAddressSuccess = false;
-      state.errorMessage = payload?.message;
-      state.loading = false;
-    },
-    [getTransactionReceipt.fulfilled.type]: (
-      state,
-      { payload }: PayloadAction<ethers.providers.TransactionReceipt>
-    ) => {
-      state.transactionReceipt = payload;
-      state.getTransactionRecepitSuccess = true;
-      state.errorMessage = null;
-      state.loading = false;
-    },
-    [getTransactionReceipt.rejected.type]: (state, { payload }) => {
-      state.getTransactionRecepitSuccess = false;
       state.errorMessage = payload?.message;
       state.loading = false;
     },
