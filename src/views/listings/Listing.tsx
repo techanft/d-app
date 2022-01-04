@@ -2,11 +2,10 @@ import { CCol, CLabel, CRow } from '@coreui/react';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
-import Loading from '../../shared/components/Loading';
 import SubmissionModal from '../../shared/components/SubmissionModal';
 import { RootState } from '../../shared/reducers';
 import { getEntity } from '../assets/assets.api';
-import { fetchingEntity, selectEntityById } from '../assets/assets.reducer';
+import { fetchingEntity } from '../assets/assets.reducer';
 // import { useGetAssetQuery } from "../../assets/assets.api";
 import Primary from './info/Primary';
 import Secondary from './info/Secondary';
@@ -26,8 +25,7 @@ const Listing = (props: IListingProps) => {
   const { fetchEntitiesSuccess } = initialState;
   const { match, history } = props;
   const { id } = match.params;
-  const { entityLoading, errorMessage } = initialState;
-  const listing = useSelector(selectEntityById(Number(id)));
+  const { errorMessage } = initialState;
 
   useEffect(() => {
     /**
@@ -50,24 +48,18 @@ const Listing = (props: IListingProps) => {
 
   return (
     <>
-      {!entityLoading && listing ? (
-        <>
-          <SubmissionModal />
+      <SubmissionModal />
 
-          <Primary listingId={Number(id)} />
-          <Secondary listingId={Number(id)} />
-          <CRow className="mx-0">
-            <CCol xs={12}>
-              <CLabel className="text-primary content-title mt-3">More listing</CLabel>
-            </CCol>
-            <CCol xs={12} className="px-0">
-              <Listings routingProps={props} />
-            </CCol>
-          </CRow>
-        </>
-      ) : (
-        <Loading />
-      )}
+      <Primary listingId={Number(id)} />
+      <Secondary listingId={Number(id)} />
+      <CRow className="mx-0">
+        <CCol xs={12}>
+          <CLabel className="text-primary content-title mt-3">More listing</CLabel>
+        </CCol>
+        <CCol xs={12} className="px-0">
+          <Listings routingProps={props} />
+        </CCol>
+      </CRow>
     </>
   );
 };
