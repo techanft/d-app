@@ -393,6 +393,14 @@ const Register = (props: IRegisterProps) => {
                                   <p className="text-primary my-2">{formatBNToken(tokenBalance, true)}</p>
                                 </CCol>
                               </CFormGroup>
+                              <CFormGroup row>
+                                <CCol xs={5}>
+                                  <CLabel className="font-weight-bold my-2">Total Stakes </CLabel>
+                                </CCol>
+                                <CCol xs={7}>
+                                  <p className="text-primary my-2">{formatBNToken(item.totalStake, true)}</p>
+                                </CCol>
+                              </CFormGroup>
                               <Formik
                                 innerRef={formikRef}
                                 enableReinitialize

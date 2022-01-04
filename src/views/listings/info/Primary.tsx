@@ -8,7 +8,7 @@ import {
   CDataTable,
   CLink,
   CPagination,
-  CRow
+  CRow,
 } from '@coreui/react';
 import {
   faArrowAltCircleDown,
@@ -16,13 +16,20 @@ import {
   faClipboard,
   faDonate,
   faEdit,
-  faIdBadge
+  faIdBadge,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { TOKEN_SYMBOL } from '../../../config/constants';
-import { checkOwnershipExpired, convertUnixToDate, formatBNToken, formatLocalDatetime, getEllipsisTxt } from '../../../shared/casual-helpers';
+import {
+  checkOwnershipExpired,
+  convertUnixToDate,
+  formatBNToken,
+  formatLocalDatetime,
+  getEllipsisTxt,
+} from '../../../shared/casual-helpers';
+import ConfirmationLoading from '../../../shared/components/ConfirmationLoading';
 import CopyTextToClipBoard from '../../../shared/components/CopyTextToClipboard';
 import InfoLoader from '../../../shared/components/InfoLoader';
 import { ToastError } from '../../../shared/components/Toast';
@@ -35,6 +42,7 @@ import { RootState } from '../../../shared/reducers';
 import { selectEntityById } from '../../assets/assets.reducer';
 import { getWorkersRecord } from '../../records/records.api';
 import { fetchingWorker, softResetWorker } from '../../records/records.reducer';
+import { hardReset } from '../../transactions/transactions.reducer';
 import ExtendOwnershipModal from '../actions/ExtendOwnershipModal';
 import WithdrawTokenModal from '../actions/WithdrawModal';
 import '../index.scss';
@@ -102,8 +110,8 @@ const ListingInfo = (props: IListingInfoProps) => {
   //get worker list
   const { initialState: recordInitialState } = useSelector((state: RootState) => state.records);
   const { loading, workers, errorMessage: workerErrorMessage } = recordInitialState.workerInitialState;
+  const { success, submitted } = useSelector((state: RootState) => state.transactions);
 
-  
   const listing = useSelector(selectEntityById(listingId));
   const [filterState, setFilterState] = useState<IParams>({
     page: 0,
@@ -172,6 +180,12 @@ const ListingInfo = (props: IListingInfoProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(filterState), listing?.address]);
 
+  useEffect(() => {
+    if (success) {
+      dispatch(hardReset());
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [success]);
 
   return (
     <CContainer fluid className="px-0">
@@ -209,6 +223,13 @@ const ListingInfo = (props: IListingInfoProps) => {
           </CCol>
         </CRow>
         <CRow className="p-0 m-0">
+          {submitted && !success ? (
+            <CCol xs={12} className="d-flex justify-content-center mt-2">
+              <ConfirmationLoading />
+            </CCol>
+          ) : (
+            ''
+          )}
           <CCol xs={6}>
             <p className="detail-title-font my-2">Blockchain address</p>
 
@@ -296,7 +317,7 @@ const ListingInfo = (props: IListingInfoProps) => {
                         return <td>{getEllipsisTxt(item.worker, 10) || '_'}</td>;
                       },
                       createdDate: (item: IRecordWorker) => {
-                        return <td>{formatLocalDatetime(item.createdDate) }</td>;
+                        return <td>{formatLocalDatetime(item.createdDate)}</td>;
                       },
                     }}
                   />
@@ -330,7 +351,11 @@ const ListingInfo = (props: IListingInfoProps) => {
                 <CCardBody className="p-2">
                   <CRow className="mx-0">
                     <p
-                      onClick={() => viewerIsOwner || !ownershipExpired ? "" :  handleModalVisibility(ModalType.OWNERSHIP_REGISTER, true)}
+                      onClick={() =>
+                        viewerIsOwner || !ownershipExpired
+                          ? ''
+                          : handleModalVisibility(ModalType.OWNERSHIP_REGISTER, true)
+                      }
                       className={`m-0 text-primary`}
                     >
                       <FontAwesomeIcon icon={faEdit} /> Đăng ký sở hữu

@@ -34,7 +34,7 @@ const ErrorModal = ({ errMsg }: IErrorModal) => {
               <CLabel>{errMsg}</CLabel>
             </CCol>
             <CCol xs={12} >
-              <CButton className="mt-5 btn-primary btn-radius-50" onClick={onReload}>Reload</CButton>
+              <CButton className="mt-3 btn-primary btn-radius-50" onClick={onReload}>Reload</CButton>
             </CCol>
           </CRow>
         </CContainer>
