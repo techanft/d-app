@@ -36,6 +36,7 @@ import {
   insertCommas,
   unInsertCommas,
 } from '../../../shared/casual-helpers';
+import ConfirmationLoading from '../../../shared/components/ConfirmationLoading';
 import ConfirmModal from '../../../shared/components/ConfirmModal';
 import InfoLoader from '../../../shared/components/InfoLoader';
 import SubmissionModal from '../../../shared/components/SubmissionModal';
@@ -375,6 +376,15 @@ const Register = (props: IRegisterProps) => {
                         <CCardBody className="px-3">
                           <CRow className="align-items-center">
                             <CCol xs={12}>
+                              {submitted && !success ? (
+                                <CRow>
+                                  <CCol xs={12} className="d-flex justify-content-center">
+                                    <ConfirmationLoading />
+                                  </CCol>
+                                </CRow>
+                              ) : (
+                                ''
+                              )}
                               <CFormGroup row>
                                 <CCol xs={5}>
                                   <CLabel className="font-weight-bold my-2">Tokens Balance </CLabel>

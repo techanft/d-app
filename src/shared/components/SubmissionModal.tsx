@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { BLOCKCHAIN_NETWORK } from '../../config/constants';
 import { awaitTransaction } from '../../views/transactions/transactions.api';
-import { fetching, softReset } from '../../views/transactions/transactions.reducer';
+import { fetching } from '../../views/transactions/transactions.reducer';
 import { RootState } from '../reducers';
 
 const SubmissionModal = () => {
@@ -32,7 +32,6 @@ const SubmissionModal = () => {
 
   const closeModal = () => {
     setVisibility(false);
-    dispatch(softReset());
   };
 
   return (
