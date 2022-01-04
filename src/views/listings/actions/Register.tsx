@@ -216,7 +216,7 @@ const Register = (props: IRegisterProps) => {
     const body = createTxBodyBaseOnType(id, EventType.CLAIM);
     dispatch(proceedTransaction(body));
   };
-
+  
   useEffect(() => {
     if (!id || !provider) return;
     dispatch(fetchingEntity());
@@ -240,14 +240,12 @@ const Register = (props: IRegisterProps) => {
   }, [success]);
 
   useEffect(() => {
-    // Only fetch listing option stakes if that stakes info is missing
-    const listingHasOptions = Boolean(listing?.options?.length);
-    if (listing && !listingHasOptions && signerAddress && provider) {
+    if (listing && signerAddress && provider) {      
       dispatch(fetchingEntity());
       dispatch(getOptionsWithStakes({ listing, stakeholder: signerAddress, provider }));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [listing, signerAddress]);
+  }, [id, signerAddress]);
 
   const initialValues: IRegister = {
     registerAmount: 0,
