@@ -22,18 +22,23 @@ const Listing = (props: IListingProps) => {
   const dispatch = useDispatch();
   const { success } = useSelector((state: RootState) => state.transactions);
   const { provider } = useSelector((state: RootState) => state.wallet);
+  const { initialState } = useSelector((state: RootState) => state.assets);
+  const { fetchEntitiesSuccess } = initialState;
   const { match, history } = props;
   const { id } = match.params;
-  const { initialState } = useSelector((state: RootState) => state.assets);
   const { entityLoading, errorMessage } = initialState;
   const listing = useSelector(selectEntityById(Number(id)));
 
   useEffect(() => {
-    if (!id || !provider) return;
+    /**
+     * Only fetch single entity (with complete info) after fetching entities (with partial info) successfuly
+     * to avoid partial info overriding complete info
+     */
+    if (!id || !provider || !fetchEntitiesSuccess) return;
     dispatch(fetchingEntity());
     dispatch(getEntity({ id: Number(id), provider }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id, success]);
+  }, [id, success, fetchEntitiesSuccess]);
 
   useEffect(() => {
     const messageIfEntityDoesNotExist = 'Not Found';
@@ -45,12 +50,12 @@ const Listing = (props: IListingProps) => {
 
   return (
     <>
-      {!entityLoading && listing?.id ? (
+      {!entityLoading && listing ? (
         <>
           <SubmissionModal />
 
-          <Primary listing={listing} />
-          <Secondary listing={listing} />
+          <Primary listingId={Number(id)} />
+          <Secondary listingId={Number(id)} />
           <CRow className="mx-0">
             <CCol xs={12}>
               <CLabel className="text-primary content-title mt-3">More listing</CLabel>

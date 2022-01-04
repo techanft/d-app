@@ -24,9 +24,8 @@ const TheContent = () => {
     if (!provider) return;
     const error = providerNetworkChecking(provider);
     dispatch(setProviderError(error));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [provider]);
-
 
   _window.ethereum.on('accountsChanged', () => {
     if (provider) {

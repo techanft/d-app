@@ -2,12 +2,9 @@ import { createEntityAdapter, createSelector, createSlice, PayloadAction } from 
 import { IAsset } from '../../shared/models/assets.model';
 import { IGetAllResp, IInitialState } from '../../shared/models/base.model';
 import { RootState } from '../../shared/reducers';
-import { getEntities, getEntity } from './assets.api';
-// import { assetsApi } from "./assets.api";
+import { getEntities, getEntity, getOptionsWithStakes } from './assets.api';
 
-interface IAssetInitialState extends IInitialState {}
-
-const initialState: IAssetInitialState = {
+const initialState: IInitialState = {
   fetchEntitiesSuccess: false,
   fetchEntitySuccess: false,
   updateEntitySuccess: false,
@@ -52,8 +49,7 @@ const { actions, reducer } = createSlice({
   },
   extraReducers: {
     [getEntities.fulfilled.type]: (state, { payload }: PayloadAction<IGetAllResp<IAsset>>) => {
-      // assetsAdapter.setAll(state, payload.results);
-      assetsAdapter.upsertMany(state, payload.results);
+      assetsAdapter.setAll(state, payload.results);
       state.initialState.totalItems = payload.count;
       state.initialState.fetchEntitiesSuccess = true;
       state.initialState.entitiesLoading = false;
@@ -73,6 +69,16 @@ const { actions, reducer } = createSlice({
       state.initialState.entityLoading = false;
       state.initialState.fetchEntitySuccess = false;
     },
+    [getOptionsWithStakes.fulfilled.type]: (state, { payload }: PayloadAction<IAsset>) => {
+      assetsAdapter.upsertOne(state, payload);
+      state.initialState.fetchEntitySuccess = true;
+      state.initialState.entityLoading = false;
+    },
+    [getOptionsWithStakes.rejected.type]: (state, { payload }: PayloadAction<any>) => {
+      state.initialState.errorMessage = payload?.message;
+      state.initialState.entityLoading = false;
+      state.initialState.fetchEntitySuccess = false;
+    },
   },
 });
 
@@ -85,8 +91,7 @@ const { selectById } = assetsAdapter.getSelectors();
 const getAssetState = (rootState: RootState) => rootState.assets;
 
 export const selectEntityById = (id: number) => {
-  return createSelector(getAssetState, (state) => selectById(state, id)
-  );
+  return createSelector(getAssetState, (state) => selectById(state, id));
 };
 
 export const assetsSelectors = assetsAdapter.getSelectors<RootState>((state) => state.assets);

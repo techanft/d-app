@@ -76,8 +76,7 @@ export const getEllipsisTxt = (str: string, n = 5) => {
   return '';
 };
 
-export const estimateWithdrawAmount = (dailyPayment: BigNumber, currentOwnership: BigNumber) => {
-  const currentUnix = dayjs().unix();
+export const estimateWithdrawAmount = (dailyPayment: BigNumber, currentOwnership: BigNumber, currentUnix: number) => {
   if (currentOwnership.toNumber() > currentUnix) {
     const amount = ((currentOwnership.toNumber() - currentUnix) * Number(convertBnToDecimal(dailyPayment))) / 86400;
     return amount;
@@ -85,20 +84,22 @@ export const estimateWithdrawAmount = (dailyPayment: BigNumber, currentOwnership
   return 0;
 };
 
-export const validateOwner = (viewerAddr: string | undefined, listingInfo: IAsset) => {
+// Returns true if viewer is the listing owner AND ownership is not expired
+export const validateOwnership = (viewerAddr: string | undefined, listingInfo: IAsset) => {
   const { ownership, owner } = listingInfo;
   if (!ownership || !owner) {
     return false;
   }
   const viewerIsOwner = viewerAddr === owner;
   const ownershipExpired = checkOwnershipExpired(ownership.toNumber());
-  if (!viewerIsOwner) {
-    return false;
-  } else {
-    if (!ownershipExpired) {
-      return true;
-    } else {
-      return false;
-    }
-  }
+
+  if (!viewerIsOwner) return false;
+
+  // console.log(ownershipExpired, 'ownershipExpired')
+
+  return !ownershipExpired;
+};
+
+export const formatLocalDatetime = (input: string | Date | undefined): string => {
+  return dayjs(input).format(APP_DATE_FORMAT);
 };

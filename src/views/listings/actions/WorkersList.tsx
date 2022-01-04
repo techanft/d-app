@@ -16,7 +16,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
 import bgImg from '../../../assets/img/registerBonus.svg';
 import { LISTING_INSTANCE } from '../../../shared/blockchain-helpers';
-import { getEllipsisTxt } from '../../../shared/casual-helpers';
+import { getEllipsisTxt, validateOwnership } from '../../../shared/casual-helpers';
 import ConfirmModal from '../../../shared/components/ConfirmModal';
 import Loading from '../../../shared/components/Loading';
 import SubmissionModal from '../../../shared/components/SubmissionModal';
@@ -58,7 +58,7 @@ const WorkersList = (props: IWorkersList) => {
 
   const dispatch = useDispatch();
   const listing = useSelector(selectEntityById(Number(id)));
-  const { signer, provider } = useSelector((state: RootState) => state.wallet);
+  const { signer, provider, signerAddress } = useSelector((state: RootState) => state.wallet);
   const { initialState } = useSelector((state: RootState) => state.records);
   const { success, submitted } = useSelector((state: RootState) => state.transactions);
   const { loading, workers, errorMessage: workerErrorMessage } = initialState.workerInitialState;
@@ -216,7 +216,9 @@ const WorkersList = (props: IWorkersList) => {
                     action: (item: IRecordWorker) => {
                       return (
                         <td>
-                          <CButton className="text-danger p-0" onClick={onEntityRemoval(item.worker || '_')}>
+                          <CButton className="text-danger p-0" 
+                          disabled={listing ? !validateOwnership(signerAddress, listing) : true}
+                          onClick={onEntityRemoval(item.worker || '_')}>
                             <CIcon name="cil-trash" />
                           </CButton>
                         </td>
@@ -243,6 +245,7 @@ const WorkersList = (props: IWorkersList) => {
           <CButton
             className="my-2 px-3 w-100 btn-radius-50 btn-font-style btn-primary"
             onClick={setRequestListener(true, setAddWorkerPermission)}
+            disabled={listing ? !validateOwnership(signerAddress, listing) : true}
           >
             Thêm quyền sở hữu
           </CButton>

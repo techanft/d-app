@@ -58,7 +58,7 @@ const SubmissionModal = () => {
         </CLabel>
       </CModalBody>
       <CModalFooter className="justify-content-center">
-        <CButton className="btn btn-primary" onClick={closeModal}>
+        <CButton className="btn btn-primary btn-radius-50 w-50" onClick={closeModal}>
           Close
         </CButton>
       </CModalFooter>
