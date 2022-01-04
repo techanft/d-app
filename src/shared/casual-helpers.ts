@@ -2,6 +2,7 @@ import dayjs from 'dayjs';
 import { BigNumber, ethers } from 'ethers';
 import { APP_DATE_FORMAT, TOKEN_SYMBOL } from '../config/constants';
 import { IAsset } from './models/assets.model';
+import { baseOptions } from './models/options.model';
 
 export const estimateOwnership = (amount: BigNumber, dailyPayment: BigNumber, currentOwnership: BigNumber) => {
   const initialOwnership = checkOwnershipExpired(currentOwnership.toNumber())
@@ -32,7 +33,7 @@ export const insertCommas = (input: number | undefined | string) => {
     if (!noMoreThanOneCommas(input)) return '';
     const parts = input.toString().split('.');
     parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-    if (parts[1]) parts[1] = parts[1].substring(0, 6); // Only take the first 6 decimals
+    if (parts[1]) parts[1] = parts[1].substring(0, 4); // Only take the first 4 decimals
     return parts.join('.');
   } else {
     return '';
@@ -42,7 +43,7 @@ export const insertCommas = (input: number | undefined | string) => {
 export const unInsertCommas = (input: string) => {
   const parts = input.split('.');
   parts[0] = parts[0].replaceAll(',', '');
-  if (parts[1]) parts[1] = parts[1].substring(0, 6); // Only take the first 6 decimals
+  if (parts[1]) parts[1] = parts[1].substring(0, 4); // Only take the first 4 decimals
   return parts.join('.');
 };
 
@@ -102,4 +103,13 @@ export const validateOwnership = (viewerAddr: string | undefined, listingInfo: I
 
 export const formatLocalDatetime = (input: string | Date | undefined): string => {
   return dayjs(input).format(APP_DATE_FORMAT);
+};
+
+export const returnOptionNameById = (optionId: number): string => {
+  const optionsPromises = baseOptions.find((item) => item.id === optionId);
+  if (optionsPromises) {
+    return optionsPromises.name;
+  } else {
+    return '_';
+  }
 };

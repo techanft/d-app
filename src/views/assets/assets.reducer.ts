@@ -2,9 +2,13 @@ import { createEntityAdapter, createSelector, createSlice, PayloadAction } from 
 import { IAsset } from '../../shared/models/assets.model';
 import { IGetAllResp, IInitialState } from '../../shared/models/base.model';
 import { RootState } from '../../shared/reducers';
+import { IAssetFilter } from '../listings/Listings';
 import { getEntities, getEntity, getOptionsWithStakes } from './assets.api';
 
-const initialState: IInitialState = {
+interface IInitialFilterState extends IInitialState {
+  filterState: IAssetFilter | undefined;
+}
+const initialState: IInitialFilterState = {
   fetchEntitiesSuccess: false,
   fetchEntitySuccess: false,
   updateEntitySuccess: false,
@@ -13,6 +17,7 @@ const initialState: IInitialState = {
   entityLoading: false,
   errorMessage: null,
   totalItems: 0,
+  filterState: undefined,
 };
 
 export const assetsAdapter = createEntityAdapter<IAsset>({
@@ -45,7 +50,12 @@ const { actions, reducer } = createSlice({
       initialState.errorMessage = null;
       initialState.fetchEntitySuccess = false;
       initialState.deleteEntitySuccess = false;
+      initialState.filterState = undefined;
     },
+    setFilterState({initialState}, {payload}: PayloadAction<IAssetFilter>) {
+      initialState.filterState = payload;
+    },
+
   },
   extraReducers: {
     [getEntities.fulfilled.type]: (state, { payload }: PayloadAction<IGetAllResp<IAsset>>) => {
@@ -84,7 +94,7 @@ const { actions, reducer } = createSlice({
 
 // Export actions
 export default reducer;
-export const { fetchingEntities, fetchingEntity, hardReset, softReset } = actions;
+export const { setFilterState, fetchingEntities, fetchingEntity, hardReset, softReset } = actions;
 
 const { selectById } = assetsAdapter.getSelectors();
 

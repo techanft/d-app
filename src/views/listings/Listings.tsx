@@ -9,7 +9,7 @@ import Loading from '../../shared/components/Loading';
 import { IParams } from '../../shared/models/base.model';
 import { RootState } from '../../shared/reducers';
 import { getEntities } from '../assets/assets.api';
-import { assetsSelectors, fetchingEntities } from '../assets/assets.reducer';
+import { assetsSelectors, fetchingEntities, setFilterState as setStoredFilterState } from '../assets/assets.reducer';
 // import { useGetAssetsQuery } from '../assets/assets.api';
 import './index.scss';
 
@@ -29,6 +29,12 @@ interface IListingsProps {
   routingProps: RouteComponentProps;
 }
 
+const initialFilterState : IAssetFilter = {
+  page: 0,
+  size: 5,
+  sort: 'createdDate,desc',
+}
+
 const Listings = ({ routingProps }: IListingsProps) => {
   const { history, match } = routingProps;
 
@@ -38,14 +44,10 @@ const Listings = ({ routingProps }: IListingsProps) => {
   const dispatch = useDispatch();
   const { initialState } = useSelector((state: RootState) => state.assets);
   const { provider } = useSelector((state: RootState) => state.wallet);
-  const { totalItems, entitiesLoading } = initialState;
+  const { totalItems, entitiesLoading, filterState: storedFilterState } = initialState;
   const assets = useSelector(assetsSelectors.selectAll);
 
-  const [filterState, setFilterState] = useState<IAssetFilter>({
-    page: 0,
-    size: 5,
-    sort: 'createdDate,desc',
-  });
+  const [filterState, setFilterState] = useState<IAssetFilter>(storedFilterState || initialFilterState);
 
   const totalPages = Math.ceil(totalItems / filterState.size);
 
@@ -55,11 +57,11 @@ const Listings = ({ routingProps }: IListingsProps) => {
       setFilterState({ ...filterState, page: page - 1 });
     }
   };
-
   useEffect(() => {
     if (!provider) return;
     dispatch(fetchingEntities());
     dispatch(getEntities({ fields: filterState, provider }));
+    dispatch(setStoredFilterState(filterState));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(filterState)]);
 
@@ -104,7 +106,9 @@ const Listings = ({ routingProps }: IListingsProps) => {
               align="center"
               className="mt-2"
             />
-          ) : ''}
+          ) : (
+            ''
+          )}
         </>
       )}
     </>
