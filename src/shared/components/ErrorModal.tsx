@@ -1,11 +1,23 @@
-import React from 'react';
+import { CButton, CCol, CContainer, CLabel, CRow } from '@coreui/react';
+import React, { useEffect } from 'react';
 import ConfirmModal from './ConfirmModal';
 
 interface IErrorModal {
-    errMsg: string
+  errMsg: string;
 }
 
-const ErrorModal = ({errMsg}: IErrorModal) => {
+const ErrorModal = ({ errMsg }: IErrorModal) => {
+  const onReload = () => {
+    window.location.reload();
+  }
+
+  useEffect(() => {
+    const refetchTimer = window.setTimeout(() => {
+      window.location.reload();
+    }, 5000);
+    return () => window.clearTimeout(refetchTimer);
+  }, []);
+
   return (
     <ConfirmModal
       color={'danger'}
@@ -16,13 +28,16 @@ const ErrorModal = ({errMsg}: IErrorModal) => {
       title={'Wallet Error!'}
       disableCloseBackdrop={true}
       CustomJSX={() => (
-        <div className="container">
-          <div className="row p-0 m-0 justify-content-center">
-            <div className="text-center col-xs-12">
-              <p className={`lead p-0`}>{errMsg}</p>
-            </div>
-          </div>
-        </div>
+        <CContainer className="text-center">
+          <CRow >
+            <CCol xs={12}>
+              <CLabel>{errMsg}</CLabel>
+            </CCol>
+            <CCol xs={12} >
+              <CButton className="mt-5 btn-primary btn-radius-50" onClick={onReload}>Reload</CButton>
+            </CCol>
+          </CRow>
+        </CContainer>
       )}
     />
   );

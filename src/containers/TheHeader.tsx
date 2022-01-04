@@ -125,8 +125,8 @@ const TheHeader = () => {
           </CLink>
         </CHeaderNavItem>
         <CHeaderNavItem>
-          <CButton className="btn-link-wallet content-title btn-radius-50 px-1" onClick={onConnectWallet()}>
-            {signerAddress ? getEllipsisTxt(signerAddress) : 'Liên kết ví'}
+          <CButton className="btn-link-wallet btn-radius-50 px-2 btn-font-style" onClick={onConnectWallet()}>
+            {signerAddress ? getEllipsisTxt(signerAddress, 4) : 'Connect Wallet'}
           </CButton>
         </CHeaderNavItem>
         <CHeaderNavItem>
