@@ -10,7 +10,7 @@ import {
   IRecordRegister,
   IRecordUnRegister,
   IRecordWithdraw,
-  IRecordWorker,
+  IRecordWorker
 } from '../../../shared/models/record.model';
 import { RootState } from '../../../shared/reducers';
 import { getEntity } from '../../assets/assets.api';
@@ -22,14 +22,14 @@ import {
   getUnRegisterRecord,
   getWithdrawRecord,
   getWorkersRecord,
-  IRecordParams,
+  IRecordParams
 } from '../../records/records.api';
 import {
   fetchingClaim,
   fetchingOwnership,
   fetchingRegister,
   fetchingWithdraw,
-  fetchingWorker,
+  fetchingWorker
 } from '../../records/records.reducer';
 import '../index.scss';
 import ActivityLogsTable from './ActivityLogsTable';
@@ -193,9 +193,9 @@ const ActivityLogs = (props: IActivityLogs) => {
     if (!listing?.address || !signerAddress) return;
     const additionalOwnerFilterParams =
       ownershipActiveTab === RecordType.OWNERSHIP_EXTENSION
-        ? { previousOwner: signerAddress, newOwner: signerAddress }
+        ? { newOwner: signerAddress }
         : { owner: signerAddress };
-    const filter = { ...ownershipFilterState, ...additionalOwnerFilterParams };
+    const filter = { ...ownershipFilterState, ...additionalOwnerFilterParams,listingAddress: listing.address, };
     const recordFetchingFunc = recordTypeMapingFetching[ownershipActiveTab];
     const recordApiFunc = recordTypeMapingApi[ownershipActiveTab];
     dispatch(recordFetchingFunc());

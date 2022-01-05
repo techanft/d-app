@@ -66,10 +66,11 @@ const ActivityLogsTable = (props: IActivityLogs) => {
   ];
 
   const claimField: ITableField[] = [
-    { key: 'createdDate', _style: titleTableStyle, label: 'Time' },
+    // { key: 'createdDate', _style: titleTableStyle, label: 'Time' },
     { key: 'amount', _style: titleTableStyle, label: 'Amount' },
-    { key: 'from', _style: titleTableStyle, label: 'From' },
-    { key: 'to', _style: titleTableStyle, label: 'To' },
+    { key: 'skatePeriod', _style: titleTableStyle, label: 'Skating Period' },
+    // { key: 'from', _style: titleTableStyle, label: 'From' },
+    // { key: 'to', _style: titleTableStyle, label: 'To' },
   ];
 
   const withdrawField: ITableField[] = [
@@ -79,8 +80,7 @@ const ActivityLogsTable = (props: IActivityLogs) => {
   ];
 
   const ownershipField: ITableField[] = [
-    { key: 'previousOwner', _style: titleTableStyle, label: 'Previous Owner' },
-    { key: 'newOwner', _style: titleTableStyle, label: 'New Owner' },
+    { key: 'amount', _style: titleTableStyle, label: 'Amount' },
     { key: 'from', _style: titleTableStyle, label: 'From' },
     { key: 'to', _style: titleTableStyle, label: 'To' },
   ];
@@ -126,14 +126,24 @@ const ActivityLogsTable = (props: IActivityLogs) => {
               </td>
             );
           },
-          from: ({ from }: IRecordOwnership | IRecordClaim) => {
+          skatePeriod: ({ from, to }: IRecordClaim) => {
+            return (
+              <td>
+                <span className="d-inline-block">
+                  {from ? dayjs(from).format(APP_DATE_FORMAT) : '_'} {'->'}{' '}
+                  {to ? dayjs(to).format(APP_DATE_FORMAT) : '_'}
+                </span>
+              </td>
+            );
+          },
+          from: ({ from }: IRecordOwnership) => {
             return (
               <td>
                 <span className="d-inline-block">{from ? dayjs(from).format(APP_DATE_FORMAT) : '_'}</span>
               </td>
             );
           },
-          to: ({ to }: IRecordOwnership | IRecordClaim) => {
+          to: ({ to }: IRecordOwnership) => {
             return (
               <td>
                 <span className="d-inline-block">{to ? dayjs(to).format(APP_DATE_FORMAT) : '_'}</span>
@@ -147,7 +157,6 @@ const ActivityLogsTable = (props: IActivityLogs) => {
               </td>
             );
           },
-
           period: ({ initialOwnership, newOwnership }: IRecordWithdraw) => {
             return (
               <td>
@@ -155,20 +164,6 @@ const ActivityLogsTable = (props: IActivityLogs) => {
                   From {initialOwnership ? dayjs.unix(Number(initialOwnership)).format(APP_DATE_FORMAT) : '_'} to{' '}
                   {newOwnership ? dayjs.unix(Number(newOwnership)).format(APP_DATE_FORMAT) : '_'}
                 </span>
-              </td>
-            );
-          },
-          previousOwner: ({ previousOwner }: IRecordOwnership) => {
-            return (
-              <td>
-                <span className="d-inline-block ">{getEllipsisTxt(previousOwner, 4)}</span>
-              </td>
-            );
-          },
-          newOwner: ({ newOwner }: IRecordOwnership) => {
-            return (
-              <td>
-                <span className="d-inline-block ">{getEllipsisTxt(newOwner, 4)}</span>
               </td>
             );
           },
