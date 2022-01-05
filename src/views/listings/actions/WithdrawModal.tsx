@@ -56,7 +56,6 @@ const WithdrawModal = (props: IWithdrawModal) => {
 
   const closeModal = () => () => {
     setVisibility(false);
-    formikRef.current?.resetForm();
   };
 
   const initialValues: IIntialValues = {
@@ -77,7 +76,7 @@ const WithdrawModal = (props: IWithdrawModal) => {
     if (!signer) {
       throw Error('No Signer found');
     }
-    const instance = LISTING_INSTANCE({address: listing.address, signer});
+    const instance = LISTING_INSTANCE({ address: listing.address, signer });
     if (!instance) {
       throw Error('Error in generating contract instace');
     }
@@ -115,6 +114,7 @@ const WithdrawModal = (props: IWithdrawModal) => {
     } else {
       setTimeLeft(undefined);
       setMaximumWithdrawable(undefined);
+      formikRef.current?.resetForm();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isVisible]);

@@ -36,6 +36,7 @@ import {
   insertCommas,
   unInsertCommas,
 } from '../../../shared/casual-helpers';
+import ConfirmationLoading from '../../../shared/components/ConfirmationLoading';
 import ConfirmModal from '../../../shared/components/ConfirmModal';
 import InfoLoader from '../../../shared/components/InfoLoader';
 import SubmissionModal from '../../../shared/components/SubmissionModal';
@@ -62,7 +63,7 @@ interface IRegister {
 const titleTableStyle = {
   textAlign: 'left',
   color: '#828282',
-  fontSize: '0.95rem',
+  fontSize: '0.875rem',
   lineHeight: '16px',
   fontWeight: '400',
 };
@@ -215,7 +216,7 @@ const Register = (props: IRegisterProps) => {
     const body = createTxBodyBaseOnType(id, EventType.CLAIM);
     dispatch(proceedTransaction(body));
   };
-
+  
   useEffect(() => {
     if (!id || !provider) return;
     dispatch(fetchingEntity());
@@ -229,14 +230,9 @@ const Register = (props: IRegisterProps) => {
   }, [id]);
 
   useEffect(() => {
-    if (success && id && provider) {
+    if (success && provider && listing && signerAddress) {
       dispatch(fetchingEntity());
-      dispatch(
-        getEntity({
-          id: Number(id),
-          provider,
-        })
-      );
+      dispatch(getOptionsWithStakes({ listing, stakeholder: signerAddress, provider }));
       dispatch(hardReset());
       setDetails([]);
     }
@@ -244,14 +240,12 @@ const Register = (props: IRegisterProps) => {
   }, [success]);
 
   useEffect(() => {
-    // Only fetch listing option stakes if that stakes info is missing
-    const listingHasOptions = Boolean(listing?.options?.length)
-    if (listing && !listingHasOptions && signerAddress && provider) {
+    if (listing && signerAddress && provider) {      
       dispatch(fetchingEntity());
       dispatch(getOptionsWithStakes({ listing, stakeholder: signerAddress, provider }));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [listing, signerAddress]);
+  }, [id, signerAddress]);
 
   const initialValues: IRegister = {
     registerAmount: 0,
@@ -363,7 +357,15 @@ const Register = (props: IRegisterProps) => {
                   return <td>{item.reward ? `${item.reward.toString()}%` : '_'}</td>;
                 },
                 registerAmount: (item: IOption) => {
-                  return <td>{item.stake?.amount ? formatBNToken(item.stake?.amount, true) : '_'}</td>;
+                  return (
+                    <td>
+                      {item.stake?.amount.eq(0) ? (
+                        <span className="text-danger">Chưa đăng ký</span>
+                      ) : (
+                        formatBNToken(item.stake?.amount, true)
+                      )}
+                    </td>
+                  );
                 },
                 details: (item: IOption) => {
                   return (
@@ -372,12 +374,29 @@ const Register = (props: IRegisterProps) => {
                         <CCardBody className="px-3">
                           <CRow className="align-items-center">
                             <CCol xs={12}>
+                              {submitted && !success ? (
+                                <CRow>
+                                  <CCol xs={12} className="d-flex justify-content-center">
+                                    <ConfirmationLoading />
+                                  </CCol>
+                                </CRow>
+                              ) : (
+                                ''
+                              )}
                               <CFormGroup row>
                                 <CCol xs={5}>
                                   <CLabel className="font-weight-bold my-2">Tokens Balance </CLabel>
                                 </CCol>
                                 <CCol xs={7}>
                                   <p className="text-primary my-2">{formatBNToken(tokenBalance, true)}</p>
+                                </CCol>
+                              </CFormGroup>
+                              <CFormGroup row>
+                                <CCol xs={5}>
+                                  <CLabel className="font-weight-bold my-2">Total Stakes </CLabel>
+                                </CCol>
+                                <CCol xs={7}>
+                                  <p className="text-primary my-2">{formatBNToken(item.totalStake, true)}</p>
                                 </CCol>
                               </CFormGroup>
                               <Formik

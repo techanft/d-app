@@ -2,14 +2,14 @@ import { CDataTable, CPagination } from '@coreui/react';
 import dayjs from 'dayjs';
 import React from 'react';
 import { APP_DATE_FORMAT } from '../../../config/constants';
-import { getEllipsisTxt, insertCommas } from '../../../shared/casual-helpers';
+import { getEllipsisTxt, insertCommas, returnOptionNameById } from '../../../shared/casual-helpers';
 import { RecordType } from '../../../shared/enumeration/recordType';
 import {
-    IRecordClaim,
-    IRecordOwnership,
-    IRecordRegister,
-    IRecordUnRegister,
-    IRecordWithdraw
+  IRecordClaim,
+  IRecordOwnership,
+  IRecordRegister,
+  IRecordUnRegister,
+  IRecordWithdraw
 } from '../../../shared/models/record.model';
 import { IRecordParams } from '../../records/records.api';
 import '../index.scss';
@@ -55,28 +55,27 @@ const ActivityLogsTable = (props: IActivityLogs) => {
   };
 
   const registerField: ITableField[] = [
-    { key: 'stakeholder', _style: titleTableStyle, label: 'Stakeholder' },
-    { key: 'optionId', _style: titleTableStyle, label: 'optionId' },
-    { key: 'amount', _style: titleTableStyle, label: 'amount' },
+    { key: 'createdDate', _style: titleTableStyle, label: 'Time' },
+    { key: 'optionId', _style: titleTableStyle, label: 'Activity' },
+    { key: 'amount', _style: titleTableStyle, label: 'Amount' },
   ];
 
   const unregisterField: ITableField[] = [
-    { key: 'stakeholder', _style: titleTableStyle, label: 'Stakeholder' },
-    { key: 'optionId', _style: titleTableStyle, label: 'optionId' },
+    { key: 'createdDate', _style: titleTableStyle, label: 'Time' },
+    { key: 'optionId', _style: titleTableStyle, label: 'Activity' },
   ];
 
   const claimField: ITableField[] = [
-    { key: 'stakeholder', _style: titleTableStyle, label: 'Stakeholder' },
-    { key: 'amount', _style: titleTableStyle, label: 'amount' },
+    { key: 'createdDate', _style: titleTableStyle, label: 'Time' },
+    { key: 'amount', _style: titleTableStyle, label: 'Amount' },
     { key: 'from', _style: titleTableStyle, label: 'From' },
     { key: 'to', _style: titleTableStyle, label: 'To' },
   ];
 
   const withdrawField: ITableField[] = [
-    { key: 'owner', _style: titleTableStyle, label: 'Owner' },
-    { key: 'amount', _style: titleTableStyle, label: 'amount' },
-    { key: 'initialOwnership', _style: titleTableStyle, label: 'Initial Ownership' },
-    { key: 'newOwnership', _style: titleTableStyle, label: 'New Ownership' },
+    { key: 'createdDate', _style: titleTableStyle, label: 'Time' },
+    { key: 'amount', _style: titleTableStyle, label: 'Amount' },
+    { key: 'period', _style: titleTableStyle, label: 'Period' },
   ];
 
   const ownershipField: ITableField[] = [
@@ -123,7 +122,7 @@ const ActivityLogsTable = (props: IActivityLogs) => {
           optionId: ({ optionId }: IRecordRegister | IRecordUnRegister) => {
             return (
               <td>
-                <span className="d-inline-block ">{getEllipsisTxt(optionId, 5)}</span>
+                <span className="d-inline-block ">{returnOptionNameById(Number(optionId))}</span>
               </td>
             );
           },
@@ -148,19 +147,12 @@ const ActivityLogsTable = (props: IActivityLogs) => {
               </td>
             );
           },
-          initialOwnership: ({ initialOwnership }: IRecordWithdraw) => {
+
+          period: ({ initialOwnership, newOwnership }: IRecordWithdraw) => {
             return (
               <td>
                 <span className="d-inline-block ">
-                  {initialOwnership ? dayjs.unix(Number(initialOwnership)).format(APP_DATE_FORMAT) : '_'}
-                </span>
-              </td>
-            );
-          },
-          newOwnership: ({ newOwnership }: IRecordWithdraw) => {
-            return (
-              <td>
-                <span className="d-inline-block ">
+                  From {initialOwnership ? dayjs.unix(Number(initialOwnership)).format(APP_DATE_FORMAT) : '_'} to{' '}
                   {newOwnership ? dayjs.unix(Number(newOwnership)).format(APP_DATE_FORMAT) : '_'}
                 </span>
               </td>
@@ -177,6 +169,13 @@ const ActivityLogsTable = (props: IActivityLogs) => {
             return (
               <td>
                 <span className="d-inline-block ">{getEllipsisTxt(newOwner, 4)}</span>
+              </td>
+            );
+          },
+          createdDate: ({ createdDate }: TRecordTypeArray) => {
+            return (
+              <td>
+                <span className="d-inline-block">{createdDate ? dayjs(createdDate).format(APP_DATE_FORMAT) : '_'}</span>
               </td>
             );
           },

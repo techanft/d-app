@@ -207,7 +207,7 @@ const ActivityLogs = (props: IActivityLogs) => {
     <CContainer fluid className="mx-0 my-2">
       <CRow>
         <CCol xs={12}>
-          <CLabel className="text-primary content-title">Reward</CLabel>
+          <CLabel className="text-primary content-title">Investment</CLabel>
         </CCol>
         <CCol xs={12}>
           <CNav variant="tabs">

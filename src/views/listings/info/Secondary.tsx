@@ -52,23 +52,6 @@ const ListingDetails = (props: IListingDetailProps) => {
         </CCol>
       </CRow>
       <CRow className="m-0 p-0">
-        <CCol xs={12}>
-          <CLabel className="text-primary content-title mt-3">Trading history</CLabel>
-        </CCol>
-        <CCol>
-          <p className="detail-title-font my-2">Price</p>
-          <p className="my-2 detail-value">10.000</p>
-        </CCol>
-        <CCol>
-          <p className="detail-title-font my-2">From</p>
-          <p className="my-2 detail-value">1x366...366999</p>
-        </CCol>
-        <CCol>
-          <p className="detail-title-font my-2">Time</p>
-          <p className="my-2 detail-value">30 minutes ago</p>
-        </CCol>
-      </CRow>
-      <CRow className="m-0 p-0">
         <CCol xs={12} className="text-center mt-3">
           <CLink to={`/${listingId}/activity-logs`}>
             <CIcon name="cil-history" /> <u>Activity Logs</u>
