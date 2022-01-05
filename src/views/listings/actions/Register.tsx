@@ -326,7 +326,7 @@ const Register = (props: IRegisterProps) => {
               <CCardTitle className="listing-card-title mb-0 px-3 py-2 w-100">
                 <p className="mb-2 text-white content-title">202 Yên Sở - Hoàng Mai - Hà Nội</p>
                 <p className="mb-0 text-white detail-title-font">
-                  Hoạt động <b>{baseOptions.length}</b>
+                  Hoạt động <b>{listing?.options ? listing.options.length : 0}</b>
                 </p>
               </CCardTitle>
             </CCardBody>
@@ -535,6 +535,7 @@ const Register = (props: IRegisterProps) => {
                                                 <CButton
                                                   className="btn-radius-50 btn btn-sm btn-success mr-2"
                                                   onClick={onClaimRewardOrUnregister(item.id, ModalType.REWARD_CLAIM)}
+                                                  disabled={tokenBalance! < item.stake.amount}
                                                 >
                                                   Claim Reward
                                                 </CButton>

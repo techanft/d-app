@@ -206,60 +206,57 @@ const WorkersList = (props: IWorkersList) => {
             </CCardBody>
           </CCard>
         </CCol>
-        <>
-          <CCol xs={12}>
-            {loading && !workers?.results.length ? (
-              <Loading />
-            ) : (
-              <>
-                {(submitted && !success) || (success && !loading) ? (
-                  <CCol xs={12} className="d-flex justify-content-center my-2">
-                    <ConfirmationLoading />
-                  </CCol>
-                ) : (
-                  ''
-                )}
-                <CDataTable
-                  striped
-                  items={workers?.results}
-                  fields={fields}
-                  responsive
-                  hover
-                  header
-                  scopedSlots={{
-                    address: (item: IRecordWorker) => {
-                      return <td>{getEllipsisTxt(item.worker || '_', 10)}</td>;
-                    },
-                    action: (item: IRecordWorker) => {
-                      return (
-                        <td>
-                          <CButton
-                            className="text-danger p-0"
-                            disabled={listing ? !validateOwnership(signerAddress, listing) : true}
-                            onClick={onEntityRemoval(item.worker || '_')}
-                          >
-                            <CIcon name="cil-trash" />
-                          </CButton>
-                        </td>
-                      );
-                    },
-                  }}
-                />
-              </>
-            )}
-            {totalPages > 1 && (
-              <CPagination
-                disabled={loading}
-                activePage={filterState.page + 1}
-                pages={totalPages}
-                onActivePageChange={handlePaginationChange}
-                align="center"
-                className="mt-2"
+        <CCol xs={12}>
+          {loading && !workers?.results.length ? (
+            <Loading />
+          ) : (
+            <>
+              {(submitted && !success) || (success && !loading) ? (
+                <CCol xs={12} className="d-flex justify-content-center my-2">
+                  <ConfirmationLoading />
+                </CCol>
+              ) : (
+                ''
+              )}
+              <CDataTable
+                striped
+                items={workers?.results}
+                fields={fields}
+                responsive
+                hover
+                header
+                scopedSlots={{
+                  address: (item: IRecordWorker) => {
+                    return <td>{getEllipsisTxt(item.worker || '_', 10)}</td>;
+                  },
+                  action: (item: IRecordWorker) => {
+                    return (
+                      <td>
+                        <CButton
+                          className="text-danger p-0"
+                          disabled={listing ? !validateOwnership(signerAddress, listing) : true}
+                          onClick={onEntityRemoval(item.worker || '_')}
+                        >
+                          <CIcon name="cil-trash" />
+                        </CButton>
+                      </td>
+                    );
+                  },
+                }}
               />
-            )}
-          </CCol>
-        </>
-
+            </>
+          )}
+          {totalPages > 1 && (
+            <CPagination
+              disabled={loading}
+              activePage={filterState.page + 1}
+              pages={totalPages}
+              onActivePageChange={handlePaginationChange}
+              align="center"
+              className="mt-2"
+            />
+          )}
+        </CCol>
         <CCol xs={12} className="d-flex justify-content-center">
           <CButton
             className="my-2 px-3 w-100 btn-radius-50 btn-font-style btn-primary"
