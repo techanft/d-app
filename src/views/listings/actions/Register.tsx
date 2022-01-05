@@ -302,16 +302,24 @@ const Register = (props: IRegisterProps) => {
     setFieldValue(`registerAmount`, initialRegisterAmount);
   };
 
-  const onClaimRewardOrUnregister = (optionId: number, type: ModalType) => () => {
-    handleModalVisibility(type, true);
+  const onClaimReward = (optionId: number, stakeAmount: BigNumber) => () => {
+    if (tokenBalance!.lt(stakeAmount)) return ToastError('Insufficient balance to claim reward!');
+    handleModalVisibility(ModalType.REWARD_CLAIM, true);
     setChosenOptionId(optionId);
   };
 
-  const checkHasRewardPool = (submitForm: (() => Promise<void>) & (() => Promise<any>)) => () => {
-    if (!listing?.rewardPool) return;
-    if (listing.rewardPool.eq(0)) return ToastInfo('Reward Pool of this listing is 0 ANFT');
-    submitForm();
+  const onUnregister = (optionId: number) => () => {
+    handleModalVisibility(ModalType.REWARD_UNREGISTER, true);
+    setChosenOptionId(optionId);
   };
+
+  const checkHasRewardPool =
+    (submitForm: (() => Promise<void>) & (() => Promise<any>), stakeAmount: BigNumber) => () => {
+      if (!listing?.rewardPool) return;
+      if (listing.rewardPool.eq(0)) return ToastInfo('Reward Pool of this listing is 0 ANFT');
+      if (isEditingRegister && tokenBalance!.lt(stakeAmount)) return ToastError('Insufficient balance to claim reward!');
+      submitForm();
+    };
 
   return (
     <CContainer fluid className="mx-0 my-2">
@@ -522,7 +530,7 @@ const Register = (props: IRegisterProps) => {
                                               <CCol xs={12} className="d-flex justify-content-center mt-3">
                                                 <CButton
                                                   className="btn-radius-50 btn btn-sm btn-primary mr-2"
-                                                  onClick={checkHasRewardPool(submitForm)}
+                                                  onClick={checkHasRewardPool(submitForm, item.stake.amount)}
                                                 >
                                                   Confirm
                                                 </CButton>
@@ -540,18 +548,15 @@ const Register = (props: IRegisterProps) => {
                                               <CCol xs={12} className="d-flex justify-content-center mt-3">
                                                 <CButton
                                                   className="btn-radius-50 btn btn-sm btn-success mr-2"
-                                                  onClick={onClaimRewardOrUnregister(item.id, ModalType.REWARD_CLAIM)}
-                                                  disabled={tokenBalance! < item.stake.amount}
+                                                  onClick={onClaimReward(item.id, item.stake.amount)}
+                                                  // disabled={tokenBalance! < item.stake.amount}
                                                 >
                                                   Claim Reward
                                                 </CButton>
                                                 <CButton
                                                   className="btn-radius-50 btn btn-sm btn-outline-danger ml-2"
                                                   variant="ghost"
-                                                  onClick={onClaimRewardOrUnregister(
-                                                    item.id,
-                                                    ModalType.REWARD_UNREGISTER
-                                                  )}
+                                                  onClick={onUnregister(item.id)}
                                                 >
                                                   Unregister
                                                 </CButton>
@@ -565,7 +570,7 @@ const Register = (props: IRegisterProps) => {
                                             <CButton
                                               className="btn-radius-50 btn btn-sm btn-primary mr-2"
                                               // type="submit"
-                                              onClick={checkHasRewardPool(submitForm)}
+                                              onClick={checkHasRewardPool(submitForm, item.stake.amount)}
                                             >
                                               Register
                                             </CButton>
