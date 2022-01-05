@@ -161,7 +161,7 @@ const ActivityLogsTable = (props: IActivityLogs) => {
             return (
               <td>
                 <span className="d-inline-block ">
-                  From {initialOwnership ? dayjs.unix(Number(initialOwnership)).format(APP_DATE_FORMAT) : '_'} to{' '}
+                  {initialOwnership ? dayjs.unix(Number(initialOwnership)).format(APP_DATE_FORMAT) : '_'} {'->'}{' '}
                   {newOwnership ? dayjs.unix(Number(newOwnership)).format(APP_DATE_FORMAT) : '_'}
                 </span>
               </td>
