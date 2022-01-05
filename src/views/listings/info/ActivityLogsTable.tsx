@@ -1,4 +1,6 @@
 import { CDataTable, CPagination } from '@coreui/react';
+import bxRightArrowAlt from '@iconify/icons-bx/bx-right-arrow-alt';
+import { Icon } from '@iconify/react';
 import dayjs from 'dayjs';
 import React from 'react';
 import { APP_DATE_FORMAT } from '../../../config/constants';
@@ -130,7 +132,7 @@ const ActivityLogsTable = (props: IActivityLogs) => {
             return (
               <td>
                 <span className="d-inline-block">
-                  {from ? dayjs(from).format(APP_DATE_FORMAT) : '_'} {'->'}{' '}
+                  {from ? dayjs(from).format(APP_DATE_FORMAT) : '_'} <Icon icon={bxRightArrowAlt} />{' '}
                   {to ? dayjs(to).format(APP_DATE_FORMAT) : '_'}
                 </span>
               </td>
@@ -161,7 +163,7 @@ const ActivityLogsTable = (props: IActivityLogs) => {
             return (
               <td>
                 <span className="d-inline-block ">
-                  {initialOwnership ? dayjs.unix(Number(initialOwnership)).format(APP_DATE_FORMAT) : '_'} {'->'}{' '}
+                  {initialOwnership ? dayjs.unix(Number(initialOwnership)).format(APP_DATE_FORMAT) : '_'} <Icon icon={bxRightArrowAlt} />{' '}
                   {newOwnership ? dayjs.unix(Number(newOwnership)).format(APP_DATE_FORMAT) : '_'}
                 </span>
               </td>
