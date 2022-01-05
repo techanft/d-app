@@ -16,7 +16,7 @@ import {
   CInvalidFeedback,
   CLabel,
   CLink,
-  CRow,
+  CRow
 } from '@coreui/react';
 import { faPen, faSyncAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -34,17 +34,17 @@ import {
   convertUnixToDate,
   formatBNToken,
   insertCommas,
-  unInsertCommas,
+  unInsertCommas
 } from '../../../shared/casual-helpers';
 import ConfirmationLoading from '../../../shared/components/ConfirmationLoading';
 import ConfirmModal from '../../../shared/components/ConfirmModal';
 import InfoLoader from '../../../shared/components/InfoLoader';
 import SubmissionModal from '../../../shared/components/SubmissionModal';
-import { ToastError } from '../../../shared/components/Toast';
+import { ToastError, ToastInfo } from '../../../shared/components/Toast';
 import { EventType } from '../../../shared/enumeration/eventType';
 import { ModalType, TModalsVisibility } from '../../../shared/enumeration/modalType';
 import useWindowDimensions from '../../../shared/hooks/useWindowDimensions';
-import { baseOptions, IOption } from '../../../shared/models/options.model';
+import { IOption } from '../../../shared/models/options.model';
 import { RootState } from '../../../shared/reducers';
 import { getEntity, getOptionsWithStakes } from '../../assets/assets.api';
 import { fetchingEntity, selectEntityById } from '../../assets/assets.reducer';
@@ -216,7 +216,7 @@ const Register = (props: IRegisterProps) => {
     const body = createTxBodyBaseOnType(id, EventType.CLAIM);
     dispatch(proceedTransaction(body));
   };
-  
+
   useEffect(() => {
     if (!id || !provider) return;
     dispatch(fetchingEntity());
@@ -240,7 +240,7 @@ const Register = (props: IRegisterProps) => {
   }, [success]);
 
   useEffect(() => {
-    if (listing && signerAddress && provider) {      
+    if (listing && signerAddress && provider) {
       dispatch(fetchingEntity());
       dispatch(getOptionsWithStakes({ listing, stakeholder: signerAddress, provider }));
     }
@@ -305,6 +305,12 @@ const Register = (props: IRegisterProps) => {
   const onClaimRewardOrUnregister = (optionId: number, type: ModalType) => () => {
     handleModalVisibility(type, true);
     setChosenOptionId(optionId);
+  };
+
+  const checkHasRewardPool = (submitForm: (() => Promise<void>) & (() => Promise<any>)) => () => {
+    if (!listing?.rewardPool) return;
+    if (listing.rewardPool.eq(0)) return ToastInfo('Reward Pool of this listing is 0 ANFT');
+    submitForm();
   };
 
   return (
@@ -516,7 +522,7 @@ const Register = (props: IRegisterProps) => {
                                               <CCol xs={12} className="d-flex justify-content-center mt-3">
                                                 <CButton
                                                   className="btn-radius-50 btn btn-sm btn-primary mr-2"
-                                                  onClick={submitForm}
+                                                  onClick={checkHasRewardPool(submitForm)}
                                                 >
                                                   Confirm
                                                 </CButton>
@@ -558,7 +564,8 @@ const Register = (props: IRegisterProps) => {
                                           <CCol xs={12} className="d-flex justify-content-center mt-3">
                                             <CButton
                                               className="btn-radius-50 btn btn-sm btn-primary mr-2"
-                                              type="submit"
+                                              // type="submit"
+                                              onClick={checkHasRewardPool(submitForm)}
                                             >
                                               Register
                                             </CButton>
