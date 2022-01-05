@@ -17,6 +17,7 @@ import { RouteComponentProps } from 'react-router-dom';
 import bgImg from '../../../assets/img/registerBonus.svg';
 import { LISTING_INSTANCE } from '../../../shared/blockchain-helpers';
 import { getEllipsisTxt, validateOwnership } from '../../../shared/casual-helpers';
+import ConfirmationLoading from '../../../shared/components/ConfirmationLoading';
 import ConfirmModal from '../../../shared/components/ConfirmModal';
 import Loading from '../../../shared/components/Loading';
 import SubmissionModal from '../../../shared/components/SubmissionModal';
@@ -129,7 +130,7 @@ const WorkersList = (props: IWorkersList) => {
     if (!signer) {
       throw Error('No Signer found');
     }
-    const instance = LISTING_INSTANCE({address: listing.address, signer});
+    const instance = LISTING_INSTANCE({ address: listing.address, signer });
     if (!instance) {
       throw Error('Error in generating contract instance');
     }
@@ -144,7 +145,6 @@ const WorkersList = (props: IWorkersList) => {
     return output;
   };
 
-  // Tại sao entityToDelete lại có cả eventId
   const [entityToDelete, setEntityToDelete] = useState<string>('');
   const [delAlrtMdl, setDeltAlrtMdl] = useState<boolean>(false);
 
@@ -202,6 +202,13 @@ const WorkersList = (props: IWorkersList) => {
               <Loading />
             ) : (
               <>
+                {(submitted && !success) || (success && !loading)  ? (
+                  <CCol xs={12} className="d-flex justify-content-center my-2">
+                    <ConfirmationLoading />
+                  </CCol>
+                ) : (
+                  ''
+                )}
                 <CDataTable
                   striped
                   items={workers?.results}
@@ -216,9 +223,11 @@ const WorkersList = (props: IWorkersList) => {
                     action: (item: IRecordWorker) => {
                       return (
                         <td>
-                          <CButton className="text-danger p-0" 
-                          disabled={listing ? !validateOwnership(signerAddress, listing) : true}
-                          onClick={onEntityRemoval(item.worker || '_')}>
+                          <CButton
+                            className="text-danger p-0"
+                            disabled={listing ? !validateOwnership(signerAddress, listing) : true}
+                            onClick={onEntityRemoval(item.worker || '_')}
+                          >
                             <CIcon name="cil-trash" />
                           </CButton>
                         </td>
@@ -247,7 +256,7 @@ const WorkersList = (props: IWorkersList) => {
             onClick={setRequestListener(true, setAddWorkerPermission)}
             disabled={listing ? !validateOwnership(signerAddress, listing) : true}
           >
-            Thêm quyền sở hữu
+            Thêm quyền khai thác
           </CButton>
         </CCol>
         <AddWorkerPermission listingId={Number(id)} visible={addWorkerPermission} setVisible={setAddWorkerPermission} />
@@ -260,7 +269,7 @@ const WorkersList = (props: IWorkersList) => {
           <p>
             {entityToDelete && (
               <>
-                Bạn chắc chắn muốn hủy quyền khai thác của
+                Bạn chắc chắn muốn hủy quyền khai thác của{' '}
                 <span className="text-primary">{getEllipsisTxt(entityToDelete, 6) || '_'}</span>
               </>
             )}
