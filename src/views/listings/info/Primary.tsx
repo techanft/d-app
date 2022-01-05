@@ -147,7 +147,7 @@ const ListingInfo = (props: IListingInfoProps) => {
   const { entityLoading } = initialState;
 
   const ownershipExpired = listing?.ownership ? checkOwnershipExpired(listing.ownership.toNumber()) : false;
-  const viewerIsOwner = signerAddress && signerAddress === listing?.owner;
+  const viewerIsOwner = Boolean(signerAddress && signerAddress === listing?.owner);
 
   const initialModalState: TModalsVisibility = {
     [ModalType.OWNERSHIP_EXTENSION]: false,
@@ -186,6 +186,12 @@ const ListingInfo = (props: IListingInfoProps) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [success]);
+
+  const onRegisteringOwnership = () => {
+    if (viewerIsOwner) return;
+    if (!ownershipExpired) return ToastError("This listing is being owned by another address!")
+    handleModalVisibility(ModalType.OWNERSHIP_REGISTER, true)
+  }
 
   return (
     <CContainer fluid className="px-0">
@@ -351,12 +357,9 @@ const ListingInfo = (props: IListingInfoProps) => {
                 <CCardBody className="p-2">
                   <CRow className="mx-0">
                     <p
-                      onClick={() =>
-                        viewerIsOwner || !ownershipExpired
-                          ? ''
-                          : handleModalVisibility(ModalType.OWNERSHIP_REGISTER, true)
-                      }
-                      className={`m-0 text-primary`}
+                    // () => handleModalVisibility(ModalType.OWNERSHIP_REGISTER, true)
+                      onClick={onRegisteringOwnership}
+                      className={`m-0 ${viewerIsOwner || !ownershipExpired ? 'text-secondary' : 'text-primary'}`}
                     >
                       <FontAwesomeIcon icon={faEdit} /> Đăng ký sở hữu
                     </p>
