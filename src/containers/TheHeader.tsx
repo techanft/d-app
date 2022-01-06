@@ -33,7 +33,7 @@ import {
   getSigner,
   getTokenBalance
 } from '../views/wallet/wallet.api';
-import { softReset as walletSoftReset } from '../views/wallet/wallet.reducer';
+import { resetSigner, softReset as walletSoftReset } from '../views/wallet/wallet.reducer';
 
 const TheHeader = () => {
   const dispatch = useDispatch();
@@ -52,8 +52,12 @@ const TheHeader = () => {
   const { errorMessage: transactionErrorMessage } = useSelector((state: RootState) => state.transactions);
 
   const onConnectWallet = () => () => {
-    if (!provider) return ToastInfo('No provider found');
-    dispatch(getProviderLogin(provider));
+    if (signerAddress) {
+      dispatch(resetSigner());
+    } else {
+      if (!provider) return ToastInfo('No provider found');
+      dispatch(getProviderLogin(provider));
+    }
   };
 
   useEffect(() => {
@@ -126,7 +130,13 @@ const TheHeader = () => {
         </CHeaderNavItem>
         <CHeaderNavItem>
           <CButton className="btn-link-wallet btn-radius-50 px-2 btn-font-style" onClick={onConnectWallet()}>
-            {signerAddress ? getEllipsisTxt(signerAddress, 4) : 'Connect Wallet'}
+            {signerAddress ? (
+              <>
+                {getEllipsisTxt(signerAddress, 4)} <CIcon name="cil-account-logout" height={15} style={{ color: 'red', margin:"0 0"}} />
+              </>
+            ) : (
+              'Connect Wallet'
+            )}
           </CButton>
         </CHeaderNavItem>
         <CHeaderNavItem>

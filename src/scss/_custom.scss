@@ -92,6 +92,16 @@ body {
     height: 20px;
     position: relative;
   }
+
+  .activityLogTableNav {
+    .nav-link {
+      color: #828282;
+      &.active {
+        border-bottom: 1px solid $primary;
+        color: $primary;
+      }
+    }
+  }
 }
 
 //============Loading Animation=========//
