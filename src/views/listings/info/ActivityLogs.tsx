@@ -1,4 +1,4 @@
-import { CCol, CContainer, CLabel, CNav, CNavItem, CNavLink, CRow, CTabContent, CTabPane } from '@coreui/react';
+import { CCol, CContainer, CNav, CNavItem, CNavLink, CRow, CTabContent, CTabPane } from '@coreui/react';
 import { ActionCreatorWithoutPayload, AsyncThunk } from '@reduxjs/toolkit';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -98,6 +98,8 @@ const ActivityLogs = (props: IActivityLogs) => {
   const { loading: withdrawLoading, withdraws } = initialState.withdrawInitialState;
   const { loading: ownershipLoading, ownerships } = initialState.ownershipInitialState;
 
+  const [tableType, setTableType] = useState<TableType>(TableType.INVESTMENT);
+
   const [investmentActiveTab, setInvestmentActiveTab] = useState<RecordType>(RecordType.REGISTER);
   const [ownershipActiveTab, setOwnershipActiveTab] = useState<RecordType>(RecordType.WITHDRAW);
 
@@ -157,6 +159,10 @@ const ActivityLogs = (props: IActivityLogs) => {
     }
   };
 
+  const onTableTypeChange = (tableType: TableType) => () => {
+    setTableType(tableType);
+  };
+
   const onTabChange = (recordType: RecordType, tableType: TableType) => () => {
     filterMappingChange[tableType]((prevState) => {
       return {
@@ -192,10 +198,8 @@ const ActivityLogs = (props: IActivityLogs) => {
   useEffect(() => {
     if (!listing?.address || !signerAddress) return;
     const additionalOwnerFilterParams =
-      ownershipActiveTab === RecordType.OWNERSHIP_EXTENSION
-        ? { newOwner: signerAddress }
-        : { owner: signerAddress };
-    const filter = { ...ownershipFilterState, ...additionalOwnerFilterParams,listingAddress: listing.address, };
+      ownershipActiveTab === RecordType.OWNERSHIP_EXTENSION ? { newOwner: signerAddress } : { owner: signerAddress };
+    const filter = { ...ownershipFilterState, ...additionalOwnerFilterParams, listingAddress: listing.address };
     const recordFetchingFunc = recordTypeMapingFetching[ownershipActiveTab];
     const recordApiFunc = recordTypeMapingApi[ownershipActiveTab];
     dispatch(recordFetchingFunc());
@@ -207,128 +211,147 @@ const ActivityLogs = (props: IActivityLogs) => {
     <CContainer fluid className="mx-0 my-2">
       <CRow>
         <CCol xs={12}>
-          <CLabel className="text-primary content-title">Investment</CLabel>
-        </CCol>
-        <CCol xs={12}>
-          <CNav variant="tabs">
+          <CNav variant="" className={'activityLogTableNav'}>
             <CNavItem className="col-4 p-0">
               <CNavLink
-                onClick={onTabChange(RecordType.REGISTER, TableType.INVESTMENT)}
-                active={investmentActiveTab === RecordType.REGISTER}
-                className="detail-title-font px-0 text-center text-primary"
+                onClick={onTableTypeChange(TableType.INVESTMENT)}
+                active={tableType === TableType.INVESTMENT}
+                className="content-title px-0 text-center"
               >
-                Register
+                Investment
               </CNavLink>
             </CNavItem>
             <CNavItem className="col-4 p-0">
               <CNavLink
-                onClick={onTabChange(RecordType.UNREGISTER, TableType.INVESTMENT)}
-                active={investmentActiveTab === RecordType.UNREGISTER}
-                className="detail-title-font px-0 text-center text-primary"
+                onClick={onTableTypeChange(TableType.OWNERSHIP)}
+                active={tableType === TableType.OWNERSHIP}
+                className="content-title px-0 text-center"
               >
-                Unregister
-              </CNavLink>
-            </CNavItem>
-            <CNavItem className="col-4 p-0">
-              <CNavLink
-                onClick={onTabChange(RecordType.CLAIM, TableType.INVESTMENT)}
-                active={investmentActiveTab === RecordType.CLAIM}
-                className="detail-title-font px-0 text-center text-primary"
-              >
-                Claim Reward
+                Ownership
               </CNavLink>
             </CNavItem>
           </CNav>
+        </CCol>
+        <CCol xs={12}>
+          <p className="header-title content-title my-2">Activity Logs</p>
           <CTabContent>
-            <CTabPane active={investmentActiveTab === RecordType.REGISTER}>
-              <ActivityLogsTable
-                results={recordResultMapping[RecordType.REGISTER]}
-                filterState={investmentFilterState}
-                recordType={RecordType.REGISTER}
-                totalPages={totalInvestmentPages}
-                loading={registerLoading}
-                tableType={TableType.INVESTMENT}
-                handlePaginationChange={handlePaginationChange}
-              />
+            <CTabPane active={tableType === TableType.INVESTMENT}>
+              <CNav variant="tabs">
+                <CNavItem className="col-4 p-0">
+                  <CNavLink
+                    onClick={onTabChange(RecordType.REGISTER, TableType.INVESTMENT)}
+                    active={investmentActiveTab === RecordType.REGISTER}
+                    className="detail-title-font px-0 text-center text-primary"
+                  >
+                    Register
+                  </CNavLink>
+                </CNavItem>
+                <CNavItem className="col-4 p-0">
+                  <CNavLink
+                    onClick={onTabChange(RecordType.UNREGISTER, TableType.INVESTMENT)}
+                    active={investmentActiveTab === RecordType.UNREGISTER}
+                    className="detail-title-font px-0 text-center text-primary"
+                  >
+                    Unregister
+                  </CNavLink>
+                </CNavItem>
+                <CNavItem className="col-4 p-0">
+                  <CNavLink
+                    onClick={onTabChange(RecordType.CLAIM, TableType.INVESTMENT)}
+                    active={investmentActiveTab === RecordType.CLAIM}
+                    className="detail-title-font px-0 text-center text-primary"
+                  >          
+                    Claim Reward
+                  </CNavLink>
+                </CNavItem>
+              </CNav>
+              <CTabContent>
+                <CTabPane active={investmentActiveTab === RecordType.REGISTER}>
+                  <ActivityLogsTable
+                    results={recordResultMapping[RecordType.REGISTER]}
+                    filterState={investmentFilterState}
+                    recordType={RecordType.REGISTER}
+                    totalPages={totalInvestmentPages}
+                    loading={registerLoading}
+                    tableType={TableType.INVESTMENT}
+                    handlePaginationChange={handlePaginationChange}
+                  />
+                </CTabPane>
+                <CTabPane active={investmentActiveTab === RecordType.UNREGISTER}>
+                  <ActivityLogsTable
+                    results={recordResultMapping[RecordType.UNREGISTER]}
+                    filterState={investmentFilterState}
+                    recordType={RecordType.UNREGISTER}
+                    totalPages={totalInvestmentPages}
+                    loading={unregisterLoading}
+                    tableType={TableType.INVESTMENT}
+                    handlePaginationChange={handlePaginationChange}
+                  />
+                </CTabPane>
+                <CTabPane active={investmentActiveTab === RecordType.CLAIM}>
+                  <ActivityLogsTable
+                    results={recordResultMapping[RecordType.CLAIM]}
+                    filterState={investmentFilterState}
+                    recordType={RecordType.CLAIM}
+                    totalPages={totalInvestmentPages}
+                    loading={claimLoading}
+                    tableType={TableType.INVESTMENT}
+                    handlePaginationChange={handlePaginationChange}
+                  />
+                </CTabPane>
+              </CTabContent>
             </CTabPane>
-            <CTabPane active={investmentActiveTab === RecordType.UNREGISTER}>
-              <ActivityLogsTable
-                results={recordResultMapping[RecordType.UNREGISTER]}
-                filterState={investmentFilterState}
-                recordType={RecordType.UNREGISTER}
-                totalPages={totalInvestmentPages}
-                loading={unregisterLoading}
-                tableType={TableType.INVESTMENT}
-                handlePaginationChange={handlePaginationChange}
-              />
-            </CTabPane>
-            <CTabPane active={investmentActiveTab === RecordType.CLAIM}>
-              <ActivityLogsTable
-                results={recordResultMapping[RecordType.CLAIM]}
-                filterState={investmentFilterState}
-                recordType={RecordType.CLAIM}
-                totalPages={totalInvestmentPages}
-                loading={claimLoading}
-                tableType={TableType.INVESTMENT}
-                handlePaginationChange={handlePaginationChange}
-              />
+            <CTabPane active={tableType === TableType.OWNERSHIP}>
+              <CNav variant="tabs">
+                <CNavItem className="col-4 p-0">
+                  <CNavLink
+                    onClick={onTabChange(RecordType.WITHDRAW, TableType.OWNERSHIP)}
+                    active={ownershipActiveTab === RecordType.WITHDRAW}
+                    className="detail-title-font px-0 text-center text-primary"
+                  >
+                    Withdraw Token
+                  </CNavLink>
+                </CNavItem>
+                <CNavItem className="col-4 p-0">
+                  <CNavLink
+                    onClick={onTabChange(RecordType.OWNERSHIP_EXTENSION, TableType.OWNERSHIP)}
+                    active={ownershipActiveTab === RecordType.OWNERSHIP_EXTENSION}
+                    className="detail-title-font px-0 text-center text-primary"
+                  >
+                    Recharge Token
+                  </CNavLink>
+                </CNavItem>
+              </CNav>
+              <CTabContent>
+                <CTabPane active={ownershipActiveTab === RecordType.WITHDRAW}>
+                  <ActivityLogsTable
+                    results={recordResultMapping[RecordType.WITHDRAW]}
+                    filterState={ownershipFilterState}
+                    recordType={RecordType.WITHDRAW}
+                    totalPages={totalOwnershipPages}
+                    loading={withdrawLoading}
+                    tableType={TableType.OWNERSHIP}
+                    handlePaginationChange={handlePaginationChange}
+                  />
+                </CTabPane>
+                <CTabPane active={ownershipActiveTab === RecordType.OWNERSHIP_EXTENSION}>
+                  <ActivityLogsTable
+                    results={recordResultMapping[RecordType.OWNERSHIP_EXTENSION]}
+                    filterState={ownershipFilterState}
+                    recordType={RecordType.OWNERSHIP_EXTENSION}
+                    totalPages={totalOwnershipPages}
+                    loading={ownershipLoading}
+                    tableType={TableType.OWNERSHIP}
+                    handlePaginationChange={handlePaginationChange}
+                  />
+                </CTabPane>
+              </CTabContent>
             </CTabPane>
           </CTabContent>
         </CCol>
       </CRow>
 
       {/* Ownership - Activity Logs */}
-      <CRow>
-        <CCol xs={12}>
-          <CLabel className="text-primary content-title">Ownership</CLabel>
-        </CCol>
-        <CCol xs={12}>
-          <CNav variant="tabs">
-            <CNavItem className="col-4 p-0">
-              <CNavLink
-                onClick={onTabChange(RecordType.WITHDRAW, TableType.OWNERSHIP)}
-                active={ownershipActiveTab === RecordType.WITHDRAW}
-                className="detail-title-font px-0 text-center text-primary"
-              >
-                Withdraw Token
-              </CNavLink>
-            </CNavItem>
-            <CNavItem className="col-4 p-0">
-              <CNavLink
-                onClick={onTabChange(RecordType.OWNERSHIP_EXTENSION, TableType.OWNERSHIP)}
-                active={ownershipActiveTab === RecordType.OWNERSHIP_EXTENSION}
-                className="detail-title-font px-0 text-center text-primary"
-              >
-                Recharge Token
-              </CNavLink>
-            </CNavItem>
-          </CNav>
-          <CTabContent>
-            <CTabPane active={ownershipActiveTab === RecordType.WITHDRAW}>
-              <ActivityLogsTable
-                results={recordResultMapping[RecordType.WITHDRAW]}
-                filterState={ownershipFilterState}
-                recordType={RecordType.WITHDRAW}
-                totalPages={totalOwnershipPages}
-                loading={withdrawLoading}
-                tableType={TableType.OWNERSHIP}
-                handlePaginationChange={handlePaginationChange}
-              />
-            </CTabPane>
-            <CTabPane active={ownershipActiveTab === RecordType.OWNERSHIP_EXTENSION}>
-              <ActivityLogsTable
-                results={recordResultMapping[RecordType.OWNERSHIP_EXTENSION]}
-                filterState={ownershipFilterState}
-                recordType={RecordType.OWNERSHIP_EXTENSION}
-                totalPages={totalOwnershipPages}
-                loading={ownershipLoading}
-                tableType={TableType.OWNERSHIP}
-                handlePaginationChange={handlePaginationChange}
-              />
-            </CTabPane>
-          </CTabContent>
-        </CCol>
-      </CRow>
     </CContainer>
   );
 };

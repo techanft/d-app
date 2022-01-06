@@ -96,6 +96,12 @@ const ActivityLogsTable = (props: IActivityLogs) => {
     [RecordType.UPDATE_WORKER]: [],
   };
 
+  results.map((dummy: any) => {
+    Object.keys(dummy).map((objectDumm: any) => {
+      console.log(objectDumm, dummy[objectDumm]);
+    });
+  });
+
   return (
     <>
       <CDataTable
@@ -132,7 +138,7 @@ const ActivityLogsTable = (props: IActivityLogs) => {
             return (
               <td>
                 <span className="d-inline-block">
-                  {from ? dayjs(from).format(APP_DATE_FORMAT) : '_'} <Icon icon={bxRightArrowAlt} />{' '}
+                  {from ? dayjs(from).format(APP_DATE_FORMAT) : '_'} <Icon icon={bxRightArrowAlt} />`{' '}
                   {to ? dayjs(to).format(APP_DATE_FORMAT) : '_'}
                 </span>
               </td>
@@ -163,7 +169,8 @@ const ActivityLogsTable = (props: IActivityLogs) => {
             return (
               <td>
                 <span className="d-inline-block ">
-                  {initialOwnership ? dayjs.unix(Number(initialOwnership)).format(APP_DATE_FORMAT) : '_'} <Icon icon={bxRightArrowAlt} />{' '}
+                  {initialOwnership ? dayjs.unix(Number(initialOwnership)).format(APP_DATE_FORMAT) : '_'}{' '}
+                  <Icon icon={bxRightArrowAlt} />{' '}
                   {newOwnership ? dayjs.unix(Number(newOwnership)).format(APP_DATE_FORMAT) : '_'}
                 </span>
               </td>
