@@ -184,8 +184,8 @@ const ActivityLogs = (props: IActivityLogs) => {
     if (!listing?.address || !signerAddress) return;
     const additionalInvestmentFilterParams = {
       ...investmentFilterState,
-      listingAddress: listing.address,
-      stakeholder: signerAddress,
+      // listingAddress: listing.address,
+      // stakeholder: signerAddress,
     };
     const recordFetchingFunc = recordTypeMapingFetching[investmentActiveTab];
     const recordApiFunc = recordTypeMapingApi[investmentActiveTab];
@@ -198,7 +198,11 @@ const ActivityLogs = (props: IActivityLogs) => {
   useEffect(() => {
     if (!listing?.address || !signerAddress) return;
     const additionalOwnerFilterParams =
-      ownershipActiveTab === RecordType.OWNERSHIP_EXTENSION ? { newOwner: signerAddress } : { owner: signerAddress };
+      ownershipActiveTab === RecordType.OWNERSHIP_EXTENSION
+        // ? { newOwner: signerAddress, listingAddress: listing.address }
+        // : { owner: signerAddress, listingAddress: listing.address };
+        ? { newOwner: "", listingAddress: "" }
+        : { owner: "", listingAddress: "" };
     const filter = { ...ownershipFilterState, ...additionalOwnerFilterParams, listingAddress: listing.address };
     const recordFetchingFunc = recordTypeMapingFetching[ownershipActiveTab];
     const recordApiFunc = recordTypeMapingApi[ownershipActiveTab];
@@ -260,12 +264,12 @@ const ActivityLogs = (props: IActivityLogs) => {
                     onClick={onTabChange(RecordType.CLAIM, TableType.INVESTMENT)}
                     active={investmentActiveTab === RecordType.CLAIM}
                     className="detail-title-font px-0 text-center text-primary"
-                  >          
+                  >
                     Claim Reward
                   </CNavLink>
                 </CNavItem>
               </CNav>
-              <CTabContent>
+              <CTabContent className="mt-3">
                 <CTabPane active={investmentActiveTab === RecordType.REGISTER}>
                   <ActivityLogsTable
                     results={recordResultMapping[RecordType.REGISTER]}
@@ -322,7 +326,7 @@ const ActivityLogs = (props: IActivityLogs) => {
                   </CNavLink>
                 </CNavItem>
               </CNav>
-              <CTabContent>
+              <CTabContent className="mt-3">
                 <CTabPane active={ownershipActiveTab === RecordType.WITHDRAW}>
                   <ActivityLogsTable
                     results={recordResultMapping[RecordType.WITHDRAW]}

@@ -1,6 +1,4 @@
-import { CDataTable, CPagination } from '@coreui/react';
-import bxRightArrowAlt from '@iconify/icons-bx/bx-right-arrow-alt';
-import { Icon } from '@iconify/react';
+import { CPagination } from '@coreui/react';
 import dayjs from 'dayjs';
 import React from 'react';
 import { APP_DATE_FORMAT } from '../../../config/constants';
@@ -25,13 +23,7 @@ interface ITableStyle {
   fontWeight: string;
 }
 
-interface ITableField {
-  key: string;
-  _style: ITableStyle;
-  label: string;
-}
-
-type TRecordTypeMappingField = { [key in RecordType]: Array<ITableField> };
+type TRecordTypeMappingRender = { [key in RecordType]: Function };
 
 interface IActivityLogs {
   results: Array<TRecordTypeArray>;
@@ -48,143 +40,126 @@ export const noItemsViewTable = { noItems: 'No Item' };
 const ActivityLogsTable = (props: IActivityLogs) => {
   const { filterState, totalPages, loading, tableType, handlePaginationChange, results, recordType } = props;
 
-  const titleTableStyle: ITableStyle = {
-    textAlign: 'left',
-    color: '#828282',
-    fontSize: '0.875rem',
-    lineHeight: '16px',
-    fontWeight: '400',
+  const renderRecordOwnerShip = (record: IRecordOwnership) => (
+    <>
+      <tr>
+        <td>Previous Owner</td>
+        <td className="text-right">{getEllipsisTxt(record.previousOwner, 5)}</td>
+      </tr>
+      <tr>
+        <td>New Owner</td>
+        <td className="text-right">{getEllipsisTxt(record.newOwner, 5)}</td>
+      </tr>
+      <tr>
+        <td>From</td>
+        <td className="text-right">{dayjs(record.from).format(APP_DATE_FORMAT)}</td>
+      </tr>
+      <tr>
+        <td>To</td>
+        <td className="text-right">{dayjs(record.to).format(APP_DATE_FORMAT)}</td>
+      </tr>
+    </>
+  );
+
+  const renderRecordClaim = (record: IRecordClaim) => (
+    <>
+      <tr>
+        <td>Stake Holder</td>
+        <td className="text-right">{getEllipsisTxt(record.stakeholder, 5)}</td>
+      </tr>
+      <tr>
+        <td>Amount</td>
+        <td className="text-right">{insertCommas(record.amount || '')}</td>
+      </tr>
+
+      <tr>
+        <td>From</td>
+        <td className="text-right">{dayjs(record.from).format(APP_DATE_FORMAT)}</td>
+      </tr>
+      <tr>
+        <td>To</td>
+        <td className="text-right">{dayjs(record.to).format(APP_DATE_FORMAT)}</td>
+      </tr>
+    </>
+  );
+
+  const renderRecordRegister = (record: IRecordRegister) => (
+    <>
+      <tr>
+        <td>Stake Holder</td>
+        <td className="text-right">{getEllipsisTxt(record.stakeholder, 5)}</td>
+      </tr>
+      <tr>
+        <td>Option</td>
+        <td className="text-right">{returnOptionNameById(Number(record.optionId))}</td>
+      </tr>
+      <tr>
+        <td>Amount</td>
+        <td className="text-right">{insertCommas(record.amount || '')}</td>
+      </tr>
+    </>
+  );
+
+  const renderRecordUnRegister = (record: IRecordUnRegister) => (
+    <>
+      <tr>
+        <td>Stake Holder</td>
+        <td className="text-right">{getEllipsisTxt(record.stakeholder, 5)}</td>
+      </tr>
+      <tr>
+        <td>Option</td>
+        <td className="text-right">{returnOptionNameById(Number(record.optionId))}</td>
+      </tr>
+    </>
+  );
+
+  const renderRecordWithdraw = (record: IRecordWithdraw) => (
+    <>
+      <tr>
+        <td>Owner</td>
+        <td className="text-right">{getEllipsisTxt(record.owner, 5)}</td>
+      </tr>
+      <tr>
+        <td>Initial Ownership</td>
+        <td className="text-right">{dayjs.unix(Number(record.initialOwnership)).format(APP_DATE_FORMAT)}</td>
+      </tr>
+      <tr>
+        <td>New Ownership</td>
+        <td className="text-right">{dayjs.unix(Number(record.initialOwnership)).format(APP_DATE_FORMAT)}</td>
+      </tr>
+      <tr>
+        <td>Ammount</td>
+        <td className="text-right">{insertCommas(record.amount || '')}</td>
+      </tr>
+    </>
+  );
+
+  const renderRecordWorker = () => <></>;
+
+  const recordMappingField: TRecordTypeMappingRender = {
+    [RecordType.REGISTER]: renderRecordRegister,
+    [RecordType.UNREGISTER]: renderRecordUnRegister,
+    [RecordType.CLAIM]: renderRecordClaim,
+    [RecordType.WITHDRAW]: renderRecordWithdraw,
+    [RecordType.OWNERSHIP_EXTENSION]: renderRecordOwnerShip,
+    [RecordType.UPDATE_WORKER]: renderRecordWorker,
   };
-
-  const registerField: ITableField[] = [
-    { key: 'createdDate', _style: titleTableStyle, label: 'Time' },
-    { key: 'optionId', _style: titleTableStyle, label: 'Activity' },
-    { key: 'amount', _style: titleTableStyle, label: 'Amount' },
-  ];
-
-  const unregisterField: ITableField[] = [
-    { key: 'createdDate', _style: titleTableStyle, label: 'Time' },
-    { key: 'optionId', _style: titleTableStyle, label: 'Activity' },
-  ];
-
-  const claimField: ITableField[] = [
-    // { key: 'createdDate', _style: titleTableStyle, label: 'Time' },
-    { key: 'amount', _style: titleTableStyle, label: 'Amount' },
-    { key: 'skatePeriod', _style: titleTableStyle, label: 'Skating Period' },
-    // { key: 'from', _style: titleTableStyle, label: 'From' },
-    // { key: 'to', _style: titleTableStyle, label: 'To' },
-  ];
-
-  const withdrawField: ITableField[] = [
-    { key: 'createdDate', _style: titleTableStyle, label: 'Time' },
-    { key: 'amount', _style: titleTableStyle, label: 'Amount' },
-    { key: 'period', _style: titleTableStyle, label: 'Period' },
-  ];
-
-  const ownershipField: ITableField[] = [
-    { key: 'amount', _style: titleTableStyle, label: 'Amount' },
-    { key: 'from', _style: titleTableStyle, label: 'From' },
-    { key: 'to', _style: titleTableStyle, label: 'To' },
-  ];
-
-  const recordMappingField: TRecordTypeMappingField = {
-    [RecordType.REGISTER]: registerField,
-    [RecordType.UNREGISTER]: unregisterField,
-    [RecordType.CLAIM]: claimField,
-    [RecordType.WITHDRAW]: withdrawField,
-    [RecordType.OWNERSHIP_EXTENSION]: ownershipField,
-    [RecordType.UPDATE_WORKER]: [],
-  };
-
-  results.map((dummy: any) => {
-    Object.keys(dummy).map((objectDumm: any) => {
-      console.log(objectDumm, dummy[objectDumm]);
-    });
-  });
 
   return (
     <>
-      <CDataTable
-        noItemsView={noItemsViewTable}
-        striped
-        items={results}
-        fields={recordMappingField[recordType]}
-        responsive
-        hover
-        header
-        scopedSlots={{
-          stakeholder: ({ stakeholder }: IRecordRegister | IRecordClaim | IRecordUnRegister) => {
-            return (
-              <td>
-                <span className="d-inline-block ">{getEllipsisTxt(stakeholder, 5)}</span>
-              </td>
-            );
-          },
-          amount: ({ amount }: IRecordRegister | IRecordClaim | IRecordWithdraw) => {
-            return (
-              <td>
-                <span className="d-inline-block">{insertCommas(amount || '')}</span>
-              </td>
-            );
-          },
-          optionId: ({ optionId }: IRecordRegister | IRecordUnRegister) => {
-            return (
-              <td>
-                <span className="d-inline-block ">{returnOptionNameById(Number(optionId))}</span>
-              </td>
-            );
-          },
-          skatePeriod: ({ from, to }: IRecordClaim) => {
-            return (
-              <td>
-                <span className="d-inline-block">
-                  {from ? dayjs(from).format(APP_DATE_FORMAT) : '_'} <Icon icon={bxRightArrowAlt} />`{' '}
-                  {to ? dayjs(to).format(APP_DATE_FORMAT) : '_'}
-                </span>
-              </td>
-            );
-          },
-          from: ({ from }: IRecordOwnership) => {
-            return (
-              <td>
-                <span className="d-inline-block">{from ? dayjs(from).format(APP_DATE_FORMAT) : '_'}</span>
-              </td>
-            );
-          },
-          to: ({ to }: IRecordOwnership) => {
-            return (
-              <td>
-                <span className="d-inline-block">{to ? dayjs(to).format(APP_DATE_FORMAT) : '_'}</span>
-              </td>
-            );
-          },
-          owner: ({ owner }: IRecordWithdraw) => {
-            return (
-              <td>
-                <span className="d-inline-block ">{getEllipsisTxt(owner, 4)}</span>
-              </td>
-            );
-          },
-          period: ({ initialOwnership, newOwnership }: IRecordWithdraw) => {
-            return (
-              <td>
-                <span className="d-inline-block ">
-                  {initialOwnership ? dayjs.unix(Number(initialOwnership)).format(APP_DATE_FORMAT) : '_'}{' '}
-                  <Icon icon={bxRightArrowAlt} />{' '}
-                  {newOwnership ? dayjs.unix(Number(newOwnership)).format(APP_DATE_FORMAT) : '_'}
-                </span>
-              </td>
-            );
-          },
-          createdDate: ({ createdDate }: TRecordTypeArray) => {
-            return (
-              <td>
-                <span className="d-inline-block">{createdDate ? dayjs(createdDate).format(APP_DATE_FORMAT) : '_'}</span>
-              </td>
-            );
-          },
-        }}
-      />
+      {results.map((result, index) => {
+        return (
+          <table key={index} className='w-100 mb-3'>
+            <thead>
+              <tr>
+                <th>{dayjs(result.createdDate).format(APP_DATE_FORMAT)}</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>{recordMappingField[recordType](result)}</tbody>
+          </table>
+        );
+      })}
       {totalPages > 1 && (
         <CPagination
           disabled={loading}
