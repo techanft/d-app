@@ -1,22 +1,27 @@
+import CIcon from '@coreui/icons-react';
 import {
   CButton,
   CCol,
   CForm,
   CInput,
+  CInputGroup,
+  CInputGroupAppend,
   CInvalidFeedback,
   CModal,
   CModalBody,
   CModalFooter,
   CModalHeader,
   CModalTitle,
-  CRow
+  CRow,
 } from '@coreui/react';
 import { utils } from 'ethers';
 import { Formik, FormikProps } from 'formik';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import QrReader from 'react-qr-reader';
 import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
 import { checkWorkerStatus, LISTING_INSTANCE } from '../../../shared/blockchain-helpers';
+import { unInsertCommas } from '../../../shared/casual-helpers';
 import { ToastError } from '../../../shared/components/Toast';
 import { EventType } from '../../../shared/enumeration/eventType';
 import { RootState } from '../../../shared/reducers';
@@ -72,7 +77,7 @@ const AddWorkerPermission = (props: ICancelWorkerPermission) => {
     if (!signer) {
       throw Error('No Signer found');
     }
-    const instance = LISTING_INSTANCE({address: listing.address, signer});
+    const instance = LISTING_INSTANCE({ address: listing.address, signer });
     if (!instance) {
       throw Error('Error in generating contract instance');
     }
@@ -89,7 +94,37 @@ const AddWorkerPermission = (props: ICancelWorkerPermission) => {
   const closeModal = () => () => {
     setVisible(false);
     formikRef.current?.resetForm();
+  }; 
+
+  const qrRef = useRef<any>()
+  const [scanResultFile, setScanResultFile] = useState<string>('');
+  console.log(scanResultFile, "scanResultFile");
+  
+
+  const onScanFile = (setFieldValue: (field: string, value: any, shouldValidate?: boolean | undefined) => void ) => () => {
+    // console.log(event, 'event');
+    // qrRef.current.openImageDialog();
+    setFieldValue(`address`, scanResultFile)
+  }
+
+
+  const handleErrorFile = (error: any) => {
+    console.log(error, 'err');
   };
+
+  const handleScanFile = (result: string | null) => {
+    if (result) {
+      console.log('result', result);
+      setScanResultFile(result);    
+
+    }
+    
+  };
+
+  const onImageLoad = (event: any) => {
+console.log(event, "event");
+
+  }
 
   return (
     <CModal show={visible} onClose={closeModal()} closeOnBackdrop={false} centered className="border-radius-modal">
@@ -117,7 +152,7 @@ const AddWorkerPermission = (props: ICancelWorkerPermission) => {
           }
         }}
       >
-        {({ values, errors, touched, handleChange, handleSubmit, handleBlur, resetForm }) => (
+        {({ values, errors, touched, handleChange, handleSubmit, handleBlur, resetForm, setFieldValue }) => (
           <CForm onSubmit={handleSubmit}>
             <>
               <CModalBody>
@@ -126,19 +161,30 @@ const AddWorkerPermission = (props: ICancelWorkerPermission) => {
                     <p>Address Wallet</p>
                   </CCol>
                   <CCol xs={12}>
-                    <CInput
-                      type="text"
-                      id="address"
-                      name="address"
-                      onChange={handleChange}
-                      autoComplete="off"
-                      value={values.address || ''}
-                      onBlur={handleBlur}
-                      className="btn-radius-50"
-                    />
+                    <CInputGroup>
+                      <CInput
+                        // type="text"
+                        id="address"
+                        name="address"
+                        // onChange={handleChange}
+                        autoComplete="off"
+                        value={values.address || ''}
+                        onBlur={handleBlur}
+                        className="btn-radius-50"
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldValue(`address`, unInsertCommas(e.target.value));
+                        }}
+                      />
+                      <CInputGroupAppend>
+                        <CButton color="primary" className="btn-radius-50" onClick={() => setFieldValue(`address`, scanResultFile)}>
+                          <CIcon name="cil-qr-code" />
+                        </CButton>
+                      </CInputGroupAppend>
+                    </CInputGroup>
                     <CInvalidFeedback className={!!errors.address && touched.address ? 'd-block' : 'd-none'}>
                       {errors.address}
                     </CInvalidFeedback>
+                    <QrReader delay={300} onError={handleErrorFile} onScan={handleScanFile} style={{ width: '100%' }} />
                   </CCol>
                 </CRow>
               </CModalBody>
