@@ -8,7 +8,7 @@ import {
   CDataTable,
   CLink,
   CPagination,
-  CRow,
+  CRow
 } from '@coreui/react';
 import {
   faArrowAltCircleDown,
@@ -16,7 +16,7 @@ import {
   faClipboard,
   faDonate,
   faEdit,
-  faIdBadge,
+  faIdBadge
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
@@ -27,7 +27,7 @@ import {
   convertUnixToDate,
   formatBNToken,
   formatLocalDatetime,
-  getEllipsisTxt,
+  getEllipsisTxt
 } from '../../../shared/casual-helpers';
 import ConfirmationLoading from '../../../shared/components/ConfirmationLoading';
 import CopyTextToClipBoard from '../../../shared/components/CopyTextToClipboard';
@@ -191,6 +191,11 @@ const ListingInfo = (props: IListingInfoProps) => {
     if (viewerIsOwner) return;
     if (!ownershipExpired) return ToastError("This listing is being owned by another address!")
     handleModalVisibility(ModalType.OWNERSHIP_REGISTER, true)
+  }
+
+  const onWithdrawToken = () => {
+    if (ownershipExpired) return ToastError("No more token to withdraw!")
+    handleModalVisibility(ModalType.OWNERSHIP_WITHDRAW, true)
   }
 
   return (
@@ -390,13 +395,12 @@ const ListingInfo = (props: IListingInfoProps) => {
               <CCard className="mt-2 activities-card mb-0">
                 <CCardBody className="p-2">
                   <CRow className="mx-0">
-                    <CLink
-                      href="#"
-                      target="_blank"
-                      onClick={() => handleModalVisibility(ModalType.OWNERSHIP_WITHDRAW, true)}
+                    <p
+                      onClick={onWithdrawToken}
+                      className={`m-0 ${ownershipExpired ? 'text-secondary' : 'text-primary'}`}
                     >
                       <FontAwesomeIcon icon={faArrowAltCircleUp} /> Rút ANFT
-                    </CLink>
+                    </p>
                   </CRow>
                   <CRow className="my-2 mx-0">
                     <p

@@ -98,7 +98,7 @@ const WithdrawModal = (props: IWithdrawModal) => {
     const currentUnix = dayjs().unix();
     const maximum = estimateWithdrawAmount(listing.dailyPayment, listing.ownership.sub(120), currentUnix);
     setMaximumWithdrawable(maximum);
-    setTimeLeft(60);
+    setTimeLeft(30);
   };
 
   useEffect(() => {
@@ -185,7 +185,7 @@ const WithdrawModal = (props: IWithdrawModal) => {
                           <CButton
                             color="primary"
                             className="btn-radius-50"
-                            onClick={() => setFieldValue(`tokenAmount`, insertCommas(maximumWithdrawable))}
+                            onClick={() => setFieldValue(`tokenAmount`, unInsertCommas(maximumWithdrawable!.toString()))}
                           >
                             MAX
                           </CButton>

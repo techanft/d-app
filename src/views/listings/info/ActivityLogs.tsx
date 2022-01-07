@@ -1,9 +1,23 @@
-import { CCol, CContainer, CNav, CNavItem, CNavLink, CRow, CTabContent, CTabPane } from '@coreui/react';
+import {
+  CCard,
+  CCardBody,
+  CCardTitle,
+  CCol,
+  CContainer, CNav,
+  CNavItem,
+  CNavLink,
+  CRow,
+  CTabContent,
+  CTabPane
+} from '@coreui/react';
 import { ActionCreatorWithoutPayload, AsyncThunk } from '@reduxjs/toolkit';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
+import { getEllipsisTxt } from '../../../shared/casual-helpers';
+import InfoLoader from '../../../shared/components/InfoLoader';
 import { RecordType } from '../../../shared/enumeration/recordType';
+import useWindowDimensions from '../../../shared/hooks/useWindowDimensions';
 import {
   IRecordClaim,
   IRecordOwnership,
@@ -91,6 +105,11 @@ const ActivityLogs = (props: IActivityLogs) => {
   const { signerAddress, provider } = useSelector((state: RootState) => state.wallet);
 
   const { initialState } = useSelector((state: RootState) => state.records);
+
+  const { initialState: assetsInitialState } = useSelector((state: RootState) => state.assets);
+  const { entityLoading } = assetsInitialState;
+
+  const { width: screenWidth } = useWindowDimensions();
 
   const { loading: registerLoading, registers } = initialState.registerInitialState;
   const { loading: unregisterLoading, unregisters } = initialState.unregisterInitialState;
@@ -199,10 +218,10 @@ const ActivityLogs = (props: IActivityLogs) => {
     if (!listing?.address || !signerAddress) return;
     const additionalOwnerFilterParams =
       ownershipActiveTab === RecordType.OWNERSHIP_EXTENSION
-        // ? { newOwner: signerAddress, listingAddress: listing.address }
-        // : { owner: signerAddress, listingAddress: listing.address };
-        ? { newOwner: "", listingAddress: "" }
-        : { owner: "", listingAddress: "" };
+        ? // ? { newOwner: signerAddress, listingAddress: listing.address }
+          // : { owner: signerAddress, listingAddress: listing.address };
+          { newOwner: '', listingAddress: '' }
+        : { owner: '', listingAddress: '' };
     const filter = { ...ownershipFilterState, ...additionalOwnerFilterParams, listingAddress: listing.address };
     const recordFetchingFunc = recordTypeMapingFetching[ownershipActiveTab];
     const recordApiFunc = recordTypeMapingApi[ownershipActiveTab];
@@ -215,7 +234,32 @@ const ActivityLogs = (props: IActivityLogs) => {
     <CContainer fluid className="mx-0 my-2">
       <CRow>
         <CCol xs={12}>
-          <CNav variant="" className={'activityLogTableNav'}>
+          <CCard className="m-0 listing-img-card">
+            {!entityLoading && listing ? (
+              <img src={listing.images} alt="listingImg" className="w-100 h-100" />
+            ) : (
+              // Ensuring 16:9 ratio for image and image loader
+              <InfoLoader width={screenWidth} height={screenWidth / 1.77} />
+            )}
+            <CCardBody className="p-0 listing-card-body">
+              <CCardTitle className="listing-card-title mb-0 px-3 py-2 w-100">
+                <p className="mb-2 text-white content-title">202 Yên Sở - Hoàng Mai - Hà Nội</p>
+                <p className="mb-0 text-white detail-title-font">
+                  Blockchain address{' '}
+                  <b>
+                    {!entityLoading && listing?.address ? (
+                      getEllipsisTxt(listing.address)
+                    ) : (
+                      <InfoLoader width={155} height={27} />
+                    )}
+                  </b>
+                </p>
+              </CCardTitle>
+            </CCardBody>
+          </CCard>
+        </CCol>
+        <CCol xs={12}>
+          <CNav variant="" className={'activityLogTableNav my-2'}>
             <CNavItem className="col-4 p-0">
               <CNavLink
                 onClick={onTableTypeChange(TableType.INVESTMENT)}

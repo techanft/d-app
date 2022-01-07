@@ -16,7 +16,7 @@ import {
   CInvalidFeedback,
   CLabel,
   CLink,
-  CRow,
+  CRow
 } from '@coreui/react';
 import { faPen, faSyncAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -34,17 +34,17 @@ import {
   convertUnixToDate,
   formatBNToken,
   insertCommas,
-  unInsertCommas,
+  unInsertCommas
 } from '../../../shared/casual-helpers';
 import ConfirmationLoading from '../../../shared/components/ConfirmationLoading';
 import ConfirmModal from '../../../shared/components/ConfirmModal';
 import InfoLoader from '../../../shared/components/InfoLoader';
 import SubmissionModal from '../../../shared/components/SubmissionModal';
-import { ToastError } from '../../../shared/components/Toast';
+import { ToastError, ToastInfo } from '../../../shared/components/Toast';
 import { EventType } from '../../../shared/enumeration/eventType';
 import { ModalType, TModalsVisibility } from '../../../shared/enumeration/modalType';
 import useWindowDimensions from '../../../shared/hooks/useWindowDimensions';
-import { baseOptions, IOption } from '../../../shared/models/options.model';
+import { IOption } from '../../../shared/models/options.model';
 import { RootState } from '../../../shared/reducers';
 import { getEntity, getOptionsWithStakes } from '../../assets/assets.api';
 import { fetchingEntity, selectEntityById } from '../../assets/assets.reducer';
@@ -216,7 +216,7 @@ const Register = (props: IRegisterProps) => {
     const body = createTxBodyBaseOnType(id, EventType.CLAIM);
     dispatch(proceedTransaction(body));
   };
-  
+
   useEffect(() => {
     if (!id || !provider) return;
     dispatch(fetchingEntity());
@@ -240,7 +240,7 @@ const Register = (props: IRegisterProps) => {
   }, [success]);
 
   useEffect(() => {
-    if (listing && signerAddress && provider) {      
+    if (listing && signerAddress && provider) {
       dispatch(fetchingEntity());
       dispatch(getOptionsWithStakes({ listing, stakeholder: signerAddress, provider }));
     }
@@ -302,10 +302,24 @@ const Register = (props: IRegisterProps) => {
     setFieldValue(`registerAmount`, initialRegisterAmount);
   };
 
-  const onClaimRewardOrUnregister = (optionId: number, type: ModalType) => () => {
-    handleModalVisibility(type, true);
+  const onClaimReward = (optionId: number, stakeAmount: BigNumber) => () => {
+    if (tokenBalance!.lt(stakeAmount)) return ToastError('Insufficient balance to claim reward!');
+    handleModalVisibility(ModalType.REWARD_CLAIM, true);
     setChosenOptionId(optionId);
   };
+
+  const onUnregister = (optionId: number) => () => {
+    handleModalVisibility(ModalType.REWARD_UNREGISTER, true);
+    setChosenOptionId(optionId);
+  };
+
+  const checkHasRewardPool =
+    (submitForm: (() => Promise<void>) & (() => Promise<any>), stakeAmount: BigNumber) => () => {
+      if (!listing?.rewardPool) return;
+      if (listing.rewardPool.eq(0)) return ToastInfo('Reward Pool of this listing is 0 ANFT');
+      if (isEditingRegister && tokenBalance!.lt(stakeAmount)) return ToastError('Insufficient balance to claim reward!');
+      submitForm();
+    };
 
   return (
     <CContainer fluid className="mx-0 my-2">
@@ -326,7 +340,7 @@ const Register = (props: IRegisterProps) => {
               <CCardTitle className="listing-card-title mb-0 px-3 py-2 w-100">
                 <p className="mb-2 text-white content-title">202 Yên Sở - Hoàng Mai - Hà Nội</p>
                 <p className="mb-0 text-white detail-title-font">
-                  Hoạt động <b>{baseOptions.length}</b>
+                  Hoạt động <b>{listing?.options ? listing.options.length : 0}</b>
                 </p>
               </CCardTitle>
             </CCardBody>
@@ -516,7 +530,7 @@ const Register = (props: IRegisterProps) => {
                                               <CCol xs={12} className="d-flex justify-content-center mt-3">
                                                 <CButton
                                                   className="btn-radius-50 btn btn-sm btn-primary mr-2"
-                                                  onClick={submitForm}
+                                                  onClick={checkHasRewardPool(submitForm, item.stake.amount)}
                                                 >
                                                   Confirm
                                                 </CButton>
@@ -534,17 +548,15 @@ const Register = (props: IRegisterProps) => {
                                               <CCol xs={12} className="d-flex justify-content-center mt-3">
                                                 <CButton
                                                   className="btn-radius-50 btn btn-sm btn-success mr-2"
-                                                  onClick={onClaimRewardOrUnregister(item.id, ModalType.REWARD_CLAIM)}
+                                                  onClick={onClaimReward(item.id, item.stake.amount)}
+                                                  // disabled={tokenBalance! < item.stake.amount}
                                                 >
                                                   Claim Reward
                                                 </CButton>
                                                 <CButton
                                                   className="btn-radius-50 btn btn-sm btn-outline-danger ml-2"
                                                   variant="ghost"
-                                                  onClick={onClaimRewardOrUnregister(
-                                                    item.id,
-                                                    ModalType.REWARD_UNREGISTER
-                                                  )}
+                                                  onClick={onUnregister(item.id)}
                                                 >
                                                   Unregister
                                                 </CButton>
@@ -557,7 +569,8 @@ const Register = (props: IRegisterProps) => {
                                           <CCol xs={12} className="d-flex justify-content-center mt-3">
                                             <CButton
                                               className="btn-radius-50 btn btn-sm btn-primary mr-2"
-                                              type="submit"
+                                              // type="submit"
+                                              onClick={checkHasRewardPool(submitForm, item.stake.amount)}
                                             >
                                               Register
                                             </CButton>
