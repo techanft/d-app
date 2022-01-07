@@ -2,7 +2,7 @@ import { CPagination } from '@coreui/react';
 import dayjs from 'dayjs';
 import React from 'react';
 import { APP_DATE_FORMAT } from '../../../config/constants';
-import { getEllipsisTxt, insertCommas, returnOptionNameById } from '../../../shared/casual-helpers';
+import { insertCommas, returnOptionNameById } from '../../../shared/casual-helpers';
 import { RecordType } from '../../../shared/enumeration/recordType';
 import {
   IRecordClaim,
@@ -43,14 +43,6 @@ const ActivityLogsTable = (props: IActivityLogs) => {
   const renderRecordOwnerShip = (record: IRecordOwnership) => (
     <>
       <tr>
-        <td>Previous Owner</td>
-        <td className="text-right">{getEllipsisTxt(record.previousOwner, 5)}</td>
-      </tr>
-      <tr>
-        <td>New Owner</td>
-        <td className="text-right">{getEllipsisTxt(record.newOwner, 5)}</td>
-      </tr>
-      <tr>
         <td>From</td>
         <td className="text-right">{dayjs(record.from).format(APP_DATE_FORMAT)}</td>
       </tr>
@@ -63,10 +55,6 @@ const ActivityLogsTable = (props: IActivityLogs) => {
 
   const renderRecordClaim = (record: IRecordClaim) => (
     <>
-      <tr>
-        <td>Stake Holder</td>
-        <td className="text-right">{getEllipsisTxt(record.stakeholder, 5)}</td>
-      </tr>
       <tr>
         <td>Amount</td>
         <td className="text-right">{insertCommas(record.amount || '')}</td>
@@ -86,10 +74,6 @@ const ActivityLogsTable = (props: IActivityLogs) => {
   const renderRecordRegister = (record: IRecordRegister) => (
     <>
       <tr>
-        <td>Stake Holder</td>
-        <td className="text-right">{getEllipsisTxt(record.stakeholder, 5)}</td>
-      </tr>
-      <tr>
         <td>Option</td>
         <td className="text-right">{returnOptionNameById(Number(record.optionId))}</td>
       </tr>
@@ -103,10 +87,6 @@ const ActivityLogsTable = (props: IActivityLogs) => {
   const renderRecordUnRegister = (record: IRecordUnRegister) => (
     <>
       <tr>
-        <td>Stake Holder</td>
-        <td className="text-right">{getEllipsisTxt(record.stakeholder, 5)}</td>
-      </tr>
-      <tr>
         <td>Option</td>
         <td className="text-right">{returnOptionNameById(Number(record.optionId))}</td>
       </tr>
@@ -116,16 +96,12 @@ const ActivityLogsTable = (props: IActivityLogs) => {
   const renderRecordWithdraw = (record: IRecordWithdraw) => (
     <>
       <tr>
-        <td>Owner</td>
-        <td className="text-right">{getEllipsisTxt(record.owner, 5)}</td>
-      </tr>
-      <tr>
         <td>Initial Ownership</td>
         <td className="text-right">{dayjs.unix(Number(record.initialOwnership)).format(APP_DATE_FORMAT)}</td>
       </tr>
       <tr>
         <td>New Ownership</td>
-        <td className="text-right">{dayjs.unix(Number(record.initialOwnership)).format(APP_DATE_FORMAT)}</td>
+        <td className="text-right">{dayjs.unix(Number(record.newOwnership)).format(APP_DATE_FORMAT)}</td>
       </tr>
       <tr>
         <td>Ammount</td>
