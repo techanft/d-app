@@ -14,7 +14,7 @@ import {
   CInputCheckbox,
   CLabel,
   CLink,
-  CRow
+  CRow,
 } from '@coreui/react';
 import { faAngleDown } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -31,9 +31,9 @@ import {
   getContractWithSigner,
   getProviderLogin,
   getSigner,
-  getTokenBalance
+  getTokenBalance,
 } from '../views/wallet/wallet.api';
-import { softReset as walletSoftReset } from '../views/wallet/wallet.reducer';
+import { resetSigner, softReset as walletSoftReset } from '../views/wallet/wallet.reducer';
 
 const TheHeader = () => {
   const dispatch = useDispatch();
@@ -52,6 +52,7 @@ const TheHeader = () => {
   const { errorMessage: transactionErrorMessage } = useSelector((state: RootState) => state.transactions);
 
   const onConnectWallet = () => () => {
+    if (signerAddress) return dispatch(resetSigner());
     if (!provider) return ToastInfo('No provider found');
     dispatch(getProviderLogin(provider));
   };
@@ -110,7 +111,7 @@ const TheHeader = () => {
     <CHeader className="header-container d-block" withSubheader>
       <CHeaderNav>
         <CHeaderBrand className="header-brand mx-auto">
-          <p className="m-0 content-title text-white">WEBVIEW</p>
+          <p className="m-0 content-title text-white">ANFT D-APP V1.0</p>
         </CHeaderBrand>
       </CHeaderNav>
       <CHeaderNav className="justify-content-between bg-white">
@@ -126,7 +127,14 @@ const TheHeader = () => {
         </CHeaderNavItem>
         <CHeaderNavItem>
           <CButton className="btn-link-wallet btn-radius-50 px-2 btn-font-style" onClick={onConnectWallet()}>
-            {signerAddress ? getEllipsisTxt(signerAddress, 4) : 'Connect Wallet'}
+            {signerAddress ? (
+              <b>
+                {getEllipsisTxt(signerAddress, 4)}{' '}
+                <CIcon name="cil-account-logout" size="lg" className="text-danger mx-0 my-0 pb-1" />
+              </b>
+            ) : (
+              'Connect Wallet'
+            )}
           </CButton>
         </CHeaderNavItem>
         <CHeaderNavItem>

@@ -8,7 +8,7 @@ import {
   CDataTable,
   CLink,
   CPagination,
-  CRow,
+  CRow
 } from '@coreui/react';
 import {
   faArrowAltCircleDown,
@@ -16,7 +16,7 @@ import {
   faClipboard,
   faDonate,
   faEdit,
-  faIdBadge,
+  faIdBadge
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
@@ -27,7 +27,7 @@ import {
   convertUnixToDate,
   formatBNToken,
   formatLocalDatetime,
-  getEllipsisTxt,
+  getEllipsisTxt
 } from '../../../shared/casual-helpers';
 import ConfirmationLoading from '../../../shared/components/ConfirmationLoading';
 import CopyTextToClipBoard from '../../../shared/components/CopyTextToClipboard';
@@ -193,6 +193,11 @@ const ListingInfo = (props: IListingInfoProps) => {
     handleModalVisibility(ModalType.OWNERSHIP_REGISTER, true)
   }
 
+  const onWithdrawToken = () => {
+    if (ownershipExpired) return ToastError("No more token to withdraw!")
+    handleModalVisibility(ModalType.OWNERSHIP_WITHDRAW, true)
+  }
+
   return (
     <CContainer fluid className="px-0">
       <CCol xs={12} className="p-0">
@@ -240,7 +245,7 @@ const ListingInfo = (props: IListingInfoProps) => {
             <p className="detail-title-font my-2">Blockchain address</p>
 
             {!entityLoading && listing?.address ? (
-              <CopyTextToClipBoard text={listing.address} />
+              <CopyTextToClipBoard text={listing.address} inputClassName='my-2 value-text copy-address'/>
             ) : (
               <InfoLoader width={155} height={27} />
             )}
@@ -250,7 +255,7 @@ const ListingInfo = (props: IListingInfoProps) => {
             <p className="detail-title-font my-2">The current owner</p>
 
             {!entityLoading && listing?.owner ? (
-              <CopyTextToClipBoard text={listing.owner} />
+              <CopyTextToClipBoard text={listing.owner} inputClassName='my-2 value-text copy-address'/>
             ) : (
               <InfoLoader width={155} height={27} />
             )}
@@ -390,13 +395,12 @@ const ListingInfo = (props: IListingInfoProps) => {
               <CCard className="mt-2 activities-card mb-0">
                 <CCardBody className="p-2">
                   <CRow className="mx-0">
-                    <CLink
-                      href="#"
-                      target="_blank"
-                      onClick={() => handleModalVisibility(ModalType.OWNERSHIP_WITHDRAW, true)}
+                    <p
+                      onClick={onWithdrawToken}
+                      className={`m-0 ${ownershipExpired ? 'text-secondary' : 'text-primary'}`}
                     >
                       <FontAwesomeIcon icon={faArrowAltCircleUp} /> Rút ANFT
-                    </CLink>
+                    </p>
                   </CRow>
                   <CRow className="my-2 mx-0">
                     <p

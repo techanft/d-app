@@ -2,7 +2,9 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { BigNumber, ethers } from 'ethers';
 import {
   getAddress,
-  getContractWithSigner, getProvider, getProviderLogin,
+  getContractWithSigner,
+  getProvider,
+  getProviderLogin,
   getSigner,
   getTokenBalance
 } from './wallet.api';
@@ -43,7 +45,7 @@ const initialState: IWalletState = {
   user: null,
   tokenBalance: undefined,
   errorMessage: null,
-  providerErrorMessage: null
+  providerErrorMessage: null,
 };
 
 // export type IAuthentication = Readonly<typeof initialState>;
@@ -78,7 +80,13 @@ const walletSlice = createSlice({
       state.errorMessage = null;
     },
     setProviderError(state, action: PayloadAction<string | null>) {
-      state.providerErrorMessage = action.payload
+      state.providerErrorMessage = action.payload;
+    },
+    resetSigner(state) {
+      state.signer = null;
+      state.getSignerSuccess = false;
+      state.signerAddress = '';
+      state.getSignerAddressSuccess = false;
     },
   },
   extraReducers: {
@@ -146,4 +154,4 @@ const walletSlice = createSlice({
 });
 
 export default walletSlice.reducer;
-export const { fetching, reset, softReset, setProviderError } = walletSlice.actions;
+export const { fetching, reset, softReset, setProviderError, resetSigner } = walletSlice.actions;

@@ -1,7 +1,6 @@
 export interface IRecord {
   id: number;
   createdDate: Date;
-  status: string;
   listingAddress: string;
 }
 

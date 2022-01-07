@@ -16,7 +16,7 @@ import {
   CInvalidFeedback,
   CLabel,
   CLink,
-  CRow,
+  CRow
 } from '@coreui/react';
 import { faPen, faSyncAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -34,17 +34,17 @@ import {
   convertUnixToDate,
   formatBNToken,
   insertCommas,
-  unInsertCommas,
+  unInsertCommas
 } from '../../../shared/casual-helpers';
 import ConfirmationLoading from '../../../shared/components/ConfirmationLoading';
 import ConfirmModal from '../../../shared/components/ConfirmModal';
 import InfoLoader from '../../../shared/components/InfoLoader';
 import SubmissionModal from '../../../shared/components/SubmissionModal';
-import { ToastError } from '../../../shared/components/Toast';
+import { ToastError, ToastInfo } from '../../../shared/components/Toast';
 import { EventType } from '../../../shared/enumeration/eventType';
 import { ModalType, TModalsVisibility } from '../../../shared/enumeration/modalType';
 import useWindowDimensions from '../../../shared/hooks/useWindowDimensions';
-import { baseOptions, IOption } from '../../../shared/models/options.model';
+import { IOption } from '../../../shared/models/options.model';
 import { RootState } from '../../../shared/reducers';
 import { getEntity, getOptionsWithStakes } from '../../assets/assets.api';
 import { fetchingEntity, selectEntityById } from '../../assets/assets.reducer';
@@ -216,7 +216,7 @@ const Register = (props: IRegisterProps) => {
     const body = createTxBodyBaseOnType(id, EventType.CLAIM);
     dispatch(proceedTransaction(body));
   };
-  
+
   useEffect(() => {
     if (!id || !provider) return;
     dispatch(fetchingEntity());
@@ -240,7 +240,7 @@ const Register = (props: IRegisterProps) => {
   }, [success]);
 
   useEffect(() => {
-    if (listing && signerAddress && provider) {      
+    if (listing && signerAddress && provider) {
       dispatch(fetchingEntity());
       dispatch(getOptionsWithStakes({ listing, stakeholder: signerAddress, provider }));
     }
@@ -302,10 +302,25 @@ const Register = (props: IRegisterProps) => {
     setFieldValue(`registerAmount`, initialRegisterAmount);
   };
 
-  const onClaimRewardOrUnregister = (optionId: number, type: ModalType) => () => {
-    handleModalVisibility(type, true);
+  const onClaimReward = (optionId: number, stakeAmount: BigNumber) => () => {
+    if (tokenBalance!.lt(stakeAmount)) return ToastError('Insufficient balance to claim reward!');
+    handleModalVisibility(ModalType.REWARD_CLAIM, true);
     setChosenOptionId(optionId);
   };
+
+  const onUnregister = (optionId: number) => () => {
+    handleModalVisibility(ModalType.REWARD_UNREGISTER, true);
+    setChosenOptionId(optionId);
+  };
+
+  const checkHasRewardPool =
+    (submitForm: (() => Promise<void>) & (() => Promise<any>), stakeAmount: BigNumber) => () => {
+      if (!listing?.rewardPool) return;
+      if (listing.rewardPool.eq(0)) return ToastInfo('Reward Pool of this listing is 0 ANFT');
+      if (isEditingRegister && tokenBalance!.lt(stakeAmount))
+        return ToastError('Insufficient balance to claim reward!');
+      submitForm();
+    };
 
   return (
     <CContainer fluid className="mx-0 my-2">
@@ -326,261 +341,283 @@ const Register = (props: IRegisterProps) => {
               <CCardTitle className="listing-card-title mb-0 px-3 py-2 w-100">
                 <p className="mb-2 text-white content-title">202 Yên Sở - Hoàng Mai - Hà Nội</p>
                 <p className="mb-0 text-white detail-title-font">
-                  Hoạt động <b>{baseOptions.length}</b>
+                  Hoạt động <b>{listing?.options ? listing.options.length : 0}</b>
                 </p>
               </CCardTitle>
             </CCardBody>
           </CCard>
-          {listing ? (
-            <CDataTable
-              striped
-              items={listing.options}
-              fields={registerView}
-              responsive
-              hover
-              header
-              scopedSlots={{
-                activityName: (item: IOption) => {
-                  return (
-                    <td
-                      onClick={() => {
-                        toggleDetails(item.id.toString());
-                      }}
-                    >
-                      <span className="text-primary d-inline-block text-truncate" style={{ maxWidth: '100px' }}>
-                        {item.name ? item.name : '_'}
-                      </span>
-                    </td>
-                  );
-                },
-                reward: (item: IOption) => {
-                  return <td>{item.reward ? `${item.reward.toString()}%` : '_'}</td>;
-                },
-                registerAmount: (item: IOption) => {
-                  return (
-                    <td>
-                      {item.stake?.amount.eq(0) ? (
-                        <span className="text-danger">Chưa đăng ký</span>
-                      ) : (
-                        formatBNToken(item.stake?.amount, true)
-                      )}
-                    </td>
-                  );
-                },
-                details: (item: IOption) => {
-                  return (
-                    <CCollapse show={details.includes(item.id.toString())}>
-                      <CCard className="mb-0">
-                        <CCardBody className="px-3">
-                          <CRow className="align-items-center">
-                            <CCol xs={12}>
-                              {submitted && !success ? (
-                                <CRow>
-                                  <CCol xs={12} className="d-flex justify-content-center">
-                                    <ConfirmationLoading />
+
+          {listing && signerAddress ? (
+            <>
+              <CDataTable
+                striped
+                items={listing.options}
+                fields={registerView}
+                responsive
+                hover
+                header
+                scopedSlots={{
+                  activityName: (item: IOption) => {
+                    return (
+                      <td
+                        onClick={() => {
+                          toggleDetails(item.id.toString());
+                        }}
+                      >
+                        <span className="text-primary d-inline-block text-truncate" style={{ maxWidth: '100px' }}>
+                          {item.name ? item.name : '_'}
+                        </span>
+                      </td>
+                    );
+                  },
+                  reward: (item: IOption) => {
+                    return <td>{item.reward ? `${item.reward.toString()}%` : '_'}</td>;
+                  },
+                  registerAmount: (item: IOption) => {
+                    return (
+                      <td>
+                        {item.stake?.amount.eq(0) ? (
+                          <span className="text-danger">Chưa đăng ký</span>
+                        ) : (
+                          formatBNToken(item.stake?.amount, true)
+                        )}
+                      </td>
+                    );
+                  },
+                  details: (item: IOption) => {
+                    return (
+                      <CCollapse show={details.includes(item.id.toString())}>
+                        <CCard className="mb-0">
+                          <CCardBody className="px-3">
+                            <CRow className="align-items-center">
+                              <CCol xs={12}>
+                                {submitted && !success ? (
+                                  <CRow>
+                                    <CCol xs={12} className="d-flex justify-content-center">
+                                      <ConfirmationLoading />
+                                    </CCol>
+                                  </CRow>
+                                ) : (
+                                  ''
+                                )}
+                                <CFormGroup row>
+                                  <CCol xs={5}>
+                                    <CLabel className="font-weight-bold my-2">Tokens Balance </CLabel>
                                   </CCol>
-                                </CRow>
-                              ) : (
-                                ''
-                              )}
-                              <CFormGroup row>
-                                <CCol xs={5}>
-                                  <CLabel className="font-weight-bold my-2">Tokens Balance </CLabel>
-                                </CCol>
-                                <CCol xs={7}>
-                                  <p className="text-primary my-2">{formatBNToken(tokenBalance, true)}</p>
-                                </CCol>
-                              </CFormGroup>
-                              <CFormGroup row>
-                                <CCol xs={5}>
-                                  <CLabel className="font-weight-bold my-2">Total Stakes </CLabel>
-                                </CCol>
-                                <CCol xs={7}>
-                                  <p className="text-primary my-2">{formatBNToken(item.totalStake, true)}</p>
-                                </CCol>
-                              </CFormGroup>
-                              <Formik
-                                innerRef={formikRef}
-                                enableReinitialize
-                                initialValues={createInitialValues(item)}
-                                validationSchema={validationSchema}
-                                onSubmit={(rawValues) => {
-                                  try {
-                                    const value = handleRawFormValues(rawValues, item.id);
-                                    dispatch(fetching());
-                                    dispatch(proceedTransaction(value));
-                                  } catch (error) {
-                                    console.log(`Error submitting form ${error}`);
-                                    ToastError(`Error submitting form ${error}`);
-                                  }
-                                }}
-                              >
-                                {({ values, errors, touched, handleBlur, handleSubmit, setFieldValue, submitForm }) => (
-                                  <CForm className="form-horizontal" onSubmit={handleSubmit}>
-                                    <CFormGroup row>
-                                      <CCol xs={5}>
-                                        <p className="font-weight-bold my-2">Amount</p>
-                                      </CCol>
-                                      <CCol xs={7}>
-                                        <CInputGroup>
-                                          <CInput
-                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                                              setFieldValue(`registerAmount`, unInsertCommas(e.target.value));
-                                            }}
-                                            id="registerAmount"
-                                            autoComplete="off"
-                                            name="registerAmount"
-                                            value={values.registerAmount ? insertCommas(values.registerAmount) : ''}
-                                            onBlur={handleBlur}
-                                            placeholder="Registered amount..."
-                                            className="btn-radius-50"
-                                            disabled={!isEditingRegister && !item.stake?.amount.eq(0)}
-                                          />
-                                          {item.stake?.amount && !item.stake.amount.eq(0) && !isEditingRegister ? (
-                                            <CInputGroupAppend>
-                                              <CButton
-                                                color="primary"
-                                                className="btn-radius-50"
-                                                onClick={onEditingRegister(
-                                                  Number(convertBnToDecimal(item.stake.amount))
-                                                )}
-                                              >
-                                                <FontAwesomeIcon icon={faPen} />
-                                              </CButton>
-                                            </CInputGroupAppend>
-                                          ) : (
-                                            <CInputGroupAppend>
-                                              <CButton
-                                                color="primary"
-                                                className="btn-radius-50 px-2"
-                                                onClick={() =>
-                                                  setFieldValue(
-                                                    `registerAmount`,
-                                                    unInsertCommas(convertBnToDecimal(tokenBalance!))
-                                                  )
-                                                }
-                                              >
-                                                MAX
-                                              </CButton>
-                                            </CInputGroupAppend>
-                                          )}
-                                        </CInputGroup>
-                                        {isEditingRegister || item.stake?.amount.eq(0) ? (
-                                          <CInvalidFeedback
-                                            className={
-                                              !!errors.registerAmount && touched.registerAmount ? 'd-block' : 'd-none'
-                                            }
-                                          >
-                                            {errors.registerAmount}
-                                          </CInvalidFeedback>
-                                        ) : (
-                                          ''
-                                        )}
-                                      </CCol>
-                                    </CFormGroup>
-                                    {item.stake?.amount ? (
-                                      !item.stake.amount.eq(0) ? (
-                                        <>
-                                          <CFormGroup row>
-                                            <CCol xs={5}>
-                                              <p className="font-weight-bold my-2">Reward</p>
-                                            </CCol>
-                                            <CCol xs={7}>
-                                              <p className="text-primary my-2">
-                                                {amountToReturn ? formatBNToken(amountToReturn, true) : 0}
+                                  <CCol xs={7}>
+                                    <p className="text-primary my-2">{formatBNToken(tokenBalance, true)}</p>
+                                  </CCol>
+                                </CFormGroup>
+                                <CFormGroup row>
+                                  <CCol xs={5}>
+                                    <CLabel className="font-weight-bold my-2">Total Stakes </CLabel>
+                                  </CCol>
+                                  <CCol xs={7}>
+                                    <p className="text-primary my-2">{formatBNToken(item.totalStake, true)}</p>
+                                  </CCol>
+                                </CFormGroup>
+                                <Formik
+                                  innerRef={formikRef}
+                                  enableReinitialize
+                                  initialValues={createInitialValues(item)}
+                                  validationSchema={validationSchema}
+                                  onSubmit={(rawValues) => {
+                                    try {
+                                      const value = handleRawFormValues(rawValues, item.id);
+                                      dispatch(fetching());
+                                      dispatch(proceedTransaction(value));
+                                    } catch (error) {
+                                      console.log(`Error submitting form ${error}`);
+                                      ToastError(`Error submitting form ${error}`);
+                                    }
+                                  }}
+                                >
+                                  {({
+                                    values,
+                                    errors,
+                                    touched,
+                                    handleBlur,
+                                    handleSubmit,
+                                    setFieldValue,
+                                    submitForm,
+                                  }) => (
+                                    <CForm className="form-horizontal" onSubmit={handleSubmit}>
+                                      <CFormGroup row>
+                                        <CCol xs={5}>
+                                          <p className="font-weight-bold my-2">Amount</p>
+                                        </CCol>
+                                        <CCol xs={7}>
+                                          <CInputGroup>
+                                            <CInput
+                                              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                                setFieldValue(`registerAmount`, unInsertCommas(e.target.value));
+                                              }}
+                                              id="registerAmount"
+                                              autoComplete="off"
+                                              name="registerAmount"
+                                              value={values.registerAmount ? insertCommas(values.registerAmount) : ''}
+                                              onBlur={handleBlur}
+                                              placeholder="Registered amount..."
+                                              className="btn-radius-50"
+                                              disabled={!isEditingRegister && !item.stake?.amount.eq(0)}
+                                            />
+                                            {item.stake?.amount && !item.stake.amount.eq(0) && !isEditingRegister ? (
+                                              <CInputGroupAppend>
                                                 <CButton
-                                                  onClick={onRefreshAmountToReturn(item.id)}
-                                                  className="p-0 ml-2"
+                                                  color="primary"
+                                                  className="btn-radius-50"
+                                                  onClick={onEditingRegister(
+                                                    Number(convertBnToDecimal(item.stake.amount))
+                                                  )}
                                                 >
-                                                  <FontAwesomeIcon icon={faSyncAlt} className="text-primary" />
+                                                  <FontAwesomeIcon icon={faPen} />
                                                 </CButton>
-                                              </p>
-                                            </CCol>
-                                          </CFormGroup>
-                                          {item.stake?.start && !item.stake.start.eq(0) ? (
-                                            <CFormGroup row>
-                                              <CCol xs={5}>
-                                                <p className="font-weight-bold my-2">Stake start </p>
-                                              </CCol>
-                                              <CCol xs={7}>
-                                                <p className="my-2">
-                                                  {convertUnixToDate(item.stake?.start.toNumber())}
-                                                </p>
-                                              </CCol>
-                                            </CFormGroup>
+                                              </CInputGroupAppend>
+                                            ) : (
+                                              <CInputGroupAppend>
+                                                <CButton
+                                                  color="primary"
+                                                  className="btn-radius-50 px-2"
+                                                  onClick={() =>
+                                                    setFieldValue(
+                                                      `registerAmount`,
+                                                      unInsertCommas(convertBnToDecimal(tokenBalance!))
+                                                    )
+                                                  }
+                                                >
+                                                  MAX
+                                                </CButton>
+                                              </CInputGroupAppend>
+                                            )}
+                                          </CInputGroup>
+                                          {isEditingRegister || item.stake?.amount.eq(0) ? (
+                                            <CInvalidFeedback
+                                              className={
+                                                !!errors.registerAmount && touched.registerAmount ? 'd-block' : 'd-none'
+                                              }
+                                            >
+                                              {errors.registerAmount}
+                                            </CInvalidFeedback>
                                           ) : (
                                             ''
                                           )}
-                                          {isEditingRegister ? (
+                                        </CCol>
+                                      </CFormGroup>
+                                      {item.stake?.amount ? (
+                                        !item.stake.amount.eq(0) ? (
+                                          <>
                                             <CFormGroup row>
-                                              <CCol xs={12} className="d-flex justify-content-center mt-3">
-                                                <CButton
-                                                  className="btn-radius-50 btn btn-sm btn-primary mr-2"
-                                                  onClick={submitForm}
-                                                >
-                                                  Confirm
-                                                </CButton>
-                                                <CButton
-                                                  className="btn-radius-50 btn btn-sm btn-outline-danger ml-2"
-                                                  variant="ghost"
-                                                  onClick={onCancelEditingRegister(setFieldValue)}
-                                                >
-                                                  Cancel
-                                                </CButton>
+                                              <CCol xs={5}>
+                                                <p className="font-weight-bold my-2">Reward</p>
+                                              </CCol>
+                                              <CCol xs={7}>
+                                                <p className="text-primary my-2">
+                                                  {amountToReturn ? formatBNToken(amountToReturn, true) : 0}
+                                                  <CButton
+                                                    onClick={onRefreshAmountToReturn(item.id)}
+                                                    className="p-0 ml-2"
+                                                  >
+                                                    <FontAwesomeIcon icon={faSyncAlt} className="text-primary" />
+                                                  </CButton>
+                                                </p>
                                               </CCol>
                                             </CFormGroup>
-                                          ) : (
-                                            <CFormGroup row>
-                                              <CCol xs={12} className="d-flex justify-content-center mt-3">
-                                                <CButton
-                                                  className="btn-radius-50 btn btn-sm btn-success mr-2"
-                                                  onClick={onClaimRewardOrUnregister(item.id, ModalType.REWARD_CLAIM)}
-                                                >
-                                                  Claim Reward
-                                                </CButton>
-                                                <CButton
-                                                  className="btn-radius-50 btn btn-sm btn-outline-danger ml-2"
-                                                  variant="ghost"
-                                                  onClick={onClaimRewardOrUnregister(
-                                                    item.id,
-                                                    ModalType.REWARD_UNREGISTER
-                                                  )}
-                                                >
-                                                  Unregister
-                                                </CButton>
-                                              </CCol>
-                                            </CFormGroup>
-                                          )}
-                                        </>
+                                            {item.stake?.start && !item.stake.start.eq(0) ? (
+                                              <CFormGroup row>
+                                                <CCol xs={5}>
+                                                  <p className="font-weight-bold my-2">Stake start </p>
+                                                </CCol>
+                                                <CCol xs={7}>
+                                                  <p className="my-2">
+                                                    {convertUnixToDate(item.stake?.start.toNumber())}
+                                                  </p>
+                                                </CCol>
+                                              </CFormGroup>
+                                            ) : (
+                                              ''
+                                            )}
+                                            {isEditingRegister ? (
+                                              <CFormGroup row>
+                                                <CCol xs={12} className="d-flex justify-content-center mt-3">
+                                                  <CButton
+                                                    className="btn-radius-50 btn btn-sm btn-primary mr-2"
+                                                    onClick={checkHasRewardPool(submitForm, item.stake.amount)}
+                                                  >
+                                                    Confirm
+                                                  </CButton>
+                                                  <CButton
+                                                    className="btn-radius-50 btn btn-sm btn-outline-danger ml-2"
+                                                    variant="ghost"
+                                                    onClick={onCancelEditingRegister(setFieldValue)}
+                                                  >
+                                                    Cancel
+                                                  </CButton>
+                                                </CCol>
+                                              </CFormGroup>
+                                            ) : (
+                                              <CFormGroup row>
+                                                <CCol xs={12} className="d-flex justify-content-center mt-3">
+                                                  <CButton
+                                                    className="btn-radius-50 btn btn-sm btn-success mr-2"
+                                                    onClick={onClaimReward(item.id, item.stake.amount)}
+                                                    // disabled={tokenBalance! < item.stake.amount}
+                                                  >
+                                                    Claim Reward
+                                                  </CButton>
+                                                  <CButton
+                                                    className="btn-radius-50 btn btn-sm btn-outline-danger ml-2"
+                                                    variant="ghost"
+                                                    onClick={onUnregister(item.id)}
+                                                  >
+                                                    Unregister
+                                                  </CButton>
+                                                </CCol>
+                                              </CFormGroup>
+                                            )}
+                                          </>
+                                        ) : (
+                                          <CFormGroup row>
+                                            <CCol xs={12} className="d-flex justify-content-center mt-3">
+                                              <CButton
+                                                className="btn-radius-50 btn btn-sm btn-primary mr-2"
+                                                // type="submit"
+                                                onClick={checkHasRewardPool(submitForm, item.stake.amount)}
+                                              >
+                                                Register
+                                              </CButton>
+                                            </CCol>
+                                          </CFormGroup>
+                                        )
                                       ) : (
-                                        <CFormGroup row>
-                                          <CCol xs={12} className="d-flex justify-content-center mt-3">
-                                            <CButton
-                                              className="btn-radius-50 btn btn-sm btn-primary mr-2"
-                                              type="submit"
-                                            >
-                                              Register
-                                            </CButton>
-                                          </CCol>
-                                        </CFormGroup>
-                                      )
-                                    ) : (
-                                      ''
-                                    )}
-                                  </CForm>
-                                )}
-                              </Formik>
-                            </CCol>
-                          </CRow>
-                        </CCardBody>
-                      </CCard>
-                    </CCollapse>
-                  );
-                },
-              }}
-            />
+                                        ''
+                                      )}
+                                    </CForm>
+                                  )}
+                                </Formik>
+                              </CCol>
+                            </CRow>
+                          </CCardBody>
+                        </CCard>
+                      </CCollapse>
+                    );
+                  },
+                }}
+              />
+              <CCol xs={12} className="px-0">
+                <i className="detail-title-font">*Lựa chọn Hoạt động bạn muốn SỬA hoặc HỦY đăng ký</i>
+              </CCol>
+              <CCol xs={12} className="text-center my-2">
+                <CLink to={`/${Number(id)}/activity-logs`}>
+                  <CIcon name="cil-history" /> Activity Logs
+                </CLink>
+              </CCol>
+            </>
           ) : (
-            ''
+            <CCol xs={12} className="p-0">
+              <div className="alert alert-warning my-3">
+                <span>Vui lòng kết nối ví để xem danh sách hoạt động</span>
+              </div>
+            </CCol>
           )}
           <ConfirmModal
             isVisible={modalsVisibility[ModalType.REWARD_CLAIM]}
@@ -617,14 +654,6 @@ const Register = (props: IRegisterProps) => {
             onConfirm={() => onUnregisterCnfrm(listing?.options ? listing.options[chosenOptionId!].id : 0)}
             onAbort={() => handleModalVisibility(ModalType.REWARD_UNREGISTER, false)}
           />
-          <CCol xs={12} className="px-0">
-            <i className="detail-title-font">*Lựa chọn Hoạt động bạn muốn SỬA hoặc HỦY đăng ký</i>
-          </CCol>
-          <CCol xs={12} className="text-center my-2">
-            <CLink to={`/${Number(id)}/activity-logs`}>
-              <CIcon name="cil-history" /> Activity Logs
-            </CLink>
-          </CCol>
         </CCol>
       </CRow>
     </CContainer>

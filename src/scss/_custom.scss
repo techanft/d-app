@@ -19,7 +19,7 @@ body {
     color: $black;
   }
   .btn-link-wallet {
-    background-color: #e3e3e3;
+    background-color: rgb(239, 244, 245);
     color: $primary;
   }
   .dt-filter {
@@ -91,6 +91,16 @@ body {
     width: 20px;
     height: 20px;
     position: relative;
+  }
+
+  .activityLogTableNav {
+    .nav-link {
+      color: #828282;
+      &.active {
+        border-bottom: 1px solid $primary;
+        color: $primary;
+      }
+    }
   }
 }
 

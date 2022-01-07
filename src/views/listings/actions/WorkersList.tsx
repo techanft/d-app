@@ -14,15 +14,16 @@ import {
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
-import bgImg from '../../../assets/img/registerBonus.svg';
 import { LISTING_INSTANCE } from '../../../shared/blockchain-helpers';
 import { getEllipsisTxt, validateOwnership } from '../../../shared/casual-helpers';
 import ConfirmationLoading from '../../../shared/components/ConfirmationLoading';
 import ConfirmModal from '../../../shared/components/ConfirmModal';
+import InfoLoader from '../../../shared/components/InfoLoader';
 import Loading from '../../../shared/components/Loading';
 import SubmissionModal from '../../../shared/components/SubmissionModal';
 import { ToastError } from '../../../shared/components/Toast';
 import { EventType } from '../../../shared/enumeration/eventType';
+import useWindowDimensions from '../../../shared/hooks/useWindowDimensions';
 import { IParams } from '../../../shared/models/base.model';
 import { IRecordWorker } from '../../../shared/models/record.model';
 import { RootState } from '../../../shared/reducers';
@@ -63,6 +64,10 @@ const WorkersList = (props: IWorkersList) => {
   const { initialState } = useSelector((state: RootState) => state.records);
   const { success, submitted } = useSelector((state: RootState) => state.transactions);
   const { loading, workers, errorMessage: workerErrorMessage } = initialState.workerInitialState;
+  const { initialState: assetsInitialState } = useSelector((state: RootState) => state.assets);
+  const { entityLoading } = assetsInitialState;
+
+  const { width: screenWidth } = useWindowDimensions();
 
   const [filterState, setFilterState] = useState<IParams>({
     page: 0,
@@ -185,71 +190,73 @@ const WorkersList = (props: IWorkersList) => {
         </CCol>
         <CCol xs={12}>
           <CCard className="m-0 listing-img-card">
-            <img src={bgImg} alt="listingImg" className="w-100 h-100" />
+            {!entityLoading && listing ? (
+              <img src={listing.images} alt="listingImg" className="w-100 h-100" />
+            ) : (
+              // Ensuring 16:9 ratio for image and image loader
+              <InfoLoader width={screenWidth} height={screenWidth / 1.77} />
+            )}
             <CCardBody className="p-0 listing-card-body">
               <CCardTitle className="listing-card-title mb-0 px-3 py-2 w-100">
-                <p className="mb-2 text-white content-title">125 - Hoàn Kiếm - Hà Nội</p>
+                <p className="mb-2 text-white content-title">202 Yên Sở - Hoàng Mai - Hà Nội</p>
                 <p className="mb-0 text-white detail-title-font">
-                  Hoạt động <b>{workers?.count || 0}</b>
+                  Worker Amount <b>{workers?.count || 0}</b>
                 </p>
               </CCardTitle>
             </CCardBody>
           </CCard>
         </CCol>
-        <>
-          <CCol xs={12}>
-            {loading && !workers?.results.length ? (
-              <Loading />
-            ) : (
-              <>
-                {(submitted && !success) || (success && !loading)  ? (
-                  <CCol xs={12} className="d-flex justify-content-center my-2">
-                    <ConfirmationLoading />
-                  </CCol>
-                ) : (
-                  ''
-                )}
-                <CDataTable
-                  striped
-                  items={workers?.results}
-                  fields={fields}
-                  responsive
-                  hover
-                  header
-                  scopedSlots={{
-                    address: (item: IRecordWorker) => {
-                      return <td>{getEllipsisTxt(item.worker || '_', 10)}</td>;
-                    },
-                    action: (item: IRecordWorker) => {
-                      return (
-                        <td>
-                          <CButton
-                            className="text-danger p-0"
-                            disabled={listing ? !validateOwnership(signerAddress, listing) : true}
-                            onClick={onEntityRemoval(item.worker || '_')}
-                          >
-                            <CIcon name="cil-trash" />
-                          </CButton>
-                        </td>
-                      );
-                    },
-                  }}
-                />
-              </>
-            )}
-            {totalPages > 1 && (
-              <CPagination
-                disabled={loading}
-                activePage={filterState.page + 1}
-                pages={totalPages}
-                onActivePageChange={handlePaginationChange}
-                align="center"
-                className="mt-2"
+        <CCol xs={12}>
+          {loading && !workers?.results.length ? (
+            <Loading />
+          ) : (
+            <>
+              {(submitted && !success) || (success && !loading) ? (
+                <CCol xs={12} className="d-flex justify-content-center my-2">
+                  <ConfirmationLoading />
+                </CCol>
+              ) : (
+                ''
+              )}
+              <CDataTable
+                striped
+                items={workers?.results}
+                fields={fields}
+                responsive
+                hover
+                header
+                scopedSlots={{
+                  address: (item: IRecordWorker) => {
+                    return <td>{getEllipsisTxt(item.worker || '_', 10)}</td>;
+                  },
+                  action: (item: IRecordWorker) => {
+                    return (
+                      <td>
+                        <CButton
+                          className="text-danger p-0"
+                          disabled={listing ? !validateOwnership(signerAddress, listing) : true}
+                          onClick={onEntityRemoval(item.worker || '_')}
+                        >
+                          <CIcon name="cil-trash" />
+                        </CButton>
+                      </td>
+                    );
+                  },
+                }}
               />
-            )}
-          </CCol>
-        </>
-
+            </>
+          )}
+          {totalPages > 1 && (
+            <CPagination
+              disabled={loading}
+              activePage={filterState.page + 1}
+              pages={totalPages}
+              onActivePageChange={handlePaginationChange}
+              align="center"
+              className="mt-2"
+            />
+          )}
+        </CCol>
         <CCol xs={12} className="d-flex justify-content-center">
           <CButton
             className="my-2 px-3 w-100 btn-radius-50 btn-font-style btn-primary"
