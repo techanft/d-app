@@ -195,7 +195,7 @@ const ActivityLogs = (props: IActivityLogs) => {
   };
 
   useEffect(() => {
-    scrollRef.current && scrollRef.current.scrollIntoView();
+    scrollRef.current && scrollRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
   }, [initialState]);
 
   useEffect(() => {
