@@ -4,6 +4,7 @@ import {
   CCardTitle,
   CCol,
   CContainer,
+  CLabel,
   CNav,
   CNavItem,
   CNavLink,
@@ -15,7 +16,7 @@ import { ActionCreatorWithoutPayload, AsyncThunk } from '@reduxjs/toolkit';
 import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
-import { getEllipsisTxt } from '../../../shared/casual-helpers';
+import CopyTextToClipBoard from '../../../shared/components/CopyTextToClipboard';
 import InfoLoader from '../../../shared/components/InfoLoader';
 import { RecordType } from '../../../shared/enumeration/recordType';
 import useWindowDimensions from '../../../shared/hooks/useWindowDimensions';
@@ -195,7 +196,7 @@ const ActivityLogs = (props: IActivityLogs) => {
   };
 
   useEffect(() => {
-    scrollRef.current && scrollRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    scrollRef.current && scrollRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }, [initialState]);
 
   useEffect(() => {
@@ -238,6 +239,9 @@ const ActivityLogs = (props: IActivityLogs) => {
     <CContainer fluid className="mx-0 my-2">
       <CRow>
         <CCol xs={12}>
+          <CLabel className="text-primary content-title">Activity Logs</CLabel>
+        </CCol>
+        <CCol xs={12}>
           <CCard className="m-0 listing-img-card">
             {!entityLoading && listing ? (
               <img src={listing.images} alt="listingImg" className="w-100 h-100" />
@@ -247,12 +251,12 @@ const ActivityLogs = (props: IActivityLogs) => {
             )}
             <CCardBody className="p-0 listing-card-body">
               <CCardTitle className="listing-card-title mb-0 px-3 py-2 w-100" innerRef={scrollRef}>
-                <p className="mb-2 text-white content-title">202 Yên Sở - Hoàng Mai - Hà Nội</p>
+                <p className="mb-0 text-white content-title">202 Yên Sở - Hoàng Mai - Hà Nội</p>
                 <p className="mb-0 text-white detail-title-font">
                   Blockchain address{' '}
                   <b>
                     {!entityLoading && listing?.address ? (
-                      getEllipsisTxt(listing.address)
+                      <CopyTextToClipBoard text={listing.address} iconClassName="text-white" inputClassName="copy-address" />
                     ) : (
                       <InfoLoader width={155} height={27} />
                     )}
@@ -262,14 +266,14 @@ const ActivityLogs = (props: IActivityLogs) => {
             </CCardBody>
           </CCard>
         </CCol>
-        <CCol xs={12} className={'text-center'}>
+        {/* <CCol xs={12} className={'text-center'}>
           <p className="header-title content-title my-3">Activity Logs</p>
-        </CCol>
+        </CCol> */}
         {signerAddress ? (
           <>
             <CCol xs={12}>
-              <CNav variant="" className={'activityLogTableNav mb-3'}>
-                <CNavItem className="col-4 p-0">
+              <CNav variant="" className={'activityLogTableNav my-3'}>
+                <CNavItem className="col-6 p-0">
                   <CNavLink
                     onClick={onTableTypeChange(TableType.INVESTMENT)}
                     active={tableType === TableType.INVESTMENT}
@@ -278,7 +282,7 @@ const ActivityLogs = (props: IActivityLogs) => {
                     Investment
                   </CNavLink>
                 </CNavItem>
-                <CNavItem className="col-4 p-0">
+                <CNavItem className="col-6 p-0">
                   <CNavLink
                     onClick={onTableTypeChange(TableType.OWNERSHIP)}
                     active={tableType === TableType.OWNERSHIP}
@@ -408,7 +412,7 @@ const ActivityLogs = (props: IActivityLogs) => {
           </>
         ) : (
           <CCol xs={12}>
-            <div className="alert alert-warning">
+            <div className="alert alert-warning my-3">
               <span>Vui lòng kết nối ví để xem lịch sử hoạt động</span>
             </div>
           </CCol>
