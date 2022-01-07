@@ -7,6 +7,7 @@ import {
   CInputGroup,
   CInputGroupAppend,
   CInvalidFeedback,
+  CLabel,
   CModal,
   CModalBody,
   CModalFooter,
@@ -146,10 +147,10 @@ const AddWorkerPermission = (props: ICancelWorkerPermission) => {
                 {isScanQrMode ? (
                   <>
                     <CRow>
-                      <CCol xs={12}>
+                      <CCol xs={12} className="mb-3 d-flex text-center">
                         <CButton
                           onClick={() => setIsScanQrMode(false)}
-                          className="text-primary content-title btn-outline-primary btn-radius-50 px-2 mb-3 py-1"
+                          className="text-primary btn-font-style btn-outline-primary btn-radius-50 px-2 py-1 justify-content-start"
                         >
                           <CIcon name="cil-arrow-thick-from-right" className="mr-1 p-0" size="lg" />
                           Back
@@ -164,7 +165,6 @@ const AddWorkerPermission = (props: ICancelWorkerPermission) => {
                             handleScanFile(data);
                             setFieldValue('address', data);
                           }}
-                          style={{ width: '100%' }}
                         />
                       </CCol>
                     </CRow>
@@ -187,7 +187,7 @@ const AddWorkerPermission = (props: ICancelWorkerPermission) => {
                           className="btn-radius-50"
                         />
                         <CInputGroupAppend>
-                          <CButton color="primary" className="btn-radius-50" onClick={onScanFile}>
+                          <CButton color="primary" className="btn-radius-50 py-0 px-2" onClick={onScanFile}>
                             <CIcon name="cil-qr-code" />
                           </CButton>
                         </CInputGroupAppend>
