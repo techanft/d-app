@@ -1,6 +1,6 @@
 
 import {
-  cilAccountLogout, cilApplicationsSettings, cilArrowCircleTop, cilCopy, cilExternalLink, cilFilter, cilFlower, cilHistory, cilMenu, cilMoon, cilQrCode, cilSpeedometer,
+  cilAccountLogout, cilApplicationsSettings, cilArrowCircleTop, cilArrowThickFromRight, cilCopy, cilExternalLink, cilFilter, cilFlower, cilHistory, cilMenu, cilMoon, cilQrCode, cilSpeedometer,
   cilSun, cilTrash, cilX
 } from '@coreui/icons/js/free'
 
@@ -20,5 +20,6 @@ export const icons = Object.assign({},
   cilArrowCircleTop,
   cilExternalLink,
   cilQrCode,
+  cilArrowThickFromRight,
   cilAccountLogout
 })

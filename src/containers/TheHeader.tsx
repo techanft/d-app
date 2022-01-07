@@ -132,7 +132,7 @@ const TheHeader = () => {
           <CButton className="btn-link-wallet btn-radius-50 px-2 btn-font-style" onClick={onConnectWallet()}>
             {signerAddress ? (
               <>
-                {getEllipsisTxt(signerAddress, 4)} <CIcon name="cil-account-logout" height={15} style={{ color: 'red', margin:"0 0"}} />
+                {getEllipsisTxt(signerAddress, 4)} <CIcon name="cil-account-logout" height={15} className='text-danger mx-0 my-0'/>
               </>
             ) : (
               'Connect Wallet'

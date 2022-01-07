@@ -21,7 +21,6 @@ import QrReader from 'react-qr-reader';
 import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
 import { checkWorkerStatus, LISTING_INSTANCE } from '../../../shared/blockchain-helpers';
-import { unInsertCommas } from '../../../shared/casual-helpers';
 import { ToastError } from '../../../shared/components/Toast';
 import { EventType } from '../../../shared/enumeration/eventType';
 import { RootState } from '../../../shared/reducers';
@@ -93,20 +92,11 @@ const AddWorkerPermission = (props: ICancelWorkerPermission) => {
 
   const closeModal = () => () => {
     setVisible(false);
+    setIsScanQrMode(false);
     formikRef.current?.resetForm();
-  }; 
+  };
 
-  const qrRef = useRef<any>()
-  const [scanResultFile, setScanResultFile] = useState<string>('');
-  console.log(scanResultFile, "scanResultFile");
-  
-
-  const onScanFile = (setFieldValue: (field: string, value: any, shouldValidate?: boolean | undefined) => void ) => () => {
-    // console.log(event, 'event');
-    // qrRef.current.openImageDialog();
-    setFieldValue(`address`, scanResultFile)
-  }
-
+  const [isScanQrMode, setIsScanQrMode] = useState<boolean>(false);
 
   const handleErrorFile = (error: any) => {
     console.log(error, 'err');
@@ -114,17 +104,14 @@ const AddWorkerPermission = (props: ICancelWorkerPermission) => {
 
   const handleScanFile = (result: string | null) => {
     if (result) {
-      console.log('result', result);
-      setScanResultFile(result);    
-
+      setIsScanQrMode(false);
     }
-    
   };
 
-  const onImageLoad = (event: any) => {
-console.log(event, "event");
-
-  }
+  const onScanFile = () => {
+    setIsScanQrMode(true);
+    formikRef.current?.resetForm();
+  };
 
   return (
     <CModal show={visible} onClose={closeModal()} closeOnBackdrop={false} centered className="border-radius-modal">
@@ -152,41 +139,65 @@ console.log(event, "event");
           }
         }}
       >
-        {({ values, errors, touched, handleChange, handleSubmit, handleBlur, resetForm, setFieldValue }) => (
+        {({ values, errors, touched, handleChange, handleSubmit, handleBlur, setFieldValue }) => (
           <CForm onSubmit={handleSubmit}>
             <>
               <CModalBody>
-                <CRow>
-                  <CCol xs={12}>
-                    <p>Address Wallet</p>
-                  </CCol>
-                  <CCol xs={12}>
-                    <CInputGroup>
-                      <CInput
-                        // type="text"
-                        id="address"
-                        name="address"
-                        // onChange={handleChange}
-                        autoComplete="off"
-                        value={values.address || ''}
-                        onBlur={handleBlur}
-                        className="btn-radius-50"
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setFieldValue(`address`, unInsertCommas(e.target.value));
-                        }}
-                      />
-                      <CInputGroupAppend>
-                        <CButton color="primary" className="btn-radius-50" onClick={() => setFieldValue(`address`, scanResultFile)}>
-                          <CIcon name="cil-qr-code" />
+                {isScanQrMode ? (
+                  <>
+                    <CRow>
+                      <CCol xs={12}>
+                        <CButton
+                          onClick={() => setIsScanQrMode(false)}
+                          className="text-primary content-title btn-outline-primary btn-radius-50 px-2 mb-3 py-1"
+                        >
+                          <CIcon name="cil-arrow-thick-from-right" className="mr-1 p-0" size="lg" />
+                          Back
                         </CButton>
-                      </CInputGroupAppend>
-                    </CInputGroup>
-                    <CInvalidFeedback className={!!errors.address && touched.address ? 'd-block' : 'd-none'}>
-                      {errors.address}
-                    </CInvalidFeedback>
-                    <QrReader delay={300} onError={handleErrorFile} onScan={handleScanFile} style={{ width: '100%' }} />
-                  </CCol>
-                </CRow>
+                      </CCol>
+                      <CCol xs={12}>
+                        {/* Due to browser implementations the camera can only be accessed over https or localhost */}
+                        <QrReader
+                          delay={300}
+                          onError={handleErrorFile}
+                          onScan={(data: string | null) => {
+                            handleScanFile(data);
+                            setFieldValue('address', data);
+                          }}
+                          style={{ width: '100%' }}
+                        />
+                      </CCol>
+                    </CRow>
+                  </>
+                ) : (
+                  <CRow>
+                    <CCol xs={12}>
+                      <p>Address Wallet</p>
+                    </CCol>
+                    <CCol xs={12}>
+                      <CInputGroup>
+                        <CInput
+                          type="text"
+                          id="address"
+                          name="address"
+                          onChange={handleChange}
+                          autoComplete="off"
+                          value={values.address || ''}
+                          onBlur={handleBlur}
+                          className="btn-radius-50"
+                        />
+                        <CInputGroupAppend>
+                          <CButton color="primary" className="btn-radius-50" onClick={onScanFile}>
+                            <CIcon name="cil-qr-code" />
+                          </CButton>
+                        </CInputGroupAppend>
+                      </CInputGroup>
+                      <CInvalidFeedback className={!!errors.address && touched.address ? 'd-block' : 'd-none'}>
+                        {errors.address}
+                      </CInvalidFeedback>
+                    </CCol>
+                  </CRow>
+                )}
               </CModalBody>
               <CModalFooter className="justify-content-between">
                 <CCol>

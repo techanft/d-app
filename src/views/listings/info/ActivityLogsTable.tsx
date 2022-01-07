@@ -15,14 +15,6 @@ import { IRecordParams } from '../../records/records.api';
 import '../index.scss';
 import { TableType, TRecordTypeArray } from './ActivityLogs';
 
-interface ITableStyle {
-  textAlign: string;
-  color: string;
-  fontSize: string;
-  lineHeight: string;
-  fontWeight: string;
-}
-
 type TRecordTypeMappingRender = { [key in RecordType]: Function };
 
 interface IActivityLogs {
