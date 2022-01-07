@@ -14,7 +14,7 @@ import {
   CInputCheckbox,
   CLabel,
   CLink,
-  CRow
+  CRow,
 } from '@coreui/react';
 import { faAngleDown } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -31,7 +31,7 @@ import {
   getContractWithSigner,
   getProviderLogin,
   getSigner,
-  getTokenBalance
+  getTokenBalance,
 } from '../views/wallet/wallet.api';
 import { resetSigner, softReset as walletSoftReset } from '../views/wallet/wallet.reducer';
 
@@ -131,9 +131,10 @@ const TheHeader = () => {
         <CHeaderNavItem>
           <CButton className="btn-link-wallet btn-radius-50 px-2 btn-font-style" onClick={onConnectWallet()}>
             {signerAddress ? (
-              <>
-                {getEllipsisTxt(signerAddress, 4)} <CIcon name="cil-account-logout" height={15} className='text-danger mx-0 my-0'/>
-              </>
+              <b>
+                {getEllipsisTxt(signerAddress, 4)}{' '}
+                <CIcon name="cil-account-logout" size="lg" className="text-danger mx-0 my-0 pb-1" />
+              </b>
             ) : (
               'Connect Wallet'
             )}

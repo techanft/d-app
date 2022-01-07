@@ -6,17 +6,19 @@ import { getEllipsisTxt } from '../casual-helpers';
 
 interface ICopyTextToClipBoardProps {
     text: string;
+    inputClassName?: string;
+    iconClassName?: string;
 }
-const CopyTextToClipBoard = ({text} : ICopyTextToClipBoardProps) => {
+const CopyTextToClipBoard = ({text, inputClassName, iconClassName} : ICopyTextToClipBoardProps) => {
     return (
         <CTooltip content="Copied" placement="bottom">
         <CopyToClipboard text={text}>
-          <p className="my-2 value-text copy-address">
+          <span className={inputClassName}>
             {getEllipsisTxt(text)}
             <CButton className="p-0 pb-3 ml-1">
-              <CIcon name="cil-copy" size="sm" />
+              <CIcon name="cil-copy" size="sm" className={iconClassName}/>
             </CButton>
-          </p>
+          </span>
         </CopyToClipboard>
       </CTooltip>
     )

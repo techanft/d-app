@@ -245,7 +245,7 @@ const ListingInfo = (props: IListingInfoProps) => {
             <p className="detail-title-font my-2">Blockchain address</p>
 
             {!entityLoading && listing?.address ? (
-              <CopyTextToClipBoard text={listing.address} />
+              <CopyTextToClipBoard text={listing.address} inputClassName='my-2 value-text copy-address'/>
             ) : (
               <InfoLoader width={155} height={27} />
             )}
@@ -255,7 +255,7 @@ const ListingInfo = (props: IListingInfoProps) => {
             <p className="detail-title-font my-2">The current owner</p>
 
             {!entityLoading && listing?.owner ? (
-              <CopyTextToClipBoard text={listing.owner} />
+              <CopyTextToClipBoard text={listing.owner} inputClassName='my-2 value-text copy-address'/>
             ) : (
               <InfoLoader width={155} height={27} />
             )}
