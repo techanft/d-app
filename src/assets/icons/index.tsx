@@ -13,7 +13,8 @@ import {
   cilX,
   cilArrowCircleTop,
   cilExternalLink,
-  cilQrCode
+  cilQrCode,
+  cilArrowThickFromRight
 } from '@coreui/icons/js/free'
 
 export const icons = Object.assign({}, 
@@ -31,5 +32,6 @@ export const icons = Object.assign({},
   cilX,
   cilArrowCircleTop,
   cilExternalLink,
-  cilQrCode
+  cilQrCode,
+  cilArrowThickFromRight
 })
