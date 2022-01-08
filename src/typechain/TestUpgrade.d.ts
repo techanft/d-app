@@ -53,6 +53,8 @@ interface TestUpgradeInterface extends ethers.utils.Interface {
     "triggerOwnershipExtensionEvent(address,address,uint256,uint256,uint256)": FunctionFragment;
     "triggerRegisterEvent(address,uint256,uint256)": FunctionFragment;
     "triggerUnregisterEvent(address,uint256)": FunctionFragment;
+    "triggerUpdateListingValueEvent(uint256)": FunctionFragment;
+    "triggerUpdatePaymentEvent(uint256)": FunctionFragment;
     "triggerUpdateWorkerEvent(address,bool)": FunctionFragment;
     "triggerWithdrawEvent(address,uint256,uint256,uint256)": FunctionFragment;
     "updateStakingAddress(address)": FunctionFragment;
@@ -167,6 +169,14 @@ interface TestUpgradeInterface extends ethers.utils.Interface {
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "triggerUpdateListingValueEvent",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "triggerUpdatePaymentEvent",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "triggerUpdateWorkerEvent",
     values: [string, boolean]
   ): string;
@@ -267,6 +277,14 @@ interface TestUpgradeInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "triggerUpdateListingValueEvent",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "triggerUpdatePaymentEvent",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "triggerUpdateWorkerEvent",
     data: BytesLike
   ): Result;
@@ -297,7 +315,9 @@ interface TestUpgradeInterface extends ethers.utils.Interface {
     "RoleRevoked(bytes32,address,address)": EventFragment;
     "Transfer(address,address,uint256)": EventFragment;
     "Unregister(address,address,uint256)": EventFragment;
+    "UpdateDailyPayment(address,uint256)": EventFragment;
     "UpdateStakingAddr(address)": EventFragment;
+    "UpdateValue(address,uint256)": EventFragment;
     "UpdateWorker(address,address,bool)": EventFragment;
     "Upgraded(address)": EventFragment;
     "Withdraw(address,address,uint256,uint256,uint256)": EventFragment;
@@ -315,7 +335,9 @@ interface TestUpgradeInterface extends ethers.utils.Interface {
   getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Unregister"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "UpdateDailyPayment"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "UpdateStakingAddr"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "UpdateValue"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "UpdateWorker"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Upgraded"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Withdraw"): EventFragment;
@@ -401,8 +423,16 @@ export type UnregisterEvent = TypedEvent<
   }
 >;
 
+export type UpdateDailyPaymentEvent = TypedEvent<
+  [string, BigNumber] & { _listing: string; _payment: BigNumber }
+>;
+
 export type UpdateStakingAddrEvent = TypedEvent<
   [string] & { _stakingAddr: string }
+>;
+
+export type UpdateValueEvent = TypedEvent<
+  [string, BigNumber] & { _listing: string; _value: BigNumber }
 >;
 
 export type UpdateWorkerEvent = TypedEvent<
@@ -618,6 +648,16 @@ export class TestUpgrade extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    triggerUpdateListingValueEvent(
+      _value: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    triggerUpdatePaymentEvent(
+      _payment: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     triggerUpdateWorkerEvent(
       _worker: string,
       _isAuthorized: boolean,
@@ -798,6 +838,16 @@ export class TestUpgrade extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  triggerUpdateListingValueEvent(
+    _value: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  triggerUpdatePaymentEvent(
+    _payment: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   triggerUpdateWorkerEvent(
     _worker: string,
     _isAuthorized: boolean,
@@ -969,6 +1019,16 @@ export class TestUpgrade extends BaseContract {
     triggerUnregisterEvent(
       _stakeholder: string,
       _optionId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    triggerUpdateListingValueEvent(
+      _value: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    triggerUpdatePaymentEvent(
+      _payment: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1256,6 +1316,22 @@ export class TestUpgrade extends BaseContract {
       { _listing: string; _stakeholder: string; _optionId: BigNumber }
     >;
 
+    "UpdateDailyPayment(address,uint256)"(
+      _listing?: null,
+      _payment?: null
+    ): TypedEventFilter<
+      [string, BigNumber],
+      { _listing: string; _payment: BigNumber }
+    >;
+
+    UpdateDailyPayment(
+      _listing?: null,
+      _payment?: null
+    ): TypedEventFilter<
+      [string, BigNumber],
+      { _listing: string; _payment: BigNumber }
+    >;
+
     "UpdateStakingAddr(address)"(
       _stakingAddr?: null
     ): TypedEventFilter<[string], { _stakingAddr: string }>;
@@ -1263,6 +1339,22 @@ export class TestUpgrade extends BaseContract {
     UpdateStakingAddr(
       _stakingAddr?: null
     ): TypedEventFilter<[string], { _stakingAddr: string }>;
+
+    "UpdateValue(address,uint256)"(
+      _listing?: null,
+      _value?: null
+    ): TypedEventFilter<
+      [string, BigNumber],
+      { _listing: string; _value: BigNumber }
+    >;
+
+    UpdateValue(
+      _listing?: null,
+      _value?: null
+    ): TypedEventFilter<
+      [string, BigNumber],
+      { _listing: string; _value: BigNumber }
+    >;
 
     "UpdateWorker(address,address,bool)"(
       _listing?: null,
@@ -1475,6 +1567,16 @@ export class TestUpgrade extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    triggerUpdateListingValueEvent(
+      _value: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    triggerUpdatePaymentEvent(
+      _payment: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     triggerUpdateWorkerEvent(
       _worker: string,
       _isAuthorized: boolean,
@@ -1661,6 +1763,16 @@ export class TestUpgrade extends BaseContract {
     triggerUnregisterEvent(
       _stakeholder: string,
       _optionId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    triggerUpdateListingValueEvent(
+      _value: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    triggerUpdatePaymentEvent(
+      _payment: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
