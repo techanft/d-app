@@ -100,8 +100,8 @@ const AddWorkerPermission = (props: ICancelWorkerPermission) => {
 
   const [isScanQrMode, setIsScanQrMode] = useState<boolean>(false);
 
-  const handleErrorFile = (error: any) => {
-    console.log(error, 'err');
+  const handleErrorFile = (err: any) => {
+    console.log(`Error in scanning QR code: ${err}`);
   };
 
   const handleScanFile = (result: string | null) => {

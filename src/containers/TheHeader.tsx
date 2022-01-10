@@ -52,12 +52,9 @@ const TheHeader = () => {
   const { errorMessage: transactionErrorMessage } = useSelector((state: RootState) => state.transactions);
 
   const onConnectWallet = () => () => {
-    if (signerAddress) {
-      dispatch(resetSigner());
-    } else {
-      if (!provider) return ToastInfo('No provider found');
-      dispatch(getProviderLogin(provider));
-    }
+    if (signerAddress) return dispatch(resetSigner());
+    if (!provider) return ToastInfo('No provider found');
+    dispatch(getProviderLogin(provider));
   };
 
   useEffect(() => {
@@ -114,7 +111,7 @@ const TheHeader = () => {
     <CHeader className="header-container d-block" withSubheader>
       <CHeaderNav>
         <CHeaderBrand className="header-brand mx-auto">
-          <p className="m-0 content-title text-white">WEBVIEW</p>
+          <p className="m-0 content-title text-white">ANFT D-APP V1.0</p>
         </CHeaderBrand>
       </CHeaderNav>
       <CHeaderNav className="justify-content-between bg-white">
