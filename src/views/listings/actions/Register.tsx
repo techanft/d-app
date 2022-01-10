@@ -560,7 +560,6 @@ const Register = (props: IRegisterProps) => {
                                                   <CButton
                                                     className="btn-radius-50 btn btn-sm btn-success mr-2"
                                                     onClick={onClaimReward(item.id, item.stake.amount)}
-                                                    // disabled={tokenBalance! < item.stake.amount}
                                                   >
                                                     Claim Reward
                                                   </CButton>
@@ -580,7 +579,6 @@ const Register = (props: IRegisterProps) => {
                                             <CCol xs={12} className="d-flex justify-content-center mt-3">
                                               <CButton
                                                 className="btn-radius-50 btn btn-sm btn-primary mr-2"
-                                                // type="submit"
                                                 onClick={checkHasRewardPool(submitForm, item.stake.amount)}
                                               >
                                                 Register

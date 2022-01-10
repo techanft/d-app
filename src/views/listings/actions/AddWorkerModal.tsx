@@ -188,7 +188,7 @@ const AddWorkerPermission = (props: ICancelWorkerPermission) => {
                           className="btn-radius-50"
                         />
                         <CInputGroupAppend>
-                          <CButton color="primary" className="btn-radius-50 py-0 px-2" onClick={onScanFile}>
+                          <CButton color="primary" className="btn-radius-50 py-0 px-3" onClick={onScanFile}>
                             <CIcon name="cil-qr-code" />
                           </CButton>
                         </CInputGroupAppend>
