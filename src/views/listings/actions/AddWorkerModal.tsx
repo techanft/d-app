@@ -6,14 +6,12 @@ import {
   CInput,
   CInputGroup,
   CInputGroupAppend,
-  CInvalidFeedback,
-  CLabel,
-  CModal,
+  CInvalidFeedback, CModal,
   CModalBody,
   CModalFooter,
   CModalHeader,
   CModalTitle,
-  CRow,
+  CRow
 } from '@coreui/react';
 import { utils } from 'ethers';
 import { Formik, FormikProps } from 'formik';

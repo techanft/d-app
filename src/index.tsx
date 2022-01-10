@@ -7,7 +7,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import App from "./App";
 import { icons } from "./assets/icons";
-import "./polyfill";
+// import "../polyfill";
 import * as serviceWorker from "./serviceWorker";
 import store from "./store";
 

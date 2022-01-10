@@ -20,6 +20,7 @@ import CopyTextToClipBoard from '../../../shared/components/CopyTextToClipboard'
 import InfoLoader from '../../../shared/components/InfoLoader';
 import { RecordType } from '../../../shared/enumeration/recordType';
 import useWindowDimensions from '../../../shared/hooks/useWindowDimensions';
+import { IGetAllResp } from '../../../shared/models/base.model';
 import {
   IRecordClaim,
   IRecordOwnership,
@@ -62,7 +63,16 @@ export type TRecordTypeArray =
   | IRecordWorker
   | IRecordWithdraw;
 
-type TRecordTypeMappingApi = { [key in RecordType]: AsyncThunk<unknown, IRecordParams, {}> };
+type TAsyncThunkRecord<T> =  AsyncThunk<IGetAllResp<T>, IRecordParams, {}>
+
+type TRecordTypeMappingApi = {
+  [RecordType.REGISTER]: TAsyncThunkRecord<IRecordRegister>,
+  [RecordType.UNREGISTER]: TAsyncThunkRecord<IRecordUnRegister>,
+  [RecordType.CLAIM]: TAsyncThunkRecord<IRecordClaim>,
+  [RecordType.WITHDRAW]: TAsyncThunkRecord<IRecordWithdraw>,
+  [RecordType.OWNERSHIP_EXTENSION]: TAsyncThunkRecord<IRecordOwnership>,
+  [RecordType.UPDATE_WORKER]: TAsyncThunkRecord<IRecordWorker>,
+};
 
 type TRecordTypeMappingFetch = { [key in RecordType]: ActionCreatorWithoutPayload<string> };
 
@@ -256,7 +266,11 @@ const ActivityLogs = (props: IActivityLogs) => {
                   Blockchain address{' '}
                   <b>
                     {!entityLoading && listing?.address ? (
-                      <CopyTextToClipBoard text={listing.address} iconClassName="text-white" inputClassName="copy-address" />
+                      <CopyTextToClipBoard
+                        text={listing.address}
+                        iconClassName="text-white"
+                        inputClassName="copy-address"
+                      />
                     ) : (
                       <InfoLoader width={155} height={27} />
                     )}
