@@ -141,7 +141,7 @@ const ActivityLogsTable = (props: IActivityLogs) => {
         </>
       ) : (
         <div className="alert alert-warning my-3">
-          <span>Không có bản ghi nào !</span>
+          <span>Không tìm thấy bản ghi nào!</span>
         </div>
       )}
     </>
