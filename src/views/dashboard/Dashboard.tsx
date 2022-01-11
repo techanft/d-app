@@ -9,7 +9,7 @@ interface IDashboard extends RouteComponentProps {}
 
 const DashboardFilter = () => {
   return (
-    <CSubheader className="sub-header mt-0 justify-content-center align-items-center">
+    <CSubheader className="sub-header mt-2 justify-content-center align-items-center">
       <CRow className="w-100 p-1">
         <CCol xs={4} className="px-0 text-center">
           <CDropdown className="mx-2">

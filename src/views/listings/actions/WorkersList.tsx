@@ -200,7 +200,7 @@ const WorkersList = (props: IWorkersList) => {
               <CCardTitle className="listing-card-title mb-0 px-3 py-2 w-100">
                 <p className="mb-2 text-white content-title">202 Yên Sở - Hoàng Mai - Hà Nội</p>
                 <p className="mb-0 text-white detail-title-font">
-                  Worker Amount <b>{workers?.count || 0}</b>
+                  Workers Count <b>{workers?.count || 0}</b>
                 </p>
               </CCardTitle>
             </CCardBody>

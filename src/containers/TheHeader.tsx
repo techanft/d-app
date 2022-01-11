@@ -34,6 +34,7 @@ import {
   getTokenBalance,
 } from '../views/wallet/wallet.api';
 import { resetSigner, softReset as walletSoftReset } from '../views/wallet/wallet.reducer';
+import { toggleSidebar } from './reducer';
 
 const TheHeader = () => {
   const dispatch = useDispatch();
@@ -51,10 +52,23 @@ const TheHeader = () => {
 
   const { errorMessage: transactionErrorMessage } = useSelector((state: RootState) => state.transactions);
 
+  const containerState = useSelector((state: RootState) => state.container);
+  const { sidebarShow } = containerState;
+
   const onConnectWallet = () => () => {
     if (signerAddress) return dispatch(resetSigner());
     if (!provider) return ToastInfo('No provider found');
     dispatch(getProviderLogin(provider));
+  };
+
+  const toggleSidebarMobile = () => {
+    const val = [false, 'responsive'].includes(sidebarShow) ? true : 'responsive';
+    dispatch(toggleSidebar(val));
+  };
+
+  const toggleSidebarDesktop = () => {
+    const val = [true, 'responsive'].includes(sidebarShow) ? false : 'responsive';
+    dispatch(toggleSidebar(val));
   };
 
   useEffect(() => {
@@ -108,7 +122,7 @@ const TheHeader = () => {
   }, [signerAddress]);
 
   return (
-    <CHeader className="header-container d-block" withSubheader>
+    <CHeader className="header-container d-block shadow-sm border-0" withSubheader>
       <CHeaderNav>
         <CHeaderBrand className="header-brand mx-auto">
           <p className="m-0 content-title text-white">ANFT D-APP V1.0</p>
@@ -116,7 +130,10 @@ const TheHeader = () => {
       </CHeaderNav>
       <CHeaderNav className="justify-content-between bg-white">
         <CHeaderNavItem>
-          <CButton className="text-primary pr-0 border-0 pl-2">
+          <CButton className="text-primary pr-0 border-0 pl-2 d-lg-none" onClick={toggleSidebarMobile}>
+            <CIcon name="cil-menu" size="xl" />
+          </CButton>
+          <CButton className="text-primary pr-0 border-0 pl-2 d-md-down-none" onClick={toggleSidebarDesktop}>
             <CIcon name="cil-menu" size="xl" />
           </CButton>
         </CHeaderNavItem>

@@ -1,0 +1,112 @@
+{
+    "anftDapp": {
+      "global": {
+        "errors": {
+          "pleaseConnectWallet": "Vui lòng liên kết ví!"
+        }
+      },
+      "sidebarComponent": {
+        "language": {
+          "language": "Ngôn ngữ",
+          "vietnamese": "Tiếng Việt",
+          "english": "Tiếng Anh"
+        }
+      },
+      "headerComponent": {
+        "connectWallet": "Liên kết ví",
+        "dashboard": "Trang chủ",
+        "filter": {
+          "filter": "Bộ lọc tìm kiếm",
+          "city": "Tỉnh/ Thành phố",
+          "dist": "Quận/ Huyện",
+          "classify": "Loại sản phẩm",
+          "segment": "Phân khúc",
+          "area": "Diện tích",
+          "orientation ": "Hướng",
+          "dailyPayment": "Phí khai thác",
+          "quality": "Chất lượng",
+          "owned": "Đã sở hữu",
+          "type": "Loại",
+          "state": "Trạng thái",
+          "services": "Dịch vụ",
+          "apply": "Áp dụng"
+        }
+      },
+      "listingComponent": {
+        "listingValue": "Giá trị BDS",
+        "primaryInfo": {
+          "ownershipStatus": {
+            "owned": "Đã sở hữu",
+            "ownershipExpired": "Đã hết hạn sở hữu. Listing có thể bị chiếm bởi người khác!",
+            "ownedByAnotherAddress": "Đã có chủ sở hữu",
+            "notOwned": "Có thể sở hữu"
+          },
+          "blockchainAddress": "Địa chỉ Blockchain",
+          "currentOwner": "Chủ sở hữu hiện tại",
+          "ownershipPeriod": "Sở hữu tới",
+          "dailyPayment": "Chi phí khai thác",
+          "totalStake": "Tổng stake",
+          "workersCount": "Số lượng người khai khác",
+          "workersList": "Xem quyền khai thác",
+          "investmentActivities": {
+            "investmentActivities": "Hoạt động đầu tư",
+            "registerOwnership": "Đăng ký sở hữu",
+            "registerClaimReward": "Đăng ký nhận thưởng"
+          },
+          "ownershipManagement": {
+            "ownershipManagement": "Quản lý sở hữu",
+            "withdrawToken": "Rút ANFT",
+            "extendOwnership": "Nạp thêm",
+            "workerManagement": "Quản lý quyền khai thác"
+          } 
+        },
+        "secondaryInfo": {
+          "details": "Chi tiết",
+          "sector": "Khu vực",
+          "propertyType": "Loại bất động sản",
+          "area": "Diện tích",
+          "floorAndOrientation": "Tầng/Hướng",
+          "quality": "Chất lượng công trình",
+          "services": "Dịch vụ khai thác"
+        },
+        "activityLogs": "Lịch sử hoạt động",
+        "moreListing": "Xem thêm bất động sản"
+      },
+      "extendOwnership": {
+        "currentOwnership": "Thời gian sở hữu hiện tại",
+        "tokenBalance": "Token sở hữu"
+      },
+      "withdrawToken": {
+        "maximumWithdrawable": "Token rút tối đa",
+        "withdrawAmount": "Số Token muốn rút"
+      },
+      "registerComponent": {
+        "activity": "Hoạt động",
+        "reward": "Tỉ lệ thưởng",
+        "registerAmount": "Mức đăng ký",
+        "notRegister": "Chưa đăng ký",
+        "register": "Đăng ký",
+        "claimReward": "Nhận thưởng",
+        "unregister": "Hủy đăng ký",
+        "selectActivity": "*Lựa chọn Hoạt động bạn muốn SỬA hoặc HỦY đăng ký",
+        "pleaseConnectWallet": "Vui lòng kết nối ví để xem danh sách hoạt động",
+        "inputAmountIsUnchange": "Mức đăng ký không thay đổi",
+        "inputAmountExceedsTokenBalance": "Mức đăng ký vượt quá token sở hữu",
+        "incorrectInputType": "Mức đăng ký không hợp lệ!",
+        "inputIsRequired!": "Mức đăng ký không được bỏ trống!",
+        "minimumRegister": "Mức đăng ký tối thiểu là 1.0 token!",
+        "insufficientBalanceToClaimReward": "Token sở hữu không đủ để nhận thưởng!"
+      },
+      "activityLogs": {
+        "pleaseConnectWallet": "Vui lòng kết nối ví để xem lịch sử hoạt động",
+        "noLogFound": "Không tìm thấy bản ghi nào!"
+      },
+      "workersList": {
+        "workersList": "Danh sách quyền khai thác",
+        "workersCount": "Số lượng người khai thác",
+        "address": "Địa chỉ",
+        "action": "Hành động",
+        "addWorkerPermission": "Thêm quyền khai thác"
+      }
+    }
+  }

@@ -169,7 +169,7 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                   </CFormGroup>
                   <CFormGroup row>
                     <CCol xs={6}>
-                      <CLabel className="recharge-token-title">Tokens available</CLabel>
+                      <CLabel className="recharge-token-title">Token Balance</CLabel>
                     </CCol>
                     <CCol xs={6}>
                       <p className="text-primary text-right">{formatBNToken(tokenBalance, true)}</p>

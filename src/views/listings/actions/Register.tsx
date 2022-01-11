@@ -400,7 +400,7 @@ const Register = (props: IRegisterProps) => {
                                 )}
                                 <CFormGroup row>
                                   <CCol xs={5}>
-                                    <CLabel className="font-weight-bold my-2">Tokens Balance </CLabel>
+                                    <CLabel className="font-weight-bold my-2">Token Balance </CLabel>
                                   </CCol>
                                   <CCol xs={7}>
                                     <p className="text-primary my-2">{formatBNToken(tokenBalance, true)}</p>

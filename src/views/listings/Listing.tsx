@@ -1,4 +1,5 @@
-import { CCol, CLabel, CRow } from '@coreui/react';
+import CIcon from '@coreui/icons-react';
+import { CCol, CLabel, CLink, CRow } from '@coreui/react';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
@@ -62,10 +63,14 @@ const Listing = (props: IListingProps) => {
   return (
     <>
       <SubmissionModal />
-
       <Primary listingId={Number(id)} />
-      <Secondary listingId={Number(id)} />
+      <Secondary />
       <CRow className="mx-0">
+        <CCol xs={12} className="text-center mt-3">
+          <CLink to={`/${Number(id)}/activity-logs`}>
+            <CIcon name="cil-history" /> <u>Activity Logs</u>
+          </CLink>
+        </CCol>
         <CCol xs={12}>
           <CLabel className="text-primary content-title mt-3">More listing</CLabel>
         </CCol>

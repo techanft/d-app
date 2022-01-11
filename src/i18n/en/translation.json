@@ -1,0 +1,112 @@
+{
+  "anftDapp": {
+    "global": {
+      "errors": {
+        "pleaseConnectWallet": "Please connect your wallet!"
+      }
+    },
+    "sidebarComponent": {
+      "language": {
+        "language": "Language",
+        "vietnamese": "Vietnamese",
+        "english": "English"
+      }
+    },
+    "headerComponent": {
+      "connectWallet": "Connect Wallet",
+      "dashboard": "Dashboard",
+      "filter": {
+        "filter": "Filter",
+        "city": "City",
+        "dist": "District",
+        "classify": "Classify",
+        "segment": "Segment",
+        "area": "Area",
+        "orientation ": "Orientation",
+        "dailyPayment": "Daily Payment",
+        "quality": "Quality",
+        "owned": "Owned",
+        "type": "Type",
+        "state": "State",
+        "services": "Services",
+        "apply": "Apply"
+      }
+    },
+    "listingComponent": {
+      "listingValue": "Value",
+      "primaryInfo": {
+        "ownershipStatus": {
+          "owned": "Owned",
+          "ownershipExpired": "Ownership expired. Listing can be owned by another address!",
+          "ownedByAnotherAddress": "Owned by another address",
+          "notOwned": "Ownership available"
+        },
+        "blockchainAddress": "Blockchain Address",
+        "currentOwner": "Current Owner",
+        "ownershipPeriod": "Ownership Period",
+        "dailyPayment": "Daily Payment",
+        "totalStake": "Total Stake",
+        "workersCount": "Workers Count",
+        "workersList": "Workers List",
+        "investmentActivities": {
+          "investmentActivities": "Investment Activities",
+          "registerOwnership": "Register Ownership",
+          "registerClaimReward": "Register Claim Reward"
+        },
+        "ownershipManagement": {
+          "ownershipManagement": "Ownership Management",
+          "withdrawToken": "Withdraw Token",
+          "extendOwnership": "Recharge Token",
+          "workerManagement": "Worker Management"
+        } 
+      },
+      "secondaryInfo": {
+        "details": "Details",
+        "sector": "Sector",
+        "propertyType": "Property Type",
+        "area": "Area",
+        "floorAndOrientation": "Floor/Orientation",
+        "quality": "Quality",
+        "services": "Services"
+      },
+      "activityLogs": "Activity Logs",
+      "moreListing": "More Listing"
+    },
+    "extendOwnership": {
+      "currentOwnership": "Current Ownership",
+      "tokenBalance": "Token Balance"
+    },
+    "withdrawToken": {
+      "maximumWithdrawable": "Maximum Withdrawable",
+      "withdrawAmount": "Withdraw Amount"
+    },
+    "registerComponent": {
+      "activity": "Activity",
+      "reward": "Reward",
+      "registerAmount": "Register Amount",
+      "notRegister": "Not Register",
+      "register": "Register",
+      "claimReward": "Claim Reward",
+      "unregister": "Unregister",
+      "selectActivity": "*Select activity you want to EDIT or UNREGISTER",
+      "pleaseConnectWallet": "Please connect wallet to view activities list",
+      "inputAmountIsUnchange": "Input amount is unchange",
+      "inputAmountExceedsTokenBalance": "Input amount exceeds token balance",
+      "incorrectInputType": "Incorrect input type!",
+      "inputIsRequired!": "This field is required!",
+      "minimumRegister": "Minimum register for the listing is 1.0 token!",
+      "insufficientBalanceToClaimReward": "Insufficient balance to claim reward!"
+    },
+    "activityLogs": {
+      "pleaseConnectWallet": "Please connect wallet to view activity logs",
+      "noLogFound": "No Log Found!"
+    },
+    "workersList": {
+      "workersList": "Workers List",
+      "workersCount": "Workers Count",
+      "address": "Address",
+      "action": "Action",
+      "addWorkerPermission": "Add Worker Permission"
+    }
+  }
+}
