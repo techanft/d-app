@@ -12,7 +12,7 @@ import {
   CModalFooter,
   CModalHeader,
   CModalTitle,
-  CRow
+  CRow,
 } from '@coreui/react';
 import { faChevronLeft } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -117,19 +117,16 @@ const AddWorkerPermission = (props: ICancelWorkerPermission) => {
 
   return (
     <CModal show={visible} onClose={closeModal()} closeOnBackdrop={false} centered className="border-radius-modal">
-      {isScanQrMode ? (
-        <CModalHeader className="justify-content-between">
+      <CModalHeader>
+        {isScanQrMode ? (
           <CButton className="p-0" onClick={() => setIsScanQrMode(false)}>
             <FontAwesomeIcon icon={faChevronLeft} size="lg" />
           </CButton>
-          <CModalTitle className="modal-title-style">Thêm quyền khai thác</CModalTitle>
-          <div></div>
-        </CModalHeader>
-      ) : (
-        <CModalHeader className="justify-content-center">
-          <CModalTitle className="modal-title-style">Thêm quyền khai thác</CModalTitle>
-        </CModalHeader>
-      )}
+        ) : (
+          ''
+        )}
+        <CModalTitle className="modal-title-style m-auto">Thêm quyền khai thác</CModalTitle>
+      </CModalHeader>
 
       <Formik<IIntialValues>
         innerRef={formikRef}
