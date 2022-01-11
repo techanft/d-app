@@ -28,10 +28,8 @@ interface ListingStorageInterface extends ethers.utils.Interface {
     "ownership()": FunctionFragment;
     "setupOptionReward(uint256,uint256)": FunctionFragment;
     "tokenContract()": FunctionFragment;
-    "updateDailyPayment(uint256)": FunctionFragment;
     "updateOwner(address)": FunctionFragment;
     "updateValidator(address)": FunctionFragment;
-    "updateValue(uint256)": FunctionFragment;
     "updatelistingId(uint256)": FunctionFragment;
     "validator()": FunctionFragment;
     "value()": FunctionFragment;
@@ -57,18 +55,10 @@ interface ListingStorageInterface extends ethers.utils.Interface {
     functionFragment: "tokenContract",
     values?: undefined
   ): string;
-  encodeFunctionData(
-    functionFragment: "updateDailyPayment",
-    values: [BigNumberish]
-  ): string;
   encodeFunctionData(functionFragment: "updateOwner", values: [string]): string;
   encodeFunctionData(
     functionFragment: "updateValidator",
     values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "updateValue",
-    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "updatelistingId",
@@ -95,19 +85,11 @@ interface ListingStorageInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "updateDailyPayment",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "updateOwner",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "updateValidator",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "updateValue",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -192,11 +174,6 @@ export class ListingStorage extends BaseContract {
 
     tokenContract(overrides?: CallOverrides): Promise<[string]>;
 
-    updateDailyPayment(
-      _dailyPayment: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     updateOwner(
       _newOwner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -204,11 +181,6 @@ export class ListingStorage extends BaseContract {
 
     updateValidator(
       _validator: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    updateValue(
-      _value: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -251,11 +223,6 @@ export class ListingStorage extends BaseContract {
 
   tokenContract(overrides?: CallOverrides): Promise<string>;
 
-  updateDailyPayment(
-    _dailyPayment: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   updateOwner(
     _newOwner: string,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -263,11 +230,6 @@ export class ListingStorage extends BaseContract {
 
   updateValidator(
     _validator: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  updateValue(
-    _value: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -310,19 +272,12 @@ export class ListingStorage extends BaseContract {
 
     tokenContract(overrides?: CallOverrides): Promise<string>;
 
-    updateDailyPayment(
-      _dailyPayment: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     updateOwner(_newOwner: string, overrides?: CallOverrides): Promise<void>;
 
     updateValidator(
       _validator: string,
       overrides?: CallOverrides
     ): Promise<void>;
-
-    updateValue(_value: BigNumberish, overrides?: CallOverrides): Promise<void>;
 
     updatelistingId(
       _listingId: BigNumberish,
@@ -357,11 +312,6 @@ export class ListingStorage extends BaseContract {
 
     tokenContract(overrides?: CallOverrides): Promise<BigNumber>;
 
-    updateDailyPayment(
-      _dailyPayment: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     updateOwner(
       _newOwner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -369,11 +319,6 @@ export class ListingStorage extends BaseContract {
 
     updateValidator(
       _validator: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    updateValue(
-      _value: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -411,11 +356,6 @@ export class ListingStorage extends BaseContract {
 
     tokenContract(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    updateDailyPayment(
-      _dailyPayment: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     updateOwner(
       _newOwner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -423,11 +363,6 @@ export class ListingStorage extends BaseContract {
 
     updateValidator(
       _validator: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    updateValue(
-      _value: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
