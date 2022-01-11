@@ -29,7 +29,6 @@ interface ListingInterface extends ethers.utils.Interface {
     "owner()": FunctionFragment;
     "ownership()": FunctionFragment;
     "register(uint256,uint256)": FunctionFragment;
-    "rewardPool()": FunctionFragment;
     "setupOptionReward(uint256,uint256)": FunctionFragment;
     "stakings(uint256,address)": FunctionFragment;
     "tokenContract()": FunctionFragment;
@@ -69,10 +68,6 @@ interface ListingInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "register",
     values: [BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "rewardPool",
-    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "setupOptionReward",
@@ -140,7 +135,6 @@ interface ListingInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "ownership", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "register", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "rewardPool", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setupOptionReward",
     data: BytesLike
@@ -263,8 +257,6 @@ export class Listing extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    rewardPool(overrides?: CallOverrides): Promise<[BigNumber]>;
-
     setupOptionReward(
       _optionId: BigNumberish,
       _reward: BigNumberish,
@@ -368,8 +360,6 @@ export class Listing extends BaseContract {
     _optionId: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
-
-  rewardPool(overrides?: CallOverrides): Promise<BigNumber>;
 
   setupOptionReward(
     _optionId: BigNumberish,
@@ -475,8 +465,6 @@ export class Listing extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    rewardPool(overrides?: CallOverrides): Promise<BigNumber>;
-
     setupOptionReward(
       _optionId: BigNumberish,
       _reward: BigNumberish,
@@ -562,8 +550,6 @@ export class Listing extends BaseContract {
       _optionId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
-
-    rewardPool(overrides?: CallOverrides): Promise<BigNumber>;
 
     setupOptionReward(
       _optionId: BigNumberish,
@@ -657,8 +643,6 @@ export class Listing extends BaseContract {
       _optionId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
-
-    rewardPool(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     setupOptionReward(
       _optionId: BigNumberish,

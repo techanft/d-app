@@ -109,7 +109,7 @@ const ListingInfo = (props: IListingInfoProps) => {
   const dispatch = useDispatch();
   //get worker list
   const { initialState: recordInitialState } = useSelector((state: RootState) => state.records);
-  const { loading, workers, errorMessage: workerErrorMessage } = recordInitialState.workerInitialState;
+  const { loading: loadingWorkers, workers, errorMessage: workerErrorMessage } = recordInitialState.workerInitialState;
   const { success, submitted } = useSelector((state: RootState) => state.transactions);
 
   const listing = useSelector(selectEntityById(listingId));
@@ -293,10 +293,10 @@ const ListingInfo = (props: IListingInfoProps) => {
           </CCol>
 
           <CCol xs={6}>
-            <p className="detail-title-font my-2">Reward Pool</p>
-            {!entityLoading && listing?.rewardPool ? (
+            <p className="detail-title-font my-2">Workers count</p>
+            {!loadingWorkers && workers ? (
               <p className="my-2 value-text">
-                {formatBNToken(listing.rewardPool, false)} <span className="token-name">ANFT</span>
+                {workers.count}
               </p>
             ) : (
               <InfoLoader width={155} height={27} />
@@ -333,7 +333,7 @@ const ListingInfo = (props: IListingInfoProps) => {
               </CRow>
               {totalPages > 1 && (
                 <CPagination
-                  disabled={loading}
+                  disabled={loadingWorkers}
                   activePage={filterState.page + 1}
                   pages={totalPages}
                   onActivePageChange={handlePaginationChange}

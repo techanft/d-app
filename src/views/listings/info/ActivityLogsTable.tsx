@@ -113,28 +113,36 @@ const ActivityLogsTable = (props: IActivityLogs) => {
 
   return (
     <>
-      {results.map((result, index) => {
-        return (
-          <table key={index} className="w-100 mb-3">
-            <thead>
-              <tr>
-                <th>{dayjs(result.createdDate).format(APP_DATE_FORMAT)}</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>{recordMappingField[recordType](result)}</tbody>
-          </table>
-        );
-      })}
-      {totalPages > 1 && (
-        <CPagination
-          disabled={loading}
-          activePage={filterState.page + 1}
-          pages={totalPages}
-          onActivePageChange={(page: number) => handlePaginationChange(page, tableType)}
-          align="center"
-          className="mt-2"
-        />
+      {results.length > 0 ? (
+        <>
+          {results.map((result, index) => {
+            return (
+              <table key={index} className="w-100 mb-3">
+                <thead>
+                  <tr>
+                    <th>{dayjs(result.createdDate).format(APP_DATE_FORMAT)}</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>{recordMappingField[recordType](result)}</tbody>
+              </table>
+            );
+          })}
+          {totalPages > 1 && (
+            <CPagination
+              disabled={loading}
+              activePage={filterState.page + 1}
+              pages={totalPages}
+              onActivePageChange={(page: number) => handlePaginationChange(page, tableType)}
+              align="center"
+              className="mt-2"
+            />
+          )}
+        </>
+      ) : (
+        <div className="alert alert-warning my-3">
+          <span>Không tìm thấy bản ghi nào!</span>
+        </div>
       )}
     </>
   );
