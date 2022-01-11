@@ -66,10 +66,9 @@ const getListingCompleteInfo = async (listing: IAsset, provider: ethers.provider
       instance.owner(),
       instance.validator(),
       instance.totalStake(),
-      instance.rewardPool(),
     ];
 
-    const [ownership, value, dailyPayment, owner, validator, totalStake, rewardPool] = await Promise.all(
+    const [ownership, value, dailyPayment, owner, validator, totalStake] = await Promise.all(
       Object.values(promises)
     );
 
@@ -81,7 +80,6 @@ const getListingCompleteInfo = async (listing: IAsset, provider: ethers.provider
       owner: owner as string,
       validator: validator as string,
       totalStake: totalStake as BigNumber,
-      rewardPool: rewardPool as BigNumber,
     };
   } catch (error) {
     ToastInfo(`Error in fetching complete: ${error}`);
