@@ -35,6 +35,7 @@ const TheContent = () => {
   _window.ethereum.on('chainChanged', (chainId: number) => {
     window.location.reload();
   });
+  
 
   return (
     <main className="c-main py-0">

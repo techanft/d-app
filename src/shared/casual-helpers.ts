@@ -113,3 +113,12 @@ export const returnOptionNameById = (optionId: number): string => {
     return '_';
   }
 };
+
+export const countDateDiffrence = (dueDate?: string, toDate?: string): number => {
+  if (!dueDate || !toDate) return 0;
+  const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
+  const dueDateObj = new Date(dueDate);
+  const toDateObj = new Date(toDate);
+  const diffDays = Math.round(Math.abs((Number(dueDateObj) - Number(toDateObj)) / oneDay));
+  return diffDays;
+};
