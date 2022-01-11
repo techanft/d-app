@@ -22,7 +22,12 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
 interface TokenInterface extends ethers.utils.Interface {
   functions: {
+    "COMMUNITY()": FunctionFragment;
     "DEFAULT_ADMIN_ROLE()": FunctionFragment;
+    "ETF()": FunctionFragment;
+    "PLATFORM_DEVELOPMENT()": FunctionFragment;
+    "REAL_ESTATE_SERVICE()": FunctionFragment;
+    "REGULATION_FUNDS()": FunctionFragment;
     "VALIDATOR()": FunctionFragment;
     "allowance(address,address)": FunctionFragment;
     "approve(address,uint256)": FunctionFragment;
@@ -60,8 +65,22 @@ interface TokenInterface extends ethers.utils.Interface {
     "upgradeToAndCall(address,bytes)": FunctionFragment;
   };
 
+  encodeFunctionData(functionFragment: "COMMUNITY", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "DEFAULT_ADMIN_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(functionFragment: "ETF", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "PLATFORM_DEVELOPMENT",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "REAL_ESTATE_SERVICE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "REGULATION_FUNDS",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "VALIDATOR", values?: undefined): string;
@@ -184,8 +203,22 @@ interface TokenInterface extends ethers.utils.Interface {
     values: [string, BytesLike]
   ): string;
 
+  decodeFunctionResult(functionFragment: "COMMUNITY", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "DEFAULT_ADMIN_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "ETF", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "PLATFORM_DEVELOPMENT",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "REAL_ESTATE_SERVICE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "REGULATION_FUNDS",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "VALIDATOR", data: BytesLike): Result;
@@ -487,7 +520,17 @@ export class Token extends BaseContract {
   interface: TokenInterface;
 
   functions: {
+    COMMUNITY(overrides?: CallOverrides): Promise<[string]>;
+
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
+    ETF(overrides?: CallOverrides): Promise<[string]>;
+
+    PLATFORM_DEVELOPMENT(overrides?: CallOverrides): Promise<[string]>;
+
+    REAL_ESTATE_SERVICE(overrides?: CallOverrides): Promise<[string]>;
+
+    REGULATION_FUNDS(overrides?: CallOverrides): Promise<[string]>;
 
     VALIDATOR(overrides?: CallOverrides): Promise<[string]>;
 
@@ -670,7 +713,17 @@ export class Token extends BaseContract {
     ): Promise<ContractTransaction>;
   };
 
+  COMMUNITY(overrides?: CallOverrides): Promise<string>;
+
   DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  ETF(overrides?: CallOverrides): Promise<string>;
+
+  PLATFORM_DEVELOPMENT(overrides?: CallOverrides): Promise<string>;
+
+  REAL_ESTATE_SERVICE(overrides?: CallOverrides): Promise<string>;
+
+  REGULATION_FUNDS(overrides?: CallOverrides): Promise<string>;
 
   VALIDATOR(overrides?: CallOverrides): Promise<string>;
 
@@ -853,7 +906,17 @@ export class Token extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    COMMUNITY(overrides?: CallOverrides): Promise<string>;
+
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    ETF(overrides?: CallOverrides): Promise<string>;
+
+    PLATFORM_DEVELOPMENT(overrides?: CallOverrides): Promise<string>;
+
+    REAL_ESTATE_SERVICE(overrides?: CallOverrides): Promise<string>;
+
+    REGULATION_FUNDS(overrides?: CallOverrides): Promise<string>;
 
     VALIDATOR(overrides?: CallOverrides): Promise<string>;
 
@@ -1388,7 +1451,17 @@ export class Token extends BaseContract {
   };
 
   estimateGas: {
+    COMMUNITY(overrides?: CallOverrides): Promise<BigNumber>;
+
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    ETF(overrides?: CallOverrides): Promise<BigNumber>;
+
+    PLATFORM_DEVELOPMENT(overrides?: CallOverrides): Promise<BigNumber>;
+
+    REAL_ESTATE_SERVICE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    REGULATION_FUNDS(overrides?: CallOverrides): Promise<BigNumber>;
 
     VALIDATOR(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1572,9 +1645,23 @@ export class Token extends BaseContract {
   };
 
   populateTransaction: {
+    COMMUNITY(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     DEFAULT_ADMIN_ROLE(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    ETF(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    PLATFORM_DEVELOPMENT(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    REAL_ESTATE_SERVICE(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    REGULATION_FUNDS(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     VALIDATOR(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
