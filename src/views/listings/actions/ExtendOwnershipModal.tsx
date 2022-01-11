@@ -94,7 +94,6 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
       })
       .typeError('Incorrect input type!')
       .required('This field is required!')
-      // Wrong message
       .min(1, 'Minimum ownership for the listing is 1.0 day!'),
   });
 
