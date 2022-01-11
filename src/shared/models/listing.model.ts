@@ -8,5 +8,4 @@ export interface IListing {
   tokenContract: string;
   worker?: any;
   totalStake: string;
-  rewardPool: string;
 }

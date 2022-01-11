@@ -13,6 +13,5 @@ export interface IAsset {
   owner: string | undefined;
   validator: string | undefined;
   totalStake: BigNumber | undefined;
-  rewardPool: BigNumber | undefined;
   options: IOption[];
 }
