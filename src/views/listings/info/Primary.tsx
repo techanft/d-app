@@ -154,7 +154,7 @@ const ListingInfo = (props: IListingInfoProps) => {
   const initialModalState: TModalsVisibility = {
     [ModalType.OWNERSHIP_EXTENSION]: false,
     [ModalType.OWNERSHIP_WITHDRAW]: false,
-    [ModalType.OWNERSHIP_REGISTER]: true,
+    [ModalType.OWNERSHIP_REGISTER]: false,
     [ModalType.REWARD_CLAIM]: false,
     [ModalType.REWARD_UNREGISTER]: false,
   };
@@ -300,9 +300,7 @@ const ListingInfo = (props: IListingInfoProps) => {
           <CCol xs={6}>
             <p className="detail-title-font my-2">Workers count</p>
             {!loadingWorkers && workers ? (
-              <p className="my-2 value-text">
-                {workers.count}
-              </p>
+              <p className="my-2 value-text">{workers.count}</p>
             ) : (
               <InfoLoader width={155} height={27} />
             )}
@@ -439,12 +437,13 @@ const ListingInfo = (props: IListingInfoProps) => {
               title="Nạp ANFT"
             />
           )}
-
-          <WithdrawTokenModal
-            listingId={listingId}
-            isVisible={modalsVisibility[ModalType.OWNERSHIP_WITHDRAW]}
-            setVisibility={(key: boolean) => handleModalVisibility(ModalType.OWNERSHIP_WITHDRAW, key)}
-          />
+          {modalsVisibility[ModalType.OWNERSHIP_WITHDRAW] && (
+            <WithdrawTokenModal
+              listingId={listingId}
+              isVisible={modalsVisibility[ModalType.OWNERSHIP_WITHDRAW]}
+              setVisibility={(key: boolean) => handleModalVisibility(ModalType.OWNERSHIP_WITHDRAW, key)}
+            />
+          )}
         </CRow>
       </CCol>
     </CContainer>

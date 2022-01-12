@@ -136,12 +136,16 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
     return startDate <= day && day <= extenableDate;
   };
 
+  const getSecondDifftoEndDate = (startDate: moment.Moment) => {
+    const startDateDay = moment(startDate).endOf('day').subtract(90, 'second');
+    const duration = moment.duration(startDateDay.diff(startDate));
+    return duration.asSeconds();
+  };
+
   const calculateExtendPrice = (day: number, startDate: moment.Moment) => {
     if (startDate && listing?.dailyPayment) {
-      const startDateDay = moment(startDate).endOf('day').subtract(90, 'second');
-      const duration = moment.duration(startDateDay.diff(startDate));
-      const secondDiff = duration.asSeconds();
       const extendPrice = listing.dailyPayment.mul(day);
+      const secondDiff = getSecondDifftoEndDate(startDate);
       const result =
         secondDiff > 0 ? caculatePriceFromSecond(listing.dailyPayment, secondDiff).add(extendPrice) : extendPrice;
       return convertBnToDecimal(result);
@@ -149,7 +153,7 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
       return '0';
     }
   };
-  
+
   const handleRawFormValues = (input: IIntialValues): IProceedTxBody => {
     if (!listing?.address) {
       throw Error('Error getting listing address');
@@ -270,15 +274,15 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                     <CCol xs={12}>
                       <CInput
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          const unCommaValue = Number(unInsertCommas(e.target.value));
-                          const extendValue = moment().add(returnMaxEndDate(unCommaValue), 'day');
-                          setFieldValue('dateCount', unCommaValue);
-                          setFieldValue('endDate', extendValue);
+                          const extendDay = Number(unInsertCommas(e.target.value));
+                          const extendDate = moment(startDate).add(returnMaxEndDate(extendDay), 'day');
+                          setFieldValue('dateCount', extendDay);
+                          setFieldValue('endDate', extendDate);
                         }}
                         id="dateCount"
                         autoComplete="off"
                         name="dateCount"
-                        value={insertCommas(values.dateCount)}
+                        value={values.dateCount ? insertCommas(values.dateCount) : ''}
                         onBlur={handleBlur}
                         className="btn-radius-50 InputMaxWidth"
                       />
