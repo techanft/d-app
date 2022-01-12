@@ -3,8 +3,14 @@
     "global": {
       "errors": {
         "pleaseConnectWallet": "Please connect your wallet!"
+      },
+      "modal": {
+        "confirm": "CONFIRM",
+        "cancel": "CANCEL",
+        "refresh": "REFRESH"
       }
     },
+
     "sidebarComponent": {
       "language": {
         "language": "Language",
@@ -12,6 +18,7 @@
         "english": "English"
       }
     },
+
     "headerComponent": {
       "connectWallet": "Connect Wallet",
       "dashboard": "Dashboard",
@@ -22,16 +29,17 @@
         "classify": "Classify",
         "segment": "Segment",
         "area": "Area",
-        "orientation ": "Orientation",
-        "dailyPayment": "Daily Payment",
+        "orientation": "Orientation",
+        "dailyPayment": "Daily payment",
         "quality": "Quality",
         "owned": "Owned",
         "type": "Type",
         "state": "State",
         "services": "Services",
-        "apply": "Apply"
+        "apply": "APPLY"
       }
     },
+
     "listingComponent": {
       "listingValue": "Value",
       "primaryInfo": {
@@ -58,7 +66,7 @@
           "withdrawToken": "Withdraw Token",
           "extendOwnership": "Recharge Token",
           "workerManagement": "Worker Management"
-        } 
+        }
       },
       "secondaryInfo": {
         "details": "Details",
@@ -70,24 +78,44 @@
         "services": "Services"
       },
       "activityLogs": "Activity Logs",
-      "moreListing": "More Listing"
+      "moreListing": "More Listing",
+      "extendOwnership": {
+        "currentOwnership": "Current Ownership",
+        "tokenBalance": "Token Balance",
+        "cannotRegisterOwnership": "This listing is being owned by another address!",
+        "ownershipEstimation": "Ownership Estimation",
+        "inputAmountExceedsTokenBalance": "Input amount exceeds token balance",
+        "incorrectInputType": "Incorrect input type!",
+        "inputIsRequired!": "This field is required!",
+        "minimumOwnership": "Minimum ownership for the listing is 1.0 day!"
+      },
+      "withdrawToken": {
+        "maximumWithdrawable": "Maximum Withdrawable",
+        "withdrawAmount": "Withdraw Amount",
+        "noMoreTokenToWithdraw": "No more token to withdraw!",
+        "incorrectInputType": "Incorrect input type!",
+        "inputIsRequired!": "This field is required!",
+        "minimumWithdraw": "Minimum withdraw for the listing is 1.0 token!"
+      }
     },
-    "extendOwnership": {
-      "currentOwnership": "Current Ownership",
-      "tokenBalance": "Token Balance"
-    },
-    "withdrawToken": {
-      "maximumWithdrawable": "Maximum Withdrawable",
-      "withdrawAmount": "Withdraw Amount"
-    },
+
     "registerComponent": {
       "activity": "Activity",
       "reward": "Reward",
       "registerAmount": "Register Amount",
       "notRegister": "Not Register",
       "register": "Register",
-      "claimReward": "Claim Reward",
-      "unregister": "Unregister",
+      "claimReward": {
+        "claimReward": "Claim Reward",
+        "claimRewardModalTitle": "Claim Reward",
+        "claimRewardModalContent": "Confirm claim reward of"
+      },
+      "unregister": {
+        "unregister": "Unregister",
+        "unregisterModalTitle": "Unregister",
+        "unregisterModalContentPrev": "Confirm unregister of",
+        "unregisterModalContentNext": "with register amount"
+      },
       "selectActivity": "*Select activity you want to EDIT or UNREGISTER",
       "pleaseConnectWallet": "Please connect wallet to view activities list",
       "inputAmountIsUnchange": "Input amount is unchange",
@@ -95,18 +123,28 @@
       "incorrectInputType": "Incorrect input type!",
       "inputIsRequired!": "This field is required!",
       "minimumRegister": "Minimum register for the listing is 1.0 token!",
-      "insufficientBalanceToClaimReward": "Insufficient balance to claim reward!"
+      "insufficientBalanceToClaimReward": "Insufficient balance to claim reward!",
+      "rewardToken": " Reward Token",
+      "stakeStart": "Stake Start"
     },
-    "activityLogs": {
+
+    "activityLogsComponent": {
       "pleaseConnectWallet": "Please connect wallet to view activity logs",
-      "noLogFound": "No Log Found!"
+      "noLogFound": "No Log(s) Found!",
+      "investment": "Investment",
+      "ownership": "Ownership"
     },
-    "workersList": {
+
+    "workersListComponent": {
       "workersList": "Workers List",
       "workersCount": "Workers Count",
       "address": "Address",
       "action": "Action",
-      "addWorkerPermission": "Add Worker Permission"
+      "addWorkerPermission": "Add Worker Permission",
+      "createdDate": "Since",
+      "deltWorkerPermission": "Delete Worker Permission",
+      "confirmDeltWorkerPermission": "Confirm delete worker permission of",
+      "addressWallet": "Address Wallet"
     }
   }
 }

@@ -14,6 +14,7 @@ import {
 } from '@coreui/react';
 import { ActionCreatorWithoutPayload, AsyncThunk } from '@reduxjs/toolkit';
 import React, { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
 import CopyTextToClipBoard from '../../../shared/components/CopyTextToClipboard';
@@ -123,6 +124,8 @@ const ActivityLogs = (props: IActivityLogs) => {
   const { entityLoading } = assetsInitialState;
 
   const { width: screenWidth } = useWindowDimensions();
+
+  const { t } = useTranslation();
 
   const { loading: registerLoading, registers } = initialState.registerInitialState;
   const { loading: unregisterLoading, unregisters } = initialState.unregisterInitialState;
@@ -249,7 +252,7 @@ const ActivityLogs = (props: IActivityLogs) => {
     <CContainer fluid className="mx-0 my-2">
       <CRow>
         <CCol xs={12}>
-          <CLabel className="text-primary content-title">Activity Logs</CLabel>
+          <CLabel className="text-primary content-title">{t("anftDapp.listingComponent.activityLogs")}</CLabel>
         </CCol>
         <CCol xs={12}>
           <CCard className="m-0 listing-img-card">
@@ -263,7 +266,7 @@ const ActivityLogs = (props: IActivityLogs) => {
               <CCardTitle className="listing-card-title mb-0 px-3 py-2 w-100" innerRef={scrollRef}>
                 <p className="mb-0 text-white content-title">202 Yên Sở - Hoàng Mai - Hà Nội</p>
                 <p className="mb-0 text-white detail-title-font">
-                  Blockchain address{' '}
+                {t('anftDapp.listingComponent.primaryInfo.blockchainAddress')}{' '}
                   <b>
                     {!entityLoading && listing?.address ? (
                       <CopyTextToClipBoard
@@ -293,7 +296,7 @@ const ActivityLogs = (props: IActivityLogs) => {
                     active={tableType === TableType.INVESTMENT}
                     className="content-title px-0 text-center font-weight-bold"
                   >
-                    Investment
+                    {t('anftDapp.activityLogsComponent.investment')}
                   </CNavLink>
                 </CNavItem>
                 <CNavItem className="col-6 p-0">
@@ -302,7 +305,7 @@ const ActivityLogs = (props: IActivityLogs) => {
                     active={tableType === TableType.OWNERSHIP}
                     className="content-title px-0 text-center font-weight-bold"
                   >
-                    Ownership
+                    {t('anftDapp.activityLogsComponent.ownership')}
                   </CNavLink>
                 </CNavItem>
               </CNav>
@@ -317,7 +320,7 @@ const ActivityLogs = (props: IActivityLogs) => {
                         active={investmentActiveTab === RecordType.REGISTER}
                         className="detail-title-font px-0 text-center text-primary"
                       >
-                        Register
+                        {t("anftDapp.registerComponent.register")}
                       </CNavLink>
                     </CNavItem>
                     <CNavItem className="col-4 p-0">
@@ -326,7 +329,7 @@ const ActivityLogs = (props: IActivityLogs) => {
                         active={investmentActiveTab === RecordType.UNREGISTER}
                         className="detail-title-font px-0 text-center text-primary"
                       >
-                        Unregister
+                        {t("anftDapp.registerComponent.unregister.unregister")}
                       </CNavLink>
                     </CNavItem>
                     <CNavItem className="col-4 p-0">
@@ -335,7 +338,7 @@ const ActivityLogs = (props: IActivityLogs) => {
                         active={investmentActiveTab === RecordType.CLAIM}
                         className="detail-title-font px-0 text-center text-primary"
                       >
-                        Claim Reward
+                        {t("anftDapp.registerComponent.claimReward.claimReward")}
                       </CNavLink>
                     </CNavItem>
                   </CNav>
@@ -383,7 +386,7 @@ const ActivityLogs = (props: IActivityLogs) => {
                         active={ownershipActiveTab === RecordType.WITHDRAW}
                         className="detail-title-font px-0 text-center text-primary"
                       >
-                        Withdraw Token
+                        {t('anftDapp.listingComponent.primaryInfo.ownershipManagement.withdrawToken')}
                       </CNavLink>
                     </CNavItem>
                     <CNavItem className="col-4 p-0">
@@ -392,7 +395,7 @@ const ActivityLogs = (props: IActivityLogs) => {
                         active={ownershipActiveTab === RecordType.OWNERSHIP_EXTENSION}
                         className="detail-title-font px-0 text-center text-primary"
                       >
-                        Recharge Token
+                        {t('anftDapp.listingComponent.primaryInfo.ownershipManagement.extendOwnership')}
                       </CNavLink>
                     </CNavItem>
                   </CNav>
@@ -427,7 +430,7 @@ const ActivityLogs = (props: IActivityLogs) => {
         ) : (
           <CCol xs={12}>
             <div className="alert alert-warning my-3">
-              <span>Vui lòng kết nối ví để xem lịch sử hoạt động</span>
+              <span>{t("anftDapp.activityLogsComponent.pleaseConnectWallet")}</span>
             </div>
           </CCol>
         )}

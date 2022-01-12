@@ -1,6 +1,7 @@
 import { CPagination } from '@coreui/react';
 import dayjs from 'dayjs';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { APP_DATE_FORMAT } from '../../../config/constants';
 import { insertCommas, returnOptionNameById } from '../../../shared/casual-helpers';
 import { RecordType } from '../../../shared/enumeration/recordType';
@@ -111,6 +112,8 @@ const recordMappingField: TRecordTypeMappingRender = {
 const ActivityLogsTable = (props: IActivityLogs) => {
   const { filterState, totalPages, loading, tableType, handlePaginationChange, results, recordType } = props;
 
+  const { t } = useTranslation();
+
   return (
     <>
       {results.length > 0 ? (
@@ -141,7 +144,7 @@ const ActivityLogsTable = (props: IActivityLogs) => {
         </>
       ) : (
         <div className="alert alert-warning my-3">
-          <span>Không tìm thấy bản ghi nào!</span>
+          <span>{t('anftDapp.activityLogsComponent.noLogFound')}</span>
         </div>
       )}
     </>

@@ -13,10 +13,11 @@ import {
   CModalFooter,
   CModalHeader,
   CModalTitle,
-  CRow,
+  CRow
 } from '@coreui/react';
 import { Formik, FormikProps } from 'formik';
 import React, { useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
 import { LISTING_INSTANCE } from '../../../shared/blockchain-helpers';
@@ -27,7 +28,7 @@ import {
   estimateOwnership,
   formatBNToken,
   insertCommas,
-  unInsertCommas,
+  unInsertCommas
 } from '../../../shared/casual-helpers';
 import { ToastError } from '../../../shared/components/Toast';
 import { EventType } from '../../../shared/enumeration/eventType';
@@ -58,6 +59,8 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
   const { submitted } = useSelector((state: RootState) => state.transactions);
   const { tokenBalance } = useSelector((state: RootState) => state.wallet);
 
+  const { t } = useTranslation();
+
   const closeModal = () => () => {
     setVisibility(false);
   };
@@ -82,18 +85,22 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
 
   const validationSchema = Yup.object().shape({
     tokenAmount: Yup.number()
-      .test('dailyPayment-minimum', `Minimum ownership for the listing is 1.0 day`, function (value) {
+      .test('dailyPayment-minimum', t('anftDapp.listingComponent.extendOwnership.minimumOwnership'), function (value) {
         if (!value) return true;
         if (!listing?.dailyPayment) return false;
         return value >= Number(convertBnToDecimal(listing.dailyPayment));
       })
-      .test('do-not-exceed-tokenBalance', `Input amount exceeds token balance`, function (value) {
-        if (!value) return true;
-        if (!tokenBalance) return true;
-        return convertDecimalToBn(String(value)).lte(tokenBalance);
-      })
-      .typeError('Incorrect input type!')
-      .required('This field is required!')
+      .test(
+        'do-not-exceed-tokenBalance',
+        t('anftDapp.listingComponent.extendOwnership.inputAmountExceedsTokenBalance'),
+        function (value) {
+          if (!value) return true;
+          if (!tokenBalance) return true;
+          return convertDecimalToBn(String(value)).lte(tokenBalance);
+        }
+      )
+      .typeError(t('anftDapp.listingComponent.extendOwnership.incorrectInputType'))
+      .required(t('anftDapp.listingComponent.extendOwnership.inputIsRequired'))
       // Wrong message
       .min(1, 'Minimum ownership for the listing is 1.0 day!'),
   });
@@ -148,7 +155,9 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                 <CCol xs={12}>
                   <CFormGroup row>
                     <CCol xs={6}>
-                      <CLabel className="recharge-token-title">Current ownership</CLabel>
+                      <CLabel className="recharge-token-title">
+                        {t('anftDapp.listingComponent.extendOwnership.currentOwnership')}
+                      </CLabel>
                     </CCol>
                     {listing?.ownership ? (
                       <CCol xs={6}>
@@ -161,7 +170,9 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
 
                   <CFormGroup row>
                     <CCol xs={8}>
-                      <CLabel className="recharge-token-title">Daily Payment</CLabel>
+                      <CLabel className="recharge-token-title">
+                        {t('anftDapp.listingComponent.primaryInfo.dailyPayment')}
+                      </CLabel>
                     </CCol>
                     <CCol xs={4}>
                       <p className="text-primary text-right">{formatBNToken(listing?.dailyPayment, true)}</p>
@@ -169,7 +180,9 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                   </CFormGroup>
                   <CFormGroup row>
                     <CCol xs={6}>
-                      <CLabel className="recharge-token-title">Token Balance</CLabel>
+                      <CLabel className="recharge-token-title">
+                        {t('anftDapp.listingComponent.extendOwnership.tokenBalance')}
+                      </CLabel>
                     </CCol>
                     <CCol xs={6}>
                       <p className="text-primary text-right">{formatBNToken(tokenBalance, true)}</p>
@@ -217,7 +230,9 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                   {!errors.tokenAmount && listing?.dailyPayment && listing?.ownership && values.tokenAmount ? (
                     <CFormGroup row className={`mt-4`}>
                       <CCol xs={6}>
-                        <CLabel className="recharge-token-title">Ownership Estimation</CLabel>
+                        <CLabel className="recharge-token-title">
+                          {t('anftDapp.listingComponent.extendOwnership.ownershipEstimation')}
+                        </CLabel>
                       </CCol>
                       <CCol xs={6}>
                         <p className="text-primary text-right">
@@ -243,12 +258,12 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                   className="px-2 w-100 btn-font-style btn-radius-50 btn btn-outline-primary"
                   onClick={closeModal()}
                 >
-                  HỦY
+                  {t('anftDapp.global.modal.cancel')}
                 </CButton>
               </CCol>
               <CCol>
                 <CButton className="px-2 w-100 btn btn-primary btn-font-style btn-radius-50" type="submit">
-                  ĐỒNG Ý
+                  {t('anftDapp.global.modal.confirm')}
                 </CButton>
               </CCol>
             </CModalFooter>

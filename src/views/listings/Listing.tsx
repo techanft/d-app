@@ -1,6 +1,7 @@
 import CIcon from '@coreui/icons-react';
 import { CCol, CLabel, CLink, CRow } from '@coreui/react';
 import React, { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
 import SubmissionModal from '../../shared/components/SubmissionModal';
@@ -26,6 +27,8 @@ const Listing = (props: IListingProps) => {
   const { match, history } = props;
   const { id } = match.params;
   const listing = useSelector(selectEntityById(Number(id)));
+
+  const { t } = useTranslation();
 
   useEffect(() => {
     /**
@@ -68,11 +71,11 @@ const Listing = (props: IListingProps) => {
       <CRow className="mx-0">
         <CCol xs={12} className="text-center mt-3">
           <CLink to={`/${Number(id)}/activity-logs`}>
-            <CIcon name="cil-history" /> <u>Activity Logs</u>
+            <CIcon name="cil-history" /> <u>{t('anftDapp.listingComponent.activityLogs')}</u>
           </CLink>
         </CCol>
         <CCol xs={12}>
-          <CLabel className="text-primary content-title mt-3">More listing</CLabel>
+          <CLabel className="text-primary content-title mt-3">{t('anftDapp.listingComponent.moreListing')}</CLabel>
         </CCol>
         <CCol xs={12} className="px-0">
           <Listings routingProps={props} />

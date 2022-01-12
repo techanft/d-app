@@ -19,6 +19,7 @@ import {
 import { faAngleDown } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { TOKEN_INSTANCE } from '../shared/blockchain-helpers';
 import { getEllipsisTxt } from '../shared/casual-helpers';
@@ -54,6 +55,8 @@ const TheHeader = () => {
 
   const containerState = useSelector((state: RootState) => state.container);
   const { sidebarShow } = containerState;
+
+  const { t } = useTranslation();
 
   const onConnectWallet = () => () => {
     if (signerAddress) return dispatch(resetSigner());
@@ -139,7 +142,7 @@ const TheHeader = () => {
         </CHeaderNavItem>
         <CHeaderNavItem>
           <CLink to="/listings">
-            <p className="header-title content-title mb-0">Dashboard</p>
+            <p className="header-title content-title mb-0">{t('anftDapp.headerComponent.dashboard')}</p>
           </CLink>
         </CHeaderNavItem>
         <CHeaderNavItem>
@@ -150,7 +153,7 @@ const TheHeader = () => {
                 <CIcon name="cil-account-logout" size="lg" className="text-danger mx-0 my-0 pb-1" />
               </b>
             ) : (
-              'Connect Wallet'
+              `${t('anftDapp.headerComponent.connectWallet')}`
             )}
           </CButton>
         </CHeaderNavItem>
@@ -160,7 +163,9 @@ const TheHeader = () => {
               <CIcon name="cil-filter" size="xl" />
             </CDropdownToggle>
             <CDropdownMenu className="dr-menu-filter m-0">
-              <CDropdownHeader className="text-center modal-title-style">Filter</CDropdownHeader>
+              <CDropdownHeader className="text-center modal-title-style">
+                {t('anftDapp.headerComponent.filter.filter')}
+              </CDropdownHeader>
               <CRow className="mx-0">
                 <CCol xs={6} className="px-0 text-center py-2">
                   <CDropdown className="mx-1">
@@ -169,7 +174,7 @@ const TheHeader = () => {
                       className="dt-filter content-title btn-radius-50 text-dark"
                       caret={false}
                     >
-                      City <FontAwesomeIcon icon={faAngleDown} />
+                      {t('anftDapp.headerComponent.filter.city')} <FontAwesomeIcon icon={faAngleDown} />
                     </CDropdownToggle>
                     <CDropdownMenu className="m-0">
                       <CDropdownItem href="#">Action</CDropdownItem>
@@ -185,7 +190,7 @@ const TheHeader = () => {
                       className="dt-filter content-title btn-radius-50 text-dark"
                       caret={false}
                     >
-                      Dist <FontAwesomeIcon icon={faAngleDown} />
+                      {t('anftDapp.headerComponent.filter.dist')} <FontAwesomeIcon icon={faAngleDown} />
                     </CDropdownToggle>
                     <CDropdownMenu className="m-0">
                       <CDropdownItem href="#">Action</CDropdownItem>
@@ -201,7 +206,7 @@ const TheHeader = () => {
                       className="dt-filter content-title btn-radius-50 text-dark"
                       caret={false}
                     >
-                      Loại sản phẩm <FontAwesomeIcon icon={faAngleDown} />
+                      {t('anftDapp.headerComponent.filter.classify')} <FontAwesomeIcon icon={faAngleDown} />
                     </CDropdownToggle>
                     <CDropdownMenu className="m-0">
                       <CDropdownItem href="#">Action</CDropdownItem>
@@ -217,7 +222,7 @@ const TheHeader = () => {
                       className="dt-filter content-title btn-radius-50 text-dark"
                       caret={false}
                     >
-                      Phân khúc <FontAwesomeIcon icon={faAngleDown} />
+                      {t('anftDapp.headerComponent.filter.segment')} <FontAwesomeIcon icon={faAngleDown} />
                     </CDropdownToggle>
                     <CDropdownMenu className="m-0">
                       <CDropdownItem href="#">Action</CDropdownItem>
@@ -233,7 +238,7 @@ const TheHeader = () => {
                       className="dt-filter content-title btn-radius-50 text-dark"
                       caret={false}
                     >
-                      Diện tích <FontAwesomeIcon icon={faAngleDown} />
+                      {t('anftDapp.headerComponent.filter.area')} <FontAwesomeIcon icon={faAngleDown} />
                     </CDropdownToggle>
                     <CDropdownMenu className="m-0">
                       <CDropdownItem href="#">Action</CDropdownItem>
@@ -249,7 +254,7 @@ const TheHeader = () => {
                       className="dt-filter content-title btn-radius-50 text-dark"
                       caret={false}
                     >
-                      Hướng <FontAwesomeIcon icon={faAngleDown} />
+                      {t('anftDapp.headerComponent.filter.orientation')} <FontAwesomeIcon icon={faAngleDown} />
                     </CDropdownToggle>
                     <CDropdownMenu className="m-0">
                       <CDropdownItem href="#">Action</CDropdownItem>
@@ -265,7 +270,7 @@ const TheHeader = () => {
                       className="dt-filter content-title btn-radius-50 text-dark"
                       caret={false}
                     >
-                      Phí khai thác <FontAwesomeIcon icon={faAngleDown} />
+                      {t('anftDapp.headerComponent.filter.dailyPayment')} <FontAwesomeIcon icon={faAngleDown} />
                     </CDropdownToggle>
                     <CDropdownMenu className="m-0">
                       <CDropdownItem href="#">Action</CDropdownItem>
@@ -281,7 +286,7 @@ const TheHeader = () => {
                       className="dt-filter content-title btn-radius-50 text-dark"
                       caret={false}
                     >
-                      Chất lượng <FontAwesomeIcon icon={faAngleDown} />
+                      {t('anftDapp.headerComponent.filter.quality')} <FontAwesomeIcon icon={faAngleDown} />
                     </CDropdownToggle>
                     <CDropdownMenu className="m-0">
                       <CDropdownItem href="#">Action</CDropdownItem>
@@ -292,10 +297,12 @@ const TheHeader = () => {
                 </CCol>
                 <CCol xs={12} className="px-3 text-left py-2 d-flex align-items-center">
                   <CInputCheckbox id="owned" name="owned" className="form-check-input m-0" />
-                  <CLabel className="content-title pl-2 m-0">Sở hữu bởi tôi</CLabel>
+                  <CLabel className="content-title pl-2 m-0">{t('anftDapp.headerComponent.filter.owned')}</CLabel>
                 </CCol>
                 <CCol xs={12} className="d-flex justify-content-center my-2">
-                  <CButton className="btn btn-primary btn-radius-50">ÁP DỤNG</CButton>
+                  <CButton className="btn btn-primary btn-radius-50">
+                    {t('anftDapp.headerComponent.filter.apply')}
+                  </CButton>
                 </CCol>
               </CRow>
             </CDropdownMenu>

@@ -13,11 +13,12 @@ import {
   CModalFooter,
   CModalHeader,
   CModalTitle,
-  CRow,
+  CRow
 } from '@coreui/react';
 import dayjs from 'dayjs';
 import { Formik, FormikProps } from 'formik';
 import React, { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
 import { LISTING_INSTANCE } from '../../../shared/blockchain-helpers';
@@ -25,7 +26,7 @@ import {
   convertDecimalToBn,
   estimateWithdrawAmount,
   insertCommas,
-  unInsertCommas,
+  unInsertCommas
 } from '../../../shared/casual-helpers';
 import { ToastError } from '../../../shared/components/Toast';
 import { EventType } from '../../../shared/enumeration/eventType';
@@ -54,6 +55,8 @@ const WithdrawModal = (props: IWithdrawModal) => {
   const { signer } = useSelector((state: RootState) => state.wallet);
   const { submitted } = useSelector((state: RootState) => state.transactions);
 
+  const { t } = useTranslation();
+
   const closeModal = () => () => {
     setVisibility(false);
   };
@@ -64,9 +67,9 @@ const WithdrawModal = (props: IWithdrawModal) => {
 
   const validationSchema = Yup.object().shape({
     tokenAmount: Yup.number()
-      .typeError('Incorrect input type!')
-      .required('This field is required!')
-      .min(1, 'Minimum withdraw for the listing is 1.0 token!'),
+      .typeError(t('anftDapp.listingComponent.withdrawToken.incorrectInputType'))
+      .required(t('anftDapp.listingComponent.withdrawToken.inputIsRequired'))
+      .min(1, t('anftDapp.listingComponent.withdrawToken.minimumWithdraw')),
   });
 
   const handleRawFormValues = (input: IIntialValues): IProceedTxBody => {
@@ -133,7 +136,9 @@ const WithdrawModal = (props: IWithdrawModal) => {
   return (
     <CModal show={isVisible} onClose={closeModal()} centered className="border-radius-modal">
       <CModalHeader className="justify-content-center">
-        <CModalTitle className="modal-title-style">Withdraw Token</CModalTitle>
+        <CModalTitle className="modal-title-style">
+          {t('anftDapp.listingComponent.primaryInfo.ownershipManagement.withdrawToken')}
+        </CModalTitle>
       </CModalHeader>
       <Formik
         innerRef={formikRef}
@@ -158,7 +163,9 @@ const WithdrawModal = (props: IWithdrawModal) => {
                 <CCol xs={12}>
                   <CFormGroup row>
                     <CCol xs={8}>
-                      <CLabel className="withdraw-token-title">Maximum Withdrawable</CLabel>
+                      <CLabel className="withdraw-token-title">
+                        {t('anftDapp.listingComponent.withdrawToken.maximumWithdrawable')}
+                      </CLabel>
                     </CCol>
                     <CCol xs={4}>
                       <p className="text-primary text-right">{insertCommas(maximumWithdrawable)}</p>
@@ -166,7 +173,9 @@ const WithdrawModal = (props: IWithdrawModal) => {
                   </CFormGroup>
                   <CFormGroup row>
                     <CCol xs={12}>
-                      <CLabel className="withdraw-token-title">Số ANFT muốn rút</CLabel>
+                      <CLabel className="withdraw-token-title">
+                        {t('anftDapp.listingComponent.withdrawToken.withdrawAmount')}
+                      </CLabel>
                     </CCol>
                     <CCol xs={12}>
                       <CInputGroup>
@@ -185,7 +194,9 @@ const WithdrawModal = (props: IWithdrawModal) => {
                           <CButton
                             color="primary"
                             className="btn-radius-50"
-                            onClick={() => setFieldValue(`tokenAmount`, unInsertCommas(maximumWithdrawable!.toString()))}
+                            onClick={() =>
+                              setFieldValue(`tokenAmount`, unInsertCommas(maximumWithdrawable!.toString()))
+                            }
                           >
                             MAX
                           </CButton>
@@ -206,20 +217,20 @@ const WithdrawModal = (props: IWithdrawModal) => {
                   className="px-2 w-100 btn-font-style btn btn-outline-primary btn-radius-50"
                   onClick={closeModal()}
                 >
-                  HỦY
+                  {t('anftDapp.global.modal.cancel')}
                 </CButton>
               </CCol>
               <CCol>
                 {timeLeft ? (
                   <CButton className="px-2 w-100 btn btn-primary btn-font-style btn-radius-50" onClick={submitForm}>
-                    XÁC NHẬN {`(${timeLeft}s)`}
+                    {t('anftDapp.global.modal.confirm')} {`(${timeLeft}s)`}
                   </CButton>
                 ) : (
                   <CButton
                     className="px-2 w-100 btn btn-warning btn-font-style btn-radius-50"
                     onClick={() => resetMaximumWithdrawableAndCountdown()}
                   >
-                    REFRESH
+                    {t('anftDapp.global.modal.refresh')}
                   </CButton>
                 )}
               </CCol>

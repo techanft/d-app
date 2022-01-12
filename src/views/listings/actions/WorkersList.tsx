@@ -9,9 +9,10 @@ import {
   CDataTable,
   CLabel,
   CPagination,
-  CRow,
+  CRow
 } from '@coreui/react';
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
 import { LISTING_INSTANCE } from '../../../shared/blockchain-helpers';
@@ -49,10 +50,6 @@ const titleTableStyle = {
   lineHeight: '16px',
   fontWeight: '400',
 };
-const fields = [
-  { key: 'address', _style: titleTableStyle, label: 'Address' },
-  { key: 'action', _style: titleTableStyle, label: 'Action' },
-];
 
 const WorkersList = (props: IWorkersList) => {
   const { match } = props;
@@ -68,6 +65,12 @@ const WorkersList = (props: IWorkersList) => {
   const { entityLoading } = assetsInitialState;
 
   const { width: screenWidth } = useWindowDimensions();
+  const { t } = useTranslation();
+
+  const fields = [
+    { key: 'address', _style: titleTableStyle, label: `${t('anftDapp.workersListComponent.address')}` },
+    { key: 'action', _style: titleTableStyle, label: `${t('anftDapp.workersListComponent.action')}` },
+  ];
 
   const [filterState, setFilterState] = useState<IParams>({
     page: 0,
@@ -186,7 +189,7 @@ const WorkersList = (props: IWorkersList) => {
       <SubmissionModal />
       <CRow>
         <CCol xs={12}>
-          <CLabel className="text-primary content-title">Danh sách quyền khai thác</CLabel>
+          <CLabel className="text-primary content-title">{t('anftDapp.workersListComponent.workersList')}</CLabel>
         </CCol>
         <CCol xs={12}>
           <CCard className="m-0 listing-img-card">
@@ -200,7 +203,7 @@ const WorkersList = (props: IWorkersList) => {
               <CCardTitle className="listing-card-title mb-0 px-3 py-2 w-100">
                 <p className="mb-2 text-white content-title">202 Yên Sở - Hoàng Mai - Hà Nội</p>
                 <p className="mb-0 text-white detail-title-font">
-                  Workers Count <b>{workers?.count || 0}</b>
+                  {t('anftDapp.listingComponent.primaryInfo.workersCount')} <b>{workers?.count || 0}</b>
                 </p>
               </CCardTitle>
             </CCardBody>
@@ -263,7 +266,7 @@ const WorkersList = (props: IWorkersList) => {
             onClick={setRequestListener(true, setAddWorkerPermission)}
             disabled={listing ? !validateOwnership(signerAddress, listing) : true}
           >
-            Thêm quyền khai thác
+            {t('anftDapp.workersListComponent.addWorkerPermission')}
           </CButton>
         </CCol>
         <AddWorkerPermission listingId={Number(id)} visible={addWorkerPermission} setVisible={setAddWorkerPermission} />
@@ -271,13 +274,13 @@ const WorkersList = (props: IWorkersList) => {
       <ConfirmModal
         isVisible={delAlrtMdl}
         color="danger"
-        title="Hủy quyền khai thác"
+        title={t('anftDapp.workersListComponent.deltWorkerPermission')}
         CustomJSX={() => (
           <p>
             {entityToDelete && (
               <>
-                Bạn chắc chắn muốn hủy quyền khai thác của{' '}
-                <span className="text-primary">{getEllipsisTxt(entityToDelete, 6) || '_'}</span>
+                {t('anftDapp.workersListComponent.confirmDeltWorkerPermission')}{' '}
+                <span className="text-primary">{getEllipsisTxt(entityToDelete, 6) || '_'}?</span>
               </>
             )}
           </p>

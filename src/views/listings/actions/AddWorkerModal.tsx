@@ -6,7 +6,8 @@ import {
   CInput,
   CInputGroup,
   CInputGroupAppend,
-  CInvalidFeedback, CModal,
+  CInvalidFeedback,
+  CModal,
   CModalBody,
   CModalFooter,
   CModalHeader,
@@ -16,6 +17,7 @@ import {
 import { utils } from 'ethers';
 import { Formik, FormikProps } from 'formik';
 import React, { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import QrReader from 'react-qr-reader';
 import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
@@ -40,6 +42,7 @@ interface IIntialValues {
 
 const AddWorkerPermission = (props: ICancelWorkerPermission) => {
   const { visible, setVisible, listingId } = props;
+  const { t } = useTranslation();
 
   // FormikRef is type-able https://github.com/jaredpalmer/formik/issues/2290
   const formikRef = useRef<FormikProps<IIntialValues>>(null);
@@ -115,7 +118,9 @@ const AddWorkerPermission = (props: ICancelWorkerPermission) => {
   return (
     <CModal show={visible} onClose={closeModal()} closeOnBackdrop={false} centered className="border-radius-modal">
       <CModalHeader className="justify-content-center">
-        <CModalTitle className="modal-title-style">Thêm quyền khai thác</CModalTitle>
+        <CModalTitle className="modal-title-style">
+          {t('anftDapp.workersListComponent.addWorkerPermission')}
+        </CModalTitle>
       </CModalHeader>
       <Formik<IIntialValues>
         innerRef={formikRef}
@@ -170,7 +175,7 @@ const AddWorkerPermission = (props: ICancelWorkerPermission) => {
                 ) : (
                   <CRow>
                     <CCol xs={12}>
-                      <p>Address Wallet</p>
+                      <p>{t('anftDapp.workersListComponent.addressWallet')}</p>
                     </CCol>
                     <CCol xs={12}>
                       <CInputGroup>
@@ -203,7 +208,7 @@ const AddWorkerPermission = (props: ICancelWorkerPermission) => {
                     className="px-2 w-100 btn-font-style btn btn-outline-primary btn-radius-50"
                     onClick={closeModal()}
                   >
-                    HỦY
+                    {t('anftDapp.global.modal.cancel')}
                   </CButton>
                 </CCol>
                 <CCol>
@@ -212,7 +217,7 @@ const AddWorkerPermission = (props: ICancelWorkerPermission) => {
                     className="px-2 w-100 btn btn-primary btn-font-style btn-radius-50"
                     type="submit"
                   >
-                    ĐỒNG Ý
+                    {t('anftDapp.global.modal.confirm')}
                   </CButton>
                 </CCol>
               </CModalFooter>
