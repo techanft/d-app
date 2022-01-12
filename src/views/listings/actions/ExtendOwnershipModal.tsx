@@ -119,9 +119,9 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
   const validationSchema = Yup.object().shape({
     dateCount: Yup.number()
       .typeError('Incorrect input type!')
-      .min(1, 'Minimum ownership for the listing is 1.0 day')
+      .min(1, "Gia hạn tối thiểu 1 ngày")
       .max(getExtenableDay(), 'Your balance does not enough')
-      .required('This field is required'),
+      ,
   });
 
   const caculatePriceFromSecond = (dailyPayment: BigNumber, diffSecond: number) => {
@@ -288,8 +288,8 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                         onBlur={handleBlur}
                         className="btn-radius-50 InputMaxWidth"
                       />
-                      <CInvalidFeedback className={!!errors.dateCount && touched.dateCount ? 'd-block' : 'd-none'}>
-                        {errors.dateCount}
+                      <CInvalidFeedback className={values.dateCount == 0 && errors.dateCount && touched.dateCount ? 'd-block' : 'd-none'}>
+                        {errors.dateCount || "Gia hạn tối thiểu 1 ngày"}
                       </CInvalidFeedback>
                     </CCol>
                   </CFormGroup>
@@ -299,7 +299,7 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                     </CCol>
                     <CCol xs={6}>
                       <p className="text-primary text-right">
-                        {values.dateCount > 0 && values.startDate
+                        { values.dateCount > 0 && values.startDate
                           ? insertCommas(calculateExtendPrice(values.dateCount, values.startDate))
                           : '0'}{' '}
                         ANFT
