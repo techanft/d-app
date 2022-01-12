@@ -6,13 +6,16 @@ import {
   CInput,
   CInputGroup,
   CInputGroupAppend,
-  CInvalidFeedback, CModal,
+  CInvalidFeedback,
+  CModal,
   CModalBody,
   CModalFooter,
   CModalHeader,
   CModalTitle,
-  CRow
+  CRow,
 } from '@coreui/react';
+import { faChevronLeft } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { utils } from 'ethers';
 import { Formik, FormikProps } from 'formik';
 import React, { useEffect, useRef, useState } from 'react';
@@ -114,9 +117,17 @@ const AddWorkerPermission = (props: ICancelWorkerPermission) => {
 
   return (
     <CModal show={visible} onClose={closeModal()} closeOnBackdrop={false} centered className="border-radius-modal">
-      <CModalHeader className="justify-content-center">
-        <CModalTitle className="modal-title-style">Thêm quyền khai thác</CModalTitle>
+      <CModalHeader>
+        {isScanQrMode ? (
+          <CButton className="p-0" onClick={() => setIsScanQrMode(false)}>
+            <FontAwesomeIcon icon={faChevronLeft} size="lg" />
+          </CButton>
+        ) : (
+          ''
+        )}
+        <CModalTitle className="modal-title-style m-auto">Thêm quyền khai thác</CModalTitle>
       </CModalHeader>
+
       <Formik<IIntialValues>
         innerRef={formikRef}
         enableReinitialize
@@ -143,30 +154,19 @@ const AddWorkerPermission = (props: ICancelWorkerPermission) => {
             <>
               <CModalBody>
                 {isScanQrMode ? (
-                  <>
-                    <CRow>
-                      <CCol xs={12} className="mb-3 d-flex text-center">
-                        <CButton
-                          onClick={() => setIsScanQrMode(false)}
-                          className="text-primary btn-font-style btn-outline-primary btn-radius-50 px-2 py-1 justify-content-start"
-                        >
-                          <CIcon name="cil-arrow-thick-from-right" className="mr-1 p-0" size="lg" />
-                          Back
-                        </CButton>
-                      </CCol>
-                      <CCol xs={12}>
-                        {/* Due to browser implementations the camera can only be accessed over https or localhost */}
-                        <QrReader
-                          delay={300}
-                          onError={handleErrorFile}
-                          onScan={(data: string | null) => {
-                            handleScanFile(data);
-                            setFieldValue('address', data);
-                          }}
-                        />
-                      </CCol>
-                    </CRow>
-                  </>
+                  <CRow>
+                    <CCol xs={12}>
+                      {/* Due to browser implementations the camera can only be accessed over https or localhost */}
+                      <QrReader
+                        delay={300}
+                        onError={handleErrorFile}
+                        onScan={(data: string | null) => {
+                          handleScanFile(data);
+                          setFieldValue('address', data);
+                        }}
+                      />
+                    </CCol>
+                  </CRow>
                 ) : (
                   <CRow>
                     <CCol xs={12}>
@@ -185,7 +185,7 @@ const AddWorkerPermission = (props: ICancelWorkerPermission) => {
                           className="btn-radius-50"
                         />
                         <CInputGroupAppend>
-                          <CButton color="primary" className="btn-radius-50 py-0 px-2" onClick={onScanFile}>
+                          <CButton color="primary" className="btn-radius-50 py-0 px-3" onClick={onScanFile}>
                             <CIcon name="cil-qr-code" />
                           </CButton>
                         </CInputGroupAppend>

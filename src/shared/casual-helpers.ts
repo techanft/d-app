@@ -13,9 +13,6 @@ export const estimateOwnership = (amount: BigNumber, dailyPayment: BigNumber, cu
 
   const newOwnership = initialOwnership.toNumber() + additionalCredit;
   return convertUnixToDate(newOwnership);
-
-  // return (x / y).toFixed(2);
-  // return '';
 };
 
 export const noMoreThanOneCommas = (input: number | string) => {
@@ -95,8 +92,6 @@ export const validateOwnership = (viewerAddr: string | undefined, listingInfo: I
   const ownershipExpired = checkOwnershipExpired(ownership.toNumber());
 
   if (!viewerIsOwner) return false;
-
-  // console.log(ownershipExpired, 'ownershipExpired')
 
   return !ownershipExpired;
 };

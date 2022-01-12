@@ -8,16 +8,7 @@ import { IAsset } from '../../shared/models/assets.model';
 import { IGetAllResp, IParams } from '../../shared/models/base.model';
 import { baseOptions, IOption, IStake } from '../../shared/models/options.model';
 import { Listing } from '../../typechain';
-
-export interface IAssetFilter extends IParams {}
-export interface IExtndOwnrshpIntialValues {
-  listingAddress: string | undefined;
-  tokenAmount: number;
-}
-export interface IExtndOwnershipBody extends Omit<IExtndOwnrshpIntialValues, 'tokenAmount'> {
-  contract: Listing;
-  tokenAmount: ethers.BigNumber;
-}
+import { IAssetFilter } from '../listings/Listings';
 
 const prefix = 'assets';
 

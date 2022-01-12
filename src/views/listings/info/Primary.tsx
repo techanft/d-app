@@ -140,10 +140,7 @@ const ListingInfo = (props: IListingInfoProps) => {
 
   const { signerAddress } = useSelector((state: RootState) => state.wallet);
 
-  // const { extendOwnerShipSuccess, extendOwnerShipTHash } = useSelector((state: RootState) => state.listingsReducer);
   const { width: screenWidth } = useWindowDimensions();
-
-  // const provider = getProvider();
 
   const { initialState } = useSelector((state: RootState) => state.assets);
   const { entityLoading } = initialState;
@@ -362,7 +359,6 @@ const ListingInfo = (props: IListingInfoProps) => {
                 <CCardBody className="p-2">
                   <CRow className="mx-0">
                     <p
-                      // () => handleModalVisibility(ModalType.OWNERSHIP_REGISTER, true)
                       onClick={onRegisteringOwnership}
                       className={`m-0 ${viewerIsOwner || !ownershipExpired ? 'text-secondary' : 'text-primary'}`}
                     >
