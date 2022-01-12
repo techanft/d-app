@@ -13,6 +13,7 @@ import {
   CModalTitle,
   CRow
 } from '@coreui/react';
+import { BigNumber } from 'ethers';
 import { Formik, FormikProps } from 'formik';
 import moment from 'moment';
 import React, { useEffect, useRef, useState } from 'react';
@@ -81,6 +82,12 @@ const WithdrawModal = (props: IWithdrawModal) => {
     withdraw: 0,
   };
 
+  const caculatePriceFromSecond = (dailyPayment: BigNumber, diffSecond: number) => {
+    const diffSecondBn = BigNumber.from(Math.round(diffSecond));
+    const additionalPrice = dailyPayment.mul(diffSecondBn).div(86400);
+    return additionalPrice;
+  };
+
   const checkDateRange = (day: moment.Moment): boolean => {
     const startDate = moment().startOf('day');
     const endDate = getEndDate().endOf('day');
@@ -94,10 +101,19 @@ const WithdrawModal = (props: IWithdrawModal) => {
     return days;
   };
 
+  const getSecondDifftoEndDate = (endDate: moment.Moment) => {
+    const endDateDay = moment(endDate).endOf('day').subtract(90, 'second');
+    const duration = moment.duration(endDateDay.diff(endDate));
+    return duration.asSeconds();
+  };
+
   const calculateWithdrawPrice = (day: number) => {
     if (listing?.dailyPayment) {
       const withdrawPrice = listing.dailyPayment.mul(day);
-      return convertBnToDecimal(withdrawPrice);
+      const secondDiff = getSecondDifftoEndDate(startDate);
+      const result =
+        secondDiff > 0 ? caculatePriceFromSecond(listing.dailyPayment, secondDiff).add(withdrawPrice) : withdrawPrice;
+      return convertBnToDecimal(result);
     } else {
       return '0';
     }
@@ -107,7 +123,7 @@ const WithdrawModal = (props: IWithdrawModal) => {
     withdraw: Yup.number()
       .typeError('Incorrect input type!')
       .min(1, 'Minimum ownership for the listing is 1.0 day')
-      .max(totalDays - 1, 'Input days exceed your current ownership')
+      .max(totalDays - 1, `Số ngày rút ra không vượt quá ${totalDays - 1} ngày`)
       .required('This field is required'),
   });
 
@@ -235,18 +251,11 @@ const WithdrawModal = (props: IWithdrawModal) => {
                         isOutsideRange={(day) => !checkDateRange(day)}
                         initialVisibleMonth={() => moment().add(0, 'month')}
                         numberOfMonths={1}
-                        orientation={'vertical'}
+                        orientation={'horizontal'}
                       />
                     </CCol>
                   </CFormGroup>
-                  <CFormGroup row>
-                    <CCol xs={8}>
-                      <CLabel className="withdraw-token-title">Remaining Days</CLabel>
-                    </CCol>
-                    <CCol xs={4}>
-                      <p className="text-primary text-right">{values.remainingDays} Days</p>
-                    </CCol>
-                  </CFormGroup>
+
                   <CFormGroup row>
                     <CCol xs={12}>
                       <CLabel className="recharge-token-title">Withdraws (Days): </CLabel>
@@ -275,19 +284,31 @@ const WithdrawModal = (props: IWithdrawModal) => {
                       </CInvalidFeedback>
                     </CCol>
                   </CFormGroup>
-                  <CFormGroup row className={`mt-4`}>
-                    <CCol xs={6}>
-                      <CLabel className="recharge-token-title">Token Estimation</CLabel>
-                    </CCol>
-                    <CCol xs={6}>
-                      <p className="text-primary text-right">
-                        {values.withdraw > 0 && values.startDate
-                          ? insertCommas(calculateWithdrawPrice(values.withdraw))
-                          : '0'}{' '}
-                        ANFT
-                      </p>
-                    </CCol>
-                  </CFormGroup>
+                  {!errors.withdraw && listing?.dailyPayment && listing?.ownership && values.withdraw && (
+                    <>
+                      <CFormGroup row className={`mt-4`}>
+                        <CCol xs={8}>
+                          <CLabel className="withdraw-token-title">Remaining Days</CLabel>
+                        </CCol>
+                        <CCol xs={4}>
+                          <p className="text-primary text-right">{values.remainingDays} Days</p>
+                        </CCol>
+                      </CFormGroup>
+                      <CFormGroup row>
+                        <CCol xs={6}>
+                          <CLabel className="recharge-token-title">Token Estimation</CLabel>
+                        </CCol>
+                        <CCol xs={6}>
+                          <p className="text-primary text-right">
+                            {values.withdraw > 0 && values.startDate
+                              ? insertCommas(calculateWithdrawPrice(values.withdraw))
+                              : '0'}{' '}
+                            ANFT
+                          </p>
+                        </CCol>
+                      </CFormGroup>
+                    </>
+                  )}
                 </CCol>
               </CRow>
             </CModalBody>

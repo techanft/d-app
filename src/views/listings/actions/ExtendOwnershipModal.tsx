@@ -33,6 +33,7 @@ import {
 import { ToastError } from '../../../shared/components/Toast';
 import { EventType } from '../../../shared/enumeration/eventType';
 import { ModalType } from '../../../shared/enumeration/modalType';
+import useWindowDimensions from '../../../shared/hooks/useWindowDimensions';
 import { RootState } from '../../../shared/reducers';
 import { selectEntityById } from '../../assets/assets.reducer';
 import { baseSetterArgs } from '../../transactions/settersMapping';
@@ -59,6 +60,7 @@ interface IIntialValues {
 const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
   const { isVisible, setVisibility, listingId, title, modelType } = props;
   const dispatch = useDispatch();
+  const { width: screenWidth } = useWindowDimensions();
   const formikRef = useRef<FormikProps<IIntialValues>>(null);
   const [focusedInput, setFocusedInput] = React.useState(null);
 
@@ -237,7 +239,7 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                       <p className="text-primary text-right">{formatBNToken(tokenBalance, true)}</p>
                     </CCol>
                   </CFormGroup>
-                  <CFormGroup row>
+                  <CFormGroup row className={`${screenWidth <= 335 ? 'd-none' : ''}`}>
                     <CCol xs={12}>
                       <CLabel className="recharge-token-title">Date pick</CLabel>
                     </CCol>
@@ -263,7 +265,7 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                         isOutsideRange={(day) => !checkDateRange(day)}
                         initialVisibleMonth={() => moment().add(0, 'month')}
                         numberOfMonths={1}
-                        orientation={'vertical'}
+                        orientation={'horizontal'}
                       />
                     </CCol>
                   </CFormGroup>
