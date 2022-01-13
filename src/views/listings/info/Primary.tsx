@@ -21,6 +21,8 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
 import { TFunction, useTranslation } from 'react-i18next';
+import 'react-dates/initialize';
+import 'react-dates/lib/css/_datepicker.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { TOKEN_SYMBOL } from '../../../config/constants';
 import {
@@ -141,10 +143,7 @@ const ListingInfo = (props: IListingInfoProps) => {
 
   const { signerAddress } = useSelector((state: RootState) => state.wallet);
 
-  // const { extendOwnerShipSuccess, extendOwnerShipTHash } = useSelector((state: RootState) => state.listingsReducer);
   const { width: screenWidth } = useWindowDimensions();
-
-  // const provider = getProvider();
 
   const { initialState } = useSelector((state: RootState) => state.assets);
   const { entityLoading } = initialState;
@@ -363,7 +362,6 @@ const ListingInfo = (props: IListingInfoProps) => {
                 <CCardBody className="p-2">
                   <CRow className="mx-0">
                     <p
-                      // () => handleModalVisibility(ModalType.OWNERSHIP_REGISTER, true)
                       onClick={onRegisteringOwnership}
                       className={`m-0 ${viewerIsOwner || !ownershipExpired ? 'text-secondary' : 'text-primary'}`}
                     >
@@ -425,16 +423,17 @@ const ListingInfo = (props: IListingInfoProps) => {
               </CCard>
             </CCollapse>
           </CCol>
-
           <ExtendOwnershipModal
             listingId={listingId}
             isVisible={modalsVisibility[ModalType.OWNERSHIP_REGISTER]}
+            modelType={ModalType.OWNERSHIP_REGISTER}
             setVisibility={(key: boolean) => handleModalVisibility(ModalType.OWNERSHIP_REGISTER, key)}
             title={t('anftDapp.listingComponent.primaryInfo.investmentActivities.registerOwnership')}
           />
           <ExtendOwnershipModal
             listingId={listingId}
             isVisible={modalsVisibility[ModalType.OWNERSHIP_EXTENSION]}
+            modelType={ModalType.OWNERSHIP_EXTENSION}
             setVisibility={(key: boolean) => handleModalVisibility(ModalType.OWNERSHIP_EXTENSION, key)}
             title={t('anftDapp.listingComponent.primaryInfo.ownershipManagement.extendOwnership')}
           />

@@ -581,7 +581,6 @@ const Register = (props: IRegisterProps) => {
                                                   <CButton
                                                     className="btn-radius-50 btn btn-sm btn-success mr-2"
                                                     onClick={onClaimReward(item.id, item.stake.amount)}
-                                                    // disabled={tokenBalance! < item.stake.amount}
                                                   >
                                                     {t('anftDapp.registerComponent.claimReward.claimReward')}
                                                   </CButton>

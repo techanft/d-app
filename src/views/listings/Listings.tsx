@@ -11,7 +11,6 @@ import { IParams } from '../../shared/models/base.model';
 import { RootState } from '../../shared/reducers';
 import { getEntities } from '../assets/assets.api';
 import { assetsSelectors, fetchingEntities, setFilterState as setStoredFilterState } from '../assets/assets.reducer';
-// import { useGetAssetsQuery } from '../assets/assets.api';
 import './index.scss';
 
 export interface IListingShortInfo {
@@ -41,7 +40,6 @@ const Listings = ({ routingProps }: IListingsProps) => {
 
   const insideDetailView = match.path.includes('detail');
 
-  // const {  totalItems } = useSelector((state: RootState) => state.assets);
   const dispatch = useDispatch();
   const { initialState } = useSelector((state: RootState) => state.assets);
   const { provider } = useSelector((state: RootState) => state.wallet);
