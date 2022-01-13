@@ -404,6 +404,7 @@ const ListingInfo = (props: IListingInfoProps) => {
                       {t('anftDapp.listingComponent.primaryInfo.ownershipManagement.withdrawToken')}
                     </p>
                   </CRow>
+
                   <CRow className="my-2 mx-0">
                     <p
                       onClick={() => handleModalVisibility(ModalType.OWNERSHIP_EXTENSION, true)}
@@ -423,25 +424,33 @@ const ListingInfo = (props: IListingInfoProps) => {
               </CCard>
             </CCollapse>
           </CCol>
-          <ExtendOwnershipModal
-            listingId={listingId}
-            isVisible={modalsVisibility[ModalType.OWNERSHIP_REGISTER]}
-            modelType={ModalType.OWNERSHIP_REGISTER}
-            setVisibility={(key: boolean) => handleModalVisibility(ModalType.OWNERSHIP_REGISTER, key)}
-            title={t('anftDapp.listingComponent.primaryInfo.investmentActivities.registerOwnership')}
-          />
-          <ExtendOwnershipModal
-            listingId={listingId}
-            isVisible={modalsVisibility[ModalType.OWNERSHIP_EXTENSION]}
-            modelType={ModalType.OWNERSHIP_EXTENSION}
-            setVisibility={(key: boolean) => handleModalVisibility(ModalType.OWNERSHIP_EXTENSION, key)}
-            title={t('anftDapp.listingComponent.primaryInfo.ownershipManagement.extendOwnership')}
-          />
-          <WithdrawTokenModal
-            listingId={listingId}
-            isVisible={modalsVisibility[ModalType.OWNERSHIP_WITHDRAW]}
-            setVisibility={(key: boolean) => handleModalVisibility(ModalType.OWNERSHIP_WITHDRAW, key)}
-          />
+          {modalsVisibility[ModalType.OWNERSHIP_EXTENSION] && (
+            <ExtendOwnershipModal
+              listingId={listingId}
+              isVisible={modalsVisibility[ModalType.OWNERSHIP_REGISTER]}
+              modelType={ModalType.OWNERSHIP_REGISTER}
+              setVisibility={(key: boolean) => handleModalVisibility(ModalType.OWNERSHIP_REGISTER, key)}
+              title="Đăng ký sở hữu"
+            />
+          )}
+
+          {modalsVisibility[ModalType.OWNERSHIP_EXTENSION] && (
+            <ExtendOwnershipModal
+              listingId={listingId}
+              isVisible={modalsVisibility[ModalType.OWNERSHIP_EXTENSION]}
+              modelType={ModalType.OWNERSHIP_EXTENSION}
+              setVisibility={(key: boolean) => handleModalVisibility(ModalType.OWNERSHIP_EXTENSION, key)}
+              title="Nạp ANFT"
+            />
+          )}
+
+          {modalsVisibility[ModalType.OWNERSHIP_WITHDRAW] && (
+            <WithdrawTokenModal
+              listingId={listingId}
+              isVisible={modalsVisibility[ModalType.OWNERSHIP_WITHDRAW]}
+              setVisibility={(key: boolean) => handleModalVisibility(ModalType.OWNERSHIP_WITHDRAW, key)}
+            />
+          )}
         </CRow>
       </CCol>
     </CContainer>

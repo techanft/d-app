@@ -65,40 +65,35 @@
   color: white;
 }
 
-.InputMaxWidth{
-  max-width: 286px;
-}
-
-
-.ContainerMaxWidth{
-  max-width: 325px;
-}
-
-.DateRangePickerInput__withBorder {
-  border-radius: 50px;
-  // width: 100%;
-  .DateInput__disabled {
+.DateRangePicker {
+  width: 100%;
+  .DateRangePickerInput__withBorder {
     border-radius: 50px;
+    width: 100%;
+    .DateInput__disabled {
+      border-radius: 50px;
+    }
+    .DateInput {
+      width: 45%;
+      border-top-right-radius: 50px;
+      border-bottom-right-radius: 50px;
+    }
+    .DateInput_input__disabled {
+      border-radius: 50px;
+      font-style: normal;
+    }
+    .DateInput_input {
+      font-weight: 400;
+      font-size: 0.875rem;
+      line-height: 1.5;
+      padding: 0.375rem 0.75rem;
+      text-align: center
+      // border-top-right-radius: 50px;
+      // border-bottom-right-radius: 50px;
+    }
   }
-  .DateInput {
-    // width: 46.5%;
-    border-top-right-radius: 50px;
-    border-bottom-right-radius: 50px;
-  }
-  .DateInput_input__disabled {
-    border-radius: 50px;
-    font-style: normal;
-  }
-  .DateInput_input {
-    font-weight: 400;
-    font-size: 0.875rem;
-    line-height: 1.5;
-    padding: 0.375rem 0.75rem;
-    border-top-right-radius: 50px;
-    border-bottom-right-radius: 50px;
-  }
-}
 
-.DateRangePickerInput__disabled {
-  background: transparent;
+  .DateRangePickerInput__disabled {
+    background: transparent;
+  }
 }
