@@ -170,8 +170,8 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
       >
         {({ values, errors, touched, setFieldValue, handleSubmit, handleBlur }) => (
           <CForm onSubmit={handleSubmit}>
-            <CModalBody className={'d-flex justify-content-center'}>
-              <CRow className={'ContainerMaxWidth'}>
+            <CModalBody>
+              <CRow>
                 <CCol xs={12}>
                   <CFormGroup row>
                     <CCol xs={6}>

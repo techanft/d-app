@@ -179,8 +179,8 @@ const WithdrawModal = (props: IWithdrawModal) => {
       >
         {({ values, errors, touched, handleSubmit, handleBlur, setFieldValue, submitForm }) => (
           <CForm onSubmit={handleSubmit}>
-            <CModalBody className={"d-flex justify-content-center"}>
-              <CRow className={"ContainerMaxWidth"}>
+            <CModalBody>
+              <CRow>
                 <CCol xs={12}>
                   <CFormGroup row>
                     <CCol xs={6}>
