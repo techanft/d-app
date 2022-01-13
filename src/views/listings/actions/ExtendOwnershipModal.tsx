@@ -11,7 +11,7 @@ import {
   CModalFooter,
   CModalHeader,
   CModalTitle,
-  CRow
+  CRow,
 } from '@coreui/react';
 import { BigNumber } from 'ethers';
 import { Formik, FormikProps } from 'formik';
@@ -31,7 +31,7 @@ import {
   formatBNToken,
   insertCommas,
   returnMaxEndDate,
-  unInsertCommas
+  unInsertCommas,
 } from '../../../shared/casual-helpers';
 import { ToastError } from '../../../shared/components/Toast';
 import { EventType } from '../../../shared/enumeration/eventType';
@@ -266,12 +266,8 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                         onBlur={handleBlur}
                         className="btn-radius-50 InputMaxWidth"
                       />
-                      <CInvalidFeedback
-                        className={
-                          values.dateCount === 0 && errors.dateCount && touched.dateCount ? 'd-block' : 'd-none'
-                        }
-                      >
-                        {errors.dateCount || 'Gia hạn tối thiểu 1 ngày'}
+                      <CInvalidFeedback className={errors.dateCount && touched.dateCount ? 'd-block' : 'd-none'}>
+                        {errors.dateCount}
                       </CInvalidFeedback>
                     </CCol>
                   </CFormGroup>
