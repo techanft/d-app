@@ -40,18 +40,18 @@
     },
 
     "listingComponent": {
-      "listingValue": "Giá trị BDS",
+      "listingValue": "Giá trị BĐS",
       "primaryInfo": {
         "ownershipStatus": {
           "owned": "Đã sở hữu",
-          "ownershipExpired": "Đã hết hạn sở hữu. Listing có thể bị chiếm bởi người khác!",
+          "ownershipExpired": "Đã hết hạn sở hữu. BĐS có thể bị chiếm bởi người khác!",
           "ownedByAnotherAddress": "Đã có chủ sở hữu",
           "notOwned": "Có thể sở hữu"
         },
         "blockchainAddress": "Địa chỉ Blockchain",
-        "currentOwner": "Chủ sở hữu hiện tại",
+        "currentOwner": "Chủ sở hữu",
         "ownershipPeriod": "Sở hữu tới",
-        "dailyPayment": "Chi phí khai thác",
+        "dailyPayment": "Phí khai thác hằng ngày",
         "totalStake": "Tổng stake",
         "workersCount": "Số lượng người khai khác",
         "workersList": "Xem quyền khai thác",
@@ -62,8 +62,8 @@
         },
         "ownershipManagement": {
           "ownershipManagement": "Quản lý sở hữu",
-          "withdrawToken": "Rút ANFT",
-          "extendOwnership": "Nạp ANFT",
+          "withdrawToken": "Rút quyền sở hữu",
+          "extendOwnership": "Nạp quyền sở hữu",
           "workerManagement": "Quản lý quyền khai thác"
         }
       },
@@ -77,23 +77,24 @@
         "services": "Dịch vụ khai thác"
       },
       "activityLogs": "Lịch sử hoạt động",
-      "moreListing": "Xem thêm BDS",
+      "moreListing": "Xem thêm BĐS",
       "extendOwnership": {
         "currentOwnership": "Thời gian sở hữu hiện tại",
-        "tokenBalance": "Token sở hữu",
+        "tokenBalance": "ANFT trong ví",
         "cannotRegisterOwnership": "Bất động sản đang được sở hữu bởi người khác!",
-        "tokenEstimation": "Token ước tính",
-        "balanceDoesNotEnough": "Token sở hữu không đủ!",
-        "incorrectInputType": "Số Token không hợp lệ!",
-        "inputIsRequired!": "Số Token không được bỏ trống!",
+        "spendingEstimation": "Ước tính chi tiêu",
+        "balanceIsNotEnough": "ANFT trong ví không đủ!",
+        "incorrectInputType": "Số ANFT không hợp lệ!",
+        "inputIsRequired!": "Vui lòng không để trống ô này!",
         "minimumOwnership": "Thời gian sở hữu tối thiểu là 1.0 ngày!"
       },
       "withdrawToken": {
         "maximumWithdrawable": "Số ngày rút tối đa",
+        "returnEstimation": "Ước tính nhận lại",
         "withdrawDays": "Số ngày muốn rút",
-        "noMoreTokenToWithdraw": "Không đủ Token để rút!",
-        "incorrectInputType": "Số Token không hợp lệ!",
-        "inputIsRequired!": "Số Token không được bỏ trống!",
+        "noMoreTokenToWithdraw": "Không đủ ANFT để rút!",
+        "incorrectInputType": "Số ANFT không hợp lệ!",
+        "inputIsRequired!": "Vui lòng không để trống ô này!",
         "minimumWithdraw": "Số ngày rút tối thiểu là 1.0 ngày!",
         "days": "Ngày",
         "remainingDays": "Số ngày sở hữu còn lại",
@@ -116,17 +117,17 @@
       "unregister": {
         "unregister": "Hủy đăng ký",
         "unregisterModalTitle": "Xác nhận hủy đăng ký",
-        "unregisterModalContentPrev": "Bạn chắc chắn muốn hủy",
+        "unregisterModalContentPrev": "Bạn chắc chắn muốn hủy nhận thưởng",
         "unregisterModalContentNext": "với đăng ký"
       },
       "selectActivity": "*Lựa chọn Hoạt động bạn muốn SỬA hoặc HỦY đăng ký",
       "pleaseConnectWallet": "Vui lòng kết nối ví để xem danh sách hoạt động",
       "inputAmountIsUnchange": "Mức đăng ký không thay đổi",
-      "inputAmountExceedsTokenBalance": "Mức đăng ký vượt quá token sở hữu",
+      "inputAmountExceedsTokenBalance": "Mức đăng ký vượt quá số ANFT trong ví",
       "incorrectInputType": "Mức đăng ký không hợp lệ!",
       "inputIsRequired!": "Mức đăng ký không được bỏ trống!",
-      "minimumRegister": "Mức đăng ký tối thiểu là 1.0 token!",
-      "insufficientBalanceToClaimReward": "Token sở hữu không đủ để nhận thưởng!",
+      "minimumRegister": "Mức đăng ký tối thiểu là 1.0 ANFT!",
+      "insufficientBalanceToClaimReward": "ANFT trong ví không đủ để nhận thưởng!",
       "rewardToken": "Token thưởng",
       "stakeStart": "Ngày đăng ký"
     },
@@ -139,14 +140,14 @@
     },
 
     "workersListComponent": {
-      "workersList": "Danh sách quyền khai thác",
+      "workersList": "Danh sách người khai thác",
       "workersCount": "Số lượng người khai thác",
       "address": "Địa chỉ",
       "action": "Hành động",
-      "addWorkerPermission": "Thêm quyền khai thác",
+      "addWorkerPermission": "Ủy quyền khai thác",
       "createdDate": "Ngày bắt đầu",
-      "deltWorkerPermission": "Hủy quyền khai thác",
-      "confirmDeltWorkerPermission": "Bạn chắc chắn muốn hủy quyền khai thác của",
+      "deltWorkerPermission": "Tước quyền khai thác",
+      "confirmDeltWorkerPermission": "Bạn chắc chắn muốn tước quyền khai thác của",
       "addressWallet": "Địa chỉ ví"
     }
   }

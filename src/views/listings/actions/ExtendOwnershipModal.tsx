@@ -282,7 +282,7 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                             setFieldValue('dateCount', extendDay);
                             setFieldValue('endDate', extendDate);
                           } catch (err) {
-                            errors.dateCount = `${t('anftDapp.listingComponent.extendOwnership.balanceDoesNotEnough')}`;
+                            errors.dateCount = `${t('anftDapp.listingComponent.extendOwnership.balanceIsNotEnough')}`;
                           }
                         }}
                         id="dateCount"
@@ -300,7 +300,7 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                   <CFormGroup row className={`mt-4`}>
                     <CCol xs={6}>
                       <CLabel className="recharge-token-title">
-                        {t('anftDapp.listingComponent.extendOwnership.tokenEstimation')}
+                        {t('anftDapp.listingComponent.extendOwnership.spendingEstimation')}
                       </CLabel>
                     </CCol>
                     <CCol xs={6}>

@@ -424,13 +424,13 @@ const ListingInfo = (props: IListingInfoProps) => {
               </CCard>
             </CCollapse>
           </CCol>
-          {modalsVisibility[ModalType.OWNERSHIP_EXTENSION] && (
+          {modalsVisibility[ModalType.OWNERSHIP_REGISTER] && (
             <ExtendOwnershipModal
               listingId={listingId}
               isVisible={modalsVisibility[ModalType.OWNERSHIP_REGISTER]}
               modelType={ModalType.OWNERSHIP_REGISTER}
               setVisibility={(key: boolean) => handleModalVisibility(ModalType.OWNERSHIP_REGISTER, key)}
-              title="Đăng ký sở hữu"
+              title={t('anftDapp.listingComponent.primaryInfo.investmentActivities.registerOwnership')}
             />
           )}
 
@@ -440,7 +440,7 @@ const ListingInfo = (props: IListingInfoProps) => {
               isVisible={modalsVisibility[ModalType.OWNERSHIP_EXTENSION]}
               modelType={ModalType.OWNERSHIP_EXTENSION}
               setVisibility={(key: boolean) => handleModalVisibility(ModalType.OWNERSHIP_EXTENSION, key)}
-              title="Nạp ANFT"
+              title={t('anftDapp.listingComponent.primaryInfo.ownershipManagement.extendOwnership')}
             />
           )}
 

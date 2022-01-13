@@ -49,20 +49,20 @@
           "notOwned": "Able to extend ownership with this listing"
         },
         "blockchainAddress": "Blockchain Address",
-        "currentOwner": "Current Owner",
-        "ownershipPeriod": "Ownership Period",
+        "currentOwner": "Owner",
+        "ownershipPeriod": "Ownership",
         "dailyPayment": "Daily Payment",
         "totalStake": "Total Stake",
         "workersCount": "Workers Count",
         "workersList": "Workers List",
         "investmentActivities": {
           "investmentActivities": "Investment Activities",
-          "registerOwnership": "Register Ownership",
-          "registerClaimReward": "Staking Register"
+          "registerOwnership": "Register for Ownership",
+          "registerClaimReward": "Register for Staking"
         },
         "ownershipManagement": {
           "ownershipManagement": "Ownership Management",
-          "withdrawToken": "Withdraw Token",
+          "withdrawToken": "Withdraw Ownership",
           "extendOwnership": "Extend Ownership",
           "workerManagement": "Workers Management"
         }
@@ -82,15 +82,16 @@
         "currentOwnership": "Current Ownership",
         "tokenBalance": "Token Balance",
         "cannotRegisterOwnership": "This listing is being owned by another address!",
-        "tokenEstimation": "Token Estimation",
-        "balanceDoesNotEnough": "Your balance does not enough",
+        "spendingEstimation": "Spending Estimation",
+        "balanceIsNotEnough": "Your balance is not enough",
         "incorrectInputType": "Incorrect input type!",
         "inputIsRequired!": "This field is required!",
         "minimumOwnership": "Minimum ownership for the listing is 1.0 day!"
       },
       "withdrawToken": {
+        "returnEstimation": "Return Estimation",
         "maximumWithdrawable": "Maximum Days",
-        "withdrawDays": "Withdraws (Days)",
+        "withdrawDays": "Days to withdraw",
         "noMoreTokenToWithdraw": "No more token to withdraw!",
         "incorrectInputType": "Incorrect input type!",
         "inputIsRequired!": "This field is required!",
@@ -106,7 +107,7 @@
       "activity": "Activity",
       "reward": "Reward",
       "registerAmount": "Register Amount",
-      "notRegister": "Not Register",
+      "notRegister": "Unregistered",
       "register": "Register",
       "claimReward": {
         "claimReward": "Claim Reward",
@@ -116,19 +117,19 @@
       "unregister": {
         "unregister": "Unregister",
         "unregisterModalTitle": "Unregister",
-        "unregisterModalContentPrev": "Confirm unregister of",
-        "unregisterModalContentNext": "with register amount"
+        "unregisterModalContentPrev": "Continue to unregister",
+        "unregisterModalContentNext": "with register amount of"
       },
-      "selectActivity": "*Select activity you want to EDIT or UNREGISTER",
-      "pleaseConnectWallet": "Please connect wallet to view activities list",
+      "selectActivity": "*Select an activity to EDIT or UNREGISTER",
+      "pleaseConnectWallet": "Please connect to your wallet to view activities list",
       "inputAmountIsUnchange": "Unchanged input amount!",
       "inputAmountExceedsTokenBalance": "Input amount exceeds token balance",
       "incorrectInputType": "Incorrect input type!",
       "inputIsRequired!": "This field is required!",
-      "minimumRegister": "Minimum register for the listing is 1.0 token!",
+      "minimumRegister": "Minimum register for the activity is 1.0 token!",
       "insufficientBalanceToClaimReward": "Insufficient balance to claim reward!",
-      "rewardToken": " Reward Token",
-      "stakeStart": "Stake Start"
+      "rewardToken": " Reward Amount",
+      "stakeStart": "Stake From"
     },
 
     "activityLogsComponent": {
@@ -143,10 +144,10 @@
       "workersCount": "Workers Count",
       "address": "Address",
       "action": "Action",
-      "addWorkerPermission": "Add Worker Permission",
+      "addWorkerPermission": "Add worker",
       "createdDate": "Since",
-      "deltWorkerPermission": "Delete Worker Permission",
-      "confirmDeltWorkerPermission": "Confirm delete worker permission of worker address",
+      "deltWorkerPermission": "Remove worker",
+      "confirmDeltWorkerPermission": "Continue to remove this worker",
       "addressWallet": "Address Wallet"
     }
   }

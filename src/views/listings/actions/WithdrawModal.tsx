@@ -274,7 +274,7 @@ const WithdrawModal = (props: IWithdrawModal) => {
                       <CFormGroup row>
                         <CCol xs={6}>
                           <CLabel className="recharge-token-title">
-                            {t('anftDapp.listingComponent.extendOwnership.tokenEstimation')}
+                            {t('anftDapp.listingComponent.withdrawToken.returnEstimation')}
                           </CLabel>
                         </CCol>
                         <CCol xs={6}>
