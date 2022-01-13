@@ -64,7 +64,7 @@ const WithdrawModal = (props: IWithdrawModal) => {
   const { signer } = useSelector((state: RootState) => state.wallet);
   const { submitted } = useSelector((state: RootState) => state.transactions);
 
-  const closeModal = () => () => {
+  const closeModal = () => {
     setVisibility(false);
   };
 
@@ -158,7 +158,7 @@ const WithdrawModal = (props: IWithdrawModal) => {
   }, [timeLeft]);
 
   return (
-    <CModal show={isVisible} onClose={closeModal()} centered className="border-radius-modal">
+    <CModal show={isVisible} onClose={closeModal} centered className="border-radius-modal">
       <CModalHeader className="justify-content-center">
         <CModalTitle className="modal-title-style">Withdraw Token</CModalTitle>
       </CModalHeader>
@@ -293,7 +293,7 @@ const WithdrawModal = (props: IWithdrawModal) => {
               <CCol>
                 <CButton
                   className="px-2 w-100 btn-font-style btn btn-outline-primary btn-radius-50"
-                  onClick={closeModal()}
+                  onClick={closeModal}
                 >
                   HỦY
                 </CButton>

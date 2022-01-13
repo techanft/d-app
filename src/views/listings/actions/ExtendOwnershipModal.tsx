@@ -71,7 +71,7 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
   const { submitted } = useSelector((state: RootState) => state.transactions);
   const { tokenBalance } = useSelector((state: RootState) => state.wallet);
 
-  const closeModal = () => () => {
+  const closeModal = () => {
     setVisibility(false);
   };
 
@@ -150,7 +150,7 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
   };
 
   return (
-    <CModal show={isVisible} onClose={closeModal()} centered className="border-radius-modal">
+    <CModal show={isVisible} onClose={closeModal} centered className="border-radius-modal">
       <CModalHeader className="justify-content-center">
         <CModalTitle className="modal-title-style">{title}</CModalTitle>
       </CModalHeader>
@@ -295,7 +295,7 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
               <CCol>
                 <CButton
                   className="px-2 w-100 btn-font-style btn-radius-50 btn btn-outline-primary"
-                  onClick={closeModal()}
+                  onClick={closeModal}
                 >
                   HỦY
                 </CButton>
