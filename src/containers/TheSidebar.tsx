@@ -1,10 +1,5 @@
 import CIcon from '@coreui/icons-react';
-import {
-  CLink,
-  CSidebar,
-  CSidebarBrand,
-  CSidebarNav
-} from '@coreui/react';
+import { CLink, CSidebar, CSidebarBrand } from '@coreui/react';
 import { faGlobe } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
@@ -57,11 +52,11 @@ const TheSidebar = () => {
       onShowChange={(val: boolean) => dispatch(toggleSidebar(val))}
     >
       <CSidebarBrand className="header-container">ANFT D-APP</CSidebarBrand>
-      <CSidebarNav>
+      <ul className="c-sidebar-nav h-100 ps">
         <li className={`c-sidebar-nav-dropdown ${LANGUAGE ? 'c-show' : ''}`}>
           <CLink className="c-sidebar-nav-dropdown-toggle" onClick={setDDCurrying(Dropdown.LANGUAGE, !LANGUAGE)}>
             <FontAwesomeIcon icon={faGlobe} className="c-sidebar-nav-icon text-primary" />
-            {t("anftDapp.sidebarComponent.language.language")}
+            {t('anftDapp.sidebarComponent.language.language')}
           </CLink>
           <ul className="c-sidebar-nav-dropdown-items">
             <li className={`c-sidebar-nav-item `}>
@@ -69,7 +64,7 @@ const TheSidebar = () => {
                 className={`c-sidebar-nav-link ${i18n.language.includes(Language.vi) ? 'text-primary' : ''}`}
                 onClick={changeLanguageI18n(Language.vi)}
               >
-                {t("anftDapp.sidebarComponent.language.vietnamese")} &nbsp;
+                {t('anftDapp.sidebarComponent.language.vietnamese')} &nbsp;
                 <CIcon name="cif-vn" />
               </CLink>
             </li>
@@ -78,13 +73,13 @@ const TheSidebar = () => {
                 className={`c-sidebar-nav-link ${i18n.language.includes(Language.en) ? 'text-primary' : ''}`}
                 onClick={changeLanguageI18n(Language.en)}
               >
-                {t("anftDapp.sidebarComponent.language.english")} &nbsp;
+                {t('anftDapp.sidebarComponent.language.english')} &nbsp;
                 <CIcon name="cif-us" />
               </CLink>
             </li>
           </ul>
         </li>
-      </CSidebarNav>
+      </ul>
     </CSidebar>
   );
 };
