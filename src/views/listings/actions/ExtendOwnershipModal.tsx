@@ -94,12 +94,8 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
 
   const getStartDate = (): moment.Moment => {
     const currentDate = moment();
-    const currentOwnership = listing?.ownership
-      ? !ownershipExpired
-        ? moment.unix(listing.ownership.toNumber())
-        : moment()
-      : moment();
-    // ModalTypeToStartDateMapping
+    const currentOwnership =
+      listing?.ownership && !ownershipExpired ? moment.unix(listing.ownership.toNumber()) : moment();
     const modalTypeToStartDateMapping: TModelTypeMappingMoment = {
       [ModalType.OWNERSHIP_EXTENSION]: currentOwnership,
       [ModalType.OWNERSHIP_REGISTER]: currentDate,
