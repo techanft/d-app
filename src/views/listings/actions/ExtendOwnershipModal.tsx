@@ -22,12 +22,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
 import { LISTING_INSTANCE } from '../../../shared/blockchain-helpers';
 import {
-  convertBnToDecimal,
+  calculateDateDifference,
+  calculatePriceByDays,
+  checkDateRange,
   convertDecimalToBn,
   convertUnixToDate,
-  countDateDiffrence,
   formatBNToken,
   insertCommas,
+  returnMaxEndDate,
   unInsertCommas
 } from '../../../shared/casual-helpers';
 import { ToastError } from '../../../shared/components/Toast';
@@ -90,11 +92,12 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
   const getStartDate = (): moment.Moment => {
     const currentDate = moment();
     const currentOwnership = listing?.ownership ? moment.unix(listing.ownership.toNumber()) : moment();
-    const modelTypeMappingStartDate: TModelTypeMappingMoment = {
+    // ModalTypeToStartDateMapping
+    const modalTypeToStartDateMapping: TModelTypeMappingMoment = {
       [ModalType.OWNERSHIP_EXTENSION]: currentOwnership,
       [ModalType.OWNERSHIP_REGISTER]: currentDate,
     };
-    return modelTypeMappingStartDate[modelType];
+    return modalTypeToStartDateMapping[modelType];
   };
 
   const startDate = getStartDate();
@@ -104,57 +107,24 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
     tokenAmount: 0,
     startDate,
     endDate,
-    dateCount: countDateDiffrence(startDate.toISOString(), endDate.toISOString()),
+    dateCount: calculateDateDifference(startDate.toISOString(), endDate.toISOString()),
   };
 
-  const getExtenableDay = (): number => {
-    if (listing?.dailyPayment && tokenBalance) {
-      const extenableDay = listing.dailyPayment.gt(0) ? tokenBalance.div(listing.dailyPayment).toNumber() : 0;
-      return extenableDay;
-    } else {
-      return 0;
-    }
+  const getExtenableDayFromTokenBalance = (): number => {
+    if (!listing?.dailyPayment || !tokenBalance) return 0;
+    if (!listing.dailyPayment.gt(0)) return 0;
+    return tokenBalance.div(listing.dailyPayment).toNumber();
   };
+
 
   const validationSchema = Yup.object().shape({
     dateCount: Yup.number()
       .typeError('Incorrect input type!')
-      .min(1, 'Minimum ownership for the listing is 1.0 day')
-      .max(getExtenableDay(), 'Your balance does not enough')
+      .min(1, 'Gia hạn tối thiểu 1 ngày')
+      // Is not enough
+      .max(getExtenableDayFromTokenBalance(), 'Your balance is not enough')
       .required('This field is required'),
   });
-
-  const caculatePriceFromSecond = (dailyPayment: BigNumber, diffSecond: number) => {
-    const diffSecondBn = BigNumber.from(Math.round(diffSecond));
-    const additionalPrice = dailyPayment.mul(diffSecondBn).div(86400);
-    return additionalPrice;
-  };
-
-  const checkDateRange = (day: moment.Moment): boolean => {
-    const startDate = getStartDate().startOf('day');
-    const extenableDate = moment().add(getExtenableDay(), 'day').endOf('day');
-    // return true if date in range of startDate and extenableDate
-    if (day < startDate) return false;
-    return startDate <= day && day <= extenableDate;
-  };
-
-  const getSecondDifftoEndDate = (startDate: moment.Moment) => {
-    const startDateDay = moment(startDate).endOf('day').subtract(90, 'second');
-    const duration = moment.duration(startDateDay.diff(startDate));
-    return duration.asSeconds();
-  };
-
-  const calculateExtendPrice = (day: number, startDate: moment.Moment) => {
-    if (startDate && listing?.dailyPayment) {
-      const extendPrice = listing.dailyPayment.mul(day);
-      const secondDiff = getSecondDifftoEndDate(startDate);
-      const result =
-        secondDiff > 0 ? caculatePriceFromSecond(listing.dailyPayment, secondDiff).add(extendPrice) : extendPrice;
-      return convertBnToDecimal(result);
-    } else {
-      return '0';
-    }
-  };
 
   const handleRawFormValues = (input: IIntialValues): IProceedTxBody => {
     if (!listing?.address) {
@@ -168,7 +138,7 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
       throw Error('Error in generating contract instance');
     }
 
-    const extendPrice = convertDecimalToBn(calculateExtendPrice(input.dateCount, input.startDate));
+    const extendPrice = convertDecimalToBn(calculatePriceByDays(input.dateCount, input.startDate, listing));
 
     const output: IProceedTxBody = {
       listingId,
@@ -178,11 +148,6 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
     };
 
     return output;
-  };
-
-  const returnMaxEndDate = (days: number): number => {
-    if (days > getExtenableDay()) return getExtenableDay();
-    return days;
   };
 
   return (
@@ -256,13 +221,19 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                             setFieldValue('endDate', endDate.endOf('day'));
                             const startDatetoISOString = startDate.toISOString();
                             const endDatetoISOString = endDate.toISOString();
-                            const dateCount = countDateDiffrence(startDatetoISOString, endDatetoISOString);
+                            const dateCount = calculateDateDifference(startDatetoISOString, endDatetoISOString);
                             setFieldValue('dateCount', dateCount);
                           }
                         }}
                         focusedInput={focusedInput}
                         onFocusChange={setFocusedInput as any}
-                        isOutsideRange={(day) => !checkDateRange(day)}
+                        isOutsideRange={(day) => {
+                          const startDateObj = moment(startDate).startOf('day');
+                          const endDateObj = moment(startDate)
+                            .add(getExtenableDayFromTokenBalance(), 'day')
+                            .endOf('day');
+                          return !checkDateRange(day, startDateObj, endDateObj);
+                        }}
                         initialVisibleMonth={() => moment(startDate).add(0, 'month')}
                         numberOfMonths={1}
                         orientation={'horizontal'}
@@ -279,7 +250,10 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                           const extendDay = Number(unInsertCommas(e.target.value));
                           try {
                             BigNumber.from(extendDay);
-                            const extendDate = moment(startDate).add(returnMaxEndDate(extendDay), 'day');
+                            const extendDate = moment(startDate).add(
+                              returnMaxEndDate(extendDay, getExtenableDayFromTokenBalance()),
+                              'day'
+                            );
                             setFieldValue('dateCount', extendDay);
                             setFieldValue('endDate', extendDate);
                           } catch (err) {
@@ -293,8 +267,12 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                         onBlur={handleBlur}
                         className="btn-radius-50 InputMaxWidth"
                       />
-                      <CInvalidFeedback className={!!errors.dateCount && touched.dateCount ? 'd-block' : 'd-none'}>
-                        {errors.dateCount}
+                      <CInvalidFeedback
+                        className={
+                          values.dateCount === 0 && errors.dateCount && touched.dateCount ? 'd-block' : 'd-none'
+                        }
+                      >
+                        {errors.dateCount || 'Gia hạn tối thiểu 1 ngày'}
                       </CInvalidFeedback>
                     </CCol>
                   </CFormGroup>
@@ -305,7 +283,7 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                     <CCol xs={6}>
                       <p className="text-primary text-right">
                         {values.dateCount > 0 && values.startDate
-                          ? insertCommas(calculateExtendPrice(values.dateCount, values.startDate))
+                          ? insertCommas(calculatePriceByDays(values.dateCount, values.startDate, listing))
                           : '0'}{' '}
                         ANFT
                       </p>

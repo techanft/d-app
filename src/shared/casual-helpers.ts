@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
 import { BigNumber, ethers } from 'ethers';
+import moment from 'moment';
 import { APP_DATE_FORMAT, TOKEN_SYMBOL } from '../config/constants';
 import { IAsset } from './models/assets.model';
 import { baseOptions } from './models/options.model';
@@ -109,11 +110,45 @@ export const returnOptionNameById = (optionId: number): string => {
   }
 };
 
-export const countDateDiffrence = (dueDate?: string, toDate?: string): number => {
-  if (!dueDate || !toDate) return 0;
-  const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
-  const dueDateObj = new Date(dueDate);
-  const toDateObj = new Date(toDate);
-  const diffDays = Math.floor(Math.abs((Number(dueDateObj) - Number(toDateObj)) / oneDay));
+export const calculateDateDifference = (fromDate: string, toDate: string): number => {
+  if (!fromDate || !toDate) return 0;
+  const fromDateObj = moment(fromDate);
+  const toDateObj = moment(toDate);
+  const diffDays = Math.floor(moment.duration(toDateObj.diff(fromDateObj)).asDays());
   return diffDays;
+};
+
+export const calculateSpendingFromSecond = (dailyPayment: BigNumber, diffSecond: number) => {
+  const diffSecondBn = BigNumber.from(Math.round(diffSecond));
+  const spending = dailyPayment.mul(diffSecondBn).div(86400);
+  return spending;
+};
+
+export const getSecondDifftoEndDate = (startDate: moment.Moment) => {
+  const endOfStartDate = moment(startDate).endOf('day');
+  const endOfStartDateMinus90Second = endOfStartDate.subtract(90, 'second');
+  const duration = moment.duration(endOfStartDateMinus90Second.diff(startDate)); // Why use diff() here but not in countDateDiffrence
+  return duration.asSeconds();
+};
+
+export const returnMaxEndDate = (days: number, maxDays: number): number => {
+  if (days > maxDays) return maxDays;
+  return days;
+};
+
+export const calculatePriceByDays = (days: number, startDate: moment.Moment, listing: IAsset | undefined) => {
+  if (!startDate || !listing?.dailyPayment) return '0';
+  const spending = listing.dailyPayment.mul(days);
+  const differenceInSeconds = getSecondDifftoEndDate(startDate);
+  const result =
+    differenceInSeconds > 0
+      ? calculateSpendingFromSecond(listing.dailyPayment, differenceInSeconds).add(spending)
+      : spending;
+  return convertBnToDecimal(result);
+};
+
+export const checkDateRange = (day: moment.Moment, startDate: moment.Moment, endDate: moment.Moment): boolean => {
+  // return true if date in range of startDate and endDate
+  if (day < startDate) return false;
+  return startDate <= day && day <= endDate;
 };

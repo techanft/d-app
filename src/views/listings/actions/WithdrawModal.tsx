@@ -13,7 +13,6 @@ import {
   CModalTitle,
   CRow
 } from '@coreui/react';
-import { BigNumber } from 'ethers';
 import { Formik, FormikProps } from 'formik';
 import moment from 'moment';
 import React, { useEffect, useRef, useState } from 'react';
@@ -22,10 +21,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
 import { LISTING_INSTANCE } from '../../../shared/blockchain-helpers';
 import {
+  calculateDateDifference,
+  calculatePriceByDays,
+  checkDateRange,
   convertBnToDecimal,
   convertDecimalToBn,
-  countDateDiffrence,
   insertCommas,
+  returnMaxEndDate,
   unInsertCommas
 } from '../../../shared/casual-helpers';
 import { ToastError } from '../../../shared/components/Toast';
@@ -74,7 +76,7 @@ const WithdrawModal = (props: IWithdrawModal) => {
 
   const startDate = moment();
   const endDate = getEndDate();
-  const totalDays = countDateDiffrence(startDate.toISOString(), endDate.toISOString());
+  const totalDays = calculateDateDifference(startDate.toISOString(), endDate.toISOString());
 
   const initialValues: IIntialValues = {
     tokenAmount: 0,
@@ -82,43 +84,6 @@ const WithdrawModal = (props: IWithdrawModal) => {
     endDate,
     remainingDays: totalDays,
     withdraw: 0,
-  };
-
-  const caculatePriceFromSecond = (dailyPayment: BigNumber, diffSecond: number) => {
-    const diffSecondBn = BigNumber.from(Math.round(diffSecond));
-    const additionalPrice = dailyPayment.mul(diffSecondBn).div(86400);
-    return additionalPrice;
-  };
-
-  const checkDateRange = (day: moment.Moment): boolean => {
-    const startDate = moment().startOf('day');
-    const endDate = getEndDate().endOf('day');
-    // return true if date in range of startDate and endDate
-    if (day < startDate) return false;
-    return startDate <= day && day <= endDate;
-  };
-
-  const returnMaxEndDate = (days: number): number => {
-    if (days > totalDays) return totalDays;
-    return days;
-  };
-
-  const getSecondDifftoEndDate = (endDate: moment.Moment) => {
-    const endDateDay = moment(endDate).endOf('day').subtract(90, 'second');
-    const duration = moment.duration(endDateDay.diff(endDate));
-    return duration.asSeconds();
-  };
-
-  const calculateWithdrawPrice = (day: number) => {
-    if (listing?.dailyPayment) {
-      const withdrawPrice = listing.dailyPayment.mul(day);
-      const secondDiff = getSecondDifftoEndDate(startDate);
-      const result =
-        secondDiff > 0 ? caculatePriceFromSecond(listing.dailyPayment, secondDiff).add(withdrawPrice) : withdrawPrice;
-      return convertBnToDecimal(result);
-    } else {
-      return '0';
-    }
   };
 
   const validationSchema = Yup.object().shape({
@@ -141,7 +106,7 @@ const WithdrawModal = (props: IWithdrawModal) => {
       throw Error('Error in generating contract instace');
     }
 
-    const withdrawPrice = convertDecimalToBn(calculateWithdrawPrice(input.withdraw));
+    const withdrawPrice = convertDecimalToBn(calculatePriceByDays(input.withdraw, input.startDate, listing));
 
     const output: IProceedTxBody = {
       listingId,
@@ -230,6 +195,7 @@ const WithdrawModal = (props: IWithdrawModal) => {
                       <CLabel className="recharge-token-title">Ownership</CLabel>
                     </CCol>
                     <CCol xs={12}>
+                      {/* Check screen width here */}
                       <DateRangePicker
                         startDate={values.startDate}
                         startDateId="startDate"
@@ -242,7 +208,7 @@ const WithdrawModal = (props: IWithdrawModal) => {
                             setFieldValue('endDate', endDate.endOf('day'));
                             const startDatetoISOString = startDate.toISOString();
                             const endDatetoISOString = endDate.toISOString();
-                            const remainingDays = countDateDiffrence(startDatetoISOString, endDatetoISOString);
+                            const remainingDays = calculateDateDifference(startDatetoISOString, endDatetoISOString);
                             const withDraw = totalDays - remainingDays;
                             setFieldValue('remainingDays', remainingDays);
                             setFieldValue('withdraw', withDraw);
@@ -250,7 +216,11 @@ const WithdrawModal = (props: IWithdrawModal) => {
                         }}
                         focusedInput={focusedInput}
                         onFocusChange={setFocusedInput as any}
-                        isOutsideRange={(day) => !checkDateRange(day)}
+                        isOutsideRange={(day) => {
+                          const startDateObj = moment(startDate).startOf('day');
+                          const endDateObj = moment(endDate).endOf('day');
+                          return !checkDateRange(day, startDateObj, endDateObj);
+                        }}
                         initialVisibleMonth={() => moment(startDate).add(0, 'month')}
                         numberOfMonths={1}
                         orientation={'horizontal'}
@@ -269,7 +239,10 @@ const WithdrawModal = (props: IWithdrawModal) => {
                           setFieldValue('withdraw', withdrawDay);
                           const remainingDays = totalDays - withdrawDay;
                           if (remainingDays > 0) {
-                            const extendValue = moment(startDate).add(returnMaxEndDate(remainingDays), 'day');
+                            const extendValue = moment(startDate).add(
+                              returnMaxEndDate(remainingDays, totalDays),
+                              'day'
+                            );
                             setFieldValue('remainingDays', remainingDays);
                             setFieldValue('endDate', extendValue);
                           }
@@ -303,7 +276,7 @@ const WithdrawModal = (props: IWithdrawModal) => {
                         <CCol xs={6}>
                           <p className="text-primary text-right">
                             {values.withdraw > 0 && values.startDate
-                              ? insertCommas(calculateWithdrawPrice(values.withdraw))
+                              ? insertCommas(calculatePriceByDays(values.withdraw, values.startDate, listing))
                               : '0'}{' '}
                             ANFT
                           </p>
