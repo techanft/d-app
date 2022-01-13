@@ -107,7 +107,7 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
     tokenAmount: 0,
     startDate,
     endDate,
-    dateCount: calculateDateDifference(startDate.toISOString(), endDate.toISOString()),
+    dateCount: calculateDateDifference(startDate, endDate),
   };
 
   const getExtenableDayFromTokenBalance = (): number => {
@@ -115,7 +115,6 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
     if (!listing.dailyPayment.gt(0)) return 0;
     return tokenBalance.div(listing.dailyPayment).toNumber();
   };
-
 
   const validationSchema = Yup.object().shape({
     dateCount: Yup.number()
@@ -171,8 +170,8 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
       >
         {({ values, errors, touched, setFieldValue, handleSubmit, handleBlur }) => (
           <CForm onSubmit={handleSubmit}>
-            <CModalBody>
-              <CRow>
+            <CModalBody className={'d-flex justify-content-center'}>
+              <CRow className={'ContainerMaxWidth'}>
                 <CCol xs={12}>
                   <CFormGroup row>
                     <CCol xs={6}>
@@ -188,10 +187,10 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                   </CFormGroup>
 
                   <CFormGroup row>
-                    <CCol xs={8}>
+                    <CCol xs={6}>
                       <CLabel className="recharge-token-title">Daily Payment</CLabel>
                     </CCol>
-                    <CCol xs={4}>
+                    <CCol xs={6}>
                       <p className="text-primary text-right">{formatBNToken(listing?.dailyPayment, true)}</p>
                     </CCol>
                   </CFormGroup>
@@ -218,9 +217,7 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                         onDatesChange={({ startDate, endDate }) => {
                           if (focusedInput === 'endDate' && endDate && startDate) {
                             setFieldValue('endDate', endDate.endOf('day'));
-                            const startDatetoISOString = startDate.toISOString();
-                            const endDatetoISOString = endDate.toISOString();
-                            const dateCount = calculateDateDifference(startDatetoISOString, endDatetoISOString);
+                            const dateCount = calculateDateDifference(startDate, endDate);
                             setFieldValue('dateCount', dateCount);
                           }
                         }}
