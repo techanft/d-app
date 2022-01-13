@@ -110,6 +110,10 @@ export const returnOptionNameById = (optionId: number): string => {
   }
 };
 
+// Duplicative logic:
+// startDate/toDate originally are momment.Momment
+// They're converted to ISOString as params to put in this function
+// Then in this function they're converted to momment.Momment
 export const calculateDateDifference = (fromDate: string, toDate: string): number => {
   if (!fromDate || !toDate) return 0;
   const fromDateObj = moment(fromDate);
@@ -127,7 +131,7 @@ export const calculateSpendingFromSecond = (dailyPayment: BigNumber, diffSecond:
 export const getSecondDifftoEndDate = (startDate: moment.Moment) => {
   const endOfStartDate = moment(startDate).endOf('day');
   const endOfStartDateMinus90Second = endOfStartDate.subtract(90, 'second');
-  const duration = moment.duration(endOfStartDateMinus90Second.diff(startDate)); // Why use diff() here but not in countDateDiffrence
+  const duration = moment.duration(endOfStartDateMinus90Second.diff(startDate)); 
   return duration.asSeconds();
 };
 

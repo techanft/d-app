@@ -121,7 +121,6 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
     dateCount: Yup.number()
       .typeError('Incorrect input type!')
       .min(1, 'Gia hạn tối thiểu 1 ngày')
-      // Is not enough
       .max(getExtenableDayFromTokenBalance(), 'Your balance is not enough')
       .required('This field is required'),
   });
