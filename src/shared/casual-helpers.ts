@@ -109,6 +109,11 @@ export const returnOptionNameById = (optionId: number): string => {
   }
 };
 
+// 2 Inputs here is always defined, no need for ? checking
+// Use moment.Momment.diff to calculate the difference instead of manual math
+// https://stackoverflow.com/questions/25150570/get-hours-difference-between-two-dates-in-moment-js
+// countDateDiffrence => Grammar. change to calculateDateDifference since you've always used "caculate" instead of "count"
+// dueDate / toDate has the same meaning, change to fromDate/toDate for startDate/endDate
 export const countDateDiffrence = (dueDate?: string, toDate?: string): number => {
   if (!dueDate || !toDate) return 0;
   const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds

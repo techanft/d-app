@@ -90,6 +90,7 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
   const getStartDate = (): moment.Moment => {
     const currentDate = moment();
     const currentOwnership = listing?.ownership ? moment.unix(listing.ownership.toNumber()) : moment();
+    // ModalTypeToStartDateMapping
     const modelTypeMappingStartDate: TModelTypeMappingMoment = {
       [ModalType.OWNERSHIP_EXTENSION]: currentOwnership,
       [ModalType.OWNERSHIP_REGISTER]: currentDate,
@@ -107,7 +108,14 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
     dateCount: countDateDiffrence(startDate.toISOString(), endDate.toISOString()),
   };
 
+  // getExtenableDayFromTokenBalance
   const getExtenableDay = (): number => {
+    /**
+    if (!listing?.dailyPayment || !tokenBalance) return 0;
+    if (!listing.dailyPayment.gt(0)) return 0;
+    return tokenBalance.div(listing.dailyPayment).toNumber();
+     */
+    
     if (listing?.dailyPayment && tokenBalance) {
       const extenableDay = listing.dailyPayment.gt(0) ? tokenBalance.div(listing.dailyPayment).toNumber() : 0;
       return extenableDay;
@@ -120,12 +128,18 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
     dateCount: Yup.number()
       .typeError('Incorrect input type!')
       .min(1, "Gia hạn tối thiểu 1 ngày")
+      // Is not enough
       .max(getExtenableDay(), 'Your balance does not enough')
       ,
   });
 
+  // Move these functions outside of the component (or better yet, inside a helper) 
+  // since they do not depend on the component state: caculatePriceFromSecond, getSecondDifftoEndDate
+
+  // calculateSpendingFromSecond
   const caculatePriceFromSecond = (dailyPayment: BigNumber, diffSecond: number) => {
     const diffSecondBn = BigNumber.from(Math.round(diffSecond));
+    // const spending = 
     const additionalPrice = dailyPayment.mul(diffSecondBn).div(86400);
     return additionalPrice;
   };
@@ -139,14 +153,26 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
   };
 
   const getSecondDifftoEndDate = (startDate: moment.Moment) => {
+    // const endOfStartDate = moment(startDate).endOf('day');
+    // const endOfStartDateMinus90Second = endOfStartDate.subtract(90, 'second');
     const startDateDay = moment(startDate).endOf('day').subtract(90, 'second');
-    const duration = moment.duration(startDateDay.diff(startDate));
-    return duration.asSeconds();
+    const duration = moment.duration(startDateDay.diff(startDate)); // Why use diff() here but not in countDateDiffrence
+    return duration.asSeconds(); 
   };
 
+  // calculate
+  // day => days
   const calculateExtendPrice = (day: number, startDate: moment.Moment) => {
+    /**
+     * Control flow (if-else arrangement) should be written like this for short & concise code
+     * if (!startDate || !listing?.dailyPayment) return '0';
+     * ...rest of the logic with a return statement
+     */
+
     if (startDate && listing?.dailyPayment) {
+      // const spending = 
       const extendPrice = listing.dailyPayment.mul(day);
+      // const differenceInSeconds = 
       const secondDiff = getSecondDifftoEndDate(startDate);
       const result =
         secondDiff > 0 ? caculatePriceFromSecond(listing.dailyPayment, secondDiff).add(extendPrice) : extendPrice;
@@ -263,6 +289,7 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                         focusedInput={focusedInput}
                         onFocusChange={setFocusedInput as any}
                         isOutsideRange={(day) => !checkDateRange(day)}
+                        // Focus on end date
                         initialVisibleMonth={() => moment().add(0, 'month')}
                         numberOfMonths={1}
                         orientation={'horizontal'}
@@ -288,7 +315,7 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                         onBlur={handleBlur}
                         className="btn-radius-50 InputMaxWidth"
                       />
-                      <CInvalidFeedback className={values.dateCount == 0 && errors.dateCount && touched.dateCount ? 'd-block' : 'd-none'}>
+                      <CInvalidFeedback className={values.dateCount === 0 && errors.dateCount && touched.dateCount ? 'd-block' : 'd-none'}>
                         {errors.dateCount || "Gia hạn tối thiểu 1 ngày"}
                       </CInvalidFeedback>
                     </CCol>

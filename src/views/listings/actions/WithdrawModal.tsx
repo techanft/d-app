@@ -82,12 +82,14 @@ const WithdrawModal = (props: IWithdrawModal) => {
     withdraw: 0,
   };
 
+    // This function is duplicated
   const caculatePriceFromSecond = (dailyPayment: BigNumber, diffSecond: number) => {
     const diffSecondBn = BigNumber.from(Math.round(diffSecond));
     const additionalPrice = dailyPayment.mul(diffSecondBn).div(86400);
     return additionalPrice;
   };
 
+  // This function is duplicated
   const checkDateRange = (day: moment.Moment): boolean => {
     const startDate = moment().startOf('day');
     const endDate = getEndDate().endOf('day');
@@ -96,17 +98,22 @@ const WithdrawModal = (props: IWithdrawModal) => {
     return startDate <= day && day <= endDate;
   };
 
+  // This function is duplicated
   const returnMaxEndDate = (days: number): number => {
     if (days > totalDays) return totalDays;
     return days;
   };
 
+  // This function is duplicated
   const getSecondDifftoEndDate = (endDate: moment.Moment) => {
     const endDateDay = moment(endDate).endOf('day').subtract(90, 'second');
     const duration = moment.duration(endDateDay.diff(endDate));
     return duration.asSeconds();
   };
 
+  // calculateWithdrawAmountFromDays
+  // day => days
+  // rework on the control flow here
   const calculateWithdrawPrice = (day: number) => {
     if (listing?.dailyPayment) {
       const withdrawPrice = listing.dailyPayment.mul(day);
@@ -228,6 +235,7 @@ const WithdrawModal = (props: IWithdrawModal) => {
                       <CLabel className="recharge-token-title">Ownership</CLabel>
                     </CCol>
                     <CCol xs={12}>
+                      {/* Check screen width here */}
                       <DateRangePicker
                         startDate={values.startDate}
                         startDateId="startDate"
@@ -249,6 +257,7 @@ const WithdrawModal = (props: IWithdrawModal) => {
                         focusedInput={focusedInput}
                         onFocusChange={setFocusedInput as any}
                         isOutsideRange={(day) => !checkDateRange(day)}
+                        // Should focus on the endDate
                         initialVisibleMonth={() => moment().add(0, 'month')}
                         numberOfMonths={1}
                         orientation={'horizontal'}
@@ -284,7 +293,7 @@ const WithdrawModal = (props: IWithdrawModal) => {
                       </CInvalidFeedback>
                     </CCol>
                   </CFormGroup>
-                  {!errors.withdraw && listing?.dailyPayment && listing?.ownership && values.withdraw && (
+                  {!errors.withdraw && listing?.dailyPayment && listing?.ownership && values.withdraw ? (
                     <>
                       <CFormGroup row className={`mt-4`}>
                         <CCol xs={8}>
@@ -308,7 +317,7 @@ const WithdrawModal = (props: IWithdrawModal) => {
                         </CCol>
                       </CFormGroup>
                     </>
-                  )}
+                  ): ""}
                 </CCol>
               </CRow>
             </CModalBody>
