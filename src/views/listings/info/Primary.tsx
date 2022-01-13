@@ -20,6 +20,8 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
+import 'react-dates/initialize';
+import 'react-dates/lib/css/_datepicker.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { TOKEN_SYMBOL } from '../../../config/constants';
 import {
@@ -186,14 +188,14 @@ const ListingInfo = (props: IListingInfoProps) => {
 
   const onRegisteringOwnership = () => {
     if (viewerIsOwner) return;
-    if (!ownershipExpired) return ToastError("This listing is being owned by another address!")
-    handleModalVisibility(ModalType.OWNERSHIP_REGISTER, true)
-  }
+    if (!ownershipExpired) return ToastError('This listing is being owned by another address!');
+    handleModalVisibility(ModalType.OWNERSHIP_REGISTER, true);
+  };
 
   const onWithdrawToken = () => {
-    if (ownershipExpired) return ToastError("No more token to withdraw!")
-    handleModalVisibility(ModalType.OWNERSHIP_WITHDRAW, true)
-  }
+    if (ownershipExpired) return ToastError('No more token to withdraw!');
+    handleModalVisibility(ModalType.OWNERSHIP_WITHDRAW, true);
+  };
 
   return (
     <CContainer fluid className="px-0">
@@ -242,7 +244,7 @@ const ListingInfo = (props: IListingInfoProps) => {
             <p className="detail-title-font my-2">Blockchain address</p>
 
             {!entityLoading && listing?.address ? (
-              <CopyTextToClipBoard text={listing.address} inputClassName='my-2 value-text copy-address'/>
+              <CopyTextToClipBoard text={listing.address} inputClassName="my-2 value-text copy-address" />
             ) : (
               <InfoLoader width={155} height={27} />
             )}
@@ -252,7 +254,7 @@ const ListingInfo = (props: IListingInfoProps) => {
             <p className="detail-title-font my-2">The current owner</p>
 
             {!entityLoading && listing?.owner ? (
-              <CopyTextToClipBoard text={listing.owner} inputClassName='my-2 value-text copy-address'/>
+              <CopyTextToClipBoard text={listing.owner} inputClassName="my-2 value-text copy-address" />
             ) : (
               <InfoLoader width={155} height={27} />
             )}
@@ -295,9 +297,7 @@ const ListingInfo = (props: IListingInfoProps) => {
           <CCol xs={6}>
             <p className="detail-title-font my-2">Workers count</p>
             {!loadingWorkers && workers ? (
-              <p className="my-2 value-text">
-                {workers.count}
-              </p>
+              <p className="my-2 value-text">{workers.count}</p>
             ) : (
               <InfoLoader width={155} height={27} />
             )}
@@ -415,16 +415,17 @@ const ListingInfo = (props: IListingInfoProps) => {
               </CCard>
             </CCollapse>
           </CCol>
-
           <ExtendOwnershipModal
             listingId={listingId}
             isVisible={modalsVisibility[ModalType.OWNERSHIP_REGISTER]}
+            modelType={ModalType.OWNERSHIP_REGISTER}
             setVisibility={(key: boolean) => handleModalVisibility(ModalType.OWNERSHIP_REGISTER, key)}
             title="Đăng ký sở hữu"
           />
           <ExtendOwnershipModal
             listingId={listingId}
             isVisible={modalsVisibility[ModalType.OWNERSHIP_EXTENSION]}
+            modelType={ModalType.OWNERSHIP_EXTENSION}
             setVisibility={(key: boolean) => handleModalVisibility(ModalType.OWNERSHIP_EXTENSION, key)}
             title="Nạp ANFT"
           />
