@@ -1,15 +1,11 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { ethers, providers } from 'ethers';
-import { _window } from '../../config/constants';
-import { TOKEN_INSTANCE } from '../../shared/blockchain-helpers';
+import { ethers } from 'ethers';
+import { BLOCKCHAIN_NETWORK, _window } from '../../config/constants';
+import { promptUserToSwitchChain, TOKEN_INSTANCE } from '../../shared/blockchain-helpers';
 
 interface IContractSigner {
   contract: ethers.Contract;
   signer: ethers.providers.JsonRpcSigner;
-}
-interface ITransactionReceipt {
-  provider: ethers.providers.Web3Provider;
-  transactionHash: string;
 }
  
 export const getProviderLogin = createAsyncThunk(
@@ -68,12 +64,19 @@ export const getTokenBalance = createAsyncThunk('getTokenBalance', async ({addre
   }
 });
 
+const INVALID_NETWORK_ERR = 'Invalid network detected. Please go to Metamask and switch to BSC network to use the application';
+
 export const getProvider = createAsyncThunk('getProvider', async (_, thunkAPI) => {
   try {
     if (!_window.ethereum) throw Error("Ethereum is not initialized. Please install an Ethereum wallet in your browser.");
     const provider = new ethers.providers.Web3Provider(_window.ethereum);
-    // For some reasons {provider._network} is undefined here (but avaiable in UI/tsx files)
-    // So we have to perform network checking/switching in UI.
+    const {chainId} = await provider.getNetwork();
+    
+    if (ethers.utils.hexlify(chainId) !== BLOCKCHAIN_NETWORK.chainId) {
+      promptUserToSwitchChain();
+      throw Error(INVALID_NETWORK_ERR)
+    }
+
     return provider
   } catch (error) {
     return thunkAPI.rejectWithValue(error);
