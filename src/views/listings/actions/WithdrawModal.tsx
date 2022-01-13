@@ -90,12 +90,13 @@ const WithdrawModal = (props: IWithdrawModal) => {
     withdraw: 0,
   };
 
+  const exceedingWithdrawErr = `Số ngày rút ra không vượt quá ${totalDays - 1} ngày`;
   const validationSchema = Yup.object().shape({
     withdraw: Yup.number()
-      .typeError(t('anftDapp.listingComponent.withdrawToken.incorrectInputType'))
-      .min(1, t('anftDapp.listingComponent.withdrawToken.minimumWithdraw'))
-      .max(totalDays - 1, `Số ngày rút ra không vượt quá ${totalDays - 1} ngày`)
-      .required(t('anftDapp.listingComponent.withdrawToken.inputIsRequired')),
+      .typeError('Incorrect input type!')
+      .min(1, 'Withdraw at least 1 day!')
+      .max(totalDays - 1, exceedingWithdrawErr)
+      .required('This field is required'),
   });
 
   const calculateWithdrawPriceByDays = (days: number) => {
@@ -272,8 +273,10 @@ const WithdrawModal = (props: IWithdrawModal) => {
                         onBlur={handleBlur}
                         className="btn-radius-50 InputMaxWidth"
                       />
-                      <CInvalidFeedback className={!!errors.withdraw && touched.withdraw ? 'd-block' : 'd-none'}>
-                        {errors.withdraw}
+                      <CInvalidFeedback className={
+                        values.withdraw === 0 &&
+                        errors.withdraw && touched.withdraw ? 'd-block' : 'd-none'}>
+                        {errors.withdraw || exceedingWithdrawErr}
                       </CInvalidFeedback>
                     </CCol>
                   </CFormGroup>
