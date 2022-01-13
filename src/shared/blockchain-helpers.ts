@@ -39,20 +39,7 @@ export const LISTING_INSTANCE = ({ address, signer, provider }: IListingInstance
   }
 };
 
-// Logic for checking provider network should be performed here
-// Return an error to save as {providerErrorMessage} inside the store
-export const INVALID_NETWORK_ERR = 'Invalid network detected. Please switch to BSC network to use the application';
-export const providerNetworkChecking = (provider: ethers.providers.Web3Provider): string | null => {
-  const { _network } = provider;
-  if (!_network) return String('Wallet integration error, please wait for 5 seconds then reload the application');
-  if (ethers.utils.hexlify(_network.chainId) !== BLOCKCHAIN_NETWORK.chainId) {
-    promptUserToSwitchChain();
-    return INVALID_NETWORK_ERR;
-  }
-  return null;
-};
-
-const promptUserToSwitchChain = () => {
+export const promptUserToSwitchChain = () => {
   _window.ethereum.request({
     method: 'wallet_addEthereumChain',
     params: [BLOCKCHAIN_NETWORK],

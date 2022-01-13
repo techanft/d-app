@@ -5,7 +5,7 @@ import axios from '../../config/axios-interceptor';
 import { LISTING_INSTANCE } from '../../shared/blockchain-helpers';
 import { ToastInfo } from '../../shared/components/Toast';
 import { IAsset } from '../../shared/models/assets.model';
-import { IGetAllResp, IParams } from '../../shared/models/base.model';
+import { IGetAllResp } from '../../shared/models/base.model';
 import { baseOptions, IOption, IStake } from '../../shared/models/options.model';
 import { Listing } from '../../typechain';
 import { IAssetFilter } from '../listings/Listings';
