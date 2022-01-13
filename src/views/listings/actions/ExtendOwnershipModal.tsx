@@ -25,6 +25,7 @@ import {
   calculateDateDifference,
   calculatePriceByDays,
   checkDateRange,
+  checkOwnershipExpired,
   convertDecimalToBn,
   convertUnixToDate,
   formatBNToken,
@@ -89,9 +90,15 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [submitted]);
 
+  const ownershipExpired = listing?.ownership ? checkOwnershipExpired(listing.ownership.toNumber()) : false;
+
   const getStartDate = (): moment.Moment => {
     const currentDate = moment();
-    const currentOwnership = listing?.ownership ? moment.unix(listing.ownership.toNumber()) : moment();
+    const currentOwnership = listing?.ownership
+      ? !ownershipExpired
+        ? moment.unix(listing.ownership.toNumber())
+        : moment()
+      : moment();
     // ModalTypeToStartDateMapping
     const modalTypeToStartDateMapping: TModelTypeMappingMoment = {
       [ModalType.OWNERSHIP_EXTENSION]: currentOwnership,
