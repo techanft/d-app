@@ -11,7 +11,7 @@ import {
   CModalFooter,
   CModalHeader,
   CModalTitle,
-  CRow
+  CRow,
 } from '@coreui/react';
 import { Formik, FormikProps } from 'formik';
 import moment from 'moment';
@@ -28,7 +28,7 @@ import {
   convertDecimalToBn,
   insertCommas,
   returnMaxEndDate,
-  unInsertCommas
+  unInsertCommas,
 } from '../../../shared/casual-helpers';
 import { ToastError } from '../../../shared/components/Toast';
 import { EventType } from '../../../shared/enumeration/eventType';
@@ -86,11 +86,12 @@ const WithdrawModal = (props: IWithdrawModal) => {
     withdraw: 0,
   };
 
+  const exceedingWithdrawErr = `Số ngày rút ra không vượt quá ${totalDays - 1} ngày`;
   const validationSchema = Yup.object().shape({
     withdraw: Yup.number()
       .typeError('Incorrect input type!')
-      .min(1, 'Minimum ownership for the listing is 1.0 day')
-      .max(totalDays - 1, `Số ngày rút ra không vượt quá ${totalDays - 1} ngày`)
+      .min(1, 'Withdraw at least 1 day!')
+      .max(totalDays - 1, exceedingWithdrawErr)
       .required('This field is required'),
   });
 
@@ -252,8 +253,10 @@ const WithdrawModal = (props: IWithdrawModal) => {
                         onBlur={handleBlur}
                         className="btn-radius-50 InputMaxWidth"
                       />
-                      <CInvalidFeedback className={!!errors.withdraw && touched.withdraw ? 'd-block' : 'd-none'}>
-                        {errors.withdraw}
+                      <CInvalidFeedback className={
+                        values.withdraw === 0 &&
+                        errors.withdraw && touched.withdraw ? 'd-block' : 'd-none'}>
+                        {errors.withdraw || exceedingWithdrawErr}
                       </CInvalidFeedback>
                     </CCol>
                   </CFormGroup>
