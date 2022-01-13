@@ -5,6 +5,7 @@ import { Redirect, Route, Switch } from 'react-router-dom';
 import { _window } from '../config/constants';
 // routes config
 import routes from '../routes';
+import Loading from '../shared/components/Loading';
 import { RootState } from '../shared/reducers';
 import { getSigner } from '../views/wallet/wallet.api';
 
@@ -27,6 +28,7 @@ const TheContent = () => {
     window.location.reload();
   });
   
+  if (!provider) return <Loading/>
 
   return (
     <main className="c-main py-0">
