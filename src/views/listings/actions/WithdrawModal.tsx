@@ -76,7 +76,7 @@ const WithdrawModal = (props: IWithdrawModal) => {
 
   const startDate = moment();
   const endDate = getEndDate();
-  const totalDays = calculateDateDifference(startDate.toISOString(), endDate.toISOString());
+  const totalDays = calculateDateDifference(startDate, endDate);
 
   const initialValues: IIntialValues = {
     tokenAmount: 0,
@@ -179,14 +179,14 @@ const WithdrawModal = (props: IWithdrawModal) => {
       >
         {({ values, errors, touched, handleSubmit, handleBlur, setFieldValue, submitForm }) => (
           <CForm onSubmit={handleSubmit}>
-            <CModalBody>
-              <CRow>
+            <CModalBody className={"d-flex justify-content-center"}>
+              <CRow className={"ContainerMaxWidth"}>
                 <CCol xs={12}>
                   <CFormGroup row>
-                    <CCol xs={8}>
+                    <CCol xs={6}>
                       <CLabel className="withdraw-token-title">Maximum Withdrawable</CLabel>
                     </CCol>
-                    <CCol xs={4}>
+                    <CCol xs={6}>
                       <p className="text-primary text-right">{insertCommas(maximumWithdrawable)} ANFT</p>
                     </CCol>
                   </CFormGroup>
@@ -206,9 +206,7 @@ const WithdrawModal = (props: IWithdrawModal) => {
                         onDatesChange={({ startDate, endDate }) => {
                           if (focusedInput === 'endDate' && endDate && startDate) {
                             setFieldValue('endDate', endDate.endOf('day'));
-                            const startDatetoISOString = startDate.toISOString();
-                            const endDatetoISOString = endDate.toISOString();
-                            const remainingDays = calculateDateDifference(startDatetoISOString, endDatetoISOString);
+                            const remainingDays = calculateDateDifference(startDate, endDate);
                             const withDraw = totalDays - remainingDays;
                             setFieldValue('remainingDays', remainingDays);
                             setFieldValue('withdraw', withDraw);
@@ -262,10 +260,10 @@ const WithdrawModal = (props: IWithdrawModal) => {
                   {!errors.withdraw && listing?.dailyPayment && listing?.ownership && values.withdraw ? (
                     <>
                       <CFormGroup row className={`mt-4`}>
-                        <CCol xs={8}>
+                        <CCol xs={6}>
                           <CLabel className="withdraw-token-title">Remaining Days</CLabel>
                         </CCol>
-                        <CCol xs={4}>
+                        <CCol xs={6}>
                           <p className="text-primary text-right">{values.remainingDays} Days</p>
                         </CCol>
                       </CFormGroup>

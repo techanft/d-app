@@ -114,7 +114,7 @@ export const returnOptionNameById = (optionId: number): string => {
 // startDate/toDate originally are momment.Momment
 // They're converted to ISOString as params to put in this function
 // Then in this function they're converted to momment.Momment
-export const calculateDateDifference = (fromDate: string, toDate: string): number => {
+export const calculateDateDifference = (fromDate: moment.Moment, toDate: moment.Moment): number => {
   if (!fromDate || !toDate) return 0;
   const fromDateObj = moment(fromDate);
   const toDateObj = moment(toDate);
@@ -131,7 +131,7 @@ export const calculateSpendingFromSecond = (dailyPayment: BigNumber, diffSecond:
 export const getSecondDifftoEndDate = (startDate: moment.Moment) => {
   const endOfStartDate = moment(startDate).endOf('day');
   const endOfStartDateMinus90Second = endOfStartDate.subtract(90, 'second');
-  const duration = moment.duration(endOfStartDateMinus90Second.diff(startDate)); 
+  const duration = moment.duration(endOfStartDateMinus90Second.diff(startDate));
   return duration.asSeconds();
 };
 
