@@ -16,7 +16,7 @@ import {
   CInvalidFeedback,
   CLabel,
   CLink,
-  CRow,
+  CRow
 } from '@coreui/react';
 import { faPen, faSyncAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -35,7 +35,7 @@ import {
   convertUnixToDate,
   formatBNToken,
   insertCommas,
-  unInsertCommas,
+  unInsertCommas
 } from '../../../shared/casual-helpers';
 import ConfirmationLoading from '../../../shared/components/ConfirmationLoading';
 import ConfirmModal from '../../../shared/components/ConfirmModal';
@@ -647,7 +647,7 @@ const Register = (props: IRegisterProps) => {
               return (
                 <p>
                   {t('anftDapp.registerComponent.claimReward.claimRewardModalContent')}{' '}
-                  <span className="text-primary">“{listing.options[chosenOptionId].name}”?</span>
+                  <span className="text-primary">“{listing.options[chosenOptionId].name}”</span>?
                 </p>
               );
             }}
@@ -666,8 +666,8 @@ const Register = (props: IRegisterProps) => {
                   <span className="text-primary">“{listing.options[chosenOptionId].name}”</span>{' '}
                   {t('anftDapp.registerComponent.unregister.unregisterModalContentNext')}{' '}
                   <span className="text-primary">
-                    {formatBNToken(listing.options[chosenOptionId].stake?.amount, true)}?
-                  </span>
+                    {formatBNToken(listing.options[chosenOptionId].stake?.amount, true)}
+                  </span>?
                 </p>
               );
             }}

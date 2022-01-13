@@ -280,7 +280,7 @@ const WorkersList = (props: IWorkersList) => {
             {entityToDelete && (
               <>
                 {t('anftDapp.workersListComponent.confirmDeltWorkerPermission')}{' '}
-                <span className="text-primary">{getEllipsisTxt(entityToDelete, 6) || '_'}?</span>
+                <span className="text-primary">{getEllipsisTxt(entityToDelete, 6) || '_'}</span>?
               </>
             )}
           </p>

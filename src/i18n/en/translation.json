@@ -94,10 +94,11 @@
         "noMoreTokenToWithdraw": "No more token to withdraw!",
         "incorrectInputType": "Incorrect input type!",
         "inputIsRequired!": "This field is required!",
-        "minimumWithdraw": "Minimum withdraw for the listing is 1.0 day!",
+        "minimumWithdraw": "Withdraw at least 1 day!",
         "days": "Day(s)",
         "remainingDays": "Remaining Days",
-        "ownershipRange": "Ownership Range"
+        "ownershipRange": "Ownership Range",
+        "exceedingWithdrawErr": "Withdraw days cannot exceed {{amount}} day(s)!"
       }
     },
 
@@ -145,7 +146,7 @@
       "addWorkerPermission": "Add Worker Permission",
       "createdDate": "Since",
       "deltWorkerPermission": "Delete Worker Permission",
-      "confirmDeltWorkerPermission": "Confirm delete worker permission of",
+      "confirmDeltWorkerPermission": "Confirm delete worker permission of worker address",
       "addressWallet": "Address Wallet"
     }
   }

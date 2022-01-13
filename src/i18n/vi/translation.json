@@ -94,10 +94,11 @@
         "noMoreTokenToWithdraw": "Không đủ Token để rút!",
         "incorrectInputType": "Số Token không hợp lệ!",
         "inputIsRequired!": "Số Token không được bỏ trống!",
-        "minimumWithdraw": "Số Token rút tối thiểu là 1.0 token!",
+        "minimumWithdraw": "Số ngày rút tối thiểu là 1.0 ngày!",
         "days": "Ngày",
         "remainingDays": "Số ngày sở hữu còn lại",
-        "ownershipRange": "Thời gian sở hữu"
+        "ownershipRange": "Thời gian sở hữu",
+        "exceedingWithdrawErr": "Số ngày rút ra không vượt quá {{amount}} ngày!"
       }
     },
 

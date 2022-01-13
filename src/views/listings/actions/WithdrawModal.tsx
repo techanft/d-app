@@ -15,19 +15,17 @@ import {
 } from '@coreui/react';
 import { Formik, FormikProps } from 'formik';
 import moment from 'moment';
-import React, { useEffect, useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import React, { useEffect, useRef } from 'react';
 import { DateRangePicker } from 'react-dates';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
 import { LISTING_INSTANCE } from '../../../shared/blockchain-helpers';
 import {
   calculateDateDifference,
-  calculateSpendingFromSecond,
   checkDateRange,
   convertBnToDecimal,
   convertDecimalToBn,
-  getSecondDifftoEndDate,
   insertCommas,
   returnMaxEndDate,
   unInsertCommas,
@@ -90,20 +88,23 @@ const WithdrawModal = (props: IWithdrawModal) => {
     withdraw: 0,
   };
 
-  const exceedingWithdrawErr = `Số ngày rút ra không vượt quá ${totalDays - 1} ngày`;
+  // const exceedingWithdrawErr = `Số ngày rút ra không vượt quá ${totalDays - 1} ngày`;
   const validationSchema = Yup.object().shape({
     withdraw: Yup.number()
-      .typeError('Incorrect input type!')
-      .min(1, 'Withdraw at least 1 day!')
-      .max(totalDays - 1, exceedingWithdrawErr)
-      .required('This field is required'),
+      .typeError(t('anftDapp.listingComponent.withdrawToken.incorrectInputType'))
+      .min(1, t('anftDapp.listingComponent.withdrawToken.minimumWithdraw'))
+      .max(
+        totalDays - 1,
+        t('anftDapp.listingComponent.withdrawToken.exceedingWithdrawErr', { amount: `${totalDays - 1}` })
+      )
+      .required(t('anftDapp.listingComponent.withdrawToken.inputIsRequired')),
   });
 
   const calculateWithdrawPriceByDays = (days: number) => {
     if (!listing?.dailyPayment) return '0';
     const spending = listing.dailyPayment.mul(days);
     return convertBnToDecimal(spending);
-  }; 
+  };
 
   const handleRawFormValues = (input: IIntialValues): IProceedTxBody => {
     if (!listing?.address) {
@@ -129,16 +130,6 @@ const WithdrawModal = (props: IWithdrawModal) => {
     return output;
   };
 
-  // const [maximumWithdrawable, setMaximumWithdrawable] = useState<undefined | number>(undefined);
-
-  // const resetMaximumWithdrawableAndCountdown = () => {
-  //   if (!listing?.dailyPayment || !listing.ownership) return undefined;
-  //   // const maximum = estimateWithdrawAmount(listing.dailyPayment, listing.ownership.sub(120), currentUnix);
-  //   const maximum = convertBnToDecimal(listing.dailyPayment.mul(totalDays - 1));
-  //   setMaximumWithdrawable(Number(maximum));
-  //   setTimeLeft(30);
-  // };
-
   useEffect(() => {
     if (submitted) {
       setVisibility(false);
@@ -148,25 +139,10 @@ const WithdrawModal = (props: IWithdrawModal) => {
 
   useEffect(() => {
     if (!isVisible) {
-      //   resetMaximumWithdrawableAndCountdown();
-      // } else {
-      //   // setTimeLeft(undefined);
-      //   setMaximumWithdrawable(undefined);
       formikRef.current?.resetForm();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isVisible]);
-
-  // const [timeLeft, setTimeLeft] = useState<undefined | number>(undefined);
-
-  // useEffect(() => {
-  //   if (!timeLeft) return;
-  //   const intervalId = setInterval(() => {
-  //     setTimeLeft(timeLeft - 1);
-  //   }, 1000);
-
-  //   return () => clearInterval(intervalId);
-  // }, [timeLeft]);
 
   return (
     <CModal show={isVisible} onClose={closeModal} centered className="border-radius-modal">
@@ -273,10 +249,11 @@ const WithdrawModal = (props: IWithdrawModal) => {
                         onBlur={handleBlur}
                         className="btn-radius-50 InputMaxWidth"
                       />
-                      <CInvalidFeedback className={
-                        values.withdraw === 0 &&
-                        errors.withdraw && touched.withdraw ? 'd-block' : 'd-none'}>
-                        {errors.withdraw || exceedingWithdrawErr}
+                      <CInvalidFeedback className={errors.withdraw && touched.withdraw ? 'd-block' : 'd-none'}>
+                        {errors.withdraw ||
+                          t('anftDapp.listingComponent.withdrawToken.exceedingWithdrawErr', {
+                            amount: `${totalDays - 1}`,
+                          })}
                       </CInvalidFeedback>
                     </CCol>
                   </CFormGroup>
@@ -289,7 +266,9 @@ const WithdrawModal = (props: IWithdrawModal) => {
                           </CLabel>
                         </CCol>
                         <CCol xs={6}>
-                          <p className="text-primary text-right">{values.remainingDays} {t('anftDapp.listingComponent.withdrawToken.days')}</p>
+                          <p className="text-primary text-right">
+                            {values.remainingDays} {t('anftDapp.listingComponent.withdrawToken.days')}
+                          </p>
                         </CCol>
                       </CFormGroup>
                       <CFormGroup row>
@@ -324,8 +303,7 @@ const WithdrawModal = (props: IWithdrawModal) => {
                 </CButton>
               </CCol>
               <CCol>
-                {/* {timeLeft ? ( */}
-                <CButton className="px-2 w-100 btn btn-primary btn-font-style btn-radius-50" onClick={submitForm}>
+                  <CButton className="px-2 w-100 btn btn-primary btn-font-style btn-radius-50" onClick={submitForm}>
                   {t('anftDapp.global.modal.confirm')}
                 </CButton>
               </CCol>
