@@ -292,12 +292,8 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                         onBlur={handleBlur}
                         className="btn-radius-50 InputMaxWidth"
                       />
-                      <CInvalidFeedback
-                        className={
-                          values.dateCount === 0 && errors.dateCount && touched.dateCount ? 'd-block' : 'd-none'
-                        }
-                      >
-                        {errors.dateCount || t('anftDapp.listingComponent.extendOwnership.minimumOwnership')}
+                      <CInvalidFeedback className={errors.dateCount && touched.dateCount ? 'd-block' : 'd-none'}>
+                        {errors.dateCount}
                       </CInvalidFeedback>
                     </CCol>
                   </CFormGroup>
