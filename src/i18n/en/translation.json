@@ -6,8 +6,7 @@
       },
       "modal": {
         "confirm": "CONFIRM",
-        "cancel": "CANCEL",
-        "refresh": "REFRESH"
+        "cancel": "CANCEL"
       }
     },
 
@@ -83,19 +82,22 @@
         "currentOwnership": "Current Ownership",
         "tokenBalance": "Token Balance",
         "cannotRegisterOwnership": "This listing is being owned by another address!",
-        "ownershipEstimation": "Ownership Estimation",
-        "inputAmountExceedsTokenBalance": "Input amount exceeds token balance",
+        "tokenEstimation": "Token Estimation",
+        "balanceDoesNotEnough": "Your balance does not enough",
         "incorrectInputType": "Incorrect input type!",
         "inputIsRequired!": "This field is required!",
         "minimumOwnership": "Minimum ownership for the listing is 1.0 day!"
       },
       "withdrawToken": {
-        "maximumWithdrawable": "Maximum Amount",
-        "withdrawAmount": "Withdraw Amount",
+        "maximumWithdrawable": "Maximum Days",
+        "withdrawDays": "Withdraws (Days)",
         "noMoreTokenToWithdraw": "No more token to withdraw!",
         "incorrectInputType": "Incorrect input type!",
         "inputIsRequired!": "This field is required!",
-        "minimumWithdraw": "Minimum withdraw for the listing is 1.0 token!"
+        "minimumWithdraw": "Minimum withdraw for the listing is 1.0 day!",
+        "days": "Day(s)",
+        "remainingDays": "Remaining Days",
+        "ownershipRange": "Ownership Range"
       }
     },
 
@@ -108,7 +110,7 @@
       "claimReward": {
         "claimReward": "Claim Reward",
         "claimRewardModalTitle": "Claim Reward",
-        "claimRewardModalContent": "Continue to claim this reward"
+        "claimRewardModalContent": "Continue to claim the reward of"
       },
       "unregister": {
         "unregister": "Unregister",

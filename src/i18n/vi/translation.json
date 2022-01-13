@@ -6,8 +6,7 @@
       },
       "modal": {
         "confirm": "XÁC NHẬN",
-        "cancel": "HỦY",
-        "refresh": "CẬP NHẬT"
+        "cancel": "HỦY"
       }
     },
 
@@ -83,19 +82,22 @@
         "currentOwnership": "Thời gian sở hữu hiện tại",
         "tokenBalance": "Token sở hữu",
         "cannotRegisterOwnership": "Bất động sản đang được sở hữu bởi người khác!",
-        "ownershipEstimation": "Ước tính thời gian sở hữu",
-        "inputAmountExceedsTokenBalance": "Số Token vượt quá số Token sở hữu!",
+        "tokenEstimation": "Token ước tính",
+        "balanceDoesNotEnough": "Token sở hữu không đủ!",
         "incorrectInputType": "Số Token không hợp lệ!",
         "inputIsRequired!": "Số Token không được bỏ trống!",
         "minimumOwnership": "Thời gian sở hữu tối thiểu là 1.0 ngày!"
       },
       "withdrawToken": {
-        "maximumWithdrawable": "Số Token rút tối đa",
-        "withdrawAmount": "Số Token muốn rút",
+        "maximumWithdrawable": "Số ngày rút tối đa",
+        "withdrawDays": "Số ngày muốn rút",
         "noMoreTokenToWithdraw": "Không đủ Token để rút!",
         "incorrectInputType": "Số Token không hợp lệ!",
         "inputIsRequired!": "Số Token không được bỏ trống!",
-        "minimumWithdraw": "Số Token rút tối thiểu là 1.0 token!"
+        "minimumWithdraw": "Số Token rút tối thiểu là 1.0 token!",
+        "days": "Ngày",
+        "remainingDays": "Số ngày sở hữu còn lại",
+        "ownershipRange": "Thời gian sở hữu"
       }
     },
 
