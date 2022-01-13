@@ -30,6 +30,7 @@ import {
 } from '../../../shared/casual-helpers';
 import { ToastError } from '../../../shared/components/Toast';
 import { EventType } from '../../../shared/enumeration/eventType';
+import useWindowDimensions from '../../../shared/hooks/useWindowDimensions';
 import { RootState } from '../../../shared/reducers';
 import { selectEntityById } from '../../assets/assets.reducer';
 import { baseSetterArgs } from '../../transactions/settersMapping';
@@ -53,6 +54,7 @@ interface IIntialValues {
 const WithdrawModal = (props: IWithdrawModal) => {
   const { isVisible, setVisibility, listingId } = props;
   const dispatch = useDispatch();
+  const { width: screenWidth } = useWindowDimensions();
   const formikRef = useRef<FormikProps<IIntialValues>>(null);
   const [focusedInput, setFocusedInput] = React.useState(null);
 
@@ -223,7 +225,7 @@ const WithdrawModal = (props: IWithdrawModal) => {
                       <p className="text-primary text-right">{insertCommas(maximumWithdrawable)} ANFT</p>
                     </CCol>
                   </CFormGroup>
-                  <CFormGroup row>
+                  <CFormGroup row className={`${screenWidth <= 335 ? 'd-none' : ''}`}>
                     <CCol xs={12}>
                       <CLabel className="recharge-token-title">Ownership</CLabel>
                     </CCol>
@@ -249,7 +251,7 @@ const WithdrawModal = (props: IWithdrawModal) => {
                         focusedInput={focusedInput}
                         onFocusChange={setFocusedInput as any}
                         isOutsideRange={(day) => !checkDateRange(day)}
-                        initialVisibleMonth={() => moment().add(0, 'month')}
+                        initialVisibleMonth={() => moment(startDate).add(0, 'month')}
                         numberOfMonths={1}
                         orientation={'horizontal'}
                       />
@@ -284,7 +286,7 @@ const WithdrawModal = (props: IWithdrawModal) => {
                       </CInvalidFeedback>
                     </CCol>
                   </CFormGroup>
-                  {!errors.withdraw && listing?.dailyPayment && listing?.ownership && values.withdraw && (
+                  {!errors.withdraw && listing?.dailyPayment && listing?.ownership && values.withdraw ? (
                     <>
                       <CFormGroup row className={`mt-4`}>
                         <CCol xs={8}>
@@ -308,6 +310,8 @@ const WithdrawModal = (props: IWithdrawModal) => {
                         </CCol>
                       </CFormGroup>
                     </>
+                  ) : (
+                    ''
                   )}
                 </CCol>
               </CRow>

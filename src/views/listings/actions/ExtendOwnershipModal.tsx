@@ -263,7 +263,7 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                         focusedInput={focusedInput}
                         onFocusChange={setFocusedInput as any}
                         isOutsideRange={(day) => !checkDateRange(day)}
-                        initialVisibleMonth={() => moment().add(0, 'month')}
+                        initialVisibleMonth={() => moment(startDate).add(0, 'month')}
                         numberOfMonths={1}
                         orientation={'horizontal'}
                       />
@@ -277,9 +277,14 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                       <CInput
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                           const extendDay = Number(unInsertCommas(e.target.value));
-                          const extendDate = moment(startDate).add(returnMaxEndDate(extendDay), 'day');
-                          setFieldValue('dateCount', extendDay);
-                          setFieldValue('endDate', extendDate);
+                          try {
+                            BigNumber.from(extendDay);
+                            const extendDate = moment(startDate).add(returnMaxEndDate(extendDay), 'day');
+                            setFieldValue('dateCount', extendDay);
+                            setFieldValue('endDate', extendDate);
+                          } catch (err) {
+                            errors.dateCount = 'Your balance does not enough';
+                          }
                         }}
                         id="dateCount"
                         autoComplete="off"
