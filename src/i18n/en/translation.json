@@ -47,7 +47,7 @@
           "owned": "Owned",
           "ownershipExpired": "Ownership expired. Listing can be owned by another address!",
           "ownedByAnotherAddress": "Owned by another address",
-          "notOwned": "Ownership available"
+          "notOwned": "Able to extend ownership with this listing"
         },
         "blockchainAddress": "Blockchain Address",
         "currentOwner": "Current Owner",
@@ -59,13 +59,13 @@
         "investmentActivities": {
           "investmentActivities": "Investment Activities",
           "registerOwnership": "Register Ownership",
-          "registerClaimReward": "Register Claim Reward"
+          "registerClaimReward": "Staking Register"
         },
         "ownershipManagement": {
           "ownershipManagement": "Ownership Management",
           "withdrawToken": "Withdraw Token",
-          "extendOwnership": "Recharge Token",
-          "workerManagement": "Worker Management"
+          "extendOwnership": "Extend Ownership",
+          "workerManagement": "Workers Management"
         }
       },
       "secondaryInfo": {
@@ -90,7 +90,7 @@
         "minimumOwnership": "Minimum ownership for the listing is 1.0 day!"
       },
       "withdrawToken": {
-        "maximumWithdrawable": "Maximum Withdrawable",
+        "maximumWithdrawable": "Maximum Amount",
         "withdrawAmount": "Withdraw Amount",
         "noMoreTokenToWithdraw": "No more token to withdraw!",
         "incorrectInputType": "Incorrect input type!",
@@ -108,7 +108,7 @@
       "claimReward": {
         "claimReward": "Claim Reward",
         "claimRewardModalTitle": "Claim Reward",
-        "claimRewardModalContent": "Confirm claim reward of"
+        "claimRewardModalContent": "Continue to claim this reward"
       },
       "unregister": {
         "unregister": "Unregister",
@@ -118,7 +118,7 @@
       },
       "selectActivity": "*Select activity you want to EDIT or UNREGISTER",
       "pleaseConnectWallet": "Please connect wallet to view activities list",
-      "inputAmountIsUnchange": "Input amount is unchange",
+      "inputAmountIsUnchange": "Unchanged input amount!",
       "inputAmountExceedsTokenBalance": "Input amount exceeds token balance",
       "incorrectInputType": "Incorrect input type!",
       "inputIsRequired!": "This field is required!",
