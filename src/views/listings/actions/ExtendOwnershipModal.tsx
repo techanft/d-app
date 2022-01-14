@@ -71,9 +71,8 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
   const [focusedInput, setFocusedInput] = React.useState(null);
 
   const listing = useSelector(selectEntityById(listingId));
-  const { signer } = useSelector((state: RootState) => state.wallet);
+  const { signer, tokenBalance } = useSelector((state: RootState) => state.wallet);
   const { submitted } = useSelector((state: RootState) => state.transactions);
-  const { tokenBalance } = useSelector((state: RootState) => state.wallet);
 
   const { t } = useTranslation();
 
@@ -289,7 +288,6 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                         autoComplete="off"
                         name="dateCount"
                         value={values.dateCount ? insertCommas(values.dateCount) : ''}
-                        onBlur={handleBlur}
                         className="btn-radius-50 InputMaxWidth"
                       />
                       <CInvalidFeedback className={errors.dateCount && touched.dateCount ? 'd-block' : 'd-none'}>

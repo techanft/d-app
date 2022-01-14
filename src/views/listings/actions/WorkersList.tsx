@@ -8,8 +8,9 @@ import {
   CContainer,
   CDataTable,
   CLabel,
+  CLink,
   CPagination,
-  CRow
+  CRow,
 } from '@coreui/react';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -53,7 +54,7 @@ const titleTableStyle = {
 };
 
 const WorkersList = (props: IWorkersList) => {
-  const { match } = props;
+  const { match, history } = props;
   const { id } = match.params;
 
   const dispatch = useDispatch();
@@ -198,7 +199,10 @@ const WorkersList = (props: IWorkersList) => {
       <SubmissionModal />
       <CRow>
         <CCol xs={12}>
-          <CLabel className="text-primary content-title">{t('anftDapp.workersListComponent.workersList')}</CLabel>
+          <CLabel className="text-primary content-title">
+            <CLink onClick={() => history.goBack()}>{`${t('anftDapp.global.backLink')} < `}</CLink>
+            {t('anftDapp.workersListComponent.workersList')}
+          </CLabel>
         </CCol>
         <CCol xs={12}>
           <CCard className="m-0 listing-img-card">

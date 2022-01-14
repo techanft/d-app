@@ -5,11 +5,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { BLOCKCHAIN_NETWORK } from '../../config/constants';
 import { awaitTransaction } from '../../views/transactions/transactions.api';
 import { fetching } from '../../views/transactions/transactions.reducer';
+import { getTokenBalance } from '../../views/wallet/wallet.api';
 import { RootState } from '../reducers';
 
 const SubmissionModal = () => {
   const { submitted, transaction, success } = useSelector((state: RootState) => state.transactions);
   const dispatch = useDispatch();
+  const { signerAddress, provider } = useSelector((state: RootState) => state.wallet);
 
   const [visibility, setVisibility] = useState(false);
 
@@ -24,8 +26,9 @@ const SubmissionModal = () => {
   }, [submitted, transaction]);
 
   useEffect(() => {
-    if (success) {
+    if (success && signerAddress && provider) {
       setVisibility(false);
+      dispatch(getTokenBalance({ address: signerAddress, provider }));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [success]);
@@ -48,7 +51,10 @@ const SubmissionModal = () => {
         <CIcon name="cil-arrow-circle-top" size="5xl" className="text-primary" />
         <CLabel className="text-primary mt-5 d-block">
           {transaction ? (
-            <CLink href={`${BLOCKCHAIN_NETWORK.blockExplorerUrls}tx/${transaction.contractTransaction.hash}`} target="_blank">
+            <CLink
+              href={`${BLOCKCHAIN_NETWORK.blockExplorerUrls}tx/${transaction.contractTransaction.hash}`}
+              target="_blank"
+            >
               View on Network Scan <CIcon name="cil-external-link" className="pb-1" size="lg" />
             </CLink>
           ) : (

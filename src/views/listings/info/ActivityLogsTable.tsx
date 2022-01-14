@@ -1,9 +1,10 @@
 import { CPagination } from '@coreui/react';
 import dayjs from 'dayjs';
+import moment from 'moment';
 import React from 'react';
 import { TFunction, useTranslation } from 'react-i18next';
 import { APP_DATE_FORMAT } from '../../../config/constants';
-import { insertCommas, returnOptionNameById } from '../../../shared/casual-helpers';
+import { calculateDateDifference, insertCommas, returnOptionNameById } from '../../../shared/casual-helpers';
 import { RecordType } from '../../../shared/enumeration/recordType';
 import {
   IRecordClaim,
@@ -16,7 +17,6 @@ import { IRecordParams } from '../../records/records.api';
 import '../index.scss';
 import { TableType, TRecordTypeArray } from './ActivityLogs';
 
-
 interface IActivityLogs {
   results: Array<TRecordTypeArray>;
   filterState: IRecordParams;
@@ -28,13 +28,12 @@ interface IActivityLogs {
 }
 interface IRecordTableProps<TableType> {
   record: TableType;
-  transFunc: TFunction<"translation", undefined>
+  transFunc: TFunction<'translation', undefined>;
 }
 
-type TRecordTypeMappingRender = { [key in RecordType]: ({record, transFunc}: IRecordTableProps<any>) => JSX.Element };
+type TRecordTypeMappingRender = { [key in RecordType]: ({ record, transFunc }: IRecordTableProps<any>) => JSX.Element };
 
-
-const renderRecordOwnerShip = ({record, transFunc}: IRecordTableProps<IRecordOwnership>) => (
+const renderRecordOwnerShip = ({ record, transFunc }: IRecordTableProps<IRecordOwnership>) => (
   <>
     <tr>
       <td>{transFunc('anftDapp.activityLogsComponent.activityLogsTable.from')}</td>
@@ -45,17 +44,21 @@ const renderRecordOwnerShip = ({record, transFunc}: IRecordTableProps<IRecordOwn
       <td className="text-right">{dayjs(record.to).format(APP_DATE_FORMAT)}</td>
     </tr>
     <tr>
+      <td>{transFunc('anftDapp.activityLogsComponent.activityLogsTable.ownedDay')}</td>
+      <td className="text-right">{calculateDateDifference(moment(record.from), moment(record.to))}</td>
+    </tr>
+    <tr>
       <td>{transFunc('anftDapp.activityLogsComponent.activityLogsTable.amount')}</td>
       <td className="text-right">{insertCommas(record.amount || '')}</td>
     </tr>
   </>
 );
 
-const renderRecordClaim = ({record, transFunc}: IRecordTableProps<IRecordClaim>) => (
+const renderRecordClaim = ({ record, transFunc }: IRecordTableProps<IRecordClaim>) => (
   <>
     <tr>
       <td>{transFunc('anftDapp.activityLogsComponent.activityLogsTable.amount')}</td>
-      <td className="text-right">{insertCommas(record.amount || '')}</td>
+      <td className="text-right">{insertCommas(record.amount || '', 10)}</td>
     </tr>
 
     <tr>
@@ -69,7 +72,7 @@ const renderRecordClaim = ({record, transFunc}: IRecordTableProps<IRecordClaim>)
   </>
 );
 
-const renderRecordRegister = ({record, transFunc}: IRecordTableProps<IRecordRegister>) => (
+const renderRecordRegister = ({ record, transFunc }: IRecordTableProps<IRecordRegister>) => (
   <>
     <tr>
       <td>{transFunc('anftDapp.registerComponent.activity')}</td>
@@ -82,7 +85,7 @@ const renderRecordRegister = ({record, transFunc}: IRecordTableProps<IRecordRegi
   </>
 );
 
-const renderRecordUnRegister = ({record, transFunc}: IRecordTableProps<IRecordUnRegister>) => (
+const renderRecordUnRegister = ({ record, transFunc }: IRecordTableProps<IRecordUnRegister>) => (
   <>
     <tr>
       <td>{transFunc('anftDapp.registerComponent.activity')}</td>
@@ -91,7 +94,7 @@ const renderRecordUnRegister = ({record, transFunc}: IRecordTableProps<IRecordUn
   </>
 );
 
-const renderRecordWithdraw = ({record, transFunc}: IRecordTableProps<IRecordWithdraw>) => (
+const renderRecordWithdraw = ({ record, transFunc }: IRecordTableProps<IRecordWithdraw>) => (
   <>
     <tr>
       <td>{transFunc('anftDapp.activityLogsComponent.activityLogsTable.initialOwnership')}</td>
@@ -100,6 +103,15 @@ const renderRecordWithdraw = ({record, transFunc}: IRecordTableProps<IRecordWith
     <tr>
       <td>{transFunc('anftDapp.activityLogsComponent.activityLogsTable.newOwnership')}</td>
       <td className="text-right">{dayjs.unix(Number(record.newOwnership)).format(APP_DATE_FORMAT)}</td>
+    </tr>
+    <tr>
+      <td>{transFunc('anftDapp.activityLogsComponent.activityLogsTable.withdrawDay')}</td>
+      <td className="text-right">
+        {calculateDateDifference(
+          moment.unix(Number(record.newOwnership)),
+          moment.unix(Number(record.initialOwnership))
+        )}
+      </td>
     </tr>
     <tr>
       <td>{transFunc('anftDapp.activityLogsComponent.activityLogsTable.amount')}</td>
@@ -139,7 +151,7 @@ const ActivityLogsTable = (props: IActivityLogs) => {
                     <th></th>
                   </tr>
                 </thead>
-                <tbody>{renderRecordTbody({record: result, transFunc: t})}</tbody>
+                <tbody>{renderRecordTbody({ record: result, transFunc: t })}</tbody>
               </table>
             );
           })}
