@@ -16,7 +16,7 @@ import {
   CInvalidFeedback,
   CLabel,
   CLink,
-  CRow
+  CRow,
 } from '@coreui/react';
 import { faPen, faSyncAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -35,7 +35,7 @@ import {
   convertUnixToDate,
   formatBNToken,
   insertCommas,
-  unInsertCommas
+  unInsertCommas,
 } from '../../../shared/casual-helpers';
 import ConfirmationLoading from '../../../shared/components/ConfirmationLoading';
 import ConfirmModal from '../../../shared/components/ConfirmModal';
@@ -72,7 +72,7 @@ const titleTableStyle = {
 interface IRegisterProps extends RouteComponentProps<IRegisterParams> {}
 
 const Register = (props: IRegisterProps) => {
-  const { match } = props;
+  const { match, history } = props;
   const { id } = match.params;
 
   const dispatch = useDispatch();
@@ -334,6 +334,7 @@ const Register = (props: IRegisterProps) => {
       <CRow>
         <CCol xs={12}>
           <CLabel className="text-primary content-title">
+            <CLink onClick={() => history.goBack()}>{`${t('anftDapp.global.backLink')} < `}</CLink>
             {t('anftDapp.listingComponent.primaryInfo.investmentActivities.registerClaimReward')}
           </CLabel>
         </CCol>
@@ -667,7 +668,8 @@ const Register = (props: IRegisterProps) => {
                   {t('anftDapp.registerComponent.unregister.unregisterModalContentNext')}{' '}
                   <span className="text-primary">
                     {formatBNToken(listing.options[chosenOptionId].stake?.amount, true)}
-                  </span>?
+                  </span>
+                  ?
                 </p>
               );
             }}

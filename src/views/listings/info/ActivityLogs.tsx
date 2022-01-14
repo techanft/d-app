@@ -5,6 +5,7 @@ import {
   CCol,
   CContainer,
   CLabel,
+  CLink,
   CNav,
   CNavItem,
   CNavLink,
@@ -21,7 +22,6 @@ import CopyTextToClipBoard from '../../../shared/components/CopyTextToClipboard'
 import InfoLoader from '../../../shared/components/InfoLoader';
 import { RecordType } from '../../../shared/enumeration/recordType';
 import useWindowDimensions from '../../../shared/hooks/useWindowDimensions';
-import { IGetAllResp } from '../../../shared/models/base.model';
 import {
   IRecordClaim,
   IRecordOwnership,
@@ -64,15 +64,15 @@ export type TRecordTypeArray =
   | IRecordWorker
   | IRecordWithdraw;
 
-type TAsyncThunkRecord<T> =  AsyncThunk<IGetAllResp<T>, IRecordParams, {}>
+type TAsyncThunkRecord<T> = AsyncThunk<IGetAllResp<T>, IRecordParams, {}>;
 
 type TRecordTypeMappingApi = {
-  [RecordType.REGISTER]: TAsyncThunkRecord<IRecordRegister>,
-  [RecordType.UNREGISTER]: TAsyncThunkRecord<IRecordUnRegister>,
-  [RecordType.CLAIM]: TAsyncThunkRecord<IRecordClaim>,
-  [RecordType.WITHDRAW]: TAsyncThunkRecord<IRecordWithdraw>,
-  [RecordType.OWNERSHIP_EXTENSION]: TAsyncThunkRecord<IRecordOwnership>,
-  [RecordType.UPDATE_WORKER]: TAsyncThunkRecord<IRecordWorker>,
+  [RecordType.REGISTER]: TAsyncThunkRecord<IRecordRegister>;
+  [RecordType.UNREGISTER]: TAsyncThunkRecord<IRecordUnRegister>;
+  [RecordType.CLAIM]: TAsyncThunkRecord<IRecordClaim>;
+  [RecordType.WITHDRAW]: TAsyncThunkRecord<IRecordWithdraw>;
+  [RecordType.OWNERSHIP_EXTENSION]: TAsyncThunkRecord<IRecordOwnership>;
+  [RecordType.UPDATE_WORKER]: TAsyncThunkRecord<IRecordWorker>;
 };
 
 type TRecordTypeMappingFetch = { [key in RecordType]: ActionCreatorWithoutPayload<string> };
@@ -111,7 +111,7 @@ type TTableMappingSetTab = { [key in TableType]: React.Dispatch<React.SetStateAc
 interface IActivityLogs extends RouteComponentProps<IActivityLogsParams> {}
 
 const ActivityLogs = (props: IActivityLogs) => {
-  const { match } = props;
+  const { match, history } = props;
   const { id } = match.params;
   const scrollRef = useRef<null | HTMLParagraphElement>(null);
   const dispatch = useDispatch();
@@ -252,7 +252,10 @@ const ActivityLogs = (props: IActivityLogs) => {
     <CContainer fluid className="mx-0 my-2">
       <CRow>
         <CCol xs={12}>
-          <CLabel className="text-primary content-title">{t("anftDapp.listingComponent.activityLogs")}</CLabel>
+          <CLabel className="text-primary content-title">
+            <CLink onClick={() => history.goBack()}>{`${t('anftDapp.global.backLink')} < `}</CLink>
+            {t('anftDapp.listingComponent.activityLogs')}
+          </CLabel>
         </CCol>
         <CCol xs={12}>
           <CCard className="m-0 listing-img-card">
@@ -266,7 +269,7 @@ const ActivityLogs = (props: IActivityLogs) => {
               <CCardTitle className="listing-card-title mb-0 px-3 py-2 w-100" innerRef={scrollRef}>
                 <p className="mb-0 text-white content-title">202 Yên Sở - Hoàng Mai - Hà Nội</p>
                 <p className="mb-0 text-white detail-title-font">
-                {t('anftDapp.listingComponent.primaryInfo.blockchainAddress')}{' '}
+                  {t('anftDapp.listingComponent.primaryInfo.blockchainAddress')}{' '}
                   <b>
                     {!entityLoading && listing?.address ? (
                       <CopyTextToClipBoard
@@ -320,7 +323,7 @@ const ActivityLogs = (props: IActivityLogs) => {
                         active={investmentActiveTab === RecordType.REGISTER}
                         className="detail-title-font px-0 text-center text-primary"
                       >
-                        {t("anftDapp.registerComponent.register")}
+                        {t('anftDapp.registerComponent.register')}
                       </CNavLink>
                     </CNavItem>
                     <CNavItem className="col-4 p-0">
@@ -329,7 +332,7 @@ const ActivityLogs = (props: IActivityLogs) => {
                         active={investmentActiveTab === RecordType.UNREGISTER}
                         className="detail-title-font px-0 text-center text-primary"
                       >
-                        {t("anftDapp.registerComponent.unregister.unregister")}
+                        {t('anftDapp.registerComponent.unregister.unregister')}
                       </CNavLink>
                     </CNavItem>
                     <CNavItem className="col-4 p-0">
@@ -338,7 +341,7 @@ const ActivityLogs = (props: IActivityLogs) => {
                         active={investmentActiveTab === RecordType.CLAIM}
                         className="detail-title-font px-0 text-center text-primary"
                       >
-                        {t("anftDapp.registerComponent.claimReward.claimReward")}
+                        {t('anftDapp.registerComponent.claimReward.claimReward')}
                       </CNavLink>
                     </CNavItem>
                   </CNav>
@@ -430,7 +433,7 @@ const ActivityLogs = (props: IActivityLogs) => {
         ) : (
           <CCol xs={12}>
             <div className="alert alert-warning my-3">
-              <span>{t("anftDapp.activityLogsComponent.pleaseConnectWallet")}</span>
+              <span>{t('anftDapp.activityLogsComponent.pleaseConnectWallet')}</span>
             </div>
           </CCol>
         )}
