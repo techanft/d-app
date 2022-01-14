@@ -1,7 +1,7 @@
 import { CPagination } from '@coreui/react';
 import dayjs from 'dayjs';
 import React from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, TFunction } from 'react-i18next';
 import { APP_DATE_FORMAT } from '../../../config/constants';
 import { insertCommas, returnOptionNameById } from '../../../shared/casual-helpers';
 import { RecordType } from '../../../shared/enumeration/recordType';
@@ -16,7 +16,6 @@ import { IRecordParams } from '../../records/records.api';
 import '../index.scss';
 import { TableType, TRecordTypeArray } from './ActivityLogs';
 
-type TRecordTypeMappingRender = { [key in RecordType]: Function };
 
 interface IActivityLogs {
   results: Array<TRecordTypeArray>;
@@ -27,8 +26,14 @@ interface IActivityLogs {
   tableType: TableType;
   handlePaginationChange: (page: number, type: TableType) => void;
 }
+interface IRecordTableProps<TableType> {
+  record: TableType;
+  transFunc: TFunction<"translation", undefined>
+}
+type TRecordTypeMappingRender = { [key in RecordType]: Function };
 
-const renderRecordOwnerShip = (record: IRecordOwnership) => (
+
+const renderRecordOwnerShip = ({record, transFunc}: IRecordTableProps<IRecordOwnership>) => (
   <>
     <tr>
       <td>From</td>
@@ -41,7 +46,7 @@ const renderRecordOwnerShip = (record: IRecordOwnership) => (
   </>
 );
 
-const renderRecordClaim = (record: IRecordClaim) => (
+const renderRecordClaim = ({record, transFunc}: IRecordTableProps<IRecordClaim>) => (
   <>
     <tr>
       <td>Amount</td>
@@ -59,7 +64,7 @@ const renderRecordClaim = (record: IRecordClaim) => (
   </>
 );
 
-const renderRecordRegister = (record: IRecordRegister) => (
+const renderRecordRegister = ({record, transFunc}: IRecordTableProps<IRecordRegister>) => (
   <>
     <tr>
       <td>Option</td>
@@ -72,7 +77,7 @@ const renderRecordRegister = (record: IRecordRegister) => (
   </>
 );
 
-const renderRecordUnRegister = (record: IRecordUnRegister) => (
+const renderRecordUnRegister = ({record, transFunc}: IRecordTableProps<IRecordUnRegister>) => (
   <>
     <tr>
       <td>Option</td>
@@ -81,7 +86,7 @@ const renderRecordUnRegister = (record: IRecordUnRegister) => (
   </>
 );
 
-const renderRecordWithdraw = (record: IRecordWithdraw) => (
+const renderRecordWithdraw = ({record, transFunc}: IRecordTableProps<IRecordWithdraw>) => (
   <>
     <tr>
       <td>Initial Ownership</td>
@@ -114,6 +119,8 @@ const ActivityLogsTable = (props: IActivityLogs) => {
 
   const { t } = useTranslation();
 
+  const renderRecordTbody = recordMappingField[recordType];
+
   return (
     <>
       {results.length > 0 ? (
@@ -127,7 +134,7 @@ const ActivityLogsTable = (props: IActivityLogs) => {
                     <th></th>
                   </tr>
                 </thead>
-                <tbody>{recordMappingField[recordType](result)}</tbody>
+                <tbody>{renderRecordTbody(result, t)}</tbody>
               </table>
             );
           })}
