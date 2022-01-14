@@ -85,7 +85,7 @@
         "spendingEstimation": "Spending Estimation",
         "balanceIsNotEnough": "Your balance is not enough",
         "incorrectInputType": "Incorrect input type!",
-        "inputIsRequired!": "This field is required!",
+        "inputIsRequired": "This field is required!",
         "minimumOwnership": "Minimum ownership for the listing is 1.0 day!"
       },
       "withdrawToken": {
@@ -94,7 +94,7 @@
         "withdrawDays": "Days to withdraw",
         "noMoreTokenToWithdraw": "No more token to withdraw!",
         "incorrectInputType": "Incorrect input type!",
-        "inputIsRequired!": "This field is required!",
+        "inputIsRequired": "This field is required!",
         "minimumWithdraw": "Withdraw at least 1 day!",
         "days": "Day(s)",
         "remainingDays": "Remaining Days",
@@ -125,7 +125,7 @@
       "inputAmountIsUnchange": "Unchanged input amount!",
       "inputAmountExceedsTokenBalance": "Input amount exceeds token balance",
       "incorrectInputType": "Incorrect input type!",
-      "inputIsRequired!": "This field is required!",
+      "inputIsRequired": "This field is required!",
       "minimumRegister": "Minimum register for the activity is 1.0 token!",
       "insufficientBalanceToClaimReward": "Insufficient balance to claim reward!",
       "rewardToken": " Reward Amount",
@@ -152,11 +152,13 @@
       "workersCount": "Workers Count",
       "address": "Address",
       "action": "Action",
-      "addWorkerPermission": "Add worker",
+      "addWorkerPermission": "Add Worker",
       "createdDate": "Since",
-      "deltWorkerPermission": "Remove worker",
+      "deltWorkerPermission": "Remove Worker",
       "confirmDeltWorkerPermission": "Continue to remove this worker",
-      "addressWallet": "Address Wallet"
+      "addressWallet": "Address Wallet",
+      "addressValidation": "Address wallet is invalid!",
+      "addressIsRequired": "This field is required!"
     }
   }
 }

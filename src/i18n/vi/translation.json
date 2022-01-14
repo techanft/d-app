@@ -85,7 +85,7 @@
         "spendingEstimation": "Ước tính chi tiêu",
         "balanceIsNotEnough": "ANFT trong ví không đủ!",
         "incorrectInputType": "Số ANFT không hợp lệ!",
-        "inputIsRequired!": "Vui lòng không để trống ô này!",
+        "inputIsRequired": "Vui lòng không để trống ô này!",
         "minimumOwnership": "Thời gian sở hữu tối thiểu là 1.0 ngày!"
       },
       "withdrawToken": {
@@ -94,7 +94,7 @@
         "withdrawDays": "Số ngày muốn rút",
         "noMoreTokenToWithdraw": "Không đủ ANFT để rút!",
         "incorrectInputType": "Số ANFT không hợp lệ!",
-        "inputIsRequired!": "Vui lòng không để trống ô này!",
+        "inputIsRequired": "Vui lòng không để trống ô này!",
         "minimumWithdraw": "Số ngày rút tối thiểu là 1.0 ngày!",
         "days": "Ngày",
         "remainingDays": "Số ngày sở hữu còn lại",
@@ -125,11 +125,11 @@
       "inputAmountIsUnchange": "Mức đăng ký không thay đổi",
       "inputAmountExceedsTokenBalance": "Mức đăng ký vượt quá số ANFT trong ví",
       "incorrectInputType": "Mức đăng ký không hợp lệ!",
-      "inputIsRequired!": "Mức đăng ký không được bỏ trống!",
+      "inputIsRequired": "Mức đăng ký không được bỏ trống!",
       "minimumRegister": "Mức đăng ký tối thiểu là 1.0 ANFT!",
       "insufficientBalanceToClaimReward": "ANFT trong ví không đủ để nhận thưởng!",
       "rewardToken": "Token thưởng",
-      "stakeStart": "Bắt đầu Stake"
+      "stakeStart": "Bắt đầu stake"
     },
 
     "activityLogsComponent": {
@@ -156,7 +156,9 @@
       "createdDate": "Ngày bắt đầu",
       "deltWorkerPermission": "Tước quyền khai thác",
       "confirmDeltWorkerPermission": "Bạn chắc chắn muốn tước quyền khai thác của",
-      "addressWallet": "Địa chỉ ví"
+      "addressWallet": "Địa chỉ ví",
+      "addressValidation": "Địa chỉ ví không hợp lệ!",
+      "addressIsRequired": "Địa chỉ ví không được bỏ trống!"
     }
   }
 }

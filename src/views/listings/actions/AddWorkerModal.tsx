@@ -67,8 +67,8 @@ const AddWorkerPermission = (props: ICancelWorkerPermission) => {
 
   const validationSchema = Yup.object().shape({
     address: Yup.string()
-      .required('Địa chỉ ví không hợp lệ')
-      .test('address-validation', 'Địa chỉ ví không hợp lệ', function (value) {
+      .required(t('anftDapp.workersListComponent.addressIsRequired'))
+      .test('address-validation', t('anftDapp.workersListComponent.addressValidation'), function (value) {
         return utils.isAddress(value || '');
       }),
   });
