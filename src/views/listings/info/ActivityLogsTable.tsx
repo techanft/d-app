@@ -55,7 +55,7 @@ const renderRecordClaim = ({record, transFunc}: IRecordTableProps<IRecordClaim>)
   <>
     <tr>
       <td>{transFunc('anftDapp.activityLogsComponent.activityLogsTable.amount')}</td>
-      <td className="text-right">{insertCommas(record.amount || '')}</td>
+      <td className="text-right">{insertCommas(record.amount || '', 10)}</td>
     </tr>
 
     <tr>

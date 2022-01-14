@@ -528,7 +528,7 @@ const Register = (props: IRegisterProps) => {
                                               </CCol>
                                               <CCol xs={7}>
                                                 <p className="text-primary my-2">
-                                                  {amountToReturn ? formatBNToken(amountToReturn, true) : 0}
+                                                  {amountToReturn ? formatBNToken(amountToReturn, true, 10) : 0}
                                                   <CButton
                                                     onClick={onRefreshAmountToReturn(item.id)}
                                                     className="p-0 ml-2"
