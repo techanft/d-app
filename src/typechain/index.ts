@@ -17,7 +17,6 @@ export type { ERC1967Upgrade } from "./ERC1967Upgrade";
 export type { Proxy } from "./Proxy";
 export type { TokenProxy } from "./TokenProxy";
 export type { Listing } from "./Listing";
-export type { ListingStorage } from "./ListingStorage";
 export type { TestUpgrade } from "./TestUpgrade";
 export type { Token } from "./Token";
 
@@ -37,6 +36,5 @@ export { ERC1967Upgrade__factory } from "./factories/ERC1967Upgrade__factory";
 export { Proxy__factory } from "./factories/Proxy__factory";
 export { TokenProxy__factory } from "./factories/TokenProxy__factory";
 export { Listing__factory } from "./factories/Listing__factory";
-export { ListingStorage__factory } from "./factories/ListingStorage__factory";
 export { TestUpgrade__factory } from "./factories/TestUpgrade__factory";
 export { Token__factory } from "./factories/Token__factory";

@@ -35,6 +35,7 @@ interface TokenInterface extends ethers.utils.Interface {
     "createListing(address,uint256)": FunctionFragment;
     "decimals()": FunctionFragment;
     "decreaseAllowance(address,uint256)": FunctionFragment;
+    "emergencyUpdateListingValidator(address,address)": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
     "grantRole(bytes32,address)": FunctionFragment;
     "handleListingTx(address,uint256,bool)": FunctionFragment;
@@ -101,6 +102,10 @@ interface TokenInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "decreaseAllowance",
     values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "emergencyUpdateListingValidator",
+    values: [string, string]
   ): string;
   encodeFunctionData(
     functionFragment: "getRoleAdmin",
@@ -232,6 +237,10 @@ interface TokenInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "decimals", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "decreaseAllowance",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "emergencyUpdateListingValidator",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -562,6 +571,12 @@ export class Token extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    emergencyUpdateListingValidator(
+      _listingAddr: string,
+      _newValidator: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<[string]>;
 
     grantRole(
@@ -752,6 +767,12 @@ export class Token extends BaseContract {
   decreaseAllowance(
     spender: string,
     subtractedValue: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  emergencyUpdateListingValidator(
+    _listingAddr: string,
+    _newValidator: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -947,6 +968,12 @@ export class Token extends BaseContract {
       subtractedValue: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
+
+    emergencyUpdateListingValidator(
+      _listingAddr: string,
+      _newValidator: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
 
@@ -1493,6 +1520,12 @@ export class Token extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    emergencyUpdateListingValidator(
+      _listingAddr: string,
+      _newValidator: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     getRoleAdmin(
       role: BytesLike,
       overrides?: CallOverrides
@@ -1693,6 +1726,12 @@ export class Token extends BaseContract {
     decreaseAllowance(
       spender: string,
       subtractedValue: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    emergencyUpdateListingValidator(
+      _listingAddr: string,
+      _newValidator: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
