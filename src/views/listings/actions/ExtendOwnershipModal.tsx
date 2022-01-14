@@ -71,9 +71,8 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
   const [focusedInput, setFocusedInput] = React.useState(null);
 
   const listing = useSelector(selectEntityById(listingId));
-  const { signer } = useSelector((state: RootState) => state.wallet);
+  const { signer, tokenBalance } = useSelector((state: RootState) => state.wallet);
   const { submitted } = useSelector((state: RootState) => state.transactions);
-  const { tokenBalance } = useSelector((state: RootState) => state.wallet);
 
   const { t } = useTranslation();
 
