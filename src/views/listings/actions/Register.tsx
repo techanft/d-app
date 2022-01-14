@@ -24,6 +24,7 @@ import dayjs from 'dayjs';
 import { BigNumber } from 'ethers';
 import { Formik, FormikProps } from 'formik';
 import React, { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
 import * as Yup from 'yup';
@@ -68,24 +69,6 @@ const titleTableStyle = {
   fontWeight: '400',
 };
 
-const registerView = [
-  {
-    key: 'activityName',
-    _style: titleTableStyle,
-    label: 'Hoạt động',
-  },
-  {
-    key: 'reward',
-    _style: titleTableStyle,
-    label: 'Tỉ lệ thưởng',
-  },
-  {
-    key: 'registerAmount',
-    _style: titleTableStyle,
-    label: 'Mức đăng ký',
-  },
-];
-
 interface IRegisterProps extends RouteComponentProps<IRegisterParams> {}
 
 const Register = (props: IRegisterProps) => {
@@ -94,6 +77,26 @@ const Register = (props: IRegisterProps) => {
 
   const dispatch = useDispatch();
   const formikRef = useRef<FormikProps<IRegister>>(null);
+
+  const { t } = useTranslation();
+
+  const registerView = [
+    {
+      key: 'activityName',
+      _style: titleTableStyle,
+      label: `${t('anftDapp.registerComponent.activity')}`,
+    },
+    {
+      key: 'reward',
+      _style: titleTableStyle,
+      label: `${t('anftDapp.registerComponent.reward')}`,
+    },
+    {
+      key: 'registerAmount',
+      _style: titleTableStyle,
+      label: `${t('anftDapp.registerComponent.registerAmount')}`,
+    },
+  ];
 
   const { signerAddress, signer, provider } = useSelector((state: RootState) => state.wallet);
 
@@ -110,7 +113,6 @@ const Register = (props: IRegisterProps) => {
   const [details, setDetails] = useState<string[]>([]);
 
   const toggleDetails = (reqId: string) => {
-    if (!signerAddress) return ToastError('Bạn chưa liên kết với ví của mình');
     proceedCalculation(Number(reqId)).then((res) => setAmountToReturn(res));
 
     const position = details.indexOf(reqId);
@@ -169,18 +171,22 @@ const Register = (props: IRegisterProps) => {
 
   const validationSchema = Yup.object().shape({
     registerAmount: Yup.number()
-      .test('stake-unchange', 'Input amount is unchange', function (value) {
+      .test('stake-unchange', t('anftDapp.registerComponent.inputAmountIsUnchange'), function (value) {
         if (!value) return true;
         return value !== initialRegisterAmount;
       })
-      .test('do-not-exceed-tokenBalance', `Input amount exceeds token balance`, function (value) {
-        if (!value) return true;
-        if (!tokenBalance) return true;
-        return convertDecimalToBn(String(value)).lte(tokenBalance);
-      })
-      .typeError('Incorrect input type!')
-      .required('This field is required!')
-      .min(1, 'Minimum register for the listing is 1.0 token!'),
+      .test(
+        'do-not-exceed-tokenBalance',
+        t('anftDapp.registerComponent.inputAmountExceedsTokenBalance'),
+        function (value) {
+          if (!value) return true;
+          if (!tokenBalance) return true;
+          return convertDecimalToBn(String(value)).lte(tokenBalance);
+        }
+      )
+      .typeError(t('anftDapp.registerComponent.incorrectInputType'))
+      .required(t('anftDapp.registerComponent.inputIsRequired'))
+      .min(1, t('anftDapp.registerComponent.minimumRegister')),
   });
 
   const createTxBodyBaseOnType = (optionId: number, type: EventType) => {
@@ -303,7 +309,8 @@ const Register = (props: IRegisterProps) => {
   };
 
   const onClaimReward = (optionId: number, stakeAmount: BigNumber) => () => {
-    if (tokenBalance!.lt(stakeAmount)) return ToastInfo('Insufficient balance to claim reward!');
+    if (tokenBalance!.lt(stakeAmount))
+      return ToastInfo(t('anftDapp.registerComponent.insufficientBalanceToClaimReward'));
     handleModalVisibility(ModalType.REWARD_CLAIM, true);
     setChosenOptionId(optionId);
   };
@@ -316,7 +323,8 @@ const Register = (props: IRegisterProps) => {
   const checkTokenBalanceGteRegisterAmount =
     (submitForm: (() => Promise<void>) & (() => Promise<any>), stakeAmount: BigNumber) => () => {
       if (!tokenBalance) return;
-      if (tokenBalance.lt(stakeAmount)) return ToastInfo('Insufficient balance to claim reward!');
+      if (tokenBalance.lt(stakeAmount))
+        return ToastInfo(t('anftDapp.registerComponent.insufficientBalanceToClaimReward'));
       submitForm();
     };
 
@@ -325,7 +333,9 @@ const Register = (props: IRegisterProps) => {
       <SubmissionModal />
       <CRow>
         <CCol xs={12}>
-          <CLabel className="text-primary content-title">Chọn mức đăng ký</CLabel>
+          <CLabel className="text-primary content-title">
+            {t('anftDapp.listingComponent.primaryInfo.investmentActivities.registerClaimReward')}
+          </CLabel>
         </CCol>
         <CCol xs={12}>
           <CCard className="m-0 listing-img-card">
@@ -339,7 +349,7 @@ const Register = (props: IRegisterProps) => {
               <CCardTitle className="listing-card-title mb-0 px-3 py-2 w-100">
                 <p className="mb-2 text-white content-title">202 Yên Sở - Hoàng Mai - Hà Nội</p>
                 <p className="mb-0 text-white detail-title-font">
-                  Hoạt động <b>{listing?.options ? listing.options.length : 0}</b>
+                  {t('anftDapp.registerComponent.activity')} <b>{listing?.options ? listing.options.length : 0}</b>
                 </p>
               </CCardTitle>
             </CCardBody>
@@ -375,7 +385,7 @@ const Register = (props: IRegisterProps) => {
                     return (
                       <td>
                         {item.stake?.amount.eq(0) ? (
-                          <span className="text-danger">Chưa đăng ký</span>
+                          <span className="text-danger">{t('anftDapp.registerComponent.notRegister')}</span>
                         ) : (
                           formatBNToken(item.stake?.amount, true)
                         )}
@@ -400,7 +410,9 @@ const Register = (props: IRegisterProps) => {
                                 )}
                                 <CFormGroup row>
                                   <CCol xs={5}>
-                                    <CLabel className="font-weight-bold my-2">Tokens Balance </CLabel>
+                                    <CLabel className="font-weight-bold my-2">
+                                      {t('anftDapp.listingComponent.extendOwnership.tokenBalance')}
+                                    </CLabel>
                                   </CCol>
                                   <CCol xs={7}>
                                     <p className="text-primary my-2">{formatBNToken(tokenBalance, true)}</p>
@@ -408,7 +420,9 @@ const Register = (props: IRegisterProps) => {
                                 </CFormGroup>
                                 <CFormGroup row>
                                   <CCol xs={5}>
-                                    <CLabel className="font-weight-bold my-2">Total Stakes </CLabel>
+                                    <CLabel className="font-weight-bold my-2">
+                                      {t('anftDapp.listingComponent.primaryInfo.totalStake')}
+                                    </CLabel>
                                   </CCol>
                                   <CCol xs={7}>
                                     <p className="text-primary my-2">{formatBNToken(item.totalStake, true)}</p>
@@ -442,7 +456,9 @@ const Register = (props: IRegisterProps) => {
                                     <CForm className="form-horizontal" onSubmit={handleSubmit}>
                                       <CFormGroup row>
                                         <CCol xs={5}>
-                                          <p className="font-weight-bold my-2">Amount</p>
+                                          <p className="font-weight-bold my-2">
+                                            {t('anftDapp.registerComponent.registerAmount')}
+                                          </p>
                                         </CCol>
                                         <CCol xs={7}>
                                           <CInputGroup>
@@ -455,7 +471,7 @@ const Register = (props: IRegisterProps) => {
                                               name="registerAmount"
                                               value={values.registerAmount ? insertCommas(values.registerAmount) : ''}
                                               onBlur={handleBlur}
-                                              placeholder="Registered amount..."
+                                              placeholder={`${t('anftDapp.registerComponent.registerAmount')}...`}
                                               className="btn-radius-50"
                                               disabled={!isEditingRegister && !item.stake?.amount.eq(0)}
                                             />
@@ -506,7 +522,9 @@ const Register = (props: IRegisterProps) => {
                                           <>
                                             <CFormGroup row>
                                               <CCol xs={5}>
-                                                <p className="font-weight-bold my-2">Reward</p>
+                                                <p className="font-weight-bold my-2">
+                                                  {t('anftDapp.registerComponent.rewardToken')}
+                                                </p>
                                               </CCol>
                                               <CCol xs={7}>
                                                 <p className="text-primary my-2">
@@ -523,7 +541,9 @@ const Register = (props: IRegisterProps) => {
                                             {item.stake?.start && !item.stake.start.eq(0) ? (
                                               <CFormGroup row>
                                                 <CCol xs={5}>
-                                                  <p className="font-weight-bold my-2">Stake start </p>
+                                                  <p className="font-weight-bold my-2">
+                                                    {t('anftDapp.registerComponent.stakeStart')}
+                                                  </p>
                                                 </CCol>
                                                 <CCol xs={7}>
                                                   <p className="my-2">
@@ -544,14 +564,14 @@ const Register = (props: IRegisterProps) => {
                                                       item.stake.amount
                                                     )}
                                                   >
-                                                    Confirm
+                                                    {t('anftDapp.global.modal.confirm')}
                                                   </CButton>
                                                   <CButton
                                                     className="btn-radius-50 btn btn-sm btn-outline-danger ml-2"
                                                     variant="ghost"
                                                     onClick={onCancelEditingRegister(setFieldValue)}
                                                   >
-                                                    Cancel
+                                                    {t('anftDapp.global.modal.cancel')}
                                                   </CButton>
                                                 </CCol>
                                               </CFormGroup>
@@ -562,14 +582,14 @@ const Register = (props: IRegisterProps) => {
                                                     className="btn-radius-50 btn btn-sm btn-success mr-2"
                                                     onClick={onClaimReward(item.id, item.stake.amount)}
                                                   >
-                                                    Claim Reward
+                                                    {t('anftDapp.registerComponent.claimReward.claimReward')}
                                                   </CButton>
                                                   <CButton
                                                     className="btn-radius-50 btn btn-sm btn-outline-danger ml-2"
                                                     variant="ghost"
                                                     onClick={onUnregister(item.id)}
                                                   >
-                                                    Unregister
+                                                    {t('anftDapp.registerComponent.unregister.unregister')}
                                                   </CButton>
                                                 </CCol>
                                               </CFormGroup>
@@ -582,7 +602,7 @@ const Register = (props: IRegisterProps) => {
                                                 className="btn-radius-50 btn btn-sm btn-primary mr-2"
                                                 type="submit"
                                               >
-                                                Register
+                                                {t('anftDapp.registerComponent.register')}
                                               </CButton>
                                             </CCol>
                                           </CFormGroup>
@@ -603,31 +623,31 @@ const Register = (props: IRegisterProps) => {
                 }}
               />
               <CCol xs={12} className="px-0">
-                <i className="detail-title-font">*Lựa chọn Hoạt động bạn muốn SỬA hoặc HỦY đăng ký</i>
+                <i className="detail-title-font">{t('anftDapp.registerComponent.selectActivity')}</i>
               </CCol>
               <CCol xs={12} className="text-center my-2">
                 <CLink to={`/${Number(id)}/activity-logs`}>
-                  <CIcon name="cil-history" /> Activity Logs
+                  <CIcon name="cil-history" /> {t('anftDapp.listingComponent.activityLogs')}
                 </CLink>
               </CCol>
             </>
           ) : (
             <CCol xs={12} className="p-0">
               <div className="alert alert-warning my-3">
-                <span>Vui lòng kết nối ví để xem danh sách hoạt động</span>
+                <span>{t('anftDapp.registerComponent.pleaseConnectWallet')}</span>
               </div>
             </CCol>
           )}
           <ConfirmModal
             isVisible={modalsVisibility[ModalType.REWARD_CLAIM]}
             color="success"
-            title="Nhận thưởng hoạt động"
+            title={t('anftDapp.registerComponent.claimReward.claimRewardModalTitle')}
             CustomJSX={() => {
               if (chosenOptionId === undefined || !listing?.options) return <></>;
               return (
                 <p>
-                  Bạn chắc chắn muốn nhận thưởng của hoạt động{' '}
-                  <span className="text-primary">“{listing.options[chosenOptionId].name}”</span>
+                  {t('anftDapp.registerComponent.claimReward.claimRewardModalContent')}{' '}
+                  <span className="text-primary">“{listing.options[chosenOptionId].name}”</span>?
                 </p>
               );
             }}
@@ -637,16 +657,17 @@ const Register = (props: IRegisterProps) => {
           <ConfirmModal
             isVisible={modalsVisibility[ModalType.REWARD_UNREGISTER]}
             color="danger"
-            title="Xác nhận hủy đăng ký"
+            title={t('anftDapp.registerComponent.unregister.unregisterModalTitle')}
             CustomJSX={() => {
               if (chosenOptionId === undefined || !listing?.options) return <></>;
               return (
                 <p>
-                  Bạn chắc chắn muốn hủy <span className="text-primary">“{listing.options[chosenOptionId].name}”</span>{' '}
-                  với đăng ký{' '}
+                  {t('anftDapp.registerComponent.unregister.unregisterModalContentPrev')}{' '}
+                  <span className="text-primary">“{listing.options[chosenOptionId].name}”</span>{' '}
+                  {t('anftDapp.registerComponent.unregister.unregisterModalContentNext')}{' '}
                   <span className="text-primary">
                     {formatBNToken(listing.options[chosenOptionId].stake?.amount, true)}
-                  </span>
+                  </span>?
                 </p>
               );
             }}

@@ -1,5 +1,6 @@
 import { CButton, CCol, CModal, CModalBody, CModalFooter, CModalHeader, CModalTitle } from '@coreui/react';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface IConfirmModal {
   color: 'danger' | 'success' | 'info' | 'warning' | 'primary';
@@ -15,6 +16,8 @@ interface IConfirmModal {
 
 const ConfirmModal = (props: IConfirmModal) => {
   const { color, title, content, isVisible, onConfirm, CustomJSX, onAbort, hideFooter, disableCloseBackdrop } = props;
+
+  const { t } = useTranslation();
 
   return (
     <CModal
@@ -34,17 +37,17 @@ const ConfirmModal = (props: IConfirmModal) => {
       {!hideFooter ? (
         <CModalFooter className="justify-content-between">
           <CCol>
+            <CButton className={`px-2 w-100 btn-font-style btn-radius-50 btn btn-outline-${color}`} onClick={onAbort}>
+              {t('anftDapp.global.modal.cancel')}
+            </CButton>
+          </CCol>
+          <CCol>
             <CButton
               className={`px-2 w-100 btn btn-${color} btn-font-style btn-radius-50`}
               type="submit"
               onClick={onConfirm}
             >
-              XÁC NHẬN
-            </CButton>
-          </CCol>
-          <CCol>
-            <CButton className={`px-2 w-100 btn-font-style btn-radius-50 btn btn-outline-${color}`} onClick={onAbort}>
-              HỦY
+              {t('anftDapp.global.modal.confirm')}
             </CButton>
           </CCol>
         </CModalFooter>

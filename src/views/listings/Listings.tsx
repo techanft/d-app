@@ -2,6 +2,7 @@ import CIcon from '@coreui/icons-react';
 import { CCol, CPagination, CRow } from '@coreui/react';
 import { BigNumber } from 'ethers';
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
 import { formatBNToken } from '../../shared/casual-helpers';
@@ -28,11 +29,11 @@ interface IListingsProps {
   routingProps: RouteComponentProps;
 }
 
-const initialFilterState : IAssetFilter = {
+const initialFilterState: IAssetFilter = {
   page: 0,
   size: 5,
   sort: 'createdDate,desc',
-}
+};
 
 const Listings = ({ routingProps }: IListingsProps) => {
   const { history, match } = routingProps;
@@ -44,6 +45,8 @@ const Listings = ({ routingProps }: IListingsProps) => {
   const { provider } = useSelector((state: RootState) => state.wallet);
   const { totalItems, entitiesLoading, filterState: storedFilterState } = initialState;
   const assets = useSelector(assetsSelectors.selectAll);
+
+  const { t } = useTranslation();
 
   const [filterState, setFilterState] = useState<IAssetFilter>(storedFilterState || initialFilterState);
 
@@ -86,7 +89,9 @@ const Listings = ({ routingProps }: IListingsProps) => {
                   <img src={item.images} alt="realEstateImg" className="rounded" />
                   <div className="media-body align-items-around ml-2">
                     <span className="info-box-text text-dark">{`${item.id} Yên Sở - Hoàng Mai - Hà Nội`}</span>
-                    <p className={`info-box-token text-primary mt-2 mb-0`}>Value: {formatBNToken(item.value, true)}</p>
+                    <p className={`info-box-token text-primary mt-2 mb-0`}>
+                      {t('anftDapp.listingComponent.listingValue')}: {formatBNToken(item.value, true)}
+                    </p>
                     <p className={`info-box-commissionRate text-success mt-2 mb-0`}>
                       <CIcon name="cil-flower" /> {formatBNToken(item.dailyPayment, true)}
                     </p>

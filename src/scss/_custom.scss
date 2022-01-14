@@ -5,8 +5,7 @@ body {
   font-style: normal;
   font-weight: 500;
 
-  .header-container {
-    border-style: none;
+  .header-container, .c-sidebar.c-sidebar-light .c-sidebar-brand {
     box-shadow: none;
     background-color: #2f2f2f;
   }
