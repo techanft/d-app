@@ -1,7 +1,7 @@
 import { CPagination } from '@coreui/react';
 import dayjs from 'dayjs';
 import React from 'react';
-import { useTranslation, TFunction } from 'react-i18next';
+import { TFunction, useTranslation } from 'react-i18next';
 import { APP_DATE_FORMAT } from '../../../config/constants';
 import { insertCommas, returnOptionNameById } from '../../../shared/casual-helpers';
 import { RecordType } from '../../../shared/enumeration/recordType';
@@ -10,8 +10,7 @@ import {
   IRecordOwnership,
   IRecordRegister,
   IRecordUnRegister,
-  IRecordWithdraw,
-  IRecord
+  IRecordWithdraw
 } from '../../../shared/models/record.model';
 import { IRecordParams } from '../../records/records.api';
 import '../index.scss';
@@ -38,12 +37,16 @@ type TRecordTypeMappingRender = { [key in RecordType]: ({record, transFunc}: IRe
 const renderRecordOwnerShip = ({record, transFunc}: IRecordTableProps<IRecordOwnership>) => (
   <>
     <tr>
-      <td>From</td>
+      <td>{transFunc('anftDapp.activityLogsComponent.activityLogsTable.from')}</td>
       <td className="text-right">{dayjs(record.from).format(APP_DATE_FORMAT)}</td>
     </tr>
     <tr>
-      <td>To</td>
+      <td>{transFunc('anftDapp.activityLogsComponent.activityLogsTable.to')}</td>
       <td className="text-right">{dayjs(record.to).format(APP_DATE_FORMAT)}</td>
+    </tr>
+    <tr>
+      <td>{transFunc('anftDapp.activityLogsComponent.activityLogsTable.amount')}</td>
+      <td className="text-right">{insertCommas(record.amount || '')}</td>
     </tr>
   </>
 );
@@ -51,16 +54,16 @@ const renderRecordOwnerShip = ({record, transFunc}: IRecordTableProps<IRecordOwn
 const renderRecordClaim = ({record, transFunc}: IRecordTableProps<IRecordClaim>) => (
   <>
     <tr>
-      <td>Amount</td>
+      <td>{transFunc('anftDapp.activityLogsComponent.activityLogsTable.amount')}</td>
       <td className="text-right">{insertCommas(record.amount || '')}</td>
     </tr>
 
     <tr>
-      <td>From</td>
+      <td>{transFunc('anftDapp.registerComponent.stakeStart')}</td>
       <td className="text-right">{dayjs(record.from).format(APP_DATE_FORMAT)}</td>
     </tr>
     <tr>
-      <td>To</td>
+      <td>{transFunc('anftDapp.activityLogsComponent.activityLogsTable.claimTime')}</td>
       <td className="text-right">{dayjs(record.to).format(APP_DATE_FORMAT)}</td>
     </tr>
   </>
@@ -69,11 +72,11 @@ const renderRecordClaim = ({record, transFunc}: IRecordTableProps<IRecordClaim>)
 const renderRecordRegister = ({record, transFunc}: IRecordTableProps<IRecordRegister>) => (
   <>
     <tr>
-      <td>Option</td>
+      <td>{transFunc('anftDapp.registerComponent.activity')}</td>
       <td className="text-right">{returnOptionNameById(Number(record.optionId))}</td>
     </tr>
     <tr>
-      <td>Amount</td>
+      <td>{transFunc('anftDapp.activityLogsComponent.activityLogsTable.amount')}</td>
       <td className="text-right">{insertCommas(record.amount || '')}</td>
     </tr>
   </>
@@ -82,7 +85,7 @@ const renderRecordRegister = ({record, transFunc}: IRecordTableProps<IRecordRegi
 const renderRecordUnRegister = ({record, transFunc}: IRecordTableProps<IRecordUnRegister>) => (
   <>
     <tr>
-      <td>Option</td>
+      <td>{transFunc('anftDapp.registerComponent.activity')}</td>
       <td className="text-right">{returnOptionNameById(Number(record.optionId))}</td>
     </tr>
   </>
@@ -91,15 +94,15 @@ const renderRecordUnRegister = ({record, transFunc}: IRecordTableProps<IRecordUn
 const renderRecordWithdraw = ({record, transFunc}: IRecordTableProps<IRecordWithdraw>) => (
   <>
     <tr>
-      <td>Initial Ownership</td>
+      <td>{transFunc('anftDapp.activityLogsComponent.activityLogsTable.initialOwnership')}</td>
       <td className="text-right">{dayjs.unix(Number(record.initialOwnership)).format(APP_DATE_FORMAT)}</td>
     </tr>
     <tr>
-      <td>New Ownership</td>
+      <td>{transFunc('anftDapp.activityLogsComponent.activityLogsTable.newOwnership')}</td>
       <td className="text-right">{dayjs.unix(Number(record.newOwnership)).format(APP_DATE_FORMAT)}</td>
     </tr>
     <tr>
-      <td>Ammount</td>
+      <td>{transFunc('anftDapp.activityLogsComponent.activityLogsTable.amount')}</td>
       <td className="text-right">{insertCommas(record.amount || '')}</td>
     </tr>
   </>

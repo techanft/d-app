@@ -89,8 +89,8 @@
         "minimumOwnership": "Minimum ownership for the listing is 1.0 day!"
       },
       "withdrawToken": {
-        "returnEstimation": "Return Estimation",
         "maximumWithdrawable": "Maximum Days",
+        "returnEstimation": "Return Estimation",
         "withdrawDays": "Days to withdraw",
         "noMoreTokenToWithdraw": "No more token to withdraw!",
         "incorrectInputType": "Incorrect input type!",
@@ -136,7 +136,15 @@
       "pleaseConnectWallet": "Please connect wallet to view activity logs",
       "noLogFound": "No Log(s) Found!",
       "investment": "Investment",
-      "ownership": "Ownership"
+      "ownership": "Ownership",
+      "activityLogsTable": {
+        "from": "From",
+        "to": "To",
+        "amount": "Amount",
+        "initialOwnership": "Initial Ownership",
+        "newOwnership": "New Ownership",
+        "claimTime": "Claim Time"
+      }
     },
 
     "workersListComponent": {
