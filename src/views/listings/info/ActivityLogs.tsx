@@ -22,6 +22,7 @@ import CopyTextToClipBoard from '../../../shared/components/CopyTextToClipboard'
 import InfoLoader from '../../../shared/components/InfoLoader';
 import { RecordType } from '../../../shared/enumeration/recordType';
 import useWindowDimensions from '../../../shared/hooks/useWindowDimensions';
+import { IGetAllResp } from '../../../shared/models/base.model';
 import {
   IRecordClaim,
   IRecordOwnership,
