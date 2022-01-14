@@ -10,7 +10,8 @@ import {
   IRecordOwnership,
   IRecordRegister,
   IRecordUnRegister,
-  IRecordWithdraw
+  IRecordWithdraw,
+  IRecord
 } from '../../../shared/models/record.model';
 import { IRecordParams } from '../../records/records.api';
 import '../index.scss';
@@ -30,7 +31,8 @@ interface IRecordTableProps<TableType> {
   record: TableType;
   transFunc: TFunction<"translation", undefined>
 }
-type TRecordTypeMappingRender = { [key in RecordType]: Function };
+
+type TRecordTypeMappingRender = { [key in RecordType]: ({record, transFunc}: IRecordTableProps<any>) => JSX.Element };
 
 
 const renderRecordOwnerShip = ({record, transFunc}: IRecordTableProps<IRecordOwnership>) => (
@@ -134,7 +136,7 @@ const ActivityLogsTable = (props: IActivityLogs) => {
                     <th></th>
                   </tr>
                 </thead>
-                <tbody>{renderRecordTbody(result, t)}</tbody>
+                <tbody>{renderRecordTbody({record: result, transFunc: t})}</tbody>
               </table>
             );
           })}
