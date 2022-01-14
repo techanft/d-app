@@ -11,7 +11,7 @@ import {
   CModalFooter,
   CModalHeader,
   CModalTitle,
-  CRow,
+  CRow
 } from '@coreui/react';
 import { Formik, FormikProps } from 'formik';
 import moment from 'moment';
@@ -28,7 +28,7 @@ import {
   convertDecimalToBn,
   insertCommas,
   returnMaxEndDate,
-  unInsertCommas,
+  unInsertCommas
 } from '../../../shared/casual-helpers';
 import { ToastError } from '../../../shared/components/Toast';
 import { EventType } from '../../../shared/enumeration/eventType';
@@ -246,7 +246,6 @@ const WithdrawModal = (props: IWithdrawModal) => {
                         autoComplete="off"
                         name="withdraw"
                         value={values.withdraw ? insertCommas(values.withdraw) : ''}
-                        onBlur={handleBlur}
                         className="btn-radius-50 InputMaxWidth"
                       />
                       <CInvalidFeedback className={errors.withdraw && touched.withdraw ? 'd-block' : 'd-none'}>
