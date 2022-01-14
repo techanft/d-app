@@ -263,7 +263,6 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                         autoComplete="off"
                         name="dateCount"
                         value={values.dateCount ? insertCommas(values.dateCount) : ''}
-                        onBlur={handleBlur}
                         className="btn-radius-50 InputMaxWidth"
                       />
                       <CInvalidFeedback
