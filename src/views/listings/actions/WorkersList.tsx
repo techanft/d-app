@@ -19,6 +19,7 @@ import { LISTING_INSTANCE } from '../../../shared/blockchain-helpers';
 import { getEllipsisTxt, validateOwnership } from '../../../shared/casual-helpers';
 import ConfirmationLoading from '../../../shared/components/ConfirmationLoading';
 import ConfirmModal from '../../../shared/components/ConfirmModal';
+import CopyTextToClipBoard from '../../../shared/components/CopyTextToClipboard';
 import InfoLoader from '../../../shared/components/InfoLoader';
 import Loading from '../../../shared/components/Loading';
 import SubmissionModal from '../../../shared/components/SubmissionModal';
@@ -68,8 +69,16 @@ const WorkersList = (props: IWorkersList) => {
   const { t } = useTranslation();
 
   const fields = [
-    { key: 'address', _style: titleTableStyle, label: `${t('anftDapp.workersListComponent.address')}` },
-    { key: 'action', _style: titleTableStyle, label: `${t('anftDapp.workersListComponent.action')}` },
+    {
+      key: 'address',
+      _style: { ...titleTableStyle, textAlign: 'left' },
+      label: `${t('anftDapp.workersListComponent.address')}`,
+    },
+    {
+      key: 'action',
+      _style: { ...titleTableStyle, textAlign: 'center' },
+      label: `${t('anftDapp.workersListComponent.action')}`,
+    },
   ];
 
   const [filterState, setFilterState] = useState<IParams>({
@@ -230,11 +239,15 @@ const WorkersList = (props: IWorkersList) => {
                 header
                 scopedSlots={{
                   address: (item: IRecordWorker) => {
-                    return <td>{getEllipsisTxt(item.worker || '_', 10)}</td>;
+                    return (
+                      <td>
+                        <CopyTextToClipBoard text={item.worker} textNumber={10} />
+                      </td>
+                    );
                   },
                   action: (item: IRecordWorker) => {
                     return (
-                      <td>
+                      <td className="text-center">
                         <CButton
                           className="text-danger p-0"
                           disabled={listing ? !validateOwnership(signerAddress, listing) : true}

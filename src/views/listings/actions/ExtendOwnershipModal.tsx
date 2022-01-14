@@ -139,7 +139,7 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
     dateCount: Yup.number()
       .typeError(t('anftDapp.listingComponent.extendOwnership.incorrectInputType'))
       .min(1, t('anftDapp.listingComponent.extendOwnership.minimumOwnership'))
-      .max(getExtenableDayFromTokenBalance(), 'Your balance is not enough')
+      .max(getExtenableDayFromTokenBalance(), t('anftDapp.listingComponent.extendOwnership.balanceIsNotEnough'))
       .required(t('anftDapp.listingComponent.extendOwnership.inputIsRequired')),
   });
 
