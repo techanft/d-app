@@ -240,6 +240,10 @@ const WithdrawModal = (props: IWithdrawModal) => {
                             );
                             setFieldValue('remainingDays', remainingDays);
                             setFieldValue('endDate', extendValue);
+                          } else {
+                            const extendValue = moment(startDate).add(1, 'day');
+                            setFieldValue('remainingDays', 1);
+                            setFieldValue('endDate', extendValue);
                           }
                         }}
                         id="withdraw"

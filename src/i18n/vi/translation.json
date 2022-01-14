@@ -138,6 +138,8 @@
       "investment": "Đầu tư",
       "ownership": "Sở hữu",
       "activityLogsTable": {
+        "ownedDay": "Số ngày sở hữu",
+        "withdrawDay": "Số ngày rút",
         "from": "Sở hữu trước nạp",
         "to": "Sở hữu sau nạp",
         "amount": "Số ANFT",
