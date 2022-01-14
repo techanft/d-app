@@ -252,16 +252,20 @@ const ListingInfo = (props: IListingInfoProps) => {
               <InfoLoader width={155} height={27} />
             )}
           </CCol>
+          
+          {ownershipExpired ? (
+            ''
+          ) : (
+            <CCol xs={6}>
+              <p className="detail-title-font my-2">{t('anftDapp.listingComponent.primaryInfo.currentOwner')}</p>
 
-          <CCol xs={6}>
-            <p className="detail-title-font my-2">{t('anftDapp.listingComponent.primaryInfo.currentOwner')}</p>
-
-            {!entityLoading && listing?.owner ? (
-              <CopyTextToClipBoard text={listing.owner} inputClassName="my-2 value-text copy-address" />
-            ) : (
-              <InfoLoader width={155} height={27} />
-            )}
-          </CCol>
+              {!entityLoading && listing?.owner ? (
+                <CopyTextToClipBoard text={listing.owner} inputClassName="my-2 value-text copy-address" />
+              ) : (
+                <InfoLoader width={155} height={27} />
+              )}
+            </CCol>
+          )}
 
           <CCol xs={6}>
             <p className="detail-title-font my-2">{t('anftDapp.listingComponent.primaryInfo.ownershipPeriod')}</p>
