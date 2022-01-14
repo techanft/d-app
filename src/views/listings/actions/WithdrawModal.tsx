@@ -241,8 +241,8 @@ const WithdrawModal = (props: IWithdrawModal) => {
                             setFieldValue('remainingDays', remainingDays);
                             setFieldValue('endDate', extendValue);
                           } else {
-                            const extendValue = moment(startDate).add(1, 'day');
-                            setFieldValue('remainingDays', 1);
+                            const extendValue = moment(startDate);
+                            setFieldValue('remainingDays', '_');
                             setFieldValue('endDate', extendValue);
                           }
                         }}
@@ -280,9 +280,9 @@ const WithdrawModal = (props: IWithdrawModal) => {
                     </CCol>
                     <CCol xs={6}>
                       <p className="text-primary text-right">
-                        {values.withdraw > 0 && values.startDate
+                        {values.withdraw > 0 && values.startDate && Number(values.remainingDays)
                           ? insertCommas(calculateWithdrawPriceByDays(values.withdraw))
-                          : '0'}{' '}
+                          : '_'}{' '}
                         ANFT
                       </p>
                     </CCol>
