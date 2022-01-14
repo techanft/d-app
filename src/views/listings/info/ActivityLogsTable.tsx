@@ -1,6 +1,7 @@
 import { CPagination } from '@coreui/react';
 import dayjs from 'dayjs';
 import React from 'react';
+import { TFunction, useTranslation } from 'react-i18next';
 import { APP_DATE_FORMAT } from '../../../config/constants';
 import { insertCommas, returnOptionNameById } from '../../../shared/casual-helpers';
 import { RecordType } from '../../../shared/enumeration/recordType';
@@ -15,7 +16,6 @@ import { IRecordParams } from '../../records/records.api';
 import '../index.scss';
 import { TableType, TRecordTypeArray } from './ActivityLogs';
 
-type TRecordTypeMappingRender = { [key in RecordType]: Function };
 
 interface IActivityLogs {
   results: Array<TRecordTypeArray>;
@@ -26,72 +26,83 @@ interface IActivityLogs {
   tableType: TableType;
   handlePaginationChange: (page: number, type: TableType) => void;
 }
+interface IRecordTableProps<TableType> {
+  record: TableType;
+  transFunc: TFunction<"translation", undefined>
+}
 
-const renderRecordOwnerShip = (record: IRecordOwnership) => (
+type TRecordTypeMappingRender = { [key in RecordType]: ({record, transFunc}: IRecordTableProps<any>) => JSX.Element };
+
+
+const renderRecordOwnerShip = ({record, transFunc}: IRecordTableProps<IRecordOwnership>) => (
   <>
     <tr>
-      <td>From</td>
+      <td>{transFunc('anftDapp.activityLogsComponent.activityLogsTable.from')}</td>
       <td className="text-right">{dayjs(record.from).format(APP_DATE_FORMAT)}</td>
     </tr>
     <tr>
-      <td>To</td>
+      <td>{transFunc('anftDapp.activityLogsComponent.activityLogsTable.to')}</td>
       <td className="text-right">{dayjs(record.to).format(APP_DATE_FORMAT)}</td>
     </tr>
-  </>
-);
-
-const renderRecordClaim = (record: IRecordClaim) => (
-  <>
     <tr>
-      <td>Amount</td>
-      <td className="text-right">{insertCommas(record.amount || '')}</td>
-    </tr>
-
-    <tr>
-      <td>From</td>
-      <td className="text-right">{dayjs(record.from).format(APP_DATE_FORMAT)}</td>
-    </tr>
-    <tr>
-      <td>To</td>
-      <td className="text-right">{dayjs(record.to).format(APP_DATE_FORMAT)}</td>
-    </tr>
-  </>
-);
-
-const renderRecordRegister = (record: IRecordRegister) => (
-  <>
-    <tr>
-      <td>Option</td>
-      <td className="text-right">{returnOptionNameById(Number(record.optionId))}</td>
-    </tr>
-    <tr>
-      <td>Amount</td>
+      <td>{transFunc('anftDapp.activityLogsComponent.activityLogsTable.amount')}</td>
       <td className="text-right">{insertCommas(record.amount || '')}</td>
     </tr>
   </>
 );
 
-const renderRecordUnRegister = (record: IRecordUnRegister) => (
+const renderRecordClaim = ({record, transFunc}: IRecordTableProps<IRecordClaim>) => (
   <>
     <tr>
-      <td>Option</td>
+      <td>{transFunc('anftDapp.activityLogsComponent.activityLogsTable.amount')}</td>
+      <td className="text-right">{insertCommas(record.amount || '')}</td>
+    </tr>
+
+    <tr>
+      <td>{transFunc('anftDapp.registerComponent.stakeStart')}</td>
+      <td className="text-right">{dayjs(record.from).format(APP_DATE_FORMAT)}</td>
+    </tr>
+    <tr>
+      <td>{transFunc('anftDapp.activityLogsComponent.activityLogsTable.claimTime')}</td>
+      <td className="text-right">{dayjs(record.to).format(APP_DATE_FORMAT)}</td>
+    </tr>
+  </>
+);
+
+const renderRecordRegister = ({record, transFunc}: IRecordTableProps<IRecordRegister>) => (
+  <>
+    <tr>
+      <td>{transFunc('anftDapp.registerComponent.activity')}</td>
+      <td className="text-right">{returnOptionNameById(Number(record.optionId))}</td>
+    </tr>
+    <tr>
+      <td>{transFunc('anftDapp.activityLogsComponent.activityLogsTable.amount')}</td>
+      <td className="text-right">{insertCommas(record.amount || '')}</td>
+    </tr>
+  </>
+);
+
+const renderRecordUnRegister = ({record, transFunc}: IRecordTableProps<IRecordUnRegister>) => (
+  <>
+    <tr>
+      <td>{transFunc('anftDapp.registerComponent.activity')}</td>
       <td className="text-right">{returnOptionNameById(Number(record.optionId))}</td>
     </tr>
   </>
 );
 
-const renderRecordWithdraw = (record: IRecordWithdraw) => (
+const renderRecordWithdraw = ({record, transFunc}: IRecordTableProps<IRecordWithdraw>) => (
   <>
     <tr>
-      <td>Initial Ownership</td>
+      <td>{transFunc('anftDapp.activityLogsComponent.activityLogsTable.initialOwnership')}</td>
       <td className="text-right">{dayjs.unix(Number(record.initialOwnership)).format(APP_DATE_FORMAT)}</td>
     </tr>
     <tr>
-      <td>New Ownership</td>
+      <td>{transFunc('anftDapp.activityLogsComponent.activityLogsTable.newOwnership')}</td>
       <td className="text-right">{dayjs.unix(Number(record.newOwnership)).format(APP_DATE_FORMAT)}</td>
     </tr>
     <tr>
-      <td>Ammount</td>
+      <td>{transFunc('anftDapp.activityLogsComponent.activityLogsTable.amount')}</td>
       <td className="text-right">{insertCommas(record.amount || '')}</td>
     </tr>
   </>
@@ -111,6 +122,10 @@ const recordMappingField: TRecordTypeMappingRender = {
 const ActivityLogsTable = (props: IActivityLogs) => {
   const { filterState, totalPages, loading, tableType, handlePaginationChange, results, recordType } = props;
 
+  const { t } = useTranslation();
+
+  const renderRecordTbody = recordMappingField[recordType];
+
   return (
     <>
       {results.length > 0 ? (
@@ -124,7 +139,7 @@ const ActivityLogsTable = (props: IActivityLogs) => {
                     <th></th>
                   </tr>
                 </thead>
-                <tbody>{recordMappingField[recordType](result)}</tbody>
+                <tbody>{renderRecordTbody({record: result, transFunc: t})}</tbody>
               </table>
             );
           })}
@@ -141,7 +156,7 @@ const ActivityLogsTable = (props: IActivityLogs) => {
         </>
       ) : (
         <div className="alert alert-warning my-3">
-          <span>Không tìm thấy bản ghi nào!</span>
+          <span>{t('anftDapp.activityLogsComponent.noLogFound')}</span>
         </div>
       )}
     </>

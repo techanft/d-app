@@ -17,18 +17,21 @@ import { BigNumber } from 'ethers';
 import { Formik, FormikProps } from 'formik';
 import moment from 'moment';
 import React, { useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { DateRangePicker } from 'react-dates';
 import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
 import { LISTING_INSTANCE } from '../../../shared/blockchain-helpers';
 import {
   calculateDateDifference,
-  calculatePriceByDays,
+  calculateSpendingFromSecond,
   checkDateRange,
+  convertBnToDecimal,
   checkOwnershipExpired,
   convertDecimalToBn,
   convertUnixToDate,
   formatBNToken,
+  getSecondDifftoEndDate,
   insertCommas,
   returnMaxEndDate,
   unInsertCommas,
@@ -71,6 +74,8 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
   const { signer } = useSelector((state: RootState) => state.wallet);
   const { submitted } = useSelector((state: RootState) => state.transactions);
   const { tokenBalance } = useSelector((state: RootState) => state.wallet);
+
+  const { t } = useTranslation();
 
   const closeModal = () => {
     setVisibility(false);
@@ -119,12 +124,23 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
     return tokenBalance.div(listing.dailyPayment).toNumber();
   };
 
+  const calculateExtendPriceByDays = (days: number, startDate: moment.Moment) => {
+    if (!startDate || !listing?.dailyPayment) return '0';
+    const spending = listing.dailyPayment.mul(days);
+    const differenceInSeconds = getSecondDifftoEndDate(startDate);
+    const result =
+      differenceInSeconds > 0
+        ? calculateSpendingFromSecond(listing.dailyPayment, differenceInSeconds).add(spending)
+        : spending;
+    return convertBnToDecimal(result);
+  };
+
   const validationSchema = Yup.object().shape({
     dateCount: Yup.number()
-      .typeError('Incorrect input type!')
-      .min(1, 'Gia hạn tối thiểu 1 ngày')
-      .max(getExtenableDayFromTokenBalance(), 'Your balance is not enough')
-      .required('This field is required'),
+      .typeError(t('anftDapp.listingComponent.extendOwnership.incorrectInputType'))
+      .min(1, t('anftDapp.listingComponent.extendOwnership.minimumOwnership'))
+      .max(getExtenableDayFromTokenBalance(), t('anftDapp.listingComponent.extendOwnership.balanceIsNotEnough'))
+      .required(t('anftDapp.listingComponent.extendOwnership.inputIsRequired')),
   });
 
   const handleRawFormValues = (input: IIntialValues): IProceedTxBody => {
@@ -139,7 +155,7 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
       throw Error('Error in generating contract instance');
     }
 
-    const extendPrice = convertDecimalToBn(calculatePriceByDays(input.dateCount, input.startDate, listing));
+    const extendPrice = convertDecimalToBn(calculateExtendPriceByDays(input.dateCount, input.startDate));
 
     const output: IProceedTxBody = {
       listingId,
@@ -178,7 +194,9 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                 <CCol xs={12}>
                   <CFormGroup row>
                     <CCol xs={6}>
-                      <CLabel className="recharge-token-title">Current ownership</CLabel>
+                      <CLabel className="recharge-token-title">
+                        {t('anftDapp.listingComponent.extendOwnership.currentOwnership')}
+                      </CLabel>
                     </CCol>
                     {listing?.ownership ? (
                       <CCol xs={6}>
@@ -191,7 +209,9 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
 
                   <CFormGroup row>
                     <CCol xs={6}>
-                      <CLabel className="recharge-token-title">Daily Payment</CLabel>
+                      <CLabel className="recharge-token-title">
+                        {t('anftDapp.listingComponent.primaryInfo.dailyPayment')}
+                      </CLabel>
                     </CCol>
                     <CCol xs={6}>
                       <p className="text-primary text-right">{formatBNToken(listing?.dailyPayment, true)}</p>
@@ -199,7 +219,9 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                   </CFormGroup>
                   <CFormGroup row>
                     <CCol xs={6}>
-                      <CLabel className="recharge-token-title">Tokens available</CLabel>
+                      <CLabel className="recharge-token-title">
+                        {t('anftDapp.listingComponent.extendOwnership.tokenBalance')}
+                      </CLabel>
                     </CCol>
                     <CCol xs={6}>
                       <p className="text-primary text-right">{formatBNToken(tokenBalance, true)}</p>
@@ -207,7 +229,9 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                   </CFormGroup>
                   <CFormGroup row className={`${screenWidth <= 335 ? 'd-none' : ''}`}>
                     <CCol xs={12}>
-                      <CLabel className="recharge-token-title">Date pick</CLabel>
+                      <CLabel className="recharge-token-title">
+                        {t('anftDapp.listingComponent.withdrawToken.ownershipRange')}
+                      </CLabel>
                     </CCol>
                     <CCol xs={12}>
                       <DateRangePicker
@@ -241,7 +265,9 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                   </CFormGroup>
                   <CFormGroup row>
                     <CCol xs={12}>
-                      <CLabel className="recharge-token-title">Days</CLabel>
+                      <CLabel className="recharge-token-title">
+                        {t('anftDapp.listingComponent.withdrawToken.days')}
+                      </CLabel>
                     </CCol>
                     <CCol xs={12}>
                       <CInput
@@ -256,7 +282,7 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                             setFieldValue('dateCount', extendDay);
                             setFieldValue('endDate', extendDate);
                           } catch (err) {
-                            errors.dateCount = 'Your balance does not enough';
+                            errors.dateCount = `${t('anftDapp.listingComponent.extendOwnership.balanceIsNotEnough')}`;
                           }
                         }}
                         id="dateCount"
@@ -272,12 +298,14 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                   </CFormGroup>
                   <CFormGroup row className={`mt-4`}>
                     <CCol xs={6}>
-                      <CLabel className="recharge-token-title">Token Estimation</CLabel>
+                      <CLabel className="recharge-token-title">
+                        {t('anftDapp.listingComponent.extendOwnership.spendingEstimation')}
+                      </CLabel>
                     </CCol>
                     <CCol xs={6}>
                       <p className="text-primary text-right">
                         {values.dateCount > 0 && values.startDate
-                          ? insertCommas(calculatePriceByDays(values.dateCount, values.startDate, listing))
+                          ? insertCommas(calculateExtendPriceByDays(values.dateCount, values.startDate))
                           : '0'}{' '}
                         ANFT
                       </p>
@@ -292,12 +320,12 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                   className="px-2 w-100 btn-font-style btn-radius-50 btn btn-outline-primary"
                   onClick={closeModal}
                 >
-                  HỦY
+                  {t('anftDapp.global.modal.cancel')}
                 </CButton>
               </CCol>
               <CCol>
                 <CButton className="px-2 w-100 btn btn-primary btn-font-style btn-radius-50" type="submit">
-                  ĐỒNG Ý
+                  {t('anftDapp.global.modal.confirm')}
                 </CButton>
               </CCol>
             </CModalFooter>

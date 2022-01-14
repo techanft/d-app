@@ -8,7 +8,7 @@ import {
   CDataTable,
   CLink,
   CPagination,
-  CRow
+  CRow,
 } from '@coreui/react';
 import {
   faArrowAltCircleDown,
@@ -16,10 +16,11 @@ import {
   faClipboard,
   faDonate,
   faEdit,
-  faIdBadge
+  faIdBadge,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
+import { TFunction, useTranslation } from 'react-i18next';
 import 'react-dates/initialize';
 import 'react-dates/lib/css/_datepicker.css';
 import { useDispatch, useSelector } from 'react-redux';
@@ -29,7 +30,7 @@ import {
   convertUnixToDate,
   formatBNToken,
   formatLocalDatetime,
-  getEllipsisTxt
+  getEllipsisTxt,
 } from '../../../shared/casual-helpers';
 import ConfirmationLoading from '../../../shared/components/ConfirmationLoading';
 import CopyTextToClipBoard from '../../../shared/components/CopyTextToClipboard';
@@ -49,7 +50,7 @@ import ExtendOwnershipModal from '../actions/ExtendOwnershipModal';
 import WithdrawTokenModal from '../actions/WithdrawModal';
 import '../index.scss';
 
-const ownershipText = (viewerAddr: string | undefined, listingInfo: IAsset) => {
+const ownershipText = (viewerAddr: string | undefined, listingInfo: IAsset, t: TFunction<'translation', undefined>) => {
   const { ownership, owner } = listingInfo;
   if (!ownership || !owner) return '';
 
@@ -61,16 +62,16 @@ const ownershipText = (viewerAddr: string | undefined, listingInfo: IAsset) => {
 
   if (viewerIsOwner && !ownershipExpired) {
     textClassname = 'text-success';
-    textContent = 'Đã sở hữu';
+    textContent = t('anftDapp.listingComponent.primaryInfo.ownershipStatus.owned');
   } else if (viewerIsOwner && ownershipExpired) {
     textClassname = 'text-danger';
-    textContent = 'Đã hết hạn sở hữu. Listing có thể bị chiếm bởi người khác!';
+    textContent = t('anftDapp.listingComponent.primaryInfo.ownershipStatus.ownershipExpired');
   } else if (!viewerIsOwner && !ownershipExpired) {
     textClassname = 'text-danger';
-    textContent = 'Đã có chủ sở hữu';
+    textContent = t('anftDapp.listingComponent.primaryInfo.ownershipStatus.ownedByAnotherAddress');
   } else if (!viewerIsOwner && ownershipExpired) {
     textClassname = 'text-success';
-    textContent = 'Có thể sở hữu';
+    textContent = t('anftDapp.listingComponent.primaryInfo.ownershipStatus.notOwned');
   }
 
   return <p className={`ownership-checked m-0 ${textClassname}`}>{textContent}</p>;
@@ -87,19 +88,6 @@ const titleTableStyle = {
   fontWeight: '400',
 };
 
-const workerFields = [
-  {
-    key: 'address',
-    _style: titleTableStyle,
-    label: 'Address',
-  },
-  {
-    key: 'createdDate',
-    _style: titleTableStyle,
-    label: 'Since',
-  },
-];
-
 const initialCollapseState: TCollapseVisibility = {
   [CollapseType.INVESTMENT]: false,
   [CollapseType.MANAGEMENT]: false,
@@ -113,6 +101,21 @@ const ListingInfo = (props: IListingInfoProps) => {
   const { initialState: recordInitialState } = useSelector((state: RootState) => state.records);
   const { loading: loadingWorkers, workers, errorMessage: workerErrorMessage } = recordInitialState.workerInitialState;
   const { success, submitted } = useSelector((state: RootState) => state.transactions);
+
+  const { t } = useTranslation();
+
+  const workerFields = [
+    {
+      key: 'address',
+      _style: titleTableStyle,
+      label: `${t('anftDapp.workersListComponent.address')}`,
+    },
+    {
+      key: 'createdDate',
+      _style: titleTableStyle,
+      label: `${t('anftDapp.workersListComponent.createdDate')}`,
+    },
+  ];
 
   const listing = useSelector(selectEntityById(listingId));
   const [filterState, setFilterState] = useState<IParams>({
@@ -166,7 +169,7 @@ const ListingInfo = (props: IListingInfoProps) => {
 
   const toggleCollapseVisibility = (type: CollapseType) => () => {
     const viewingWorkerList = type === CollapseType.WORKER_LIST; // Doesnt require wallet connection to view worker list
-    if (!signerAddress && !viewingWorkerList) return ToastError('Please connect your wallet!');
+    if (!signerAddress && !viewingWorkerList) return ToastError(t('anftDapp.global.errors.pleaseConnectWallet'));
     setCollapseVisibility({ ...initialCollapseState, [type]: !collapseVisibility[type] });
   };
 
@@ -188,12 +191,12 @@ const ListingInfo = (props: IListingInfoProps) => {
 
   const onRegisteringOwnership = () => {
     if (viewerIsOwner) return;
-    if (!ownershipExpired) return ToastError('This listing is being owned by another address!');
+    if (!ownershipExpired) return ToastError(t('anftDapp.listingComponent.extendOwnership.cannotRegisterOwnership'));
     handleModalVisibility(ModalType.OWNERSHIP_REGISTER, true);
   };
 
   const onWithdrawToken = () => {
-    if (ownershipExpired) return ToastError('No more token to withdraw!');
+    if (ownershipExpired) return ToastError(t('anftDapp.listingComponent.withdrawToken.noMoreTokenToWithdraw'));
     handleModalVisibility(ModalType.OWNERSHIP_WITHDRAW, true);
   };
 
@@ -226,7 +229,7 @@ const ListingInfo = (props: IListingInfoProps) => {
 
           <CCol xs={12} className=" mb-3">
             {!entityLoading && listing?.ownership ? (
-              ownershipText(signerAddress, listing)
+              ownershipText(signerAddress, listing, t)
             ) : (
               <InfoLoader width={300} height={29} />
             )}
@@ -241,7 +244,7 @@ const ListingInfo = (props: IListingInfoProps) => {
             ''
           )}
           <CCol xs={6}>
-            <p className="detail-title-font my-2">Blockchain address</p>
+            <p className="detail-title-font my-2">{t('anftDapp.listingComponent.primaryInfo.blockchainAddress')}</p>
 
             {!entityLoading && listing?.address ? (
               <CopyTextToClipBoard text={listing.address} inputClassName="my-2 value-text copy-address" />
@@ -251,7 +254,7 @@ const ListingInfo = (props: IListingInfoProps) => {
           </CCol>
 
           <CCol xs={6}>
-            <p className="detail-title-font my-2">The current owner</p>
+            <p className="detail-title-font my-2">{t('anftDapp.listingComponent.primaryInfo.currentOwner')}</p>
 
             {!entityLoading && listing?.owner ? (
               <CopyTextToClipBoard text={listing.owner} inputClassName="my-2 value-text copy-address" />
@@ -261,7 +264,7 @@ const ListingInfo = (props: IListingInfoProps) => {
           </CCol>
 
           <CCol xs={6}>
-            <p className="detail-title-font my-2">Sở hữu tới </p>
+            <p className="detail-title-font my-2">{t('anftDapp.listingComponent.primaryInfo.ownershipPeriod')}</p>
             {!entityLoading && listing?.ownership ? (
               <p className={`my-2 value-text ${ownershipExpired ? 'text-danger' : 'text-success'}`}>
                 {convertUnixToDate(listing.ownership.toNumber())}
@@ -272,7 +275,7 @@ const ListingInfo = (props: IListingInfoProps) => {
           </CCol>
 
           <CCol xs={6}>
-            <p className="detail-title-font my-2">Daily payment</p>
+            <p className="detail-title-font my-2">{t('anftDapp.listingComponent.primaryInfo.dailyPayment')}</p>
 
             {!entityLoading && listing?.dailyPayment ? (
               <p className="my-2 value-text">
@@ -284,7 +287,7 @@ const ListingInfo = (props: IListingInfoProps) => {
           </CCol>
 
           <CCol xs={6}>
-            <p className="detail-title-font my-2">Total Stake</p>
+            <p className="detail-title-font my-2">{t('anftDapp.listingComponent.primaryInfo.totalStake')}</p>
             {!entityLoading && listing?.totalStake ? (
               <p className="text-primary my-2 value-text">
                 {formatBNToken(listing.totalStake, false)} <span className="token-name">ANFT</span>
@@ -295,7 +298,7 @@ const ListingInfo = (props: IListingInfoProps) => {
           </CCol>
 
           <CCol xs={6}>
-            <p className="detail-title-font my-2">Workers count</p>
+            <p className="detail-title-font my-2">{t('anftDapp.listingComponent.primaryInfo.workersCount')}</p>
             {!loadingWorkers && workers ? (
               <p className="my-2 value-text">{workers.count}</p>
             ) : (
@@ -305,7 +308,7 @@ const ListingInfo = (props: IListingInfoProps) => {
 
           <CCol xs={12} className="text-center">
             <p className="text-primary my-2" onClick={toggleCollapseVisibility(CollapseType.WORKER_LIST)}>
-              <FontAwesomeIcon icon={faIdBadge} /> <u>Xem quyền khai thác</u>
+              <FontAwesomeIcon icon={faIdBadge} /> <u>{t('anftDapp.listingComponent.primaryInfo.workersList')}</u>
             </p>
           </CCol>
 
@@ -349,7 +352,7 @@ const ListingInfo = (props: IListingInfoProps) => {
               className="px-3 w-100 btn-radius-50 btn-font-style btn btn-outline-primary"
               onClick={toggleCollapseVisibility(CollapseType.INVESTMENT)}
             >
-              Hoạt động đầu tư
+              {t('anftDapp.listingComponent.primaryInfo.investmentActivities.investmentActivities')}
             </CButton>
           </CCol>
 
@@ -362,12 +365,14 @@ const ListingInfo = (props: IListingInfoProps) => {
                       onClick={onRegisteringOwnership}
                       className={`m-0 ${viewerIsOwner || !ownershipExpired ? 'text-secondary' : 'text-primary'}`}
                     >
-                      <FontAwesomeIcon icon={faEdit} /> Đăng ký sở hữu
+                      <FontAwesomeIcon icon={faEdit} />{' '}
+                      {t('anftDapp.listingComponent.primaryInfo.investmentActivities.registerOwnership')}
                     </p>
                   </CRow>
                   <CRow className="mt-2 mx-0">
                     <CLink to={`/listings/${listingId}/register`}>
-                      <FontAwesomeIcon icon={faDonate} /> Đăng ký nhận thưởng
+                      <FontAwesomeIcon icon={faDonate} />{' '}
+                      {t('anftDapp.listingComponent.primaryInfo.investmentActivities.registerClaimReward')}
                     </CLink>
                   </CRow>
                 </CCardBody>
@@ -382,7 +387,7 @@ const ListingInfo = (props: IListingInfoProps) => {
               }`}
               onClick={toggleCollapseVisibility(CollapseType.MANAGEMENT)}
             >
-              Quản lý sở hữu
+              {t('anftDapp.listingComponent.primaryInfo.ownershipManagement.ownershipManagement')}
             </CButton>
           </CCol>
 
@@ -395,7 +400,8 @@ const ListingInfo = (props: IListingInfoProps) => {
                       onClick={onWithdrawToken}
                       className={`m-0 ${ownershipExpired ? 'text-secondary' : 'text-primary'}`}
                     >
-                      <FontAwesomeIcon icon={faArrowAltCircleUp} /> Rút ANFT
+                      <FontAwesomeIcon icon={faArrowAltCircleUp} />{' '}
+                      {t('anftDapp.listingComponent.primaryInfo.ownershipManagement.withdrawToken')}
                     </p>
                   </CRow>
 
@@ -404,25 +410,27 @@ const ListingInfo = (props: IListingInfoProps) => {
                       onClick={() => handleModalVisibility(ModalType.OWNERSHIP_EXTENSION, true)}
                       className={`m-0 text-primary`}
                     >
-                      <FontAwesomeIcon icon={faArrowAltCircleDown} /> Nạp thêm
+                      <FontAwesomeIcon icon={faArrowAltCircleDown} />{' '}
+                      {t('anftDapp.listingComponent.primaryInfo.ownershipManagement.extendOwnership')}
                     </p>
                   </CRow>
                   <CRow className="mx-0">
                     <CLink to={`/${listingId}/workers-list`}>
-                      <FontAwesomeIcon icon={faClipboard} /> Quản lý quyền khai thác
+                      <FontAwesomeIcon icon={faClipboard} />{' '}
+                      {t('anftDapp.listingComponent.primaryInfo.ownershipManagement.workerManagement')}
                     </CLink>
                   </CRow>
                 </CCardBody>
               </CCard>
             </CCollapse>
           </CCol>
-          {modalsVisibility[ModalType.OWNERSHIP_EXTENSION] && (
+          {modalsVisibility[ModalType.OWNERSHIP_REGISTER] && (
             <ExtendOwnershipModal
               listingId={listingId}
               isVisible={modalsVisibility[ModalType.OWNERSHIP_REGISTER]}
               modelType={ModalType.OWNERSHIP_REGISTER}
               setVisibility={(key: boolean) => handleModalVisibility(ModalType.OWNERSHIP_REGISTER, key)}
-              title="Đăng ký sở hữu"
+              title={t('anftDapp.listingComponent.primaryInfo.investmentActivities.registerOwnership')}
             />
           )}
 
@@ -432,7 +440,7 @@ const ListingInfo = (props: IListingInfoProps) => {
               isVisible={modalsVisibility[ModalType.OWNERSHIP_EXTENSION]}
               modelType={ModalType.OWNERSHIP_EXTENSION}
               setVisibility={(key: boolean) => handleModalVisibility(ModalType.OWNERSHIP_EXTENSION, key)}
-              title="Nạp ANFT"
+              title={t('anftDapp.listingComponent.primaryInfo.ownershipManagement.extendOwnership')}
             />
           )}
 
