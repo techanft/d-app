@@ -252,40 +252,34 @@ const WithdrawModal = (props: IWithdrawModal) => {
                         value={values.withdraw ? insertCommas(values.withdraw) : ''}
                         className="btn-radius-50 InputMaxWidth"
                       />
-                      <CInvalidFeedback className={
-                        values.withdraw === 0 &&
-                        errors.withdraw && touched.withdraw ? 'd-block' : 'd-none'}>
+                      <CInvalidFeedback
+                        className={values.withdraw === 0 && errors.withdraw && touched.withdraw ? 'd-block' : 'd-none'}
+                      >
                         {errors.withdraw || exceedingWithdrawErr}
                       </CInvalidFeedback>
                     </CCol>
                   </CFormGroup>
-                  {!errors.withdraw && listing?.dailyPayment && listing?.ownership && values.withdraw ? (
-                    <>
-                      <CFormGroup row className={`mt-4`}>
-                        <CCol xs={6}>
-                          <CLabel className="withdraw-token-title">Remaining Days</CLabel>
-                        </CCol>
-                        <CCol xs={6}>
-                          <p className="text-primary text-right">{values.remainingDays} Days</p>
-                        </CCol>
-                      </CFormGroup>
-                      <CFormGroup row>
-                        <CCol xs={6}>
-                          <CLabel className="recharge-token-title">Token Estimation</CLabel>
-                        </CCol>
-                        <CCol xs={6}>
-                          <p className="text-primary text-right">
-                            {values.withdraw > 0 && values.startDate
-                              ? insertCommas(calculatePriceByDays(values.withdraw, values.startDate, listing))
-                              : '0'}{' '}
-                            ANFT
-                          </p>
-                        </CCol>
-                      </CFormGroup>
-                    </>
-                  ) : (
-                    ''
-                  )}
+                  <CFormGroup row className={`mt-4`}>
+                    <CCol xs={6}>
+                      <CLabel className="withdraw-token-title">Remaining Days</CLabel>
+                    </CCol>
+                    <CCol xs={6}>
+                      <p className="text-primary text-right">{values.remainingDays} Days</p>
+                    </CCol>
+                  </CFormGroup>
+                  <CFormGroup row>
+                    <CCol xs={6}>
+                      <CLabel className="recharge-token-title">Token Estimation</CLabel>
+                    </CCol>
+                    <CCol xs={6}>
+                      <p className="text-primary text-right">
+                        {values.withdraw > 0 && values.startDate
+                          ? insertCommas(calculatePriceByDays(values.withdraw, values.startDate, listing))
+                          : '0'}{' '}
+                        ANFT
+                      </p>
+                    </CCol>
+                  </CFormGroup>
                 </CCol>
               </CRow>
             </CModalBody>
