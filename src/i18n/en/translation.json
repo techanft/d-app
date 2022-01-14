@@ -139,7 +139,7 @@
       "investment": "Investment",
       "ownership": "Ownership",
       "activityLogsTable": {
-        "ownedDay": "Owned days",
+        "ownedDay": "Extended days",
         "withdrawDay": "Withdraw days",
         "from": "From",
         "to": "To",
