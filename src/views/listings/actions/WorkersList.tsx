@@ -8,9 +8,8 @@ import {
   CContainer,
   CDataTable,
   CLabel,
-  CLink,
   CPagination,
-  CRow,
+  CRow
 } from '@coreui/react';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -199,13 +198,13 @@ const WorkersList = (props: IWorkersList) => {
       <SubmissionModal />
       <CRow>
         <CCol xs={12}>
-          <CLabel className="text-primary content-title">
-            <CLink onClick={() => history.goBack()}>{`${t('anftDapp.global.backLink')} < `}</CLink>
-            {t('anftDapp.workersListComponent.workersList')}
-          </CLabel>
+          <CButton className="text-primary p-0 pb-1 ">
+            <CIcon name="cil-arrow-circle-left" onClick={() => history.goBack()} size="lg" />
+          </CButton>
+          <CLabel className="text-primary content-title ml-1">{t('anftDapp.workersListComponent.workersList')}</CLabel>
         </CCol>
         <CCol xs={12}>
-          <CCard className="m-0 listing-img-card">
+          <CCard className="mt-1 listing-img-card">
             {!entityLoading && listing ? (
               <img src={listing.images} alt="listingImg" className="w-100 h-100" />
             ) : (

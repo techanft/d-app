@@ -1,17 +1,18 @@
+import CIcon from '@coreui/icons-react';
 import {
+  CButton,
   CCard,
   CCardBody,
   CCardTitle,
   CCol,
   CContainer,
   CLabel,
-  CLink,
   CNav,
   CNavItem,
   CNavLink,
   CRow,
   CTabContent,
-  CTabPane
+  CTabPane,
 } from '@coreui/react';
 import { ActionCreatorWithoutPayload, AsyncThunk } from '@reduxjs/toolkit';
 import React, { useEffect, useRef, useState } from 'react';
@@ -22,14 +23,13 @@ import CopyTextToClipBoard from '../../../shared/components/CopyTextToClipboard'
 import InfoLoader from '../../../shared/components/InfoLoader';
 import { RecordType } from '../../../shared/enumeration/recordType';
 import useWindowDimensions from '../../../shared/hooks/useWindowDimensions';
-import { IGetAllResp } from '../../../shared/models/base.model';
 import {
   IRecordClaim,
   IRecordOwnership,
   IRecordRegister,
   IRecordUnRegister,
   IRecordWithdraw,
-  IRecordWorker
+  IRecordWorker,
 } from '../../../shared/models/record.model';
 import { RootState } from '../../../shared/reducers';
 import { getEntity } from '../../assets/assets.api';
@@ -41,14 +41,14 @@ import {
   getUnRegisterRecord,
   getWithdrawRecord,
   getWorkersRecord,
-  IRecordParams
+  IRecordParams,
 } from '../../records/records.api';
 import {
   fetchingClaim,
   fetchingOwnership,
   fetchingRegister,
   fetchingWithdraw,
-  fetchingWorker
+  fetchingWorker,
 } from '../../records/records.reducer';
 import '../index.scss';
 import ActivityLogsTable from './ActivityLogsTable';
@@ -65,7 +65,7 @@ export type TRecordTypeArray =
   | IRecordWorker
   | IRecordWithdraw;
 
-type TAsyncThunkRecord<T> = AsyncThunk<IGetAllResp<T>, IRecordParams, {}>;
+type TAsyncThunkRecord<T> = AsyncThunk<any, IRecordParams, {}>;
 
 type TRecordTypeMappingApi = {
   [RecordType.REGISTER]: TAsyncThunkRecord<IRecordRegister>;
@@ -253,13 +253,13 @@ const ActivityLogs = (props: IActivityLogs) => {
     <CContainer fluid className="mx-0 my-2">
       <CRow>
         <CCol xs={12}>
-          <CLabel className="text-primary content-title">
-            <CLink onClick={() => history.goBack()}>{`${t('anftDapp.global.backLink')} < `}</CLink>
-            {t('anftDapp.listingComponent.activityLogs')}
-          </CLabel>
+          <CButton className="text-primary p-0 pb-1 ">
+            <CIcon name="cil-arrow-circle-left" onClick={() => history.goBack()} size="lg" />
+          </CButton>
+          <CLabel className="text-primary content-title ml-1">{t('anftDapp.listingComponent.activityLogs')}</CLabel>
         </CCol>
         <CCol xs={12}>
-          <CCard className="m-0 listing-img-card">
+          <CCard className="mt-1 listing-img-card">
             {!entityLoading && listing ? (
               <img src={listing.images} alt="listingImg" className="w-100 h-100" />
             ) : (

@@ -7,8 +7,7 @@
       "modal": {
         "confirm": "XÁC NHẬN",
         "cancel": "HỦY"
-      },
-      "backLink": "Quay lại"
+      }
     },
 
     "sidebarComponent": {

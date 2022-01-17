@@ -333,13 +333,15 @@ const Register = (props: IRegisterProps) => {
       <SubmissionModal />
       <CRow>
         <CCol xs={12}>
-          <CLabel className="text-primary content-title">
-            <CLink onClick={() => history.goBack()}>{`${t('anftDapp.global.backLink')} < `}</CLink>
+          <CButton className="text-primary p-0 pb-1 ">
+            <CIcon name="cil-arrow-circle-left" onClick={() => history.goBack()} size="lg" />
+          </CButton>
+          <CLabel className="text-primary content-title ml-1">
             {t('anftDapp.listingComponent.primaryInfo.investmentActivities.registerClaimReward')}
           </CLabel>
         </CCol>
         <CCol xs={12}>
-          <CCard className="m-0 listing-img-card">
+          <CCard className="mt-1 listing-img-card">
             {!entityLoading && listing ? (
               <img src={listing.images} alt="listingImg" className="w-100 h-100" />
             ) : (
