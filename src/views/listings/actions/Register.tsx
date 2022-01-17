@@ -264,6 +264,20 @@ const Register = (props: IRegisterProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [submitted]);
 
+  useEffect(() => {
+    /**
+     * Make sure to refetch if complete info got overriden in some unknown cases
+     */
+    const listingHasOptions = listing?.options;
+    if (Boolean(listingHasOptions) || !provider || !listing || !signerAddress) return;
+    const refetchTimer = window.setTimeout(() => {
+      dispatch(fetchingEntity());
+      dispatch(getOptionsWithStakes({ listing, stakeholder: signerAddress, provider }));
+    }, 1500);
+    return () => window.clearTimeout(refetchTimer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [provider, signerAddress, id, listing]);
+
   const createInitialValues = (item: IOption): IRegister => {
     if (!item.stake?.amount) return initialValues;
     return { ...initialValues, registerAmount: Number(convertBnToDecimal(item.stake.amount)) };
