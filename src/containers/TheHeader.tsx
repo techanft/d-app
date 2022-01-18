@@ -27,7 +27,11 @@ import { getEllipsisTxt } from '../shared/casual-helpers';
 import { ToastError, ToastInfo } from '../shared/components/Toast';
 import { RootState } from '../shared/reducers';
 import { getEntities } from '../views/assets/assets.api';
-import { fetchingEntities, softReset as assetsSoftReset } from '../views/assets/assets.reducer';
+import {
+  fetchingEntities,
+  setFilterState as setStoredFilterState,
+  softReset as assetsSoftReset,
+} from '../views/assets/assets.reducer';
 import { IAssetFilter } from '../views/listings/Listings';
 import { softReset as transactionsSoftReset } from '../views/transactions/transactions.reducer';
 import {
@@ -40,8 +44,12 @@ import {
 import { resetSigner, softReset as walletSoftReset } from '../views/wallet/wallet.reducer';
 import { toggleSidebar } from './reducer';
 
+interface IDataFilter {
+  value: string;
+  label: string;
+}
 
-const dataFilterDemo = [
+const dataFilterDemo: IDataFilter[] = [
   {
     value: '1',
     label: 'Action',
@@ -55,6 +63,29 @@ const dataFilterDemo = [
     label: 'Something else here',
   },
 ];
+
+const initialValues: IAssetFilter = {
+  page: 0,
+  size: 5,
+  sort: 'createdDate,desc',
+};
+
+type TListingsFilter = {
+  [key in keyof Partial<IAssetFilter>]: IDataFilter[];
+};
+
+const listingsFilter: TListingsFilter = {
+  city: dataFilterDemo,
+  dist: dataFilterDemo,
+  classify: dataFilterDemo,
+  segment: dataFilterDemo,
+  area: dataFilterDemo,
+  orientation: dataFilterDemo,
+  dailyPayment: dataFilterDemo,
+  quality: dataFilterDemo,
+};
+
+const listingsFilterKeys = Object.keys(listingsFilter) as Array<keyof TListingsFilter>;
 
 const TheHeader = () => {
   const dispatch = useDispatch();
@@ -143,14 +174,8 @@ const TheHeader = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [signerAddress]);
 
-  const initialValues: IAssetFilter = {
-    page: 0,
-    size: 5,
-    sort: 'createdDate,desc',
-  };
-
   const handleRawValues = (values: IAssetFilter) => {
-    if (Number(values.owner) === 1) return { ...values, owner: signerAddress };
+    if (Boolean(values.owner)) return { ...values, owner: signerAddress };
     return { ...values, owner: undefined };
   };
 
@@ -187,8 +212,8 @@ const TheHeader = () => {
             )}
           </CButton>
         </CHeaderNavItem>
-        <CHeaderNavItem>
-          <CDropdown>
+        <CHeaderNavItem className="nav-item-filter">
+          <CDropdown className="dr-item-filter">
             <CDropdownToggle caret={false} className="text-primary pl-0 border-0 pr-2">
               <CIcon name="cil-filter" size="xl" />
             </CDropdownToggle>
@@ -201,6 +226,7 @@ const TheHeader = () => {
                     if (!provider || !signerAddress) return ToastError(t('anftDapp.global.errors.pleaseConnectWallet'));
                     dispatch(fetchingEntities());
                     dispatch(getEntities({ fields: values, provider }));
+                    dispatch(setStoredFilterState(values));
                   } catch (error) {
                     console.log(`Error submitting form ${error}`);
                     ToastError(`Error submitting form ${error}`);
@@ -216,135 +242,25 @@ const TheHeader = () => {
                       </CButton>
                     </div>
                     <CRow className="mx-2">
-                      <CCol xs={6} className="px-2 text-center py-2">
-                        <CSelect
-                          className="btn-radius-50 text-dark px-2 content-title"
-                          onChange={handleChange}
-                          value={values.city || ''}
-                          id="city"
-                          name="city"
-                        >
-                          <option value="">{t('anftDapp.headerComponent.filter.city')}</option>
-                          {dataFilterDemo.map((e, i) => (
-                            <option value={e.value} key={`city-key-${i}`}>
-                              {e.label}
-                            </option>
-                          ))}
-                        </CSelect>
-                      </CCol>
-                      <CCol xs={6} className="px-2 text-center py-2">
-                        <CSelect
-                          className="btn-radius-50 text-dark px-2 content-title"
-                          onChange={handleChange}
-                          value={values.dist || ''}
-                          id="dist"
-                          name="dist"
-                        >
-                          <option value="">{t('anftDapp.headerComponent.filter.dist')}</option>
-                          {dataFilterDemo.map((e, i) => (
-                            <option value={e.value} key={`dist-key-${i}`}>
-                              {e.label}
-                            </option>
-                          ))}
-                        </CSelect>
-                      </CCol>
-                      <CCol xs={6} className="px-2 text-center py-2">
-                        <CSelect
-                          className="btn-radius-50 text-dark px-2 content-title"
-                          onChange={handleChange}
-                          value={values.classify || ''}
-                          id="classify"
-                          name="classify"
-                        >
-                          <option value="">{t('anftDapp.headerComponent.filter.classify')}</option>
-                          {dataFilterDemo.map((e, i) => (
-                            <option value={e.value} key={`classify-key-${i}`}>
-                              {e.label}
-                            </option>
-                          ))}
-                        </CSelect>
-                      </CCol>
-                      <CCol xs={6} className="px-2 text-center py-2">
-                        <CSelect
-                          className="btn-radius-50 text-dark px-2 content-title"
-                          onChange={handleChange}
-                          value={values.segment || ''}
-                          id="segment"
-                          name="segment"
-                        >
-                          <option value="">{t('anftDapp.headerComponent.filter.segment')}</option>
-                          {dataFilterDemo.map((e, i) => (
-                            <option value={e.value} key={`segment-key-${i}`}>
-                              {e.label}
-                            </option>
-                          ))}
-                        </CSelect>
-                      </CCol>
-                      <CCol xs={6} className="px-2 text-center py-2">
-                        <CSelect
-                          className="btn-radius-50 text-dark px-2 content-title"
-                          onChange={handleChange}
-                          value={values.area || ''}
-                          id="area"
-                          name="area"
-                        >
-                          <option value="">{t('anftDapp.headerComponent.filter.area')}</option>
-                          {dataFilterDemo.map((e, i) => (
-                            <option value={e.value} key={`area-key-${i}`}>
-                              {e.label}
-                            </option>
-                          ))}
-                        </CSelect>
-                      </CCol>
-                      <CCol xs={6} className="px-2 text-center py-2">
-                        <CSelect
-                          className="btn-radius-50 text-dark px-2 content-title"
-                          onChange={handleChange}
-                          value={values.orientation || ''}
-                          id="orientation"
-                          name="orientation"
-                        >
-                          <option value="">{t('anftDapp.headerComponent.filter.orientation')}</option>
-                          {dataFilterDemo.map((e, i) => (
-                            <option value={e.value} key={`orientation-key-${i}`}>
-                              {e.label}
-                            </option>
-                          ))}
-                        </CSelect>
-                      </CCol>
-                      <CCol xs={6} className="px-2 text-center py-2">
-                        <CSelect
-                          className="btn-radius-50 text-dark px-2 content-title"
-                          onChange={handleChange}
-                          value={values.dailyPayment || ''}
-                          id="dailyPayment"
-                          name="dailyPayment"
-                        >
-                          <option value="">{t('anftDapp.headerComponent.filter.dailyPayment')}</option>
-                          {dataFilterDemo.map((e, i) => (
-                            <option value={e.value} key={`dailyPayment-key-${i}`}>
-                              {e.label}
-                            </option>
-                          ))}
-                        </CSelect>
-                      </CCol>
-                      <CCol xs={6} className="px-2 text-center py-2">
-                        <CSelect
-                          className="btn-radius-50 text-dark px-2 content-title"
-                          onChange={handleChange}
-                          value={values.quality || ''}
-                          id="quality"
-                          name="quality"
-                        >
-                          <option value="">{t('anftDapp.headerComponent.filter.quality')}</option>
-                          {dataFilterDemo.map((e, i) => (
-                            <option value={e.value} key={`quality-key-${i}`}>
-                              {e.label}
-                            </option>
-                          ))}
-                        </CSelect>
-                      </CCol>
-                      <CCol xs={6} className="px-2 py-2 d-flex justify-content-center">
+                      {listingsFilterKeys.map((e) => (
+                        <CCol xs={6} md={4} className="px-2 text-center py-2" key={`listings-key-${e}`}>
+                          <CSelect
+                            className="btn-radius-50 text-dark px-2 content-title"
+                            onChange={handleChange}
+                            value={values[e] || ''}
+                            id={e}
+                            name={e}
+                          >
+                            <option value="">{t(`anftDapp.headerComponent.filter.${e}`)}</option>
+                            {listingsFilter[e]?.map((o, i) => (
+                              <option value={o.value} key={`${e}-key-${i}`}>
+                                {o.label}
+                              </option>
+                            ))}
+                          </CSelect>
+                        </CCol>
+                      ))}
+                      <CCol xs={12} md={4} className="py-3 px-4 d-flex align-items-end">
                         <CInputCheckbox
                           id="owner"
                           name="owner"
@@ -352,7 +268,6 @@ const TheHeader = () => {
                           value={values.owner}
                           onChange={handleChange}
                           checked={values.owner ? true : false}
-                          color='red'
                         />
                         <CLabel className="content-title pl-2 m-0">{t('anftDapp.headerComponent.filter.owned')}</CLabel>
                       </CCol>

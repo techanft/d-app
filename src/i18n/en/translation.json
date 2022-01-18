@@ -2,7 +2,7 @@
   "anftDapp": {
     "global": {
       "errors": {
-        "pleaseConnectWallet": "Please connect your wallet!"
+        "pleaseConnectWallet": "Please connect to your wallet!"
       },
       "modal": {
         "confirm": "CONFIRM",
@@ -133,7 +133,7 @@
     },
 
     "activityLogsComponent": {
-      "pleaseConnectWallet": "Please connect wallet to view activity logs",
+      "pleaseConnectWallet": "Please connect to your wallet to view activity logs",
       "noLogFound": "No Log(s) Found!",
       "investment": "Investment",
       "ownership": "Ownership",
