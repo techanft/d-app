@@ -2,6 +2,7 @@ import CIcon from '@coreui/icons-react';
 import { CTooltip, CButton } from '@coreui/react';
 import React from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
+import { useTranslation } from 'react-i18next';
 import { getEllipsisTxt } from '../casual-helpers';
 
 interface ICopyTextToClipBoardProps {
@@ -12,8 +13,9 @@ interface ICopyTextToClipBoardProps {
 }
 const CopyTextToClipBoard = (props: ICopyTextToClipBoardProps) => {
   const { text, inputClassName, iconClassName, textNumber } = props;
+  const {t } = useTranslation();
   return (
-    <CTooltip content="Copied" placement="bottom">
+    <CTooltip content={t("anftDapp.copyTextToClipBoard.copied")} placement="bottom">
       <CopyToClipboard text={text}>
         <span className={inputClassName}>
           {getEllipsisTxt(text, textNumber)}

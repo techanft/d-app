@@ -6,7 +6,20 @@
       },
       "modal": {
         "confirm": "CONFIRM",
-        "cancel": "CANCEL"
+        "cancel": "CANCEL",
+        "submissionModal": {
+          "title": "Transaction submitted",
+          "content": "View on Network Scan",
+          "close": "Close"
+        },
+        "errorModal": {
+          "deviceErr": "Device Error!",
+          "deviceErrMsg": "Our application is current not supporting Desktop. Please switch to a mobile device",
+          "walletErr": "Wallet Error!",
+          "invalidNetworkErrMsg": "Invalid network detected. Please go to Metamask and switch to BSC network to use the application",
+          "ethereumIsNotInitializedErrMsg": "Ethereum is not initialized. Please install an Ethereum wallet in your browser",
+          "reload": "Reload"
+        }
       }
     },
 
@@ -161,6 +174,9 @@
       "addressWallet": "Address Wallet",
       "addressValidation": "Address wallet is invalid!",
       "addressIsRequired": "This field is required!"
+    },
+    "copyTextToClipBoard": {
+      "copied": "Copied"
     }
   }
 }
