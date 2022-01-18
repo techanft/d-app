@@ -355,7 +355,7 @@ const Register = (props: IRegisterProps) => {
           </CLabel>
         </CCol>
         <CCol xs={12}>
-          <CCard className="mt-1 listing-img-card">
+          <CCard className="mt-1 listing-img-card mb-0">
             {!entityLoading && listing ? (
               <img src={listing.images} alt="listingImg" className="w-100 h-100" />
             ) : (
