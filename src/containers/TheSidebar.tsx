@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
+import { useLocation } from 'react-router-dom';
 import { Dropdown } from '../shared/enumeration/dropdown';
 import { Language } from '../shared/enumeration/language';
 import { RootState } from '../shared/reducers';
@@ -19,6 +20,7 @@ const intialDDState: DropdownState = {
 };
 
 const TheSidebar = () => {
+  const location = useLocation().pathname;
   const dispatch = useDispatch();
   const containerState = useSelector((state: RootState) => state.container);
   const { sidebarShow } = containerState;
@@ -43,6 +45,11 @@ const TheSidebar = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sidebarShow]);
+
+  const highlightNavItem = (path: string): 'c-active text-primary' | '' => {
+    if (path === '/') return '';
+    return location.includes(path) ? 'c-active text-primary' : '';
+  };
 
   return (
     <CSidebar
@@ -78,6 +85,11 @@ const TheSidebar = () => {
               </CLink>
             </li>
           </ul>
+        </li>
+        <li className={`c-sidebar-nav-item `}>
+          <CLink className={`c-sidebar-nav-link ${highlightNavItem('/overview')}`} to={'/overview'}>
+            Tổng quan &nbsp;
+          </CLink>
         </li>
       </ul>
     </CSidebar>

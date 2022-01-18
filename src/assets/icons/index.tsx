@@ -1,3 +1,4 @@
+import { cifUs, cifVn } from '@coreui/icons/js/flag';
 import {
   cilAccountLogout,
   cilApplicationsSettings,
@@ -5,19 +6,15 @@ import {
   cilArrowThickFromRight,
   cilCopy,
   cilExternalLink,
-  cilFilter,
-  cilFlower,
+  cilFilter, cilFilterX, cilFlower,
   cilHistory,
-  cilMenu,
-  cilMoon,
-  cilQrCode,
+  cilMenu, cilMinus, cilMoon, cilPlus, cilQrCode,
   cilSpeedometer,
   cilSun,
   cilTrash,
-  cilX,
+  cilX
 } from '@coreui/icons/js/free';
 
-import { cifVn, cifUs } from '@coreui/icons/js/flag';
 
 export const icons = Object.assign(
   {},
@@ -39,6 +36,9 @@ export const icons = Object.assign(
     cilSun,
     cilTrash,
     cilX,
+    cilFilterX,
+    cilMinus,
+    cilPlus,
   },
   {
     cifVn,
