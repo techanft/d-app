@@ -3,10 +3,9 @@ import {
   CButton,
   CCol,
   CDropdown,
-  CDropdownHeader,
-  CDropdownItem,
   CDropdownMenu,
   CDropdownToggle,
+  CForm,
   CHeader,
   CHeaderBrand,
   CHeaderNav,
@@ -15,9 +14,11 @@ import {
   CLabel,
   CLink,
   CRow,
+  CSelect,
 } from '@coreui/react';
-import { faAngleDown } from '@fortawesome/free-solid-svg-icons';
+import { faSyncAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Formik } from 'formik';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
@@ -25,7 +26,9 @@ import { TOKEN_INSTANCE } from '../shared/blockchain-helpers';
 import { getEllipsisTxt } from '../shared/casual-helpers';
 import { ToastError, ToastInfo } from '../shared/components/Toast';
 import { RootState } from '../shared/reducers';
-import { softReset as assetsSoftReset } from '../views/assets/assets.reducer';
+import { getEntities } from '../views/assets/assets.api';
+import { fetchingEntities, softReset as assetsSoftReset } from '../views/assets/assets.reducer';
+import { IAssetFilter } from '../views/listings/Listings';
 import { softReset as transactionsSoftReset } from '../views/transactions/transactions.reducer';
 import {
   getAddress,
@@ -36,6 +39,22 @@ import {
 } from '../views/wallet/wallet.api';
 import { resetSigner, softReset as walletSoftReset } from '../views/wallet/wallet.reducer';
 import { toggleSidebar } from './reducer';
+
+
+const dataFilterDemo = [
+  {
+    value: '1',
+    label: 'Action',
+  },
+  {
+    value: '2',
+    label: 'Another action',
+  },
+  {
+    value: '3',
+    label: 'Something else here',
+  },
+];
 
 const TheHeader = () => {
   const dispatch = useDispatch();
@@ -124,10 +143,21 @@ const TheHeader = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [signerAddress]);
 
+  const initialValues: IAssetFilter = {
+    page: 0,
+    size: 5,
+    sort: 'createdDate,desc',
+  };
+
+  const handleRawValues = (values: IAssetFilter) => {
+    if (Number(values.owner) === 1) return { ...values, owner: signerAddress };
+    return { ...values, owner: undefined };
+  };
+
   return (
     <CHeader className="header-container d-block shadow-sm border-0" withSubheader>
       <CHeaderNav>
-        <CHeaderBrand className="header-brand mx-auto">
+        <CHeaderBrand className="mx-auto">
           <p className="m-0 content-title text-white">ANFT D-APP V1.0</p>
         </CHeaderBrand>
       </CHeaderNav>
@@ -163,148 +193,178 @@ const TheHeader = () => {
               <CIcon name="cil-filter" size="xl" />
             </CDropdownToggle>
             <CDropdownMenu className="dr-menu-filter m-0">
-              <CDropdownHeader className="text-center modal-title-style">
-                {t('anftDapp.headerComponent.filter.filter')}
-              </CDropdownHeader>
-              <CRow className="mx-0">
-                <CCol xs={6} className="px-0 text-center py-2">
-                  <CDropdown className="mx-1">
-                    <CDropdownToggle
-                      color="white"
-                      className="dt-filter content-title btn-radius-50 text-dark"
-                      caret={false}
-                    >
-                      {t('anftDapp.headerComponent.filter.city')} <FontAwesomeIcon icon={faAngleDown} />
-                    </CDropdownToggle>
-                    <CDropdownMenu className="m-0">
-                      <CDropdownItem href="#">Action</CDropdownItem>
-                      <CDropdownItem href="#">Another action</CDropdownItem>
-                      <CDropdownItem href="#">Something else here</CDropdownItem>
-                    </CDropdownMenu>
-                  </CDropdown>
-                </CCol>
-                <CCol xs={6} className="px-0 text-center py-2">
-                  <CDropdown className="mx-1">
-                    <CDropdownToggle
-                      color="white"
-                      className="dt-filter content-title btn-radius-50 text-dark"
-                      caret={false}
-                    >
-                      {t('anftDapp.headerComponent.filter.dist')} <FontAwesomeIcon icon={faAngleDown} />
-                    </CDropdownToggle>
-                    <CDropdownMenu className="m-0">
-                      <CDropdownItem href="#">Action</CDropdownItem>
-                      <CDropdownItem href="#">Another action</CDropdownItem>
-                      <CDropdownItem href="#">Something else here</CDropdownItem>
-                    </CDropdownMenu>
-                  </CDropdown>
-                </CCol>
-                <CCol xs={6} className="px-0 text-center py-2">
-                  <CDropdown className="mx-1">
-                    <CDropdownToggle
-                      color="white"
-                      className="dt-filter content-title btn-radius-50 text-dark"
-                      caret={false}
-                    >
-                      {t('anftDapp.headerComponent.filter.classify')} <FontAwesomeIcon icon={faAngleDown} />
-                    </CDropdownToggle>
-                    <CDropdownMenu className="m-0">
-                      <CDropdownItem href="#">Action</CDropdownItem>
-                      <CDropdownItem href="#">Another action</CDropdownItem>
-                      <CDropdownItem href="#">Something else here</CDropdownItem>
-                    </CDropdownMenu>
-                  </CDropdown>
-                </CCol>
-                <CCol xs={6} className="px-0 text-center py-2">
-                  <CDropdown className="mx-1">
-                    <CDropdownToggle
-                      color="white"
-                      className="dt-filter content-title btn-radius-50 text-dark"
-                      caret={false}
-                    >
-                      {t('anftDapp.headerComponent.filter.segment')} <FontAwesomeIcon icon={faAngleDown} />
-                    </CDropdownToggle>
-                    <CDropdownMenu className="m-0">
-                      <CDropdownItem href="#">Action</CDropdownItem>
-                      <CDropdownItem href="#">Another action</CDropdownItem>
-                      <CDropdownItem href="#">Something else here</CDropdownItem>
-                    </CDropdownMenu>
-                  </CDropdown>
-                </CCol>
-                <CCol xs={6} className="px-0 text-center py-2">
-                  <CDropdown className="mx-1">
-                    <CDropdownToggle
-                      color="white"
-                      className="dt-filter content-title btn-radius-50 text-dark"
-                      caret={false}
-                    >
-                      {t('anftDapp.headerComponent.filter.area')} <FontAwesomeIcon icon={faAngleDown} />
-                    </CDropdownToggle>
-                    <CDropdownMenu className="m-0">
-                      <CDropdownItem href="#">Action</CDropdownItem>
-                      <CDropdownItem href="#">Another action</CDropdownItem>
-                      <CDropdownItem href="#">Something else here</CDropdownItem>
-                    </CDropdownMenu>
-                  </CDropdown>
-                </CCol>
-                <CCol xs={6} className="px-0 text-center py-2">
-                  <CDropdown className="mx-1">
-                    <CDropdownToggle
-                      color="white"
-                      className="dt-filter content-title btn-radius-50 text-dark"
-                      caret={false}
-                    >
-                      {t('anftDapp.headerComponent.filter.orientation')} <FontAwesomeIcon icon={faAngleDown} />
-                    </CDropdownToggle>
-                    <CDropdownMenu className="m-0">
-                      <CDropdownItem href="#">Action</CDropdownItem>
-                      <CDropdownItem href="#">Another action</CDropdownItem>
-                      <CDropdownItem href="#">Something else here</CDropdownItem>
-                    </CDropdownMenu>
-                  </CDropdown>
-                </CCol>
-                <CCol xs={6} className="px-0 text-center py-2">
-                  <CDropdown className="mx-1">
-                    <CDropdownToggle
-                      color="white"
-                      className="dt-filter content-title btn-radius-50 text-dark"
-                      caret={false}
-                    >
-                      {t('anftDapp.headerComponent.filter.dailyPayment')} <FontAwesomeIcon icon={faAngleDown} />
-                    </CDropdownToggle>
-                    <CDropdownMenu className="m-0">
-                      <CDropdownItem href="#">Action</CDropdownItem>
-                      <CDropdownItem href="#">Another action</CDropdownItem>
-                      <CDropdownItem href="#">Something else here</CDropdownItem>
-                    </CDropdownMenu>
-                  </CDropdown>
-                </CCol>
-                <CCol xs={6} className="px-0 text-center py-2">
-                  <CDropdown className="mx-1">
-                    <CDropdownToggle
-                      color="white"
-                      className="dt-filter content-title btn-radius-50 text-dark"
-                      caret={false}
-                    >
-                      {t('anftDapp.headerComponent.filter.quality')} <FontAwesomeIcon icon={faAngleDown} />
-                    </CDropdownToggle>
-                    <CDropdownMenu className="m-0">
-                      <CDropdownItem href="#">Action</CDropdownItem>
-                      <CDropdownItem href="#">Another action</CDropdownItem>
-                      <CDropdownItem href="#">Something else here</CDropdownItem>
-                    </CDropdownMenu>
-                  </CDropdown>
-                </CCol>
-                <CCol xs={12} className="px-3 text-left py-2 d-flex align-items-center">
-                  <CInputCheckbox id="owned" name="owned" className="form-check-input m-0" />
-                  <CLabel className="content-title pl-2 m-0">{t('anftDapp.headerComponent.filter.owned')}</CLabel>
-                </CCol>
-                <CCol xs={12} className="d-flex justify-content-center my-2">
-                  <CButton className="btn btn-primary btn-radius-50">
-                    {t('anftDapp.headerComponent.filter.apply')}
-                  </CButton>
-                </CCol>
-              </CRow>
+              <Formik
+                initialValues={initialValues}
+                onSubmit={(rawValues) => {
+                  const values = handleRawValues(rawValues);
+                  try {
+                    if (!provider || !signerAddress) return ToastError(t('anftDapp.global.errors.pleaseConnectWallet'));
+                    dispatch(fetchingEntities());
+                    dispatch(getEntities({ fields: values, provider }));
+                  } catch (error) {
+                    console.log(`Error submitting form ${error}`);
+                    ToastError(`Error submitting form ${error}`);
+                  }
+                }}
+              >
+                {({ values, handleChange, handleSubmit, resetForm }) => (
+                  <CForm onSubmit={handleSubmit}>
+                    <div className="modal-title-style d-flex justify-content-end px-3 py-2">
+                      <CLabel className="m-auto pl-3"> {t('anftDapp.headerComponent.filter.filter')}</CLabel>
+                      <CButton className="p-0 text-primary" onClick={resetForm}>
+                        <FontAwesomeIcon icon={faSyncAlt} />
+                      </CButton>
+                    </div>
+                    <CRow className="mx-2">
+                      <CCol xs={6} className="px-2 text-center py-2">
+                        <CSelect
+                          className="btn-radius-50 text-dark px-2 content-title"
+                          onChange={handleChange}
+                          value={values.city || ''}
+                          id="city"
+                          name="city"
+                        >
+                          <option value="">{t('anftDapp.headerComponent.filter.city')}</option>
+                          {dataFilterDemo.map((e, i) => (
+                            <option value={e.value} key={`city-key-${i}`}>
+                              {e.label}
+                            </option>
+                          ))}
+                        </CSelect>
+                      </CCol>
+                      <CCol xs={6} className="px-2 text-center py-2">
+                        <CSelect
+                          className="btn-radius-50 text-dark px-2 content-title"
+                          onChange={handleChange}
+                          value={values.dist || ''}
+                          id="dist"
+                          name="dist"
+                        >
+                          <option value="">{t('anftDapp.headerComponent.filter.dist')}</option>
+                          {dataFilterDemo.map((e, i) => (
+                            <option value={e.value} key={`dist-key-${i}`}>
+                              {e.label}
+                            </option>
+                          ))}
+                        </CSelect>
+                      </CCol>
+                      <CCol xs={6} className="px-2 text-center py-2">
+                        <CSelect
+                          className="btn-radius-50 text-dark px-2 content-title"
+                          onChange={handleChange}
+                          value={values.classify || ''}
+                          id="classify"
+                          name="classify"
+                        >
+                          <option value="">{t('anftDapp.headerComponent.filter.classify')}</option>
+                          {dataFilterDemo.map((e, i) => (
+                            <option value={e.value} key={`classify-key-${i}`}>
+                              {e.label}
+                            </option>
+                          ))}
+                        </CSelect>
+                      </CCol>
+                      <CCol xs={6} className="px-2 text-center py-2">
+                        <CSelect
+                          className="btn-radius-50 text-dark px-2 content-title"
+                          onChange={handleChange}
+                          value={values.segment || ''}
+                          id="segment"
+                          name="segment"
+                        >
+                          <option value="">{t('anftDapp.headerComponent.filter.segment')}</option>
+                          {dataFilterDemo.map((e, i) => (
+                            <option value={e.value} key={`segment-key-${i}`}>
+                              {e.label}
+                            </option>
+                          ))}
+                        </CSelect>
+                      </CCol>
+                      <CCol xs={6} className="px-2 text-center py-2">
+                        <CSelect
+                          className="btn-radius-50 text-dark px-2 content-title"
+                          onChange={handleChange}
+                          value={values.area || ''}
+                          id="area"
+                          name="area"
+                        >
+                          <option value="">{t('anftDapp.headerComponent.filter.area')}</option>
+                          {dataFilterDemo.map((e, i) => (
+                            <option value={e.value} key={`area-key-${i}`}>
+                              {e.label}
+                            </option>
+                          ))}
+                        </CSelect>
+                      </CCol>
+                      <CCol xs={6} className="px-2 text-center py-2">
+                        <CSelect
+                          className="btn-radius-50 text-dark px-2 content-title"
+                          onChange={handleChange}
+                          value={values.orientation || ''}
+                          id="orientation"
+                          name="orientation"
+                        >
+                          <option value="">{t('anftDapp.headerComponent.filter.orientation')}</option>
+                          {dataFilterDemo.map((e, i) => (
+                            <option value={e.value} key={`orientation-key-${i}`}>
+                              {e.label}
+                            </option>
+                          ))}
+                        </CSelect>
+                      </CCol>
+                      <CCol xs={6} className="px-2 text-center py-2">
+                        <CSelect
+                          className="btn-radius-50 text-dark px-2 content-title"
+                          onChange={handleChange}
+                          value={values.dailyPayment || ''}
+                          id="dailyPayment"
+                          name="dailyPayment"
+                        >
+                          <option value="">{t('anftDapp.headerComponent.filter.dailyPayment')}</option>
+                          {dataFilterDemo.map((e, i) => (
+                            <option value={e.value} key={`dailyPayment-key-${i}`}>
+                              {e.label}
+                            </option>
+                          ))}
+                        </CSelect>
+                      </CCol>
+                      <CCol xs={6} className="px-2 text-center py-2">
+                        <CSelect
+                          className="btn-radius-50 text-dark px-2 content-title"
+                          onChange={handleChange}
+                          value={values.quality || ''}
+                          id="quality"
+                          name="quality"
+                        >
+                          <option value="">{t('anftDapp.headerComponent.filter.quality')}</option>
+                          {dataFilterDemo.map((e, i) => (
+                            <option value={e.value} key={`quality-key-${i}`}>
+                              {e.label}
+                            </option>
+                          ))}
+                        </CSelect>
+                      </CCol>
+                      <CCol xs={6} className="px-2 py-2 d-flex justify-content-center">
+                        <CInputCheckbox
+                          id="owner"
+                          name="owner"
+                          className="form-check-input m-0"
+                          value={values.owner}
+                          onChange={handleChange}
+                          checked={values.owner ? true : false}
+                          color='red'
+                        />
+                        <CLabel className="content-title pl-2 m-0">{t('anftDapp.headerComponent.filter.owned')}</CLabel>
+                      </CCol>
+                      <CCol xs={12} className="d-flex justify-content-center my-2">
+                        <CButton className="btn btn-primary btn-radius-50" type="submit">
+                          {t('anftDapp.headerComponent.filter.apply')}
+                        </CButton>
+                      </CCol>
+                    </CRow>
+                  </CForm>
+                )}
+              </Formik>
             </CDropdownMenu>
           </CDropdown>
         </CHeaderNavItem>

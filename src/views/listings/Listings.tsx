@@ -23,7 +23,17 @@ export interface IListingShortInfo {
   tHash: string;
 }
 
-export interface IAssetFilter extends IParams {}
+export interface IAssetFilter extends IParams {
+  owner? : string;
+  city?: string;
+  dist?: string;
+  classify?: string;
+  segment?: string;
+  area?: string;
+  orientation?: string;
+  dailyPayment?: string;
+  quality?: string;
+}
 
 interface IListingsProps {
   routingProps: RouteComponentProps;

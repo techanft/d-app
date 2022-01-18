@@ -1,6 +1,4 @@
-import { CCol, CDropdown, CDropdownItem, CDropdownMenu, CDropdownToggle, CRow, CSubheader } from '@coreui/react';
-import { faAngleDown } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { CCol, CRow, CSelect, CSubheader } from '@coreui/react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { RouteComponentProps } from 'react-router-dom';
@@ -8,58 +6,55 @@ import Listings from '../listings/Listings';
 
 interface IDashboard extends RouteComponentProps {}
 
+const dataFilterDemo = [
+  {
+    value: '1',
+    label: 'Action',
+  },
+  {
+    value: '2',
+    label: 'Another action',
+  },
+  {
+    value: '3',
+    label: 'Something else here',
+  },
+];
+
 const DashboardFilter = () => {
   const { t } = useTranslation();
   return (
     <CSubheader className="sub-header mt-2 justify-content-center align-items-center">
       <CRow className="w-100 p-1">
-        <CCol xs={4} className="px-0 text-center">
-          <CDropdown className="mx-2">
-            <CDropdownToggle
-              color="white"
-              className="dt-filter content-title btn-radius-50 w-100 px-0 text-dark"
-              caret={false}
-            >
-              {t('anftDapp.headerComponent.filter.type')} <FontAwesomeIcon icon={faAngleDown} />
-            </CDropdownToggle>
-            <CDropdownMenu>
-              <CDropdownItem href="#">Action</CDropdownItem>
-              <CDropdownItem href="#">Another action</CDropdownItem>
-              <CDropdownItem href="#">Something else here</CDropdownItem>
-            </CDropdownMenu>
-          </CDropdown>
+        <CCol xs={4} className="px-2">
+          <CSelect className="btn-radius-50 text-dark px-2 content-title">
+            <option value="">{t('anftDapp.headerComponent.filter.type')}</option>
+            {dataFilterDemo.map((e, i) => (
+              <option value={e.value} key={`type-key-${i}`}>
+                {e.label}
+              </option>
+            ))}
+          </CSelect>
         </CCol>
-        <CCol xs={4} className="px-0 text-center">
-          <CDropdown className="mx-2">
-            <CDropdownToggle
-              color="white"
-              className="dt-filter content-title btn-radius-50 w-100 px-0 text-dark"
-              caret={false}
-            >
-              {t('anftDapp.headerComponent.filter.state')} <FontAwesomeIcon icon={faAngleDown} />
-            </CDropdownToggle>
-            <CDropdownMenu>
-              <CDropdownItem href="#">Action</CDropdownItem>
-              <CDropdownItem href="#">Another action</CDropdownItem>
-              <CDropdownItem href="#">Something else here</CDropdownItem>
-            </CDropdownMenu>
-          </CDropdown>
+        <CCol xs={4} className="px-2">
+          <CSelect className="btn-radius-50 text-dark px-2 content-title">
+            <option value="">{t('anftDapp.headerComponent.filter.state')}</option>
+            {dataFilterDemo.map((e, i) => (
+              <option value={e.value} key={`state-key-${i}`}>
+                {e.label}
+              </option>
+            ))}
+          </CSelect>
         </CCol>
-        <CCol xs={4} className="px-0 text-center">
-          <CDropdown className="mx-2">
-            <CDropdownToggle
-              color="white"
-              className="dt-filter content-title btn-radius-50 w-100 px-0 text-dark"
-              caret={false}
-            >
-              {t('anftDapp.headerComponent.filter.services')} <FontAwesomeIcon icon={faAngleDown} />
-            </CDropdownToggle>
-            <CDropdownMenu>
-              <CDropdownItem href="#">Action</CDropdownItem>
-              <CDropdownItem href="#">Another action</CDropdownItem>
-              <CDropdownItem href="#">Something else here</CDropdownItem>
-            </CDropdownMenu>
-          </CDropdown>
+        <CCol xs={4} className="px-2">
+          <CSelect className="btn-radius-50 text-dark px-2 content-title">
+            <option value="">{t('anftDapp.headerComponent.filter.services')}</option>
+            {dataFilterDemo.map((e, i) => (
+              <option value={e.value} key={`services-key-${i}`}>
+                {e.label}
+              </option>
+            ))}
+          </CSelect>
         </CCol>
       </CRow>
     </CSubheader>
