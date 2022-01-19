@@ -94,7 +94,7 @@ const Listings = ({ routingProps }: IListingsProps) => {
               <CCol xs={12} key={`listing-${index}`} className="px-0">
                 <div
                   className="media info-box bg-white mx-3 my-2 p-2 align-items-center rounded shadow-sm"
-                  onClick={onRedirecting(`/listings/${item.id}/detail`)}
+                  onClick={onRedirecting(`/${item.id}/detail`)}
                 >
                   <img src={item.images} alt="realEstateImg" className="rounded" />
                   <div className="media-body align-items-around ml-2">

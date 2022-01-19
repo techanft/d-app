@@ -376,7 +376,7 @@ const ListingInfo = (props: IListingInfoProps) => {
                     </p>
                   </CRow>
                   <CRow className="mt-2 mx-0">
-                    <CLink to={`/listings/${listingId}/register`}>
+                    <CLink to={`/${listingId}/register`}>
                       <FontAwesomeIcon icon={faDonate} />{' '}
                       {t('anftDapp.listingComponent.primaryInfo.investmentActivities.registerClaimReward')}
                     </CLink>
