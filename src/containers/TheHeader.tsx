@@ -15,7 +15,7 @@ import {
   CLink,
   CRow,
   CSelect,
-  CSubheader,
+  CSubheader
 } from '@coreui/react';
 import { faSyncAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -32,7 +32,7 @@ import { getEntities } from '../views/assets/assets.api';
 import {
   fetchingEntities,
   setFilterState as setStoredFilterState,
-  softReset as assetsSoftReset,
+  softReset as assetsSoftReset
 } from '../views/assets/assets.reducer';
 import { IAssetFilter } from '../views/listings/Listings';
 import { softReset as transactionsSoftReset } from '../views/transactions/transactions.reducer';
@@ -41,7 +41,7 @@ import {
   getContractWithSigner,
   getProviderLogin,
   getSigner,
-  getTokenBalance,
+  getTokenBalance
 } from '../views/wallet/wallet.api';
 import { resetSigner, softReset as walletSoftReset } from '../views/wallet/wallet.reducer';
 import { toggleSidebar } from './reducer';
@@ -92,6 +92,8 @@ const listingsFilterKeys = Object.keys(listingsFilter) as Array<keyof TListingsF
 const TheHeader = () => {
   const dispatch = useDispatch();
   const location = useLocation().pathname;
+
+  const isDashboardView = location.includes('/listings');
 
   const {
     getProviderLoginSuccess,
@@ -177,8 +179,8 @@ const TheHeader = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [signerAddress]);
 
-  const handleRawValues = (values: IAssetFilter) : IAssetFilter => {
-    return {...values, owner: Boolean(values.owner) ? signerAddress : undefined }
+  const handleRawValues = (values: IAssetFilter): IAssetFilter => {
+    return { ...values, owner: Boolean(values.owner) ? signerAddress : undefined };
   };
 
   return (
@@ -189,7 +191,7 @@ const TheHeader = () => {
             <p className="m-0 content-title text-white">ANFT D-APP V1.0</p>
           </CHeaderBrand>
         </CHeaderNav>
-        <CHeaderNav className="justify-content-between bg-white px-2">
+        <CHeaderNav className={`${isDashboardView ? 'justify-content-between' : ''} bg-white px-2`}>
           <CHeaderNavItem>
             <CButton className="text-primary p-0 border-0 d-lg-none" onClick={toggleSidebarMobile}>
               <CIcon name="cil-menu" size="xl" />
@@ -198,12 +200,12 @@ const TheHeader = () => {
               <CIcon name="cil-menu" size="xl" />
             </CButton>
           </CHeaderNavItem>
-          <CHeaderNavItem>
+          <CHeaderNavItem className={`${isDashboardView ? '' : 'ml-2'}`}>
             <CLink to="/listings">
               <p className="header-title content-title mb-0">{t('anftDapp.headerComponent.dashboard')}</p>
             </CLink>
           </CHeaderNavItem>
-          <CHeaderNavItem>
+          <CHeaderNavItem className={`${isDashboardView ? '' : 'ml-auto'}`}>
             <CButton className="btn-link-wallet btn-radius-50 px-2 btn-font-style" onClick={onConnectWallet}>
               {signerAddress ? (
                 <b>
@@ -215,7 +217,7 @@ const TheHeader = () => {
               )}
             </CButton>
           </CHeaderNavItem>
-          {location.includes('/listings') ? (
+          {isDashboardView ? (
             <CHeaderNavItem className="nav-item-filter">
               <CDropdown className="dr-item-filter">
                 <CDropdownToggle caret={false} className="text-primary p-0 border-0">
@@ -296,7 +298,7 @@ const TheHeader = () => {
           )}
         </CHeaderNav>
       </CHeader>
-      {location.includes('/listings') ? (
+      {isDashboardView ? (
         <CSubheader className="sub-header mt-2 justify-content-center align-items-center">
           <CRow className="w-100 p-1">
             <CCol xs={4} className="px-2">
