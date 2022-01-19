@@ -4,7 +4,7 @@ import TokenImplementation from '../assets/deployments/bsc-testnet/Token_Impleme
 import TokenProxy from '../assets/deployments/bsc-testnet/Token_Proxy.json';
 import { BLOCKCHAIN_NETWORK, _window } from '../config/constants';
 import { Listing, Token } from '../typechain';
-import { convertBnToDecimal, convertDecimalToBn } from './casual-helpers';
+import { convertDecimalToBn } from './casual-helpers';
 import { IAsset } from './models/assets.model';
 import { IOption } from './models/options.model';
 
