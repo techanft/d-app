@@ -4,7 +4,7 @@ import { BigNumber } from 'ethers';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
-import { RouteComponentProps } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { formatBNToken } from '../../shared/casual-helpers';
 import Loading from '../../shared/components/Loading';
 import { IParams } from '../../shared/models/base.model';
@@ -24,7 +24,7 @@ export interface IListingShortInfo {
 }
 
 export interface IAssetFilter extends IParams {
-  owner? : string;
+  owner?: string;
   city?: string;
   dist?: string;
   classify?: string;
@@ -35,20 +35,16 @@ export interface IAssetFilter extends IParams {
   quality?: string;
 }
 
-interface IListingsProps {
-  routingProps: RouteComponentProps;
-}
-
 const initialFilterState: IAssetFilter = {
   page: 0,
   size: 5,
   sort: 'createdDate,desc',
 };
 
-const Listings = ({ routingProps }: IListingsProps) => {
-  const { history, match } = routingProps;
-
-  const insideDetailView = match.path.includes('detail');
+const Listings = () => {
+  const history = useHistory();
+  const { location } = history;
+  const insideDetailView = location.pathname.includes('detail');
 
   const dispatch = useDispatch();
   const { initialState } = useSelector((state: RootState) => state.assets);
