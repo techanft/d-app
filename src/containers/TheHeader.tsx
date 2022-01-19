@@ -15,7 +15,7 @@ import {
   CLink,
   CRow,
   CSelect,
-  CSubheader
+  CSubheader,
 } from '@coreui/react';
 import { faSyncAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -32,7 +32,7 @@ import { getEntities } from '../views/assets/assets.api';
 import {
   fetchingEntities,
   setFilterState as setStoredFilterState,
-  softReset as assetsSoftReset
+  softReset as assetsSoftReset,
 } from '../views/assets/assets.reducer';
 import { IAssetFilter } from '../views/listings/Listings';
 import { softReset as transactionsSoftReset } from '../views/transactions/transactions.reducer';
@@ -41,7 +41,7 @@ import {
   getContractWithSigner,
   getProviderLogin,
   getSigner,
-  getTokenBalance
+  getTokenBalance,
 } from '../views/wallet/wallet.api';
 import { resetSigner, softReset as walletSoftReset } from '../views/wallet/wallet.reducer';
 import { toggleSidebar } from './reducer';
@@ -111,7 +111,7 @@ const TheHeader = () => {
 
   const { t } = useTranslation();
 
-  const onConnectWallet = () => () => {
+  const onConnectWallet = () => {
     if (signerAddress) return dispatch(resetSigner());
     if (!provider) return ToastInfo('No provider found');
     dispatch(getProviderLogin(provider));
@@ -159,7 +159,7 @@ const TheHeader = () => {
   }, [getProviderLoginSuccess]);
 
   useEffect(() => {
-    if (getSignerSuccess && signer !== null) {
+    if (getSignerSuccess && signer) {
       const TokenContract = TOKEN_INSTANCE({ signer });
       if (!TokenContract) return;
       const body = { contract: TokenContract, signer };
@@ -177,9 +177,8 @@ const TheHeader = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [signerAddress]);
 
-  const handleRawValues = (values: IAssetFilter) => {
-    if (Boolean(values.owner)) return { ...values, owner: signerAddress };
-    return { ...values, owner: undefined };
+  const handleRawValues = (values: IAssetFilter) : IAssetFilter => {
+    return {...values, owner: Boolean(values.owner) ? signerAddress : undefined }
   };
 
   return (
@@ -205,7 +204,7 @@ const TheHeader = () => {
             </CLink>
           </CHeaderNavItem>
           <CHeaderNavItem>
-            <CButton className="btn-link-wallet btn-radius-50 px-2 btn-font-style" onClick={onConnectWallet()}>
+            <CButton className="btn-link-wallet btn-radius-50 px-2 btn-font-style" onClick={onConnectWallet}>
               {signerAddress ? (
                 <b>
                   {getEllipsisTxt(signerAddress, 4)}{' '}
@@ -228,8 +227,9 @@ const TheHeader = () => {
                     onSubmit={(rawValues) => {
                       const values = handleRawValues(rawValues);
                       try {
-                        if (!provider || !signerAddress)
+                        if (!provider || !signerAddress) {
                           return ToastError(t('anftDapp.global.errors.pleaseConnectWallet'));
+                        }
                         dispatch(fetchingEntities());
                         dispatch(getEntities({ fields: values, provider }));
                         dispatch(setStoredFilterState(values));
@@ -296,7 +296,6 @@ const TheHeader = () => {
           )}
         </CHeaderNav>
       </CHeader>
-      
       {location.includes('/listings') ? (
         <CSubheader className="sub-header mt-2 justify-content-center align-items-center">
           <CRow className="w-100 p-1">
