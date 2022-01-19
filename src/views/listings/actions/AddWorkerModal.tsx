@@ -12,13 +12,14 @@ import {
   CModalFooter,
   CModalHeader,
   CModalTitle,
-  CRow
+  CRow,
 } from '@coreui/react';
 import { faChevronLeft } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { utils } from 'ethers';
 import { Formik, FormikProps } from 'formik';
 import React, { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import QrReader from 'react-qr-reader';
 import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
@@ -43,6 +44,7 @@ interface IIntialValues {
 
 const AddWorkerPermission = (props: ICancelWorkerPermission) => {
   const { visible, setVisible, listingId } = props;
+  const { t } = useTranslation();
 
   // FormikRef is type-able https://github.com/jaredpalmer/formik/issues/2290
   const formikRef = useRef<FormikProps<IIntialValues>>(null);
@@ -65,8 +67,8 @@ const AddWorkerPermission = (props: ICancelWorkerPermission) => {
 
   const validationSchema = Yup.object().shape({
     address: Yup.string()
-      .required('Địa chỉ ví không hợp lệ')
-      .test('address-validation', 'Địa chỉ ví không hợp lệ', function (value) {
+      .required(t('anftDapp.workersListComponent.addressIsRequired'))
+      .test('address-validation', t('anftDapp.workersListComponent.addressValidation'), function (value) {
         return utils.isAddress(value || '');
       }),
   });
@@ -117,19 +119,16 @@ const AddWorkerPermission = (props: ICancelWorkerPermission) => {
 
   return (
     <CModal show={visible} onClose={closeModal()} closeOnBackdrop={false} centered className="border-radius-modal">
-      {isScanQrMode ? (
-        <CModalHeader className="justify-content-between">
+      <CModalHeader>
+        {isScanQrMode ? (
           <CButton className="p-0" onClick={() => setIsScanQrMode(false)}>
             <FontAwesomeIcon icon={faChevronLeft} size="lg" />
           </CButton>
-          <CModalTitle className="modal-title-style">Thêm quyền khai thác</CModalTitle>
-          <div></div>
-        </CModalHeader>
-      ) : (
-        <CModalHeader className="justify-content-center">
-          <CModalTitle className="modal-title-style">Thêm quyền khai thác</CModalTitle>
-        </CModalHeader>
-      )}
+        ) : (
+          ''
+        )}
+        <CModalTitle className="modal-title-style m-auto">{t('anftDapp.workersListComponent.addWorkerPermission')}</CModalTitle>
+      </CModalHeader>
 
       <Formik<IIntialValues>
         innerRef={formikRef}
@@ -173,7 +172,7 @@ const AddWorkerPermission = (props: ICancelWorkerPermission) => {
                 ) : (
                   <CRow>
                     <CCol xs={12}>
-                      <p>Address Wallet</p>
+                      <p>{t('anftDapp.workersListComponent.addressWallet')}</p>
                     </CCol>
                     <CCol xs={12}>
                       <CInputGroup>
@@ -206,7 +205,7 @@ const AddWorkerPermission = (props: ICancelWorkerPermission) => {
                     className="px-2 w-100 btn-font-style btn btn-outline-primary btn-radius-50"
                     onClick={closeModal()}
                   >
-                    HỦY
+                    {t('anftDapp.global.modal.cancel')}
                   </CButton>
                 </CCol>
                 <CCol>
@@ -215,7 +214,7 @@ const AddWorkerPermission = (props: ICancelWorkerPermission) => {
                     className="px-2 w-100 btn btn-primary btn-font-style btn-radius-50"
                     type="submit"
                   >
-                    ĐỒNG Ý
+                    {t('anftDapp.global.modal.confirm')}
                   </CButton>
                 </CCol>
               </CModalFooter>

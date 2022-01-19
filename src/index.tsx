@@ -10,7 +10,7 @@ import { icons } from "./assets/icons";
 // import "../polyfill";
 import * as serviceWorker from "./serviceWorker";
 import store from "./store";
-
+import "./i18n/config";
 
 
 React.icons = icons;

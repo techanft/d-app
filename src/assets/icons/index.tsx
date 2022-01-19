@@ -1,24 +1,44 @@
-
+import { cifUs, cifVn } from '@coreui/icons/js/flag';
 import {
-  cilAccountLogout, cilApplicationsSettings, cilArrowCircleTop, cilCopy, cilExternalLink, cilFilter, cilFlower, cilHistory, cilMenu, cilMoon, cilQrCode, cilSpeedometer,
-  cilSun, cilTrash, cilX
-} from '@coreui/icons/js/free'
-
-export const icons = Object.assign({}, 
-  {}, {
-  cilApplicationsSettings,
-  cilSpeedometer,
-  cilSun,
-  cilMoon,
-  cilHistory,
-  cilFlower,
-  cilTrash,
-  cilFilter,
-  cilMenu,
-  cilCopy,
-  cilX,
+  cilAccountLogout,
   cilArrowCircleTop,
+  cilCopy,
   cilExternalLink,
+  cilFilter,
+  cilFilterX,
+  cilFlower,
+  cilHistory,
+  cilMenu,
+  cilMinus,
+  cilPlus,
   cilQrCode,
-  cilAccountLogout
-})
+  cilTrash,
+  cilX,
+  cilArrowCircleLeft,
+} from '@coreui/icons/js/free';
+
+export const icons = Object.assign(
+  {},
+  {},
+  {
+    cilAccountLogout,
+    cilArrowCircleTop,
+    cilCopy,
+    cilExternalLink,
+    cilFilter,
+    cilFlower,
+    cilHistory,
+    cilMenu,
+    cilQrCode,
+    cilTrash,
+    cilX,
+    cilArrowCircleLeft,
+    cilFilterX,
+    cilMinus,
+    cilPlus,
+  },
+  {
+    cifVn,
+    cifUs,
+  }
+);

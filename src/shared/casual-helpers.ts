@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
 import { BigNumber, ethers } from 'ethers';
+import moment from 'moment';
 import { APP_DATE_FORMAT, TOKEN_SYMBOL } from '../config/constants';
 import { IAsset } from './models/assets.model';
 import { baseOptions } from './models/options.model';
@@ -25,22 +26,22 @@ export const noMoreThanOneCommas = (input: number | string) => {
   return commasCount <= 1;
 };
 
-export const insertCommas = (input: number | undefined | string) => {
+export const insertCommas = (input: number | undefined | string, n: number = 4) => {
   if (typeof input !== 'undefined') {
     if (!noMoreThanOneCommas(input)) return '';
     const parts = input.toString().split('.');
     parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-    if (parts[1]) parts[1] = parts[1].substring(0, 4); // Only take the first 4 decimals
+    if (parts[1]) parts[1] = parts[1].substring(0, n); // Only take the first n decimals, default 4 decimals
     return parts.join('.');
   } else {
     return '';
   }
 };
 
-export const unInsertCommas = (input: string) => {
+export const unInsertCommas = (input: string, n : number = 4) => {
   const parts = input.split('.');
   parts[0] = parts[0].replaceAll(',', '');
-  if (parts[1]) parts[1] = parts[1].substring(0, 4); // Only take the first 4 decimals
+  if (parts[1]) parts[1] = parts[1].substring(0, n); // Only take the first n decimals, default 4 decimals
   return parts.join('.');
 };
 
@@ -53,9 +54,9 @@ export const convertDecimalToBn = (input: string) => {
   return ethers.utils.parseUnits(sanitizedInput);
 };
 
-export const formatBNToken = (input: BigNumber | undefined, displaySymbol: boolean) => {
+export const formatBNToken = (input: BigNumber | undefined, displaySymbol: boolean, n : number = 4) => {
   if (!input) return '_';
-  const formatedAmount = insertCommas(convertBnToDecimal(input));
+  const formatedAmount = insertCommas(convertBnToDecimal(input), n);
   return `${formatedAmount} ${displaySymbol ? TOKEN_SYMBOL : ''}`;
 };
 
@@ -107,4 +108,51 @@ export const returnOptionNameById = (optionId: number): string => {
   } else {
     return '_';
   }
+};
+
+// Duplicative logic:
+// startDate/toDate originally are momment.Momment
+// They're converted to ISOString as params to put in this function
+// Then in this function they're converted to momment.Momment
+export const calculateDateDifference = (fromDate: moment.Moment, toDate: moment.Moment): number => {
+  if (!fromDate || !toDate) return 0;
+  const fromDateObj = moment(fromDate);
+  const toDateObj = moment(toDate);
+  const diffDays = Math.floor(moment.duration(toDateObj.diff(fromDateObj)).asDays());
+  return diffDays;
+};
+
+export const calculateSpendingFromSecond = (dailyPayment: BigNumber, diffSecond: number) => {
+  const diffSecondBn = BigNumber.from(Math.round(diffSecond));
+  const spending = dailyPayment.mul(diffSecondBn).div(86400);
+  return spending;
+};
+
+export const getSecondDifftoEndDate = (startDate: moment.Moment) => {
+  const endOfStartDate = moment(startDate).endOf('day');
+  const endOfStartDateMinus90Second = endOfStartDate.subtract(90, 'second');
+  const duration = moment.duration(endOfStartDateMinus90Second.diff(startDate));
+  return duration.asSeconds();
+};
+
+export const returnMaxEndDate = (days: number, maxDays: number): number => {
+  if (days > maxDays) return maxDays;
+  return days;
+};
+
+export const calculatePriceByDays = (days: number, startDate: moment.Moment, listing: IAsset | undefined) => {
+  if (!startDate || !listing?.dailyPayment) return '0';
+  const spending = listing.dailyPayment.mul(days);
+  const differenceInSeconds = getSecondDifftoEndDate(startDate);
+  const result =
+    differenceInSeconds > 0
+      ? calculateSpendingFromSecond(listing.dailyPayment, differenceInSeconds).add(spending)
+      : spending;
+  return convertBnToDecimal(result);
+};
+
+export const checkDateRange = (day: moment.Moment, startDate: moment.Moment, endDate: moment.Moment): boolean => {
+  // return true if date in range of startDate and endDate
+  if (day < startDate) return false;
+  return startDate <= day && day <= endDate;
 };

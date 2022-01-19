@@ -2,8 +2,9 @@ import CIcon from '@coreui/icons-react';
 import { CCol, CPagination, CRow } from '@coreui/react';
 import { BigNumber } from 'ethers';
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
-import { RouteComponentProps } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { formatBNToken } from '../../shared/casual-helpers';
 import Loading from '../../shared/components/Loading';
 import { IParams } from '../../shared/models/base.model';
@@ -22,28 +23,36 @@ export interface IListingShortInfo {
   tHash: string;
 }
 
-export interface IAssetFilter extends IParams {}
-
-interface IListingsProps {
-  routingProps: RouteComponentProps;
+export interface IAssetFilter extends IParams {
+  owner?: string;
+  city?: string;
+  dist?: string;
+  classify?: string;
+  segment?: string;
+  area?: string;
+  orientation?: string;
+  dailyPayment?: string;
+  quality?: string;
 }
 
-const initialFilterState : IAssetFilter = {
+const initialFilterState: IAssetFilter = {
   page: 0,
   size: 5,
   sort: 'createdDate,desc',
-}
+};
 
-const Listings = ({ routingProps }: IListingsProps) => {
-  const { history, match } = routingProps;
-
-  const insideDetailView = match.path.includes('detail');
+const Listings = () => {
+  const history = useHistory();
+  const { location } = history;
+  const insideDetailView = location.pathname.includes('detail');
 
   const dispatch = useDispatch();
   const { initialState } = useSelector((state: RootState) => state.assets);
   const { provider } = useSelector((state: RootState) => state.wallet);
   const { totalItems, entitiesLoading, filterState: storedFilterState } = initialState;
   const assets = useSelector(assetsSelectors.selectAll);
+
+  const { t } = useTranslation();
 
   const [filterState, setFilterState] = useState<IAssetFilter>(storedFilterState || initialFilterState);
 
@@ -81,12 +90,14 @@ const Listings = ({ routingProps }: IListingsProps) => {
               <CCol xs={12} key={`listing-${index}`} className="px-0">
                 <div
                   className="media info-box bg-white mx-3 my-2 p-2 align-items-center rounded shadow-sm"
-                  onClick={onRedirecting(`/listings/${item.id}/detail`)}
+                  onClick={onRedirecting(`/${item.id}/detail`)}
                 >
                   <img src={item.images} alt="realEstateImg" className="rounded" />
                   <div className="media-body align-items-around ml-2">
                     <span className="info-box-text text-dark">{`${item.id} Yên Sở - Hoàng Mai - Hà Nội`}</span>
-                    <p className={`info-box-token text-primary mt-2 mb-0`}>Value: {formatBNToken(item.value, true)}</p>
+                    <p className={`info-box-token text-primary mt-2 mb-0`}>
+                      {t('anftDapp.listingComponent.listingValue')}: {formatBNToken(item.value, true)}
+                    </p>
                     <p className={`info-box-commissionRate text-success mt-2 mb-0`}>
                       <CIcon name="cil-flower" /> {formatBNToken(item.dailyPayment, true)}
                     </p>

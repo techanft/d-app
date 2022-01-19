@@ -1,27 +1,31 @@
 import CIcon from '@coreui/icons-react';
-import { CTooltip, CButton } from '@coreui/react';
-import React from 'react'
+import { CButton, CTooltip } from '@coreui/react';
+import React from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
+import { useTranslation } from 'react-i18next';
 import { getEllipsisTxt } from '../casual-helpers';
 
 interface ICopyTextToClipBoardProps {
-    text: string;
-    inputClassName?: string;
-    iconClassName?: string;
+  text: string;
+  inputClassName?: string;
+  iconClassName?: string;
+  textNumber?: number;
 }
-const CopyTextToClipBoard = ({text, inputClassName, iconClassName} : ICopyTextToClipBoardProps) => {
-    return (
-        <CTooltip content="Copied" placement="bottom">
-        <CopyToClipboard text={text}>
-          <span className={inputClassName}>
-            {getEllipsisTxt(text)}
-            <CButton className="p-0 pb-3 ml-1">
-              <CIcon name="cil-copy" size="sm" className={iconClassName}/>
-            </CButton>
-          </span>
-        </CopyToClipboard>
-      </CTooltip>
-    )
-}
+const CopyTextToClipBoard = (props: ICopyTextToClipBoardProps) => {
+  const { text, inputClassName, iconClassName, textNumber } = props;
+  const {t } = useTranslation();
+  return (
+    <CTooltip content={t("anftDapp.copyTextToClipBoard.copied")} placement="bottom">
+      <CopyToClipboard text={text}>
+        <span className={inputClassName}>
+          {getEllipsisTxt(text, textNumber)}
+          <CButton className="p-0 ml-1 border-0 btn-copy">
+            <CIcon name="cil-copy" size='custom-size' className={iconClassName} />
+          </CButton>
+        </span>
+      </CopyToClipboard>
+    </CTooltip>
+  );
+};
 
 export default CopyTextToClipBoard;

@@ -1,0 +1,184 @@
+{
+  "anftDapp": {
+    "global": {
+      "errors": {
+        "pleaseConnectWallet": "Please connect to your wallet!"
+      },
+      "modal": {
+        "confirm": "CONFIRM",
+        "cancel": "CANCEL",
+        "submissionModal": {
+          "title": "Transaction submitted",
+          "content": "View on Network Scan",
+          "close": "Close"
+        },
+        "errorModal": {
+          "deviceErr": "Device Error!",
+          "deviceErrMsg": "Our application is current not supporting Desktop. Please switch to a mobile device",
+          "walletErr": "Wallet Error!",
+          "invalidNetworkErrMsg": "Invalid network detected. Please go to Metamask and switch to BSC network to use the application",
+          "ethereumIsNotInitializedErrMsg": "Ethereum is not initialized. Please install an Ethereum wallet in your browser",
+          "reload": "Reload"
+        }
+      }
+    },
+
+    "sidebarComponent": {
+      "language": {
+        "language": "Language",
+        "vietnamese": "Vietnamese",
+        "english": "English"
+      }
+    },
+
+    "headerComponent": {
+      "connectWallet": "Connect Wallet",
+      "dashboard": "Dashboard",
+      "filter": {
+        "filter": "Filter",
+        "city": "City",
+        "dist": "District",
+        "classify": "Classify",
+        "segment": "Segment",
+        "area": "Area",
+        "orientation": "Orientation",
+        "dailyPayment": "Daily payment",
+        "quality": "Quality",
+        "owned": "Owned",
+        "type": "Type",
+        "state": "State",
+        "services": "Services",
+        "apply": "APPLY"
+      }
+    },
+
+    "listingComponent": {
+      "listingValue": "Value",
+      "primaryInfo": {
+        "ownershipStatus": {
+          "owned": "Owned",
+          "ownershipExpired": "Ownership expired. Listing can be owned by another address!",
+          "ownedByAnotherAddress": "Owned by another address",
+          "notOwned": "Able to extend ownership with this listing"
+        },
+        "blockchainAddress": "Blockchain Address",
+        "currentOwner": "Owner",
+        "ownershipPeriod": "Ownership",
+        "dailyPayment": "Daily Payment",
+        "totalStake": "Total Stake",
+        "workersCount": "Workers Count",
+        "workersList": "Workers List",
+        "investmentActivities": {
+          "investmentActivities": "Investment Activities",
+          "registerOwnership": "Register for Ownership",
+          "registerClaimReward": "Register for Staking"
+        },
+        "ownershipManagement": {
+          "ownershipManagement": "Ownership Management",
+          "withdrawToken": "Withdraw Ownership",
+          "extendOwnership": "Extend Ownership",
+          "workerManagement": "Workers Management"
+        }
+      },
+      "secondaryInfo": {
+        "details": "Details",
+        "sector": "Sector",
+        "propertyType": "Property Type",
+        "area": "Area",
+        "floorAndOrientation": "Floor/Orientation",
+        "quality": "Quality",
+        "services": "Services"
+      },
+      "activityLogs": "Activity Logs",
+      "moreListing": "More Listing",
+      "extendOwnership": {
+        "currentOwnership": "Current Ownership",
+        "tokenBalance": "Token Balance",
+        "cannotRegisterOwnership": "This listing is being owned by another address!",
+        "spendingEstimation": "Spending Estimation",
+        "balanceIsNotEnough": "Your balance is not enough",
+        "incorrectInputType": "Incorrect input type!",
+        "inputIsRequired": "This field is required!",
+        "minimumOwnership": "Minimum ownership for the listing is 1.0 day!"
+      },
+      "withdrawToken": {
+        "maximumWithdrawable": "Maximum Days",
+        "returnEstimation": "Return Estimation",
+        "withdrawDays": "Days to withdraw",
+        "noMoreTokenToWithdraw": "No more token to withdraw!",
+        "incorrectInputType": "Incorrect input type!",
+        "inputIsRequired": "This field is required!",
+        "minimumWithdraw": "Withdraw at least 1 day!",
+        "days": "Day(s)",
+        "remainingDays": "Remaining Days",
+        "ownershipRange": "Ownership Range",
+        "exceedingWithdrawErr": "Withdraw days cannot exceed {{amount}} day(s)!"
+      }
+    },
+
+    "registerComponent": {
+      "activity": "Activity",
+      "activitiesCount": "Activities Count",
+      "reward": "Reward",
+      "registerAmount": "Register Amount",
+      "notRegister": "Unregistered",
+      "register": "Register",
+      "claimReward": {
+        "claimReward": "Claim Reward",
+        "claimRewardModalTitle": "Claim Reward",
+        "claimRewardModalContent": "Continue to claim the reward of"
+      },
+      "unregister": {
+        "unregister": "Unregister",
+        "unregisterModalTitle": "Unregister",
+        "unregisterModalContentPrev": "Continue to unregister",
+        "unregisterModalContentNext": "with register amount of"
+      },
+      "selectActivity": "*Select an activity to EDIT or UNREGISTER",
+      "pleaseConnectWallet": "Please connect to your wallet to view activities list",
+      "inputAmountIsUnchange": "Unchanged input amount!",
+      "inputAmountExceedsTokenBalance": "Input amount exceeds token balance",
+      "incorrectInputType": "Incorrect input type!",
+      "inputIsRequired": "This field is required!",
+      "minimumRegister": "Minimum register for the activity is 1.0 token!",
+      "insufficientBalanceToClaimReward": "Insufficient balance to claim reward!",
+      "rewardToken": " Reward Amount",
+      "stakeStart": "Stake From"
+    },
+
+    "activityLogsComponent": {
+      "pleaseConnectWallet": "Please connect to your wallet to view activity logs",
+      "noLogFound": "No Log(s) Found!",
+      "investment": "Investment",
+      "ownership": "Ownership",
+      "activityLogsTable": {
+        "ownedDay": "Extended days",
+        "withdrawDay": "Withdraw days",
+        "from": "From",
+        "to": "To",
+        "amount": "Amount",
+        "initialOwnership": "Initial Ownership",
+        "newOwnership": "New Ownership",
+        "claimTime": "Claim Time"
+      },
+      "createdDate": "Created Date"
+    },
+
+    "workersListComponent": {
+      "workersList": "Workers List",
+      "workersCount": "Workers Count",
+      "address": "Address",
+      "action": "Action",
+      "addWorkerPermission": "Add Worker",
+      "createdDate": "Since",
+      "deltWorkerPermission": "Remove Worker",
+      "confirmDeltWorkerPermission": "Continue to remove this worker",
+      "addressWallet": "Address Wallet",
+      "addressValidation": "Address wallet is invalid!",
+      "addressIsRequired": "This field is required!"
+    },
+    "copyTextToClipBoard": {
+      "copied": "Copied"
+    }
+  }
+}

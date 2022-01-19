@@ -13,6 +13,7 @@ export interface IRecordOwnership extends IRecord {
   newOwner: string;
   from: string;
   to: string;
+  amount: string;
 }
 
 export interface IRecordClaim extends IRecord {

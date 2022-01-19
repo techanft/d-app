@@ -4,6 +4,7 @@ import TokenImplementation from '../assets/deployments/bsc-testnet/Token_Impleme
 import TokenProxy from '../assets/deployments/bsc-testnet/Token_Proxy.json';
 import { BLOCKCHAIN_NETWORK, _window } from '../config/constants';
 import { Listing, Token } from '../typechain';
+import { convertDecimalToBn } from './casual-helpers';
 import { IAsset } from './models/assets.model';
 import { IOption } from './models/options.model';
 
@@ -39,20 +40,7 @@ export const LISTING_INSTANCE = ({ address, signer, provider }: IListingInstance
   }
 };
 
-// Logic for checking provider network should be performed here
-// Return an error to save as {providerErrorMessage} inside the store
-export const INVALID_NETWORK_ERR = 'Invalid network detected. Please switch to BSC network to use the application';
-export const providerNetworkChecking = (provider: ethers.providers.Web3Provider): string | null => {
-  const { _network } = provider;
-  if (!_network) return String('Wallet integration error, please wait for 5 seconds then reload the application');
-  if (ethers.utils.hexlify(_network.chainId) !== BLOCKCHAIN_NETWORK.chainId) {
-    promptUserToSwitchChain();
-    return INVALID_NETWORK_ERR;
-  }
-  return null;
-};
-
-const promptUserToSwitchChain = () => {
+export const promptUserToSwitchChain = () => {
   _window.ethereum.request({
     method: 'wallet_addEthereumChain',
     params: [BLOCKCHAIN_NETWORK],
@@ -84,20 +72,23 @@ export const calculateStakeHolderReward = async ({
 
   const userStake = await instance.stakings(optionInfo.id, stakeholder);
 
-  let T = totalStake.mul(100).div(value);
+  const safeMul = convertDecimalToBn('1');
+
+  let T = totalStake.mul(safeMul).div(value);
 
   const T_Threshold = BigNumber.from(86);
   const expiredOwnershipThreshold = BigNumber.from(50);
 
-  if (T.gt(T_Threshold)) {
-    T = T_Threshold;
+  if (T.gt(safeMul.mul(T_Threshold).div(100))) {
+    T = safeMul.mul(T_Threshold).div(100);
   }
 
-  if (ownership < currentUnix && T.gt(expiredOwnershipThreshold)) {
-    T = expiredOwnershipThreshold;
+  if (ownership < currentUnix && T.gt(safeMul.mul(expiredOwnershipThreshold).div(100))) {
+    T = expiredOwnershipThreshold.mul(safeMul.div(100));
   }
 
-  const RTd = dailyPayment.mul(T).div(100);
+  const RTd = dailyPayment.mul(T).div(safeMul);
+
   const above = RTd.mul(optionInfo.reward!.toNumber()).div(100);
   const At = optionInfo.totalStake!.eq(0) ? 1 : optionInfo.totalStake!;
   const Ax = userStake._amount;
