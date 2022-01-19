@@ -1,5 +1,5 @@
 import CIcon from '@coreui/icons-react';
-import { CTooltip, CButton } from '@coreui/react';
+import { CButton, CTooltip } from '@coreui/react';
 import React from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import { useTranslation } from 'react-i18next';

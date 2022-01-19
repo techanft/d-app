@@ -159,7 +159,8 @@
         "initialOwnership": "Initial Ownership",
         "newOwnership": "New Ownership",
         "claimTime": "Claim Time"
-      }
+      },
+      "createdDate": "Created Date"
     },
 
     "workersListComponent": {

@@ -159,7 +159,8 @@
         "initialOwnership": "Sở hữu trước rút",
         "newOwnership": "Sở hữu sau rút",
         "claimTime": "Thời gian nhận thưởng"
-      }
+      },
+      "createdDate": "Ngày bắt đầu"
     },
 
     "workersListComponent": {
