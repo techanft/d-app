@@ -2,13 +2,25 @@
   "anftDapp": {
     "global": {
       "errors": {
-        "pleaseConnectWallet": "Please connect your wallet!"
+        "pleaseConnectWallet": "Please connect to your wallet!"
       },
       "modal": {
         "confirm": "CONFIRM",
-        "cancel": "CANCEL"
-      },
-      "backLink": "Back"
+        "cancel": "CANCEL",
+        "submissionModal": {
+          "title": "Transaction submitted",
+          "content": "View on Network Scan",
+          "close": "Close"
+        },
+        "errorModal": {
+          "deviceErr": "Device Error!",
+          "deviceErrMsg": "Our application is current not supporting Desktop. Please switch to a mobile device",
+          "walletErr": "Wallet Error!",
+          "invalidNetworkErrMsg": "Invalid network detected. Please go to Metamask and switch to BSC network to use the application",
+          "ethereumIsNotInitializedErrMsg": "Ethereum is not initialized. Please install an Ethereum wallet in your browser",
+          "reload": "Reload"
+        }
+      }
     },
 
     "sidebarComponent": {
@@ -106,6 +118,7 @@
 
     "registerComponent": {
       "activity": "Activity",
+      "activitiesCount": "Activities Count",
       "reward": "Reward",
       "registerAmount": "Register Amount",
       "notRegister": "Unregistered",
@@ -134,7 +147,7 @@
     },
 
     "activityLogsComponent": {
-      "pleaseConnectWallet": "Please connect wallet to view activity logs",
+      "pleaseConnectWallet": "Please connect to your wallet to view activity logs",
       "noLogFound": "No Log(s) Found!",
       "investment": "Investment",
       "ownership": "Ownership",
@@ -147,7 +160,8 @@
         "initialOwnership": "Initial Ownership",
         "newOwnership": "New Ownership",
         "claimTime": "Claim Time"
-      }
+      },
+      "createdDate": "Created Date"
     },
 
     "workersListComponent": {
@@ -162,6 +176,9 @@
       "addressWallet": "Address Wallet",
       "addressValidation": "Address wallet is invalid!",
       "addressIsRequired": "This field is required!"
+    },
+    "copyTextToClipBoard": {
+      "copied": "Copied"
     }
   }
 }

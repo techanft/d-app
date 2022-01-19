@@ -1,5 +1,6 @@
 import { CButton, CCol, CContainer, CLabel, CRow } from '@coreui/react';
 import React, { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import ConfirmModal from './ConfirmModal';
 
 interface IErrorModal {
@@ -10,6 +11,7 @@ interface IErrorModal {
 
 const ErrorModal = (props: IErrorModal) => {
   const { errMsg, title, autoReload } = props;
+  const { t } = useTranslation();
   const onReload = () => {
     window.location.reload();
   };
@@ -31,18 +33,18 @@ const ErrorModal = (props: IErrorModal) => {
       onConfirm={() => {}}
       onAbort={() => {}}
       hideFooter={true}
-      title={title}
+      title={t(title)}
       disableCloseBackdrop={true}
       CustomJSX={() => (
         <CContainer className="text-center">
           <CRow>
             <CCol xs={12}>
-              <CLabel className="content-title">{errMsg}</CLabel>
+              <CLabel className="content-title">{t(errMsg)}</CLabel>
             </CCol>
             {autoReload ? (
               <CCol xs={12}>
                 <CButton className="mt-3 btn-primary btn-radius-50" onClick={onReload}>
-                  Reload
+                  {t('anftDapp.global.modal.errorModal.reload')}
                 </CButton>
               </CCol>
             ) : (

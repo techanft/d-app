@@ -78,7 +78,7 @@ const Listing = (props: IListingProps) => {
           <CLabel className="text-primary content-title mt-3">{t('anftDapp.listingComponent.moreListing')}</CLabel>
         </CCol>
         <CCol xs={12} className="px-0">
-          <Listings routingProps={props} />
+          <Listings />
         </CCol>
       </CRow>
     </>

@@ -2,6 +2,8 @@ import React from 'react';
 
 const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'));
 
+const LogsOverview = React.lazy(() => import('./views/logsOverview/LogsOverview'));
+
 const Listing = React.lazy(() => import('./views/listings/Listing'));
 
 const Register = React.lazy(() => import('./views/listings/actions/Register'));
@@ -14,13 +16,14 @@ const WorkersList = React.lazy(() => import('./views/listings/actions/WorkersLis
 const routes = [
   // { path: '/', exact: true, name: 'Home' },
   { path: '/listings', name: 'Dashboard', component: Dashboard, exact: true },
+  { path: '/logs-overview', name: 'LogsOverview', component: LogsOverview, exact: true },
   {
-    path: '/listings/:id/detail',
+    path: '/:id/detail',
     name: 'Listing',
     component: Listing
   },
   {
-    path: '/listings/:id/register',
+    path: '/:id/register',
     name: 'Register',
     component: Register,
     exact: true,

@@ -1,44 +1,41 @@
+import { cifUs, cifVn } from '@coreui/icons/js/flag';
 import {
   cilAccountLogout,
-  cilApplicationsSettings,
   cilArrowCircleTop,
-  cilArrowThickFromRight,
   cilCopy,
   cilExternalLink,
   cilFilter,
+  cilFilterX,
   cilFlower,
   cilHistory,
   cilMenu,
-  cilMoon,
+  cilMinus,
+  cilPlus,
   cilQrCode,
-  cilSpeedometer,
-  cilSun,
   cilTrash,
   cilX,
+  cilArrowCircleLeft,
 } from '@coreui/icons/js/free';
-
-import { cifVn, cifUs } from '@coreui/icons/js/flag';
 
 export const icons = Object.assign(
   {},
   {},
   {
     cilAccountLogout,
-    cilApplicationsSettings,
     cilArrowCircleTop,
-    cilArrowThickFromRight,
     cilCopy,
     cilExternalLink,
     cilFilter,
     cilFlower,
     cilHistory,
     cilMenu,
-    cilMoon,
     cilQrCode,
-    cilSpeedometer,
-    cilSun,
     cilTrash,
     cilX,
+    cilArrowCircleLeft,
+    cilFilterX,
+    cilMinus,
+    cilPlus,
   },
   {
     cifVn,

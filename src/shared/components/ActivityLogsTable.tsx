@@ -3,21 +3,22 @@ import dayjs from 'dayjs';
 import moment from 'moment';
 import React from 'react';
 import { TFunction, useTranslation } from 'react-i18next';
-import { APP_DATE_FORMAT } from '../../../config/constants';
-import { calculateDateDifference, insertCommas, returnOptionNameById } from '../../../shared/casual-helpers';
-import { RecordType } from '../../../shared/enumeration/recordType';
+import { APP_DATE_FORMAT } from '../../config/constants';
+import { IRecordParams } from '../../views/records/records.api';
+import { calculateDateDifference, insertCommas, returnOptionNameById } from '../casual-helpers';
+import { RecordType } from '../enumeration/recordType';
 import {
   IRecordClaim,
   IRecordOwnership,
   IRecordRegister,
   IRecordUnRegister,
   IRecordWithdraw
-} from '../../../shared/models/record.model';
-import { IRecordParams } from '../../records/records.api';
-import '../index.scss';
-import { TableType, TRecordTypeArray } from './ActivityLogs';
+} from '../models/record.model';
+import { TableType, TRecordTypeArray } from './ActivityLogsContainer';
+import CopyTextToClipBoard from './CopyTextToClipboard';
 
-interface IActivityLogs {
+interface IActivityLogsTable {
+  shouldDisplayBlockchainAddress: boolean;
   results: Array<TRecordTypeArray>;
   filterState: IRecordParams;
   recordType: RecordType;
@@ -29,12 +30,21 @@ interface IActivityLogs {
 interface IRecordTableProps<TableType> {
   record: TableType;
   transFunc: TFunction<'translation', undefined>;
+  shouldDisplayBlockchainAddress: boolean;
 }
 
 type TRecordTypeMappingRender = { [key in RecordType]: ({ record, transFunc }: IRecordTableProps<any>) => JSX.Element };
 
-const renderRecordOwnerShip = ({ record, transFunc }: IRecordTableProps<IRecordOwnership>) => (
+const renderRecordOwnerShip = ({ record, transFunc, shouldDisplayBlockchainAddress }: IRecordTableProps<IRecordOwnership>) => (
   <>
+    {shouldDisplayBlockchainAddress && (
+      <tr>
+        <td>{transFunc('anftDapp.listingComponent.primaryInfo.blockchainAddress')}</td>
+        <td className="text-right">
+          <CopyTextToClipBoard text={record.listingAddress} inputClassName="copy-address" iconClassName='m-0' />
+        </td>
+      </tr>
+    )}
     <tr>
       <td>{transFunc('anftDapp.activityLogsComponent.activityLogsTable.from')}</td>
       <td className="text-right">{dayjs(record.from).format(APP_DATE_FORMAT)}</td>
@@ -54,8 +64,16 @@ const renderRecordOwnerShip = ({ record, transFunc }: IRecordTableProps<IRecordO
   </>
 );
 
-const renderRecordClaim = ({ record, transFunc }: IRecordTableProps<IRecordClaim>) => (
+const renderRecordClaim = ({ record, transFunc, shouldDisplayBlockchainAddress }: IRecordTableProps<IRecordClaim>) => (
   <>
+    {shouldDisplayBlockchainAddress && (
+      <tr>
+        <td>{transFunc('anftDapp.listingComponent.primaryInfo.blockchainAddress')}</td>
+        <td className="text-right">
+          <CopyTextToClipBoard text={record.listingAddress} inputClassName="copy-address" iconClassName='m-0'/>
+        </td>
+      </tr>
+    )}
     <tr>
       <td>{transFunc('anftDapp.activityLogsComponent.activityLogsTable.amount')}</td>
       <td className="text-right">{insertCommas(record.amount || '', 10)}</td>
@@ -72,8 +90,16 @@ const renderRecordClaim = ({ record, transFunc }: IRecordTableProps<IRecordClaim
   </>
 );
 
-const renderRecordRegister = ({ record, transFunc }: IRecordTableProps<IRecordRegister>) => (
+const renderRecordRegister = ({ record, transFunc, shouldDisplayBlockchainAddress }: IRecordTableProps<IRecordRegister>) => (
   <>
+    {shouldDisplayBlockchainAddress && (
+      <tr>
+        <td>{transFunc('anftDapp.listingComponent.primaryInfo.blockchainAddress')}</td>
+        <td className="text-right">
+          <CopyTextToClipBoard text={record.listingAddress} inputClassName="copy-address" iconClassName='m-0'/>
+        </td>
+      </tr>
+    )}
     <tr>
       <td>{transFunc('anftDapp.registerComponent.activity')}</td>
       <td className="text-right">{returnOptionNameById(Number(record.optionId))}</td>
@@ -85,8 +111,16 @@ const renderRecordRegister = ({ record, transFunc }: IRecordTableProps<IRecordRe
   </>
 );
 
-const renderRecordUnRegister = ({ record, transFunc }: IRecordTableProps<IRecordUnRegister>) => (
+const renderRecordUnRegister = ({ record, transFunc, shouldDisplayBlockchainAddress }: IRecordTableProps<IRecordUnRegister>) => (
   <>
+    {shouldDisplayBlockchainAddress && (
+      <tr>
+        <td>{transFunc('anftDapp.listingComponent.primaryInfo.blockchainAddress')}</td>
+        <td className="text-right">
+          <CopyTextToClipBoard text={record.listingAddress} inputClassName="copy-address" iconClassName='m-0'/>
+        </td>
+      </tr>
+    )}
     <tr>
       <td>{transFunc('anftDapp.registerComponent.activity')}</td>
       <td className="text-right">{returnOptionNameById(Number(record.optionId))}</td>
@@ -94,8 +128,16 @@ const renderRecordUnRegister = ({ record, transFunc }: IRecordTableProps<IRecord
   </>
 );
 
-const renderRecordWithdraw = ({ record, transFunc }: IRecordTableProps<IRecordWithdraw>) => (
+const renderRecordWithdraw = ({ record, transFunc, shouldDisplayBlockchainAddress }: IRecordTableProps<IRecordWithdraw>) => (
   <>
+    {shouldDisplayBlockchainAddress && (
+      <tr>
+        <td>{transFunc('anftDapp.listingComponent.primaryInfo.blockchainAddress')}</td>
+        <td className="text-right">
+          <CopyTextToClipBoard text={record.listingAddress} inputClassName="copy-address" iconClassName='m-0'/>
+        </td>
+      </tr>
+    )}
     <tr>
       <td>{transFunc('anftDapp.activityLogsComponent.activityLogsTable.initialOwnership')}</td>
       <td className="text-right">{dayjs.unix(Number(record.initialOwnership)).format(APP_DATE_FORMAT)}</td>
@@ -131,8 +173,8 @@ const recordMappingField: TRecordTypeMappingRender = {
   [RecordType.UPDATE_WORKER]: renderRecordWorker,
 };
 
-const ActivityLogsTable = (props: IActivityLogs) => {
-  const { filterState, totalPages, loading, tableType, handlePaginationChange, results, recordType } = props;
+const ActivityLogsTable = (props: IActivityLogsTable) => {
+  const { filterState, totalPages, loading, tableType, handlePaginationChange, results, recordType, shouldDisplayBlockchainAddress } = props;
 
   const { t } = useTranslation();
 
@@ -151,7 +193,7 @@ const ActivityLogsTable = (props: IActivityLogs) => {
                     <th></th>
                   </tr>
                 </thead>
-                <tbody>{renderRecordTbody({ record: result, transFunc: t })}</tbody>
+                <tbody>{renderRecordTbody({ record: result, transFunc: t, shouldDisplayBlockchainAddress })}</tbody>
               </table>
             );
           })}

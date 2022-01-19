@@ -264,6 +264,20 @@ const Register = (props: IRegisterProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [submitted]);
 
+  useEffect(() => {
+    /**
+     * Make sure to refetch if complete info got overriden in some unknown cases
+     */
+    const listingHasOptions = listing?.options;
+    if (Boolean(listingHasOptions) || !provider || !listing || !signerAddress) return;
+    const refetchTimer = window.setTimeout(() => {
+      dispatch(fetchingEntity());
+      dispatch(getOptionsWithStakes({ listing, stakeholder: signerAddress, provider }));
+    }, 1500);
+    return () => window.clearTimeout(refetchTimer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [provider, signerAddress, id, listing]);
+
   const createInitialValues = (item: IOption): IRegister => {
     if (!item.stake?.amount) return initialValues;
     return { ...initialValues, registerAmount: Number(convertBnToDecimal(item.stake.amount)) };
@@ -333,13 +347,15 @@ const Register = (props: IRegisterProps) => {
       <SubmissionModal />
       <CRow>
         <CCol xs={12}>
-          <CLabel className="text-primary content-title">
-            <CLink onClick={() => history.goBack()}>{`${t('anftDapp.global.backLink')} < `}</CLink>
+          <CButton className="text-primary p-0 pb-1 ">
+            <CIcon name="cil-arrow-circle-left" onClick={() => history.goBack()} size="lg" />
+          </CButton>
+          <CLabel className="text-primary content-title ml-1">
             {t('anftDapp.listingComponent.primaryInfo.investmentActivities.registerClaimReward')}
           </CLabel>
         </CCol>
         <CCol xs={12}>
-          <CCard className="m-0 listing-img-card">
+          <CCard className="mt-1 listing-img-card mb-0">
             {!entityLoading && listing ? (
               <img src={listing.images} alt="listingImg" className="w-100 h-100" />
             ) : (
@@ -350,7 +366,7 @@ const Register = (props: IRegisterProps) => {
               <CCardTitle className="listing-card-title mb-0 px-3 py-2 w-100">
                 <p className="mb-2 text-white content-title">202 Yên Sở - Hoàng Mai - Hà Nội</p>
                 <p className="mb-0 text-white detail-title-font">
-                  {t('anftDapp.registerComponent.activity')} <b>{listing?.options ? listing.options.length : 0}</b>
+                  {t('anftDapp.registerComponent.activitiesCount')} <b>{listing?.options ? listing.options.length : 0}</b>
                 </p>
               </CCardTitle>
             </CCardBody>

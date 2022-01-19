@@ -79,9 +79,6 @@ const walletSlice = createSlice({
       state.loading = false;
       state.errorMessage = null;
     },
-    setProviderError(state, action: PayloadAction<string | null>) {
-      state.providerErrorMessage = action.payload;
-    },
     resetSigner(state) {
       state.signer = null;
       state.getSignerSuccess = false;
@@ -154,4 +151,4 @@ const walletSlice = createSlice({
 });
 
 export default walletSlice.reducer;
-export const { fetching, reset, softReset, setProviderError, resetSigner } = walletSlice.actions;
+export const { fetching, reset, softReset, resetSigner } = walletSlice.actions;
