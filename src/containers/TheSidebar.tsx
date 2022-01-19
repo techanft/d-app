@@ -88,7 +88,7 @@ const TheSidebar = () => {
         </li>
         <li className={`c-sidebar-nav-item `}>
           <CLink className={`c-sidebar-nav-link ${highlightNavItem('/overview')}`} to={'/overview'}>
-            Tổng quan &nbsp;
+          <CIcon name="cil-history" className="c-sidebar-nav-icon text-primary"/> {t('anftDapp.listingComponent.activityLogs')}
           </CLink>
         </li>
       </ul>

@@ -73,7 +73,7 @@ export const SearchContainer = (props: ISearchContainer) => {
         <CForm onSubmit={handleSubmit}>
           <CRow className="searchContainer">
             <CCol xs={12}>
-              <CCard className={'btn-radius-25i'}>
+              <CCard className={'btn-radius-25i m-0'}>
                 <CCardHeader className={'btn-radius-50i border-bottom-0'}>
                   <div className="d-flex justify-content-between">
                     <p className="content-title mb-0" style={{ fontSize: '1rem', fontWeight: 500 }}>
@@ -97,7 +97,7 @@ export const SearchContainer = (props: ISearchContainer) => {
                       ))}
                     </CRow>
                     <CRow className="text-center justify-content-center">
-                      <CButton type="submit" color="info" className="btn btn-primary btn-radius-50">
+                      <CButton type="submit" className="btn btn-primary btn-radius-50">
                         {t('anftDapp.headerComponent.filter.apply')}
                       </CButton>
                     </CRow>
@@ -124,7 +124,7 @@ export const ComponentExchange = (props: IComponentExchange) => {
                 <React.Fragment key={i}>
                   {item.singleInput ? (
                     <CCol xs={12} md={6} xxl={3} className={`paddingCol textCol ${item.isHidden ? 'd-none' : ''}`}>
-                      <CLabel htmlFor={item.id}>{item.title}</CLabel>
+                      <CLabel htmlFor={item.id} className="mb-2">{item.title}</CLabel>
                       <CInput
                         className=" btn-radius-50"
                         id={item.id}
@@ -171,7 +171,7 @@ export const ComponentExchange = (props: IComponentExchange) => {
             case 'date':
               return (
                 <CCol key={i} xs={12} md={6} xxl={3} className={`paddingCol textCol ${item.isHidden ? 'd-none' : ''}`}>
-                  <CLabel htmlFor={item.id}>{item.title}</CLabel>
+                  <CLabel htmlFor={item.id} className="mb-2">{item.title}</CLabel>
                   <CInput
                     className=" dateInput btn-radius-50"
                     onChange={handleChange}

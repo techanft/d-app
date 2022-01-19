@@ -102,10 +102,17 @@ body {
 
 .c-header-nav {
   .nav-item-filter {
-    position: unset;
+    position: initial;
     .dr-item-filter {
-      position: unset;
+      position: initial;
     }
+  }
+}
+
+.btn-copy {
+  vertical-align: initial !important;
+  .c-icon {
+    vertical-align: top;
   }
 }
 

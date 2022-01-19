@@ -9,7 +9,7 @@
         "cancel": "HỦY",
         "submissionModal": {
           "title": "Giao dịch gửi thành công",
-          "content": "Xem chi tiết giao dịch",
+          "content": "Xem chi tiết",
           "close": "Đóng"
         },
         "errorModal": {
@@ -66,7 +66,7 @@
         "ownershipPeriod": "Sở hữu tới",
         "dailyPayment": "Phí khai thác hằng ngày",
         "totalStake": "Tổng stake",
-        "workersCount": "Số lượng người khai khác",
+        "workersCount": "Số người khai khác",
         "workersList": "Xem quyền khai thác",
         "investmentActivities": {
           "investmentActivities": "Hoạt động đầu tư",
@@ -118,6 +118,7 @@
 
     "registerComponent": {
       "activity": "Hoạt động",
+      "activitiesCount": "Số hoạt động",
       "reward": "Tỉ lệ thưởng",
       "registerAmount": "Mức đăng ký",
       "notRegister": "Chưa đăng ký",
@@ -165,7 +166,7 @@
 
     "workersListComponent": {
       "workersList": "Danh sách người khai thác",
-      "workersCount": "Số lượng người khai thác",
+      "workersCount": "Số người khai thác",
       "address": "Địa chỉ",
       "action": "Hành động",
       "addWorkerPermission": "Ủy quyền khai thác",

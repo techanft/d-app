@@ -244,7 +244,7 @@ const WorkersList = (props: IWorkersList) => {
                   address: (item: IRecordWorker) => {
                     return (
                       <td>
-                        <CopyTextToClipBoard text={item.worker} textNumber={10} />
+                        <CopyTextToClipBoard text={item.worker} textNumber={10} iconClassName='m-0'/>
                       </td>
                     );
                   },

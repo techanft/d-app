@@ -41,7 +41,7 @@ const renderRecordOwnerShip = ({ record, transFunc, overview }: IRecordTableProp
       <tr>
         <td>{transFunc('anftDapp.listingComponent.primaryInfo.blockchainAddress')}</td>
         <td className="text-right">
-          <CopyTextToClipBoard text={record.listingAddress} inputClassName="copy-address" />
+          <CopyTextToClipBoard text={record.listingAddress} inputClassName="copy-address" iconClassName='m-0' />
         </td>
       </tr>
     )}
@@ -70,7 +70,7 @@ const renderRecordClaim = ({ record, transFunc, overview }: IRecordTableProps<IR
       <tr>
         <td>{transFunc('anftDapp.listingComponent.primaryInfo.blockchainAddress')}</td>
         <td className="text-right">
-          <CopyTextToClipBoard text={record.listingAddress} inputClassName="copy-address" />
+          <CopyTextToClipBoard text={record.listingAddress} inputClassName="copy-address" iconClassName='m-0'/>
         </td>
       </tr>
     )}
@@ -96,7 +96,7 @@ const renderRecordRegister = ({ record, transFunc, overview }: IRecordTableProps
       <tr>
         <td>{transFunc('anftDapp.listingComponent.primaryInfo.blockchainAddress')}</td>
         <td className="text-right">
-          <CopyTextToClipBoard text={record.listingAddress} inputClassName="copy-address" />
+          <CopyTextToClipBoard text={record.listingAddress} inputClassName="copy-address" iconClassName='m-0'/>
         </td>
       </tr>
     )}
@@ -117,7 +117,7 @@ const renderRecordUnRegister = ({ record, transFunc, overview }: IRecordTablePro
       <tr>
         <td>{transFunc('anftDapp.listingComponent.primaryInfo.blockchainAddress')}</td>
         <td className="text-right">
-          <CopyTextToClipBoard text={record.listingAddress} inputClassName="copy-address" />
+          <CopyTextToClipBoard text={record.listingAddress} inputClassName="copy-address" iconClassName='m-0'/>
         </td>
       </tr>
     )}
@@ -134,7 +134,7 @@ const renderRecordWithdraw = ({ record, transFunc, overview }: IRecordTableProps
       <tr>
         <td>{transFunc('anftDapp.listingComponent.primaryInfo.blockchainAddress')}</td>
         <td className="text-right">
-          <CopyTextToClipBoard text={record.listingAddress} inputClassName="copy-address" />
+          <CopyTextToClipBoard text={record.listingAddress} inputClassName="copy-address" iconClassName='m-0'/>
         </td>
       </tr>
     )}

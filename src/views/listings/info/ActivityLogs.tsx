@@ -58,14 +58,14 @@ const ActivityLogs = (props: IActivityLogs) => {
             )}
             <CCardBody className="p-0 listing-card-body">
               <CCardTitle className="listing-card-title mb-0 px-3 py-2 w-100" innerRef={scrollRef}>
-                <p className="mb-0 text-white content-title">202 Yên Sở - Hoàng Mai - Hà Nội</p>
+                <p className="mb-2 text-white content-title">202 Yên Sở - Hoàng Mai - Hà Nội</p>
                 <p className="mb-0 text-white detail-title-font">
                   {t('anftDapp.listingComponent.primaryInfo.blockchainAddress')}{' '}
                   <b>
                     {!entityLoading && listing?.address ? (
                       <CopyTextToClipBoard
                         text={listing.address}
-                        iconClassName="text-white"
+                        iconClassName="text-white m-0"
                         inputClassName="copy-address"
                       />
                     ) : (

@@ -19,8 +19,8 @@ const CopyTextToClipBoard = (props: ICopyTextToClipBoardProps) => {
       <CopyToClipboard text={text}>
         <span className={inputClassName}>
           {getEllipsisTxt(text, textNumber)}
-          <CButton className="p-0 pb-3 ml-1">
-            <CIcon name="cil-copy" size="sm" className={iconClassName} />
+          <CButton className="p-0 ml-1 border-0 btn-copy">
+            <CIcon name="cil-copy" size='custom-size' className={iconClassName} />
           </CButton>
         </span>
       </CopyToClipboard>

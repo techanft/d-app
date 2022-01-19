@@ -366,7 +366,7 @@ const Register = (props: IRegisterProps) => {
               <CCardTitle className="listing-card-title mb-0 px-3 py-2 w-100">
                 <p className="mb-2 text-white content-title">202 Yên Sở - Hoàng Mai - Hà Nội</p>
                 <p className="mb-0 text-white detail-title-font">
-                  {t('anftDapp.registerComponent.activity')} <b>{listing?.options ? listing.options.length : 0}</b>
+                  {t('anftDapp.registerComponent.activitiesCount')} <b>{listing?.options ? listing.options.length : 0}</b>
                 </p>
               </CCardTitle>
             </CCardBody>

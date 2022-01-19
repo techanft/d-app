@@ -118,6 +118,7 @@
 
     "registerComponent": {
       "activity": "Activity",
+      "activitiesCount": "Activities Count",
       "reward": "Reward",
       "registerAmount": "Register Amount",
       "notRegister": "Unregistered",
