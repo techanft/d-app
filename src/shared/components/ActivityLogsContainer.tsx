@@ -202,11 +202,12 @@ const ActivityLogsContainer = (props: IActivityLogsProps) => {
     dispatch(recordApiFunc(additionalInvestmentFilterParams));
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [JSON.stringify(investmentFilterState), filterState, investmentActiveTab, signerAddress]);
+  }, [JSON.stringify(investmentFilterState), JSON.stringify(filterState), investmentActiveTab, signerAddress]);
 
   useEffect(() => {
     if (!signerAddress) return;
     if (!isLogOverview && !filterState.listingAddress) return;
+    
     const additionalOwnerFilterParams =
       ownershipActiveTab === RecordType.OWNERSHIP_EXTENSION ? { newOwner: signerAddress } : { owner: signerAddress };
     const filter = {
@@ -219,7 +220,7 @@ const ActivityLogsContainer = (props: IActivityLogsProps) => {
     dispatch(recordFetchingFunc());
     dispatch(recordApiFunc(filter));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [JSON.stringify(ownershipFilterState), filterState, ownershipActiveTab, signerAddress]);
+  }, [JSON.stringify(ownershipFilterState), JSON.stringify(filterState), ownershipActiveTab, signerAddress]);
 
   return (
     <>

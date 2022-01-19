@@ -28,14 +28,6 @@ const ActivityLogs = (props: IActivityLogs) => {
   const { provider } = useSelector((state: RootState) => state.wallet);
   const { initialState: assetsInitialState } = useSelector((state: RootState) => state.assets);
   const { entityLoading } = assetsInitialState;
-  const [filterState, setFilterState] = useState<IOverviewFilter>({});
-
-  useEffect(() => {
-    if (listing?.address && !filterState.listingAddress) {
-      setFilterState({ listingAddress: listing.address });
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [listing]);
 
   useEffect(() => {
     if (!id || !provider) return;
@@ -83,15 +75,13 @@ const ActivityLogs = (props: IActivityLogs) => {
             </CCardBody>
           </CCard>
         </CCol>
-        {/* <CCol xs={12} className={'text-center'}>
-          <p className="header-title content-title my-3">Activity Logs</p>
-        </CCol> */}
-        {!entityLoading && listing && (
-          <ActivityLogsContainer shouldDisplayBlockchainAddress={false} filterState={filterState} />
+
+     {/* Ownership - Activity Logs */}
+        {listing?.address && (
+          <ActivityLogsContainer shouldDisplayBlockchainAddress={false} filterState={{ listingAddress: listing.address }} />
         )}
       </CRow>
 
-      {/* Ownership - Activity Logs */}
     </CContainer>
   );
 };
