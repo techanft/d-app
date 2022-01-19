@@ -95,7 +95,7 @@ const TheSidebar = () => {
             Add icon for this nav item
           */}
           <CLink className={`c-sidebar-nav-link ${highlightNavItem('/logs-overview')}`} to={'/logs-overview'}>
-            <CIcon name="cil-history" className={`c-sidebar-nav-icon text-primary`} /> Lịch sử tương tác
+            <CIcon name="cil-history" className={`c-sidebar-nav-icon text-primary`} /> Lịch sử hoạt động
           </CLink>
         </li>
       </ul>

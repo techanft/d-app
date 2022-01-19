@@ -1,5 +1,5 @@
 import { CCard, CCardBody, CCardTitle, CCol, CContainer, CLabel, CRow } from '@coreui/react';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
@@ -10,7 +10,6 @@ import useWindowDimensions from '../../../shared/hooks/useWindowDimensions';
 import { RootState } from '../../../shared/reducers';
 import { getEntity } from '../../assets/assets.api';
 import { fetchingEntity, selectEntityById } from '../../assets/assets.reducer';
-import { IOverviewFilter } from '../../logsOverview/LogsOverview';
 import '../index.scss';
 
 interface IActivityLogsParams {
