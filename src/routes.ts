@@ -16,7 +16,7 @@ const WorkersList = React.lazy(() => import('./views/listings/actions/WorkersLis
 const routes = [
   // { path: '/', exact: true, name: 'Home' },
   { path: '/listings', name: 'Dashboard', component: Dashboard, exact: true },
-  { path: '/overview', name: 'Overview', component: Overview, exact: true },
+  { path: '/logs-overview', name: 'Overview', component: Overview, exact: true },
   {
     path: '/listings/:id/detail',
     name: 'Listing',

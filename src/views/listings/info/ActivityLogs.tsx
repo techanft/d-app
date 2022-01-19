@@ -1,5 +1,5 @@
 import { CCard, CCardBody, CCardTitle, CCol, CContainer, CLabel, CRow } from '@coreui/react';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
@@ -10,6 +10,7 @@ import useWindowDimensions from '../../../shared/hooks/useWindowDimensions';
 import { RootState } from '../../../shared/reducers';
 import { getEntity } from '../../assets/assets.api';
 import { fetchingEntity, selectEntityById } from '../../assets/assets.reducer';
+import { IOverviewFilter } from '../../logsOverview/LogsOverview';
 import '../index.scss';
 
 interface IActivityLogsParams {
@@ -27,6 +28,14 @@ const ActivityLogs = (props: IActivityLogs) => {
   const { provider } = useSelector((state: RootState) => state.wallet);
   const { initialState: assetsInitialState } = useSelector((state: RootState) => state.assets);
   const { entityLoading } = assetsInitialState;
+  const [filterState, setFilterState] = useState<IOverviewFilter>({});
+
+  useEffect(() => {
+    if (listing?.address && !filterState.listingAddress) {
+      setFilterState({ listingAddress: listing.address });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [listing]);
 
   useEffect(() => {
     if (!id || !provider) return;
@@ -77,7 +86,9 @@ const ActivityLogs = (props: IActivityLogs) => {
         {/* <CCol xs={12} className={'text-center'}>
           <p className="header-title content-title my-3">Activity Logs</p>
         </CCol> */}
-        <ActivityLogsContainer overview={false} filterState={{ listingAddress: listing?.address }} />
+        {!entityLoading && listing && (
+          <ActivityLogsContainer shouldDisplayBlockchainAddress={false} filterState={filterState} />
+        )}
       </CRow>
 
       {/* Ownership - Activity Logs */}

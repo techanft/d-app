@@ -18,7 +18,7 @@ import { TableType, TRecordTypeArray } from './ActivityLogsContainer';
 import CopyTextToClipBoard from './CopyTextToClipboard';
 
 interface IActivityLogsTable {
-  overview: boolean;
+  shouldDisplayBlockchainAddress: boolean;
   results: Array<TRecordTypeArray>;
   filterState: IRecordParams;
   recordType: RecordType;
@@ -30,14 +30,14 @@ interface IActivityLogsTable {
 interface IRecordTableProps<TableType> {
   record: TableType;
   transFunc: TFunction<'translation', undefined>;
-  overview: boolean;
+  shouldDisplayBlockchainAddress: boolean;
 }
 
 type TRecordTypeMappingRender = { [key in RecordType]: ({ record, transFunc }: IRecordTableProps<any>) => JSX.Element };
 
-const renderRecordOwnerShip = ({ record, transFunc, overview }: IRecordTableProps<IRecordOwnership>) => (
+const renderRecordOwnerShip = ({ record, transFunc, shouldDisplayBlockchainAddress }: IRecordTableProps<IRecordOwnership>) => (
   <>
-    {overview && (
+    {shouldDisplayBlockchainAddress && (
       <tr>
         <td>{transFunc('anftDapp.listingComponent.primaryInfo.blockchainAddress')}</td>
         <td className="text-right">
@@ -64,9 +64,9 @@ const renderRecordOwnerShip = ({ record, transFunc, overview }: IRecordTableProp
   </>
 );
 
-const renderRecordClaim = ({ record, transFunc, overview }: IRecordTableProps<IRecordClaim>) => (
+const renderRecordClaim = ({ record, transFunc, shouldDisplayBlockchainAddress }: IRecordTableProps<IRecordClaim>) => (
   <>
-    {overview && (
+    {shouldDisplayBlockchainAddress && (
       <tr>
         <td>{transFunc('anftDapp.listingComponent.primaryInfo.blockchainAddress')}</td>
         <td className="text-right">
@@ -90,9 +90,9 @@ const renderRecordClaim = ({ record, transFunc, overview }: IRecordTableProps<IR
   </>
 );
 
-const renderRecordRegister = ({ record, transFunc, overview }: IRecordTableProps<IRecordRegister>) => (
+const renderRecordRegister = ({ record, transFunc, shouldDisplayBlockchainAddress }: IRecordTableProps<IRecordRegister>) => (
   <>
-    {overview && (
+    {shouldDisplayBlockchainAddress && (
       <tr>
         <td>{transFunc('anftDapp.listingComponent.primaryInfo.blockchainAddress')}</td>
         <td className="text-right">
@@ -111,9 +111,9 @@ const renderRecordRegister = ({ record, transFunc, overview }: IRecordTableProps
   </>
 );
 
-const renderRecordUnRegister = ({ record, transFunc, overview }: IRecordTableProps<IRecordUnRegister>) => (
+const renderRecordUnRegister = ({ record, transFunc, shouldDisplayBlockchainAddress }: IRecordTableProps<IRecordUnRegister>) => (
   <>
-    {overview && (
+    {shouldDisplayBlockchainAddress && (
       <tr>
         <td>{transFunc('anftDapp.listingComponent.primaryInfo.blockchainAddress')}</td>
         <td className="text-right">
@@ -128,9 +128,9 @@ const renderRecordUnRegister = ({ record, transFunc, overview }: IRecordTablePro
   </>
 );
 
-const renderRecordWithdraw = ({ record, transFunc, overview }: IRecordTableProps<IRecordWithdraw>) => (
+const renderRecordWithdraw = ({ record, transFunc, shouldDisplayBlockchainAddress }: IRecordTableProps<IRecordWithdraw>) => (
   <>
-    {overview && (
+    {shouldDisplayBlockchainAddress && (
       <tr>
         <td>{transFunc('anftDapp.listingComponent.primaryInfo.blockchainAddress')}</td>
         <td className="text-right">
@@ -174,7 +174,7 @@ const recordMappingField: TRecordTypeMappingRender = {
 };
 
 const ActivityLogsTable = (props: IActivityLogsTable) => {
-  const { filterState, totalPages, loading, tableType, handlePaginationChange, results, recordType, overview } = props;
+  const { filterState, totalPages, loading, tableType, handlePaginationChange, results, recordType, shouldDisplayBlockchainAddress } = props;
 
   const { t } = useTranslation();
 
@@ -193,7 +193,7 @@ const ActivityLogsTable = (props: IActivityLogsTable) => {
                     <th></th>
                   </tr>
                 </thead>
-                <tbody>{renderRecordTbody({ record: result, transFunc: t, overview })}</tbody>
+                <tbody>{renderRecordTbody({ record: result, transFunc: t, shouldDisplayBlockchainAddress })}</tbody>
               </table>
             );
           })}

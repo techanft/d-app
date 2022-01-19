@@ -15,7 +15,6 @@ import {
 import { FormikState } from 'formik';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import './index.scss';
 
 interface ISelectValue {
   value: string;

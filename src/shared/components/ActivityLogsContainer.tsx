@@ -1,42 +1,41 @@
 import { CCol, CNav, CNavItem, CNavLink, CTabContent, CTabPane } from '@coreui/react';
 import { ActionCreatorWithoutPayload, AsyncThunk } from '@reduxjs/toolkit';
-import { isEmpty } from 'lodash';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
+import { useLocation } from 'react-router-dom';
 import { IOverviewFilter } from '../../views/logsOverview/LogsOverview';
 import {
-    getClaimsRecord,
-    getOwnershipExtensionRecord,
-    getRegisterRecord,
-    getUnRegisterRecord,
-    getWithdrawRecord,
-    getWorkersRecord,
-    IRecordParams
+  getClaimsRecord,
+  getOwnershipExtensionRecord,
+  getRegisterRecord,
+  getUnRegisterRecord,
+  getWithdrawRecord,
+  getWorkersRecord,
+  IRecordParams
 } from '../../views/records/records.api';
 import {
-    fetchingClaim,
-    fetchingOwnership,
-    fetchingRegister,
-    fetchingWithdraw,
-    fetchingWorker
+  fetchingClaim,
+  fetchingOwnership,
+  fetchingRegister,
+  fetchingWithdraw,
+  fetchingWorker
 } from '../../views/records/records.reducer';
 import { RecordType } from '../enumeration/recordType';
 import { IGetAllResp } from '../models/base.model';
 import {
-    IRecordClaim,
-    IRecordOwnership,
-    IRecordRegister,
-    IRecordUnRegister,
-    IRecordWithdraw,
-    IRecordWorker
+  IRecordClaim,
+  IRecordOwnership,
+  IRecordRegister,
+  IRecordUnRegister,
+  IRecordWithdraw,
+  IRecordWorker
 } from '../models/record.model';
 import { RootState } from '../reducers';
 import ActivityLogsTable from './ActivityLogsTable';
 
 interface IActivityLogsProps {
-  id?: string;
-  overview: boolean;
+  shouldDisplayBlockchainAddress: boolean;
   filterState: IOverviewFilter;
 }
 
@@ -93,9 +92,11 @@ type TTableMappingSetFilter = { [key in TableType]: React.Dispatch<React.SetStat
 type TTableMappingSetTab = { [key in TableType]: React.Dispatch<React.SetStateAction<RecordType>> };
 
 const ActivityLogsContainer = (props: IActivityLogsProps) => {
-  const { overview, filterState } = props;
+  const { shouldDisplayBlockchainAddress, filterState } = props;
   const scrollRef = useRef<null | HTMLParagraphElement>(null);
   const dispatch = useDispatch();
+  const location = useLocation();
+  const isLogOverview = location.pathname === '/logs-overview' ? true : false;
   const { signerAddress } = useSelector((state: RootState) => state.wallet);
 
   const { initialState } = useSelector((state: RootState) => state.records);
@@ -189,7 +190,7 @@ const ActivityLogsContainer = (props: IActivityLogsProps) => {
 
   useEffect(() => {
     if (!signerAddress) return;
-    if (!overview && isEmpty(filterState)) return;
+    if (!isLogOverview && !filterState.listingAddress) return;
     const additionalInvestmentFilterParams = {
       ...investmentFilterState,
       ...filterState,
@@ -205,7 +206,7 @@ const ActivityLogsContainer = (props: IActivityLogsProps) => {
 
   useEffect(() => {
     if (!signerAddress) return;
-    if (!overview && isEmpty(filterState)) return;
+    if (!isLogOverview && !filterState.listingAddress) return;
     const additionalOwnerFilterParams =
       ownershipActiveTab === RecordType.OWNERSHIP_EXTENSION ? { newOwner: signerAddress } : { owner: signerAddress };
     const filter = {
@@ -281,7 +282,7 @@ const ActivityLogsContainer = (props: IActivityLogsProps) => {
                 <CTabContent className="mt-3">
                   <CTabPane active={investmentActiveTab === RecordType.REGISTER}>
                     <ActivityLogsTable
-                      overview={overview}
+                      shouldDisplayBlockchainAddress={shouldDisplayBlockchainAddress}
                       results={recordResultMapping[RecordType.REGISTER]}
                       filterState={investmentFilterState}
                       recordType={RecordType.REGISTER}
@@ -293,7 +294,7 @@ const ActivityLogsContainer = (props: IActivityLogsProps) => {
                   </CTabPane>
                   <CTabPane active={investmentActiveTab === RecordType.UNREGISTER}>
                     <ActivityLogsTable
-                      overview={overview}
+                      shouldDisplayBlockchainAddress={shouldDisplayBlockchainAddress}
                       results={recordResultMapping[RecordType.UNREGISTER]}
                       filterState={investmentFilterState}
                       recordType={RecordType.UNREGISTER}
@@ -305,7 +306,7 @@ const ActivityLogsContainer = (props: IActivityLogsProps) => {
                   </CTabPane>
                   <CTabPane active={investmentActiveTab === RecordType.CLAIM}>
                     <ActivityLogsTable
-                      overview={overview}
+                      shouldDisplayBlockchainAddress={shouldDisplayBlockchainAddress}
                       results={recordResultMapping[RecordType.CLAIM]}
                       filterState={investmentFilterState}
                       recordType={RecordType.CLAIM}
@@ -341,7 +342,7 @@ const ActivityLogsContainer = (props: IActivityLogsProps) => {
                 <CTabContent className="mt-3">
                   <CTabPane active={ownershipActiveTab === RecordType.WITHDRAW}>
                     <ActivityLogsTable
-                      overview={overview}
+                      shouldDisplayBlockchainAddress={shouldDisplayBlockchainAddress}
                       results={recordResultMapping[RecordType.WITHDRAW]}
                       filterState={ownershipFilterState}
                       recordType={RecordType.WITHDRAW}
@@ -353,7 +354,7 @@ const ActivityLogsContainer = (props: IActivityLogsProps) => {
                   </CTabPane>
                   <CTabPane active={ownershipActiveTab === RecordType.OWNERSHIP_EXTENSION}>
                     <ActivityLogsTable
-                      overview={overview}
+                      shouldDisplayBlockchainAddress={shouldDisplayBlockchainAddress}
                       results={recordResultMapping[RecordType.OWNERSHIP_EXTENSION]}
                       filterState={ownershipFilterState}
                       recordType={RecordType.OWNERSHIP_EXTENSION}
