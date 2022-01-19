@@ -7,7 +7,8 @@
       "modal": {
         "confirm": "XÁC NHẬN",
         "cancel": "HỦY"
-      }
+      },
+      "backLink": "Quay lại"
     },
 
     "sidebarComponent": {
@@ -138,7 +139,7 @@
       "investment": "Đầu tư",
       "ownership": "Sở hữu",
       "activityLogsTable": {
-        "ownedDay": "Số ngày sở hữu",
+        "ownedDay": "Số ngày nạp thêm",
         "withdrawDay": "Số ngày rút",
         "from": "Sở hữu trước nạp",
         "to": "Sở hữu sau nạp",

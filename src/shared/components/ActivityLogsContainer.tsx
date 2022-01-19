@@ -96,7 +96,7 @@ const ActivityLogsContainer = (props: IActivityLogsProps) => {
   const scrollRef = useRef<null | HTMLParagraphElement>(null);
   const dispatch = useDispatch();
   const location = useLocation();
-  const isLogOverview = location.pathname === '/logs-overview' ? true : false;
+  const isLogOverview = location.pathname === '/logs-overview';
   const { signerAddress } = useSelector((state: RootState) => state.wallet);
 
   const { initialState } = useSelector((state: RootState) => state.records);

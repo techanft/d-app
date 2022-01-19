@@ -26,22 +26,22 @@ export const noMoreThanOneCommas = (input: number | string) => {
   return commasCount <= 1;
 };
 
-export const insertCommas = (input: number | undefined | string) => {
+export const insertCommas = (input: number | undefined | string, n: number = 4) => {
   if (typeof input !== 'undefined') {
     if (!noMoreThanOneCommas(input)) return '';
     const parts = input.toString().split('.');
     parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-    if (parts[1]) parts[1] = parts[1].substring(0, 4); // Only take the first 4 decimals
+    if (parts[1]) parts[1] = parts[1].substring(0, n); // Only take the first n decimals, default 4 decimals
     return parts.join('.');
   } else {
     return '';
   }
 };
 
-export const unInsertCommas = (input: string) => {
+export const unInsertCommas = (input: string, n : number = 4) => {
   const parts = input.split('.');
   parts[0] = parts[0].replaceAll(',', '');
-  if (parts[1]) parts[1] = parts[1].substring(0, 4); // Only take the first 4 decimals
+  if (parts[1]) parts[1] = parts[1].substring(0, n); // Only take the first n decimals, default 4 decimals
   return parts.join('.');
 };
 
@@ -54,9 +54,9 @@ export const convertDecimalToBn = (input: string) => {
   return ethers.utils.parseUnits(sanitizedInput);
 };
 
-export const formatBNToken = (input: BigNumber | undefined, displaySymbol: boolean) => {
+export const formatBNToken = (input: BigNumber | undefined, displaySymbol: boolean, n : number = 4) => {
   if (!input) return '_';
-  const formatedAmount = insertCommas(convertBnToDecimal(input));
+  const formatedAmount = insertCommas(convertBnToDecimal(input), n);
   return `${formatedAmount} ${displaySymbol ? TOKEN_SYMBOL : ''}`;
 };
 
