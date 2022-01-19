@@ -77,13 +77,13 @@ const ActivityLogs = (props: IActivityLogs) => {
             </CCardBody>
           </CCard>
         </CCol>
-        {/* <CCol xs={12} className={'text-center'}>
-          <p className="header-title content-title my-3">Activity Logs</p>
-        </CCol> */}
-        <ActivityLogsContainer overview={false} filterState={{ listingAddress: listing?.address }} />
+
+     {/* Ownership - Activity Logs */}
+        {listing?.address && (
+          <ActivityLogsContainer shouldDisplayBlockchainAddress={false} filterState={{ listingAddress: listing.address }} />
+        )}
       </CRow>
 
-      {/* Ownership - Activity Logs */}
     </CContainer>
   );
 };

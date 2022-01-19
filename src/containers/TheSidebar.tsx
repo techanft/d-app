@@ -71,8 +71,8 @@ const TheSidebar = () => {
                 className={`c-sidebar-nav-link ${i18n.language.includes(Language.vi) ? 'text-primary' : ''}`}
                 onClick={changeLanguageI18n(Language.vi)}
               >
-                {t('anftDapp.sidebarComponent.language.vietnamese')} &nbsp;
-                <CIcon name="cif-vn" />
+                {t('anftDapp.sidebarComponent.language.vietnamese')}
+                <CIcon name="cif-vn" className={`ml-1`} />
               </CLink>
             </li>
             <li className={`c-sidebar-nav-item`}>
@@ -80,15 +80,22 @@ const TheSidebar = () => {
                 className={`c-sidebar-nav-link ${i18n.language.includes(Language.en) ? 'text-primary' : ''}`}
                 onClick={changeLanguageI18n(Language.en)}
               >
-                {t('anftDapp.sidebarComponent.language.english')} &nbsp;
-                <CIcon name="cif-us" />
+                {t('anftDapp.sidebarComponent.language.english')}
+                <CIcon name="cif-us" className={`ml-1`} />
               </CLink>
             </li>
           </ul>
         </li>
         <li className={`c-sidebar-nav-item `}>
-          <CLink className={`c-sidebar-nav-link ${highlightNavItem('/overview')}`} to={'/overview'}>
-          <CIcon name="cil-history" className="c-sidebar-nav-icon text-primary"/> {t('anftDapp.listingComponent.activityLogs')}
+          {/* 
+            overview => logs-overview;
+            change route and component names
+          */}
+          {/* 
+            Add icon for this nav item
+          */}
+          <CLink className={`c-sidebar-nav-link ${highlightNavItem('/logs-overview')}`} to={'/logs-overview'}>
+            <CIcon name="cil-history" className={`c-sidebar-nav-icon text-primary`} />  {t('anftDapp.listingComponent.activityLogs')}
           </CLink>
         </li>
       </ul>

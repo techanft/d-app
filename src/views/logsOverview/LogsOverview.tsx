@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { RouteComponentProps } from 'react-router-dom';
 import ActivityLogsContainer from '../../shared/components/ActivityLogsContainer';
-import { ComponentExchange, ISearchContent } from '../../shared/components/searchContainer/SearchContainer';
+import { ComponentExchange, ISearchContent } from '../../shared/components/SearchContainer';
 
 interface IActivityLogs extends RouteComponentProps {}
 
@@ -68,7 +68,7 @@ const LogsOverview = (props: IActivityLogs) => {
             )}
           </Formik>
         </CCol>
-        <ActivityLogsContainer overview={true} filterState={filterState} />
+        <ActivityLogsContainer shouldDisplayBlockchainAddress={true} filterState={filterState} />
       </CRow>
     </CContainer>
   );

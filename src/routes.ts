@@ -2,7 +2,7 @@ import React from 'react';
 
 const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'));
 
-const Overview = React.lazy(() => import('./views/logsOverview/LogsOverview'));
+const LogsOverview = React.lazy(() => import('./views/logsOverview/LogsOverview'));
 
 const Listing = React.lazy(() => import('./views/listings/Listing'));
 
@@ -16,7 +16,7 @@ const WorkersList = React.lazy(() => import('./views/listings/actions/WorkersLis
 const routes = [
   // { path: '/', exact: true, name: 'Home' },
   { path: '/listings', name: 'Dashboard', component: Dashboard, exact: true },
-  { path: '/overview', name: 'Overview', component: Overview, exact: true },
+  { path: '/logs-overview', name: 'LogsOverview', component: LogsOverview, exact: true },
   {
     path: '/:id/detail',
     name: 'Listing',
