@@ -200,7 +200,7 @@ const TheHeader = () => {
               <CIcon name="cil-menu" size="xl" />
             </CButton>
           </CHeaderNavItem>
-          <CHeaderNavItem className={`${isDashboardView ? '' : 'ml-2'}`}>
+          <CHeaderNavItem className={`${isDashboardView ? '' : 'ml-3'}`}>
             <CLink to="/listings">
               <p className="header-title content-title mb-0">{t('anftDapp.headerComponent.dashboard')}</p>
             </CLink>
