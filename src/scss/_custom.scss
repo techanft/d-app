@@ -163,27 +163,30 @@ body {
       margin-left: 0px;
       padding-right: 0px;
     }
+
+    .card-header {
+      background-color: initial;
+    }
+  }
+
+  .c-header-nav {
+    .nav-item-filter {
+      position: initial;
+      .dr-item-filter {
+        position: initial;
+      }
+    }
   }
   
-}
-
-.c-header-nav {
-  .nav-item-filter {
-    position: initial;
-    .dr-item-filter {
-      position: initial;
+  .btn-copy {
+    vertical-align: initial !important;
+    .c-icon {
+      vertical-align: top;
     }
   }
 }
 
-.btn-copy {
-  vertical-align: initial !important;
-  .c-icon {
-    vertical-align: top;
-  }
-}
-
-//============Loading Animation=========//
+//============Loading Transaction=========//
 .lds-ellipsis {
   display: inline-block;
   position: relative;
