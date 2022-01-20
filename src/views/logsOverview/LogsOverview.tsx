@@ -35,9 +35,9 @@ const LogsOverview = (props: IActivityLogs) => {
       searchContent: [
         {
           title: t('anftDapp.activityLogsComponent.createdDate'),
-          id: 'createDate',
+          id: 'createdDate',
           type: 'date',
-          name: 'createDate',
+          name: 'createdDate',
           singleInput: true,
         },
       ],

@@ -15,12 +15,12 @@ import {
   CLink,
   CRow,
   CSelect,
-  CSubheader
+  CSubheader,
 } from '@coreui/react';
 import { faSyncAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Formik, FormikProps } from 'formik';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
@@ -31,8 +31,9 @@ import { RootState } from '../shared/reducers';
 import { getEntities } from '../views/assets/assets.api';
 import {
   fetchingEntities,
+  hardReset,
   setFilterState as setStoredFilterState,
-  softReset as assetsSoftReset
+  softReset as assetsSoftReset,
 } from '../views/assets/assets.reducer';
 import { IAssetFilter } from '../views/listings/Listings';
 import { softReset as transactionsSoftReset } from '../views/transactions/transactions.reducer';
@@ -41,7 +42,7 @@ import {
   getContractWithSigner,
   getProviderLogin,
   getSigner,
-  getTokenBalance
+  getTokenBalance,
 } from '../views/wallet/wallet.api';
 import { resetSigner, softReset as walletSoftReset } from '../views/wallet/wallet.reducer';
 import { toggleSidebar } from './reducer';
@@ -105,7 +106,7 @@ const TheHeader = () => {
     errorMessage: walletErrorMessage,
   } = useSelector((state: RootState) => state.wallet);
   const { initialState: assetsInitialState } = useSelector((state: RootState) => state.assets);
-  const { errorMessage: assetErrorMessage } = assetsInitialState;
+  const { errorMessage: assetErrorMessage, fetchEntitiesSuccess } = assetsInitialState;
 
   const { errorMessage: transactionErrorMessage } = useSelector((state: RootState) => state.transactions);
 
@@ -185,6 +186,16 @@ const TheHeader = () => {
     return { ...values, owner: Boolean(values.owner) ? signerAddress : undefined };
   };
 
+  const [isDropdownFilterShowing, setIsDropdownFilterShowing] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (fetchEntitiesSuccess) {
+      setIsDropdownFilterShowing(false);
+      dispatch(hardReset());
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fetchEntitiesSuccess]);
+
   return (
     <>
       <CHeader className="header-container d-block shadow-sm border-0" withSubheader>
@@ -221,10 +232,14 @@ const TheHeader = () => {
           </CHeaderNavItem>
           <CHeaderNavItem className={`${isDashboardView ? '' : 'd-none'} nav-item-filter`}>
             <CDropdown className="dr-item-filter">
-              <CDropdownToggle caret={false} className="text-primary p-0 border-0">
+              <CDropdownToggle
+                caret={false}
+                className="text-primary p-0 border-0"
+                onClick={() => setIsDropdownFilterShowing(true)}
+              >
                 <CIcon name="cil-filter" size="xl" />
               </CDropdownToggle>
-              <CDropdownMenu className="dr-menu-filter m-0">
+              <CDropdownMenu className="dr-menu-filter m-0" show={isDropdownFilterShowing}>
                 <Formik<IAssetFilter>
                   innerRef={formikRef}
                   initialValues={initialValues}
