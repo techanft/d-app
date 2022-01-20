@@ -6,9 +6,21 @@
       },
       "modal": {
         "confirm": "XÁC NHẬN",
-        "cancel": "HỦY"
-      },
-      "backLink": "Quay lại"
+        "cancel": "HỦY",
+        "submissionModal": {
+          "title": "Giao dịch gửi thành công",
+          "content": "Xem chi tiết",
+          "close": "Đóng"
+        },
+        "errorModal": {
+          "deviceErr": "Lỗi thiết bị!",
+          "deviceErrMsg": "Ứng dụng hiện tại chỉ hỗ trợ thiết bị di động. Vui lòng chuyển sang thiết bị di động để sử dụng ứng dụng",
+          "walletErr": "Lỗi tích hợp ví!",
+          "invalidNetworkErrMsg": "Mạng không hợp lệ. Vui lòng vào Metamask và chuyển sang mạng BSC để sử dụng ứng dụng",
+          "ethereumIsNotInitializedErrMsg": "Ethereum chưa được khởi tạo. Vui lòng cài đặt ví Ethereum trong trình duyệt của bạn",
+          "reload": "Tải lại"
+        }
+      }
     },
 
     "sidebarComponent": {
@@ -54,7 +66,7 @@
         "ownershipPeriod": "Sở hữu tới",
         "dailyPayment": "Phí khai thác hằng ngày",
         "totalStake": "Tổng stake",
-        "workersCount": "Số lượng người khai khác",
+        "workersCount": "Số người khai khác",
         "workersList": "Xem quyền khai thác",
         "investmentActivities": {
           "investmentActivities": "Hoạt động đầu tư",
@@ -106,6 +118,7 @@
 
     "registerComponent": {
       "activity": "Hoạt động",
+      "activitiesCount": "Số hoạt động",
       "reward": "Tỉ lệ thưởng",
       "registerAmount": "Mức đăng ký",
       "notRegister": "Chưa đăng ký",
@@ -153,7 +166,7 @@
 
     "workersListComponent": {
       "workersList": "Danh sách người khai thác",
-      "workersCount": "Số lượng người khai thác",
+      "workersCount": "Số người khai thác",
       "address": "Địa chỉ",
       "action": "Hành động",
       "addWorkerPermission": "Ủy quyền khai thác",
@@ -163,6 +176,9 @@
       "addressWallet": "Địa chỉ ví",
       "addressValidation": "Địa chỉ ví không hợp lệ!",
       "addressIsRequired": "Địa chỉ ví không được bỏ trống!"
+    },
+    "copyTextToClipBoard": {
+      "copied": "Đã sao chép"
     }
   }
 }

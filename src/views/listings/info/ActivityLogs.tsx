@@ -1,4 +1,5 @@
-import { CCard, CCardBody, CCardTitle, CCol, CContainer, CLabel, CRow } from '@coreui/react';
+import CIcon from '@coreui/icons-react';
+import { CButton, CCard, CCardBody, CCardTitle, CCol, CContainer, CLabel, CRow } from '@coreui/react';
 import React, { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
@@ -10,7 +11,6 @@ import useWindowDimensions from '../../../shared/hooks/useWindowDimensions';
 import { RootState } from '../../../shared/reducers';
 import { getEntity } from '../../assets/assets.api';
 import { fetchingEntity, selectEntityById } from '../../assets/assets.reducer';
-import '../index.scss';
 
 interface IActivityLogsParams {
   [x: string]: string;
@@ -19,7 +19,7 @@ interface IActivityLogsParams {
 interface IActivityLogs extends RouteComponentProps<IActivityLogsParams> {}
 
 const ActivityLogs = (props: IActivityLogs) => {
-  const { match } = props;
+  const { match, history } = props;
   const { id } = match.params;
   const dispatch = useDispatch();
   const scrollRef = useRef<null | HTMLParagraphElement>(null);
@@ -43,10 +43,13 @@ const ActivityLogs = (props: IActivityLogs) => {
     <CContainer fluid className="mx-0 my-2">
       <CRow>
         <CCol xs={12}>
-          <CLabel className="text-primary content-title">{t('anftDapp.listingComponent.activityLogs')}</CLabel>
+          <CButton className="text-primary p-0 pb-1 ">
+            <CIcon name="cil-arrow-circle-left" onClick={() => history.goBack()} size="lg" />
+          </CButton>
+          <CLabel className="text-primary content-title ml-1">{t('anftDapp.listingComponent.activityLogs')}</CLabel>
         </CCol>
         <CCol xs={12}>
-          <CCard className="m-0 listing-img-card">
+          <CCard className="mt-1 listing-img-card mb-0">
             {!entityLoading && listing ? (
               <img src={listing.images} alt="listingImg" className="w-100 h-100" />
             ) : (
@@ -55,14 +58,14 @@ const ActivityLogs = (props: IActivityLogs) => {
             )}
             <CCardBody className="p-0 listing-card-body">
               <CCardTitle className="listing-card-title mb-0 px-3 py-2 w-100" innerRef={scrollRef}>
-                <p className="mb-0 text-white content-title">202 Yên Sở - Hoàng Mai - Hà Nội</p>
+                <p className="mb-2 text-white content-title">202 Yên Sở - Hoàng Mai - Hà Nội</p>
                 <p className="mb-0 text-white detail-title-font">
                   {t('anftDapp.listingComponent.primaryInfo.blockchainAddress')}{' '}
                   <b>
                     {!entityLoading && listing?.address ? (
                       <CopyTextToClipBoard
                         text={listing.address}
-                        iconClassName="text-white"
+                        iconClassName="text-white m-0"
                         inputClassName="copy-address"
                       />
                     ) : (

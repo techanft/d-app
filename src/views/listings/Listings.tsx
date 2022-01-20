@@ -4,7 +4,7 @@ import { BigNumber } from 'ethers';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
-import { RouteComponentProps } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { formatBNToken } from '../../shared/casual-helpers';
 import Loading from '../../shared/components/Loading';
 import { IParams } from '../../shared/models/base.model';
@@ -23,10 +23,16 @@ export interface IListingShortInfo {
   tHash: string;
 }
 
-export interface IAssetFilter extends IParams {}
-
-interface IListingsProps {
-  routingProps: RouteComponentProps;
+export interface IAssetFilter extends IParams {
+  owner?: string;
+  city?: string;
+  dist?: string;
+  classify?: string;
+  segment?: string;
+  area?: string;
+  orientation?: string;
+  dailyPayment?: string;
+  quality?: string;
 }
 
 const initialFilterState: IAssetFilter = {
@@ -35,10 +41,10 @@ const initialFilterState: IAssetFilter = {
   sort: 'createdDate,desc',
 };
 
-const Listings = ({ routingProps }: IListingsProps) => {
-  const { history, match } = routingProps;
-
-  const insideDetailView = match.path.includes('detail');
+const Listings = () => {
+  const history = useHistory();
+  const { location } = history;
+  const insideDetailView = location.pathname.includes('detail');
 
   const dispatch = useDispatch();
   const { initialState } = useSelector((state: RootState) => state.assets);
@@ -84,7 +90,7 @@ const Listings = ({ routingProps }: IListingsProps) => {
               <CCol xs={12} key={`listing-${index}`} className="px-0">
                 <div
                   className="media info-box bg-white mx-3 my-2 p-2 align-items-center rounded shadow-sm"
-                  onClick={onRedirecting(`/listings/${item.id}/detail`)}
+                  onClick={onRedirecting(`/${item.id}/detail`)}
                 >
                   <img src={item.images} alt="realEstateImg" className="rounded" />
                   <div className="media-body align-items-around ml-2">

@@ -18,12 +18,12 @@ const routes = [
   { path: '/listings', name: 'Dashboard', component: Dashboard, exact: true },
   { path: '/logs-overview', name: 'LogsOverview', component: LogsOverview, exact: true },
   {
-    path: '/listings/:id/detail',
+    path: '/:id/detail',
     name: 'Listing',
     component: Listing
   },
   {
-    path: '/listings/:id/register',
+    path: '/:id/register',
     name: 'Register',
     component: Register,
     exact: true,

@@ -247,7 +247,7 @@ const ListingInfo = (props: IListingInfoProps) => {
             <p className="detail-title-font my-2">{t('anftDapp.listingComponent.primaryInfo.blockchainAddress')}</p>
 
             {!entityLoading && listing?.address ? (
-              <CopyTextToClipBoard text={listing.address} inputClassName="my-2 value-text copy-address" />
+              <p className='my-2'><CopyTextToClipBoard text={listing.address} inputClassName="my-2 value-text copy-address" iconClassName="m-0"/></p>
             ) : (
               <InfoLoader width={155} height={27} />
             )}
@@ -261,7 +261,7 @@ const ListingInfo = (props: IListingInfoProps) => {
                 <p className="detail-title-font my-2">{t('anftDapp.listingComponent.primaryInfo.currentOwner')}</p>
 
                 {!entityLoading && listing?.owner ? (
-                  <CopyTextToClipBoard text={listing.owner} inputClassName="my-2 value-text copy-address" />
+                  <p className='my-2'><CopyTextToClipBoard text={listing.owner} inputClassName="my-2 value-text copy-address" iconClassName="m-0"/></p>
                 ) : (
                   <InfoLoader width={155} height={27} />
                 )}
@@ -376,7 +376,7 @@ const ListingInfo = (props: IListingInfoProps) => {
                     </p>
                   </CRow>
                   <CRow className="mt-2 mx-0">
-                    <CLink to={`/listings/${listingId}/register`}>
+                    <CLink to={`/${listingId}/register`}>
                       <FontAwesomeIcon icon={faDonate} />{' '}
                       {t('anftDapp.listingComponent.primaryInfo.investmentActivities.registerClaimReward')}
                     </CLink>

@@ -15,8 +15,8 @@ const TheLayout = () => {
     <div className="dapp-layout">
       {!isMobile ? (
         <ErrorModal
-          errMsg="Our application is current not supporting Desktop. Please switch to a mobile device!"
-          title="Device Error!"
+          errMsg="anftDapp.global.modal.errorModal.deviceErrMsg"
+          title="anftDapp.global.modal.errorModal.deviceErr"
           autoReload={false}
         />
       ) : (
@@ -32,7 +32,7 @@ const TheLayout = () => {
             </div>
             </>
           ) : (
-            <ErrorModal errMsg={providerErrorMessage} title="Wallet Error!" autoReload={true} />
+            <ErrorModal errMsg={providerErrorMessage} title="anftDapp.global.modal.errorModal.walletErr" autoReload={true} />
           )}
         </>
       )}
