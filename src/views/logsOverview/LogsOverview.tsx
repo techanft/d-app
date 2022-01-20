@@ -10,7 +10,8 @@ interface IActivityLogs extends RouteComponentProps {}
 
 export interface IOverviewFilter {
   listingAddress?: string;
-  createdDate?: string;
+  fromDate?: string;
+  toDate?: string;
 }
 
 const LogsOverview = (props: IActivityLogs) => {
@@ -36,8 +37,9 @@ const LogsOverview = (props: IActivityLogs) => {
         {
           title: t('anftDapp.activityLogsComponent.createdDate'),
           id: 'createDate',
-          type: 'date',
-          name: 'createDate',
+          type: 'dateRange',
+          name1: 'fromDate',
+          name2: 'toDate',
           singleInput: true,
         },
       ],

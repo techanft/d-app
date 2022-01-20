@@ -29,6 +29,7 @@ const Listing = (props: IListingProps) => {
   const listing = useSelector(selectEntityById(Number(id)));
 
   const { t } = useTranslation();
+  
 
   useEffect(() => {
     /**

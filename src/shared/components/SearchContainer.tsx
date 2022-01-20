@@ -187,22 +187,22 @@ export const ComponentExchange = (props: IComponentExchange) => {
                 <CCol key={i} xs={12} md={6} xxl={3} className={`paddingCol textCol ${item.isHidden ? 'd-none' : ''}`}>
                   <CLabel htmlFor={item.id}>{item.title}</CLabel>
                   <CRow>
-                    <CCol sm={6} className="padright5">
+                    <CCol xs={12} sm={6} className="pr-sm-1 mb-2">
                       <CInput
                         className=" dateInput btn-radius-50"
                         onChange={handleChange}
                         id={item.id}
-                        type={item.type}
+                        type="date"
                         value={values[item.name1!] || ''}
                         autoComplete="off"
                         name={item.name1}
                       />
                     </CCol>
-                    <CCol sm={6} className="padleft5">
+                    <CCol xs={12} sm={6} className="pl-sm-1">
                       <CInput
                         className="  dateInput btn-radius-50"
                         onChange={handleChange}
-                        type={item.type}
+                        type="date"
                         autoComplete="off"
                         name={item.name2}
                         value={values[item.name2!] || ''}

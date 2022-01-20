@@ -1,4 +1,3 @@
-import dayjs from 'dayjs';
 import { BigNumber, ethers } from 'ethers';
 import moment from 'moment';
 import { APP_DATE_FORMAT, TOKEN_SYMBOL } from '../config/constants';
@@ -7,7 +6,7 @@ import { baseOptions } from './models/options.model';
 
 export const estimateOwnership = (amount: BigNumber, dailyPayment: BigNumber, currentOwnership: BigNumber) => {
   const initialOwnership = checkOwnershipExpired(currentOwnership.toNumber())
-    ? BigNumber.from(dayjs().unix())
+    ? BigNumber.from(moment().unix())
     : currentOwnership;
 
   const additionalCredit = amount.mul(86400).div(dailyPayment).toNumber();
@@ -61,12 +60,12 @@ export const formatBNToken = (input: BigNumber | undefined, displaySymbol: boole
 };
 
 export const checkOwnershipExpired = (timestamp: number): boolean => {
-  const currTimstamp = dayjs().unix();
+  const currTimstamp = moment().unix();
   return currTimstamp >= timestamp;
 };
 
 export const convertUnixToDate = (timestamp: number): string => {
-  return dayjs.unix(timestamp).format(APP_DATE_FORMAT);
+  return moment.unix(timestamp).format(APP_DATE_FORMAT);
 };
 export const getEllipsisTxt = (str: string, n = 5) => {
   if (str) {
@@ -98,7 +97,7 @@ export const validateOwnership = (viewerAddr: string | undefined, listingInfo: I
 };
 
 export const formatLocalDatetime = (input: string | Date | undefined): string => {
-  return dayjs(input).format(APP_DATE_FORMAT);
+  return moment(input).format(APP_DATE_FORMAT);
 };
 
 export const returnOptionNameById = (optionId: number): string => {
