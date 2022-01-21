@@ -179,6 +179,10 @@
     },
     "copyTextToClipBoard": {
       "copied": "Copied"
+    },
+    "searchContainer": {
+      "listingBlockChainAddress": "Listing Blockchain Address",
+      "time": "Time"
     }
   }
 }

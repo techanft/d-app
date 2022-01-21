@@ -179,6 +179,10 @@
     },
     "copyTextToClipBoard": {
       "copied": "Đã sao chép"
+    },
+    "searchContainer": {
+      "listingBlockChainAddress": "Địa chỉ Blockchain BĐS",
+      "time": "Thời gian"
     }
   }
 }
