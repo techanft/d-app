@@ -48,7 +48,7 @@ const Listings = () => {
 
   const dispatch = useDispatch();
   const { initialState } = useSelector((state: RootState) => state.assets);
-  const { provider } = useSelector((state: RootState) => state.wallet);
+  const { provider, signerAddress } = useSelector((state: RootState) => state.wallet);
   const { totalItems, entitiesLoading, filterState: storedFilterState } = initialState;
   const assets = useSelector(assetsSelectors.selectAll);
 
@@ -70,7 +70,7 @@ const Listings = () => {
     dispatch(getEntities({ fields: filterState, provider }));
     dispatch(setStoredFilterState(filterState));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [JSON.stringify(filterState)]);
+  }, [JSON.stringify(filterState), signerAddress]);
 
   const onRedirecting = (path: string) => {
     return () => {
