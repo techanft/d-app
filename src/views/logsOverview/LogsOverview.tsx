@@ -7,6 +7,9 @@ import { isDateBefore } from '../../shared/casual-helpers';
 import ActivityLogsContainer from '../../shared/components/ActivityLogsContainer';
 import { ComponentExchange, ISearchContent } from '../../shared/components/SearchContainer';
 import { ToastError } from '../../shared/components/Toast';
+import * as Yup from 'yup';
+;
+
 
 interface IActivityLogs extends RouteComponentProps {}
 
@@ -37,8 +40,8 @@ const LogsOverview = (props: IActivityLogs) => {
     {
       searchContent: [
         {
-          title: t('anftDapp.activityLogsComponent.activityLogsTable.from'),
-          title2nd: t('anftDapp.activityLogsComponent.activityLogsTable.to'),
+          title: t('anftDapp.activityLogsComponent.activityLogsTable.fromDate'),
+          title2nd: t('anftDapp.activityLogsComponent.activityLogsTable.toDate'),
           id: 'createDate',
           type: 'date',
           name1: 'fromDate',
@@ -48,6 +51,17 @@ const LogsOverview = (props: IActivityLogs) => {
       ],
     },
   ];
+  const validationSchema = Yup.object().shape({
+    fromDate: Yup.string().test(
+      'is-before-end',
+      t('anftDapp.activityLogsComponent.errors.startingDateDoesNotOccurAfterTheEndingDate'),
+      function (value) {
+        !isDateBefore(value, this.parent?.toDate) &&
+          ToastError(t('anftDapp.activityLogsComponent.errors.startingDateDoesNotOccurAfterTheEndingDate'));
+        return isDateBefore(value, this.parent?.toDate);
+      }
+    )
+  });
 
   return (
     <CContainer fluid className="mx-0 my-2">
@@ -58,12 +72,9 @@ const LogsOverview = (props: IActivityLogs) => {
         <CCol xs={12}>
           <Formik
             initialValues={filterState}
+            validationSchema={validationSchema}
+            validateOnChange={false}
             onSubmit={(values) => {
-              if (values.fromDate && values.toDate && !isDateBefore(values.fromDate, values.toDate)) {
-                return ToastError(
-                  t('anftDapp.activityLogsComponent.errors.startingDateDoesNotOccurAfterTheEndingDate')
-                );
-              }
               setFilterState(values);
             }}
           >

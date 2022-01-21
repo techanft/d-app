@@ -157,6 +157,8 @@
         "withdrawDay": "Withdraw days",
         "from": "From",
         "to": "To",
+        "fromDate": "From",
+        "toDate": "To",
         "amount": "Amount",
         "initialOwnership": "Initial Ownership",
         "newOwnership": "New Ownership",
