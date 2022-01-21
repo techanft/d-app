@@ -23,9 +23,9 @@ const LogsOverview = (props: IActivityLogs) => {
     {
       searchContent: [
         {
-          title: t('anftDapp.listingComponent.primaryInfo.blockchainAddress'),
+          title: t('anftDapp.searchContainer.listingBlockChainAddress'),
           id: 'listingAddress',
-          placeHolder: `${t('anftDapp.listingComponent.primaryInfo.blockchainAddress')}...`,
+          placeHolder: `${t('anftDapp.searchContainer.listingBlockChainAddress')}...`,
           type: 'text',
           singleInput: true,
           name: 'listingAddress',

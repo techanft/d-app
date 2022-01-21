@@ -192,13 +192,13 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
               <CRow>
                 <CCol xs={12}>
                   <CFormGroup row>
-                    <CCol xs={6}>
+                    <CCol xs={7}>
                       <CLabel className="recharge-token-title">
                         {t('anftDapp.listingComponent.extendOwnership.currentOwnership')}
                       </CLabel>
                     </CCol>
                     {listing?.ownership ? (
-                      <CCol xs={6}>
+                      <CCol xs={5}>
                         <p className="text-primary text-right">{convertUnixToDate(listing.ownership.toNumber())}</p>
                       </CCol>
                     ) : (
@@ -207,12 +207,12 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                   </CFormGroup>
 
                   <CFormGroup row>
-                    <CCol xs={6}>
+                    <CCol xs={7}>
                       <CLabel className="recharge-token-title">
                         {t('anftDapp.listingComponent.primaryInfo.dailyPayment')}
                       </CLabel>
                     </CCol>
-                    <CCol xs={6}>
+                    <CCol xs={5}>
                       <p className="text-primary text-right">{formatBNToken(listing?.dailyPayment, true)}</p>
                     </CCol>
                   </CFormGroup>
