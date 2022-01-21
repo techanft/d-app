@@ -227,7 +227,7 @@ const ActivityLogsContainer = (props: IActivityLogsProps) => {
       {signerAddress ? (
         <>
           <CCol xs={12}>
-            <CNav variant="" className={'activityLogTableNav my-3'}>
+            <CNav variant="" className={'activity-log-table-nav my-3'}>
               <CNavItem className="col-6 p-0">
                 <CNavLink
                   onClick={onTableTypeChange(TableType.INVESTMENT)}

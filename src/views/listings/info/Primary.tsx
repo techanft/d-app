@@ -8,7 +8,7 @@ import {
   CDataTable,
   CLink,
   CPagination,
-  CRow,
+  CRow
 } from '@coreui/react';
 import {
   faArrowAltCircleDown,
@@ -16,13 +16,13 @@ import {
   faClipboard,
   faDonate,
   faEdit,
-  faIdBadge,
+  faIdBadge
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
-import { TFunction, useTranslation } from 'react-i18next';
 import 'react-dates/initialize';
 import 'react-dates/lib/css/_datepicker.css';
+import { TFunction, useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { TOKEN_SYMBOL } from '../../../config/constants';
 import {
@@ -30,7 +30,7 @@ import {
   convertUnixToDate,
   formatBNToken,
   formatLocalDatetime,
-  getEllipsisTxt,
+  getEllipsisTxt
 } from '../../../shared/casual-helpers';
 import ConfirmationLoading from '../../../shared/components/ConfirmationLoading';
 import CopyTextToClipBoard from '../../../shared/components/CopyTextToClipboard';

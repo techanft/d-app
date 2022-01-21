@@ -1,5 +1,4 @@
 import { CPagination } from '@coreui/react';
-import dayjs from 'dayjs';
 import moment from 'moment';
 import React from 'react';
 import { TFunction, useTranslation } from 'react-i18next';
@@ -47,11 +46,11 @@ const renderRecordOwnerShip = ({ record, transFunc, shouldDisplayBlockchainAddre
     )}
     <tr>
       <td>{transFunc('anftDapp.activityLogsComponent.activityLogsTable.from')}</td>
-      <td className="text-right">{dayjs(record.from).format(APP_DATE_FORMAT)}</td>
+      <td className="text-right">{moment(record.from).format(APP_DATE_FORMAT)}</td>
     </tr>
     <tr>
       <td>{transFunc('anftDapp.activityLogsComponent.activityLogsTable.to')}</td>
-      <td className="text-right">{dayjs(record.to).format(APP_DATE_FORMAT)}</td>
+      <td className="text-right">{moment(record.to).format(APP_DATE_FORMAT)}</td>
     </tr>
     <tr>
       <td>{transFunc('anftDapp.activityLogsComponent.activityLogsTable.ownedDay')}</td>
@@ -81,11 +80,11 @@ const renderRecordClaim = ({ record, transFunc, shouldDisplayBlockchainAddress }
 
     <tr>
       <td>{transFunc('anftDapp.registerComponent.stakeStart')}</td>
-      <td className="text-right">{dayjs(record.from).format(APP_DATE_FORMAT)}</td>
+      <td className="text-right">{moment(record.from).format(APP_DATE_FORMAT)}</td>
     </tr>
     <tr>
       <td>{transFunc('anftDapp.activityLogsComponent.activityLogsTable.claimTime')}</td>
-      <td className="text-right">{dayjs(record.to).format(APP_DATE_FORMAT)}</td>
+      <td className="text-right">{moment(record.to).format(APP_DATE_FORMAT)}</td>
     </tr>
   </>
 );
@@ -140,11 +139,11 @@ const renderRecordWithdraw = ({ record, transFunc, shouldDisplayBlockchainAddres
     )}
     <tr>
       <td>{transFunc('anftDapp.activityLogsComponent.activityLogsTable.initialOwnership')}</td>
-      <td className="text-right">{dayjs.unix(Number(record.initialOwnership)).format(APP_DATE_FORMAT)}</td>
+      <td className="text-right">{moment.unix(Number(record.initialOwnership)).format(APP_DATE_FORMAT)}</td>
     </tr>
     <tr>
       <td>{transFunc('anftDapp.activityLogsComponent.activityLogsTable.newOwnership')}</td>
-      <td className="text-right">{dayjs.unix(Number(record.newOwnership)).format(APP_DATE_FORMAT)}</td>
+      <td className="text-right">{moment.unix(Number(record.newOwnership)).format(APP_DATE_FORMAT)}</td>
     </tr>
     <tr>
       <td>{transFunc('anftDapp.activityLogsComponent.activityLogsTable.withdrawDay')}</td>
@@ -189,7 +188,7 @@ const ActivityLogsTable = (props: IActivityLogsTable) => {
               <table key={index} className="w-100 mb-3">
                 <thead>
                   <tr>
-                    <th>{dayjs(result.createdDate).format(APP_DATE_FORMAT)}</th>
+                    <th>{moment(result.createdDate).format(APP_DATE_FORMAT)}</th>
                     <th></th>
                   </tr>
                 </thead>

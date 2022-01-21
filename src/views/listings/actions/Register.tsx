@@ -16,13 +16,13 @@ import {
   CInvalidFeedback,
   CLabel,
   CLink,
-  CRow,
+  CRow
 } from '@coreui/react';
 import { faPen, faSyncAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import dayjs from 'dayjs';
 import { BigNumber } from 'ethers';
 import { Formik, FormikProps } from 'formik';
+import moment from 'moment';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
@@ -35,7 +35,7 @@ import {
   convertUnixToDate,
   formatBNToken,
   insertCommas,
-  unInsertCommas,
+  unInsertCommas
 } from '../../../shared/casual-helpers';
 import ConfirmationLoading from '../../../shared/components/ConfirmationLoading';
 import ConfirmModal from '../../../shared/components/ConfirmModal';
@@ -291,7 +291,7 @@ const Register = (props: IRegisterProps) => {
     if (!instance) return BigNumber.from(0);
     const optionInfo = listing.options.find(({ id }) => id === optionId);
 
-    const currentUnix = dayjs().unix();
+    const currentUnix = moment().unix();
 
     const value: ICalSHReward = {
       instance: instance,
