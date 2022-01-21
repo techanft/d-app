@@ -161,6 +161,9 @@
         "initialOwnership": "Sở hữu trước rút",
         "newOwnership": "Sở hữu sau rút",
         "claimTime": "Thời gian nhận thưởng"
+      },"errors": {
+        "startingDateDoesNotOccurAfterTheEndingDate": "Ngày bắt đầu không được xảy ra sau ngày kết thúc",
+        "endingDateDoesNotOccurBeforeTheStartingDate": "Ngày kết thúc không đƯỢc xảy ra trước ngày bắt đầu"
       },
       "createdDate": "Ngày bắt đầu"
     },
