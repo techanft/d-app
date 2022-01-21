@@ -37,7 +37,7 @@ export const insertCommas = (input: number | undefined | string, n: number = 4) 
   }
 };
 
-export const unInsertCommas = (input: string, n : number = 4) => {
+export const unInsertCommas = (input: string, n: number = 4) => {
   const parts = input.split('.');
   parts[0] = parts[0].replaceAll(',', '');
   if (parts[1]) parts[1] = parts[1].substring(0, n); // Only take the first n decimals, default 4 decimals
@@ -53,7 +53,7 @@ export const convertDecimalToBn = (input: string) => {
   return ethers.utils.parseUnits(sanitizedInput);
 };
 
-export const formatBNToken = (input: BigNumber | undefined, displaySymbol: boolean, n : number = 4) => {
+export const formatBNToken = (input: BigNumber | undefined, displaySymbol: boolean, n: number = 4) => {
   if (!input) return '_';
   const formatedAmount = insertCommas(convertBnToDecimal(input), n);
   return `${formatedAmount} ${displaySymbol ? TOKEN_SYMBOL : ''}`;
@@ -154,4 +154,12 @@ export const checkDateRange = (day: moment.Moment, startDate: moment.Moment, end
   // return true if date in range of startDate and endDate
   if (day < startDate) return false;
   return startDate <= day && day <= endDate;
+};
+
+export const isDateBefore = (input: string | undefined, compared: string | undefined) => {
+  return moment(moment(input)).isBefore(moment(compared));
+};
+
+export const isDateAfter = (input: string | undefined, compared: string | undefined) => {
+  return moment(moment(input)).isAfter(moment(compared));
 };
