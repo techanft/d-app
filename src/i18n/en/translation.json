@@ -54,6 +54,7 @@
 
     "listingComponent": {
       "listingValue": "Value",
+      "noListingFound": "No listing found",
       "primaryInfo": {
         "ownershipStatus": {
           "owned": "Owned",
@@ -181,7 +182,7 @@
       "copied": "Copied"
     },
     "searchContainer": {
-      "listingBlockChainAddress": "Listing Blockchain Address",
+      "listingBlockChainAddress": "Listing's Blockchain Address",
       "time": "Time"
     }
   }

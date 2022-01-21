@@ -31,7 +31,6 @@ import { RootState } from '../shared/reducers';
 import { getEntities } from '../views/assets/assets.api';
 import {
   fetchingEntities,
-  hardReset,
   setFilterState as setStoredFilterState,
   softReset as assetsSoftReset,
 } from '../views/assets/assets.reducer';
@@ -191,7 +190,7 @@ const TheHeader = () => {
   useEffect(() => {
     if (fetchEntitiesSuccess) {
       setIsDropdownFilterShowing(false);
-      dispatch(hardReset());
+      dispatch(assetsSoftReset());
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchEntitiesSuccess]);

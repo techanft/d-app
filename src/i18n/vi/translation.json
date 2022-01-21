@@ -54,6 +54,7 @@
 
     "listingComponent": {
       "listingValue": "Giá trị BĐS",
+      "noListingFound": "Không tìm thấy bản ghi nào",
       "primaryInfo": {
         "ownershipStatus": {
           "owned": "Đã sở hữu",
