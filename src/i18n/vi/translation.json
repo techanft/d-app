@@ -165,7 +165,7 @@
         "claimTime": "Thời gian nhận thưởng"
       },"errors": {
         "startingDateDoesNotOccurAfterTheEndingDate": "Ngày bắt đầu không được xảy ra sau ngày kết thúc",
-        "endingDateDoesNotOccurBeforeTheStartingDate": "Ngày kết thúc không đƯỢc xảy ra trước ngày bắt đầu"
+        "endingDateDoesNotOccurBeforeTheStartingDate": "Ngày kết thúc không được xảy ra trước ngày bắt đầu"
       },
       "createdDate": "Ngày bắt đầu"
     },
