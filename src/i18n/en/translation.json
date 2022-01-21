@@ -161,6 +161,10 @@
         "newOwnership": "New Ownership",
         "claimTime": "Claim Time"
       },
+      "errors": {
+        "startingDateDoesNotOccurAfterTheEndingDate": "Starting Date does not occur after the Ending Date",
+        "endingDateDoesNotOccurBeforeTheStartingDate": "Ending Date does not occur before the Starting Date"
+      },
       "createdDate": "Created Date"
     },
 

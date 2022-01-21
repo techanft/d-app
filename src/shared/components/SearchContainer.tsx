@@ -25,6 +25,7 @@ interface ISearchItem {
   id: string;
   type: string;
   title: string;
+  title2nd?: string;
   name?: string;
   name1?: string;
   name2?: string;
@@ -123,7 +124,9 @@ export const ComponentExchange = (props: IComponentExchange) => {
                 <React.Fragment key={i}>
                   {item.singleInput ? (
                     <CCol xs={12} md={6} xxl={3} className={`px-5px textCol ${item.isHidden ? 'd-none' : ''}`}>
-                      <CLabel htmlFor={item.id} className="mb-2">{item.title}</CLabel>
+                      <CLabel htmlFor={item.id} className="mb-2">
+                        {item.title}
+                      </CLabel>
                       <CInput
                         className=" btn-radius-50"
                         id={item.id}
@@ -169,18 +172,54 @@ export const ComponentExchange = (props: IComponentExchange) => {
               );
             case 'date':
               return (
-                <CCol key={i} xs={12} md={6} xxl={3} className={`px-5px textCol ${item.isHidden ? 'd-none' : ''}`}>
-                  <CLabel htmlFor={item.id} className="mb-2">{item.title}</CLabel>
-                  <CInput
-                    className=" dateInput btn-radius-50"
-                    onChange={handleChange}
-                    id={item.id}
-                    type={item.type}
-                    value={values[item.name!] || ''}
-                    autoComplete="off"
-                    name={item.name}
-                  />
-                </CCol>
+                <React.Fragment key={i}>
+                  {item.singleInput ? (
+                    <CCol xs={12} md={6} xxl={3} className={`px-5px textCol ${item.isHidden ? 'd-none' : ''}`}>
+                      <CLabel htmlFor={item.id} className="mb-2">
+                        {item.title}
+                      </CLabel>
+                      <CInput
+                        className=" dateInput btn-radius-50"
+                        onChange={handleChange}
+                        id={item.id}
+                        type={item.type}
+                        value={values[item.name!] || ''}
+                        autoComplete="off"
+                        name={item.name}
+                      />
+                    </CCol>
+                  ) : (
+                    <CCol xs={12} md={6} xxl={3} className={`px-5px textCol ${item.isHidden ? 'd-none' : ''}`}>
+                      <CRow>
+                        <CCol xs={6} sm={6} className="pr-5px">
+                          <CLabel htmlFor={item.id}>{item.title}</CLabel>
+                          <CInput
+                            className=" btn-radius-50"
+                            onChange={handleChange}
+                            id={item.id}
+                            type={item.type}
+                            value={values[item.name1!] || ''}
+                            placeholder={item.placeHolder1}
+                            autoComplete="off"
+                            name={item.name1}
+                          />
+                        </CCol>
+                        <CCol xs={6} sm={6} className="pl-5px">
+                          <CLabel htmlFor={item.id}>{item.title2nd}</CLabel>
+                          <CInput
+                            className=" btn-radius-50"
+                            onChange={handleChange}
+                            type={item.type}
+                            placeholder={item.placeHolder2}
+                            autoComplete="off"
+                            name={item.name2}
+                            value={values[item.name2!] || ''}
+                          />
+                        </CCol>
+                      </CRow>
+                    </CCol>
+                  )}
+                </React.Fragment>
               );
             case 'dateRange':
               return (
