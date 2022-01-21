@@ -48,7 +48,7 @@ const Listings = () => {
 
   const dispatch = useDispatch();
   const { initialState } = useSelector((state: RootState) => state.assets);
-  const { provider } = useSelector((state: RootState) => state.wallet);
+  const { provider, signerAddress } = useSelector((state: RootState) => state.wallet);
   const { totalItems, entitiesLoading, filterState: storedFilterState } = initialState;
   const assets = useSelector(assetsSelectors.selectAll);
 
@@ -70,7 +70,7 @@ const Listings = () => {
     dispatch(getEntities({ fields: filterState, provider }));
     dispatch(setStoredFilterState(filterState));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [JSON.stringify(filterState)]);
+  }, [JSON.stringify(filterState), signerAddress]);
 
   const onRedirecting = (path: string) => {
     return () => {
@@ -80,47 +80,55 @@ const Listings = () => {
   };
 
   return (
-    <>
-      {entitiesLoading && !assets.length ? (
-        <Loading />
-      ) : (
+    <CRow className={`mx-0`}>
+      {assets.length ? (
         <>
-          <CRow className="mx-0">
-            {assets.map((item, index) => (
-              <CCol xs={12} key={`listing-${index}`} className="px-0">
-                <div
-                  className="media info-box bg-white mx-3 my-2 p-2 align-items-center rounded shadow-sm"
-                  onClick={onRedirecting(`/${item.id}/detail`)}
-                >
-                  <img src={item.images} alt="realEstateImg" className="rounded" />
-                  <div className="media-body align-items-around ml-2">
-                    <span className="info-box-text text-dark">{`${item.id} Yên Sở - Hoàng Mai - Hà Nội`}</span>
-                    <p className={`info-box-token text-primary mt-2 mb-0`}>
-                      {t('anftDapp.listingComponent.listingValue')}: {formatBNToken(item.value, true)}
-                    </p>
-                    <p className={`info-box-commissionRate text-success mt-2 mb-0`}>
-                      <CIcon name="cil-flower" /> {formatBNToken(item.dailyPayment, true)}
-                    </p>
-                  </div>
+          {assets.map((item, index) => (
+            <CCol xs={12} key={`listing-${index}`} className="px-0">
+              <div
+                className="media info-box bg-white mx-3 my-2 p-2 align-items-center rounded shadow-sm"
+                onClick={onRedirecting(`/${item.id}/detail`)}
+              >
+                <img src={item.images} alt="realEstateImg" className="rounded" />
+                <div className="media-body align-items-around ml-2">
+                  <span className="info-box-text text-dark">{`${item.id} Yên Sở - Hoàng Mai - Hà Nội`}</span>
+                  <p className={`info-box-token text-primary mt-2 mb-0`}>
+                    {t('anftDapp.listingComponent.listingValue')}: {formatBNToken(item.value, true)}
+                  </p>
+                  <p className={`info-box-commissionRate text-success mt-2 mb-0`}>
+                    <CIcon name="cil-flower" /> {formatBNToken(item.dailyPayment, true)}
+                  </p>
                 </div>
-              </CCol>
-            ))}
-          </CRow>
-          {totalPages > 1 && !insideDetailView ? (
-            <CPagination
-              disabled={entitiesLoading}
-              activePage={filterState.page + 1}
-              pages={totalPages}
-              onActivePageChange={handlePaginationChange}
-              align="center"
-              className="mt-2"
-            />
-          ) : (
-            ''
-          )}
+              </div>
+            </CCol>
+          ))}
+          <CCol xs={12} className="p-0">
+            {totalPages > 1 && !insideDetailView ? (
+              <CPagination
+                disabled={entitiesLoading}
+                activePage={filterState.page + 1}
+                pages={totalPages}
+                onActivePageChange={handlePaginationChange}
+                align="center"
+                className="mt-2"
+              />
+            ) : (
+              ''
+            )}
+          </CCol>
         </>
+      ) : (
+        <CCol xs={12}>
+          {entitiesLoading ? ( //Still loading and waiting for results
+            <Loading /> 
+          ) : ( //Finished loading and no result found
+            <div className="alert alert-warning my-3">
+              <span>{t('anftDapp.listingComponent.noListingFound')}</span>
+            </div>
+          )}
+        </CCol>
       )}
-    </>
+    </CRow>
   );
 };
 

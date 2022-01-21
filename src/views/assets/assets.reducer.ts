@@ -50,6 +50,7 @@ const { actions, reducer } = createSlice({
       initialState.errorMessage = null;
       initialState.fetchEntitySuccess = false;
       initialState.deleteEntitySuccess = false;
+      initialState.fetchEntitiesSuccess = false;
       initialState.filterState = undefined;
     },
     setFilterState({initialState}, {payload}: PayloadAction<IAssetFilter>) {

@@ -54,6 +54,7 @@
 
     "listingComponent": {
       "listingValue": "Giá trị BĐS",
+      "noListingFound": "Không tìm thấy bản ghi nào",
       "primaryInfo": {
         "ownershipStatus": {
           "owned": "Đã sở hữu",
@@ -182,6 +183,10 @@
     },
     "copyTextToClipBoard": {
       "copied": "Đã sao chép"
+    },
+    "searchContainer": {
+      "listingBlockChainAddress": "Địa chỉ Blockchain BĐS",
+      "time": "Thời gian"
     }
   }
 }
