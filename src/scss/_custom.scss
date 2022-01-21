@@ -89,7 +89,7 @@ body {
     position: relative;
   }
 
-  .activityLogTableNav {
+  .activity-log-table-nav {
     .nav-link {
       color: #828282;
       &.active {
@@ -98,7 +98,7 @@ body {
       }
     }
   }
-  .searchContainer {
+  .search-container {
     label {
       margin-bottom: 0.2rem;
       font-weight: bold;
@@ -117,7 +117,7 @@ body {
       border-radius: 25px !important;
     }
   
-    .collapseIcon {
+    .collapse-icon {
       color: rgba(0, 0, 0, 0.5);
       box-shadow: none !important;
       &:hover {

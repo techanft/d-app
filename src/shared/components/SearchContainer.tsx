@@ -70,7 +70,7 @@ export const SearchContainer = (props: ISearchContainer) => {
     <>
       {listComponent && (
         <CForm onSubmit={handleSubmit}>
-          <CRow className="searchContainer">
+          <CRow className="search-container">
             <CCol xs={12}>
               <CCard className={'btn-radius-25i m-0'}>
                 <CCardHeader className={'btn-radius-50i border-bottom-0'}>
@@ -79,10 +79,10 @@ export const SearchContainer = (props: ISearchContainer) => {
                       {t('anftDapp.headerComponent.filter.filter')}
                     </p>
                     <div>
-                      <CButton className="collapseIcon btn-tool " onClick={handleResetForm}>
+                      <CButton className="collapse-icon btn-tool " onClick={handleResetForm}>
                         <CIcon name="cil-filter-x" size="lg" />
                       </CButton>
-                      <CButton className="collapseIcon btn-tool " onClick={setCardVisibleListener(!cardVisible)}>
+                      <CButton className="collapse-icon btn-tool " onClick={setCardVisibleListener(!cardVisible)}>
                         <CIcon name={cardVisible ? 'cil-minus' : 'cil-plus'} size="lg" />
                       </CButton>
                     </div>
