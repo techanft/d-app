@@ -122,7 +122,7 @@ export const ComponentExchange = (props: IComponentExchange) => {
               return (
                 <React.Fragment key={i}>
                   {item.singleInput ? (
-                    <CCol xs={12} md={6} xxl={3} className={`paddingCol textCol ${item.isHidden ? 'd-none' : ''}`}>
+                    <CCol xs={12} md={6} xxl={3} className={`px-5px textCol ${item.isHidden ? 'd-none' : ''}`}>
                       <CLabel htmlFor={item.id} className="mb-2">{item.title}</CLabel>
                       <CInput
                         className=" btn-radius-50"
@@ -136,10 +136,10 @@ export const ComponentExchange = (props: IComponentExchange) => {
                       />
                     </CCol>
                   ) : (
-                    <CCol xs={12} md={6} xxl={3} className={`paddingCol textCol ${item.isHidden ? 'd-none' : ''}`}>
+                    <CCol xs={12} md={6} xxl={3} className={`px-5px textCol ${item.isHidden ? 'd-none' : ''}`}>
                       <CLabel htmlFor={item.id}>{item.title}</CLabel>
                       <CRow>
-                        <CCol sm={6} className="padright5">
+                        <CCol sm={6} className="pr-5px">
                           <CInput
                             className=" btn-radius-50"
                             onChange={handleChange}
@@ -151,7 +151,7 @@ export const ComponentExchange = (props: IComponentExchange) => {
                             name={item.name1}
                           />
                         </CCol>
-                        <CCol sm={6} className="padleft5">
+                        <CCol sm={6} className="pl-5px">
                           <CInput
                             className=" btn-radius-50"
                             onChange={handleChange}
@@ -169,7 +169,7 @@ export const ComponentExchange = (props: IComponentExchange) => {
               );
             case 'date':
               return (
-                <CCol key={i} xs={12} md={6} xxl={3} className={`paddingCol textCol ${item.isHidden ? 'd-none' : ''}`}>
+                <CCol key={i} xs={12} md={6} xxl={3} className={`px-5px textCol ${item.isHidden ? 'd-none' : ''}`}>
                   <CLabel htmlFor={item.id} className="mb-2">{item.title}</CLabel>
                   <CInput
                     className=" dateInput btn-radius-50"
@@ -184,7 +184,7 @@ export const ComponentExchange = (props: IComponentExchange) => {
               );
             case 'dateRange':
               return (
-                <CCol key={i} xs={12} md={6} xxl={3} className={`paddingCol textCol ${item.isHidden ? 'd-none' : ''}`}>
+                <CCol key={i} xs={12} md={6} xxl={3} className={`px-5px textCol ${item.isHidden ? 'd-none' : ''}`}>
                   <CLabel htmlFor={item.id}>{item.title}</CLabel>
                   <CRow>
                     <CCol xs={12} sm={6} className="pr-sm-1 mb-2">
@@ -213,7 +213,7 @@ export const ComponentExchange = (props: IComponentExchange) => {
               );
             case 'select':
               return (
-                <CCol key={i} xs={12} md={6} xxl={3} className={`paddingCol textCol ${item.isHidden ? 'd-none' : ''}`}>
+                <CCol key={i} xs={12} md={6} xxl={3} className={`px-5px textCol ${item.isHidden ? 'd-none' : ''}`}>
                   <CLabel htmlFor={item.id}>{item.title}</CLabel>
                   <CSelect name={item.name} id={item.id} onChange={handleChange} value={values[item.name!]}>
                     <option defaultValue="">{item.placeHolder}</option>
@@ -229,7 +229,7 @@ export const ComponentExchange = (props: IComponentExchange) => {
               );
             default:
               return (
-                <CCol key={i} xs={12} md={6} xxl={3} className={`paddingCol textCol ${item.isHidden ? 'd-none' : ''}`}>
+                <CCol key={i} xs={12} md={6} xxl={3} className={`px-5px textCol ${item.isHidden ? 'd-none' : ''}`}>
                   <CLabel htmlFor={item.id}>{item.title}</CLabel>
                   <CInput
                     className=" btn-radius-50"
