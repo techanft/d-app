@@ -5,8 +5,7 @@ import {
   CCardBody,
   CCardHeader,
   CCol,
-  CCollapse,
-  CForm,
+  CCollapse, CForm,
   CInput,
   CLabel,
   CRow,
@@ -45,11 +44,11 @@ export interface ISearchContent {
 }
 
 interface ISearchContainer {
-  listComponent?: Array<any>;
+  listComponent: Array<any>;
   handleSubmit: (e?: React.FormEvent<HTMLFormElement>) => void;
   resetForm: (nextState?: Partial<FormikState<any>>) => void;
 }
-interface IComponentExchange {
+interface IFilterComponent {
   textType: Array<ISearchContent>;
   values: any;
   resetForm: (nextState?: Partial<FormikState<any>>) => void;
@@ -69,22 +68,25 @@ export const SearchContainer = (props: ISearchContainer) => {
   };
   return (
     <>
-      {listComponent && (
         <CForm onSubmit={handleSubmit}>
           <CRow className="search-container">
             <CCol xs={12}>
               <CCard className={'btn-radius-25i m-0'}>
                 <CCardHeader className={'btn-radius-50i border-bottom-0'}>
                   <div className="d-flex justify-content-between">
-                    <p className="content-title mb-0" style={{ fontSize: '1rem', fontWeight: 500 }}>
-                      {t('anftDapp.headerComponent.filter.filter')}
+                    <p className="content-title mb-0">
+                      {!cardVisible ? t('anftDapp.headerComponent.filter.filter') : ''}
                     </p>
+
                     <div>
                       <CButton className="collapse-icon btn-tool " onClick={handleResetForm}>
                         <CIcon name="cil-filter-x" size="lg" />
                       </CButton>
-                      <CButton className="collapse-icon btn-tool " onClick={setCardVisibleListener(!cardVisible)}>
-                        <CIcon name={cardVisible ? 'cil-minus' : 'cil-plus'} size="lg" />
+                      <CButton
+                        className="collapse-icon btn-tool toggle-collapse-btn"
+                        onClick={setCardVisibleListener(!cardVisible)}
+                      >
+                        <CIcon name={cardVisible ? 'cil-fullscreen-exit' : 'cil-fullscreen'} size="lg" />
                       </CButton>
                     </div>
                   </div>
@@ -107,12 +109,11 @@ export const SearchContainer = (props: ISearchContainer) => {
             </CCol>
           </CRow>
         </CForm>
-      )}
     </>
   );
 };
 
-export const ComponentExchange = (props: IComponentExchange) => {
+export const FilterComponent = (props: IFilterComponent) => {
   const { textType, values, handleChange, handleSubmit, resetForm } = props;
   const exchangeComponent = textType.map((element, index) => {
     return (
