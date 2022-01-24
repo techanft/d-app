@@ -3,7 +3,8 @@
     "global": {
       "errors": {
         "pleaseConnectWallet": "Vui lòng liên kết ví!",
-        "errorSubmittingForm": "Lỗi gửi biểu mẫu"
+        "errorSubmittingForm": "Lỗi gửi biểu mẫu",
+        "qrScanError": "Lỗi quét mã QR"
       },
       "modal": {
         "confirm": "XÁC NHẬN",

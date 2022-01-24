@@ -3,7 +3,8 @@
     "global": {
       "errors": {
         "pleaseConnectWallet": "Please connect to your wallet!",
-        "errorSubmittingForm": "Error in submitting form"
+        "errorSubmittingForm": "Error in submitting form",
+        "qrScanError": "Error in scanning QR code"
       },
       "modal": {
         "confirm": "CONFIRM",

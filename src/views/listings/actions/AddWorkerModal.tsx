@@ -103,9 +103,9 @@ const AddWorkerPermission = (props: ICancelWorkerPermission) => {
   const [isScanQrMode, setIsScanQrMode] = useState<boolean>(false);
 
   const handleErrorFile = (err: any) => {
-    console.log(`Error in scanning QR code: ${err}`);
+    console.log(`${t('anftDapp.global.errors.qrScanError')}: ${err}`);
   };
-
+  
   const handleScanFile = (result: string | null) => {
     if (result) {
       setIsScanQrMode(false);
