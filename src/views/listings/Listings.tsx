@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
 import { formatBNToken } from '../../shared/casual-helpers';
 import Loading from '../../shared/components/Loading';
+import useWindowDimensions from '../../shared/hooks/useWindowDimensions';
 import { IAsset } from '../../shared/models/assets.model';
 import { IParams } from '../../shared/models/base.model';
 import { RootState } from '../../shared/reducers';
@@ -87,6 +88,9 @@ const Listings = () => {
     return Number(listingBeingDetailedId) === id ? 'd-none' : '';
   };
 
+  const {width} = useWindowDimensions();
+  const minimumWidthDisplayingTokenSymbol = 360
+
   return (
     <CRow className={`mx-0`}>
       {assets.length && !entitiesLoading ? (
@@ -100,15 +104,15 @@ const Listings = () => {
                 <img src={item.images} alt="realEstateImg" className="rounded" />
                 <div className="media-body align-items-around ml-2">
                   <span className="info-box-text text-dark">{`${item.id} Yên Sở - Hoàng Mai - Hà Nội`}</span>
-                  <table className={`w-100`}>
+                  <table className={`w-100 mt-1`}>
                     <tbody>
-                      <tr className={`info-box-token text-primary mt-2 mb-0`}>
+                      <tr className={`info-box-daily-payment text-primary mt-2 mb-0`}>
                         <td>{t('anftDapp.listingComponent.listingValue')}</td>
-                        <td className={`text-right`}>{formatBNToken(item.value, true)} </td>
+                        <td className={`text-right`}>{formatBNToken(item.value, width > minimumWidthDisplayingTokenSymbol)} </td>
                       </tr>
-                      <tr className={`info-box-commissionRate text-success mt-2 mb-0`}>
+                      <tr className={`info-box-daily-payment text-success mt-2 mb-0`}>
                         <td>{t('anftDapp.listingComponent.dailyPayment')}</td>
-                        <td className={`text-right`}>{formatBNToken(item.dailyPayment, true)} </td>
+                        <td className={`text-right`}>{formatBNToken(item.dailyPayment, width > minimumWidthDisplayingTokenSymbol)} </td>
                       </tr>
                     </tbody>
                   </table>

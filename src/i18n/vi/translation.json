@@ -56,7 +56,7 @@
 
     "listingComponent": {
       "listingValue": "Giá trị",
-      "dailyPayment": "Chi phí khai thác",
+      "dailyPayment": "Phí khai thác",
       "noListingFound": "Không tìm thấy bản ghi nào",
       "primaryInfo": {
         "ownershipStatus": {
