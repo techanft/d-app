@@ -94,7 +94,7 @@ const AddWorkerPermission = (props: ICancelWorkerPermission) => {
     return output;
   };
 
-  const closeModal = () => () => {
+  const closeModal = () => {
     setVisible(false);
     setIsScanQrMode(false);
     formikRef.current?.resetForm();
@@ -103,9 +103,9 @@ const AddWorkerPermission = (props: ICancelWorkerPermission) => {
   const [isScanQrMode, setIsScanQrMode] = useState<boolean>(false);
 
   const handleErrorFile = (err: any) => {
-    console.log(`Error in scanning QR code: ${err}`);
+    console.log(`${t('anftDapp.global.errors.qrScanError')}: ${err}`);
   };
-
+  
   const handleScanFile = (result: string | null) => {
     if (result) {
       setIsScanQrMode(false);
@@ -118,7 +118,7 @@ const AddWorkerPermission = (props: ICancelWorkerPermission) => {
   };
 
   return (
-    <CModal show={visible} onClose={closeModal()} closeOnBackdrop={false} centered className="border-radius-modal">
+    <CModal show={visible} onClose={closeModal} closeOnBackdrop={false} centered className="border-radius-modal">
       <CModalHeader>
         {isScanQrMode ? (
           <CButton className="p-0" onClick={() => setIsScanQrMode(false)}>
@@ -138,15 +138,14 @@ const AddWorkerPermission = (props: ICancelWorkerPermission) => {
         onSubmit={async (rawValues) => {
           try {
             const value = handleRawFormValues(rawValues);
-            const workerExisted = await checkWorkerStatus(value.contract, rawValues.address, true);
-            if (workerExisted) {
-              throw Error('Worker Exsisted');
-            }
+            const workerAuthorized = await checkWorkerStatus(value.contract, rawValues.address, true);
+            if (workerAuthorized) throw Error(t('anftDapp.workersListComponent.workerAuthorized'));
+            
             dispatch(fetching());
             dispatch(proceedTransaction(value));
           } catch (error) {
             console.log(`Error submitting form ${error}`);
-            ToastError(`Error submitting form ${error}`);
+            ToastError(`${t('anftDapp.global.errors.errorSubmittingForm')}: ${error}`);
             dispatch(softReset());
           }
         }}
@@ -203,7 +202,7 @@ const AddWorkerPermission = (props: ICancelWorkerPermission) => {
                 <CCol>
                   <CButton
                     className="px-2 w-100 btn-font-style btn btn-outline-primary btn-radius-50"
-                    onClick={closeModal()}
+                    onClick={closeModal}
                   >
                     {t('anftDapp.global.modal.cancel')}
                   </CButton>

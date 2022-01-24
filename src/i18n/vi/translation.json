@@ -2,7 +2,9 @@
   "anftDapp": {
     "global": {
       "errors": {
-        "pleaseConnectWallet": "Vui lòng liên kết ví!"
+        "pleaseConnectWallet": "Vui lòng liên kết ví!",
+        "errorSubmittingForm": "Lỗi gửi biểu mẫu",
+        "qrScanError": "Lỗi quét mã QR"
       },
       "modal": {
         "confirm": "XÁC NHẬN",
@@ -35,7 +37,7 @@
       "connectWallet": "Liên kết ví",
       "dashboard": "Trang chủ",
       "filter": {
-        "filter": "Bộ lọc",
+        "filter": "Tìm kiếm",
         "city": "Tỉnh/ Thành phố",
         "dist": "Quận/ Huyện",
         "classify": "Loại sản phẩm",
@@ -53,7 +55,8 @@
     },
 
     "listingComponent": {
-      "listingValue": "Giá trị BĐS",
+      "listingValue": "Giá trị",
+      "dailyPayment": "Phí khai thác",
       "noListingFound": "Không tìm thấy bản ghi nào",
       "primaryInfo": {
         "ownershipStatus": {
@@ -181,7 +184,8 @@
       "confirmDeltWorkerPermission": "Bạn chắc chắn muốn tước quyền khai thác của",
       "addressWallet": "Địa chỉ ví",
       "addressValidation": "Địa chỉ ví không hợp lệ!",
-      "addressIsRequired": "Địa chỉ ví không được bỏ trống!"
+      "addressIsRequired": "Địa chỉ ví không được bỏ trống!",
+      "workerAuthorized": "Địa chỉ này đã được ủy quyền"
     },
     "copyTextToClipBoard": {
       "copied": "Đã sao chép"

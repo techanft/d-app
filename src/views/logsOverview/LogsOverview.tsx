@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { RouteComponentProps } from 'react-router-dom';
 import { isDateBefore } from '../../shared/casual-helpers';
 import ActivityLogsContainer from '../../shared/components/ActivityLogsContainer';
-import { ComponentExchange, ISearchContent } from '../../shared/components/SearchContainer';
+import { FilterComponent, ISearchContent } from '../../shared/components/SearchContainer';
 import { ToastError } from '../../shared/components/Toast';
 import * as Yup from 'yup';
 ;
@@ -56,6 +56,7 @@ const LogsOverview = (props: IActivityLogs) => {
       'is-before-end',
       t('anftDapp.activityLogsComponent.errors.startingDateDoesNotOccurAfterTheEndingDate'),
       function (value) {
+        if (!value || !this.parent.toDate) return true;
         !isDateBefore(value, this.parent?.toDate) &&
           ToastError(t('anftDapp.activityLogsComponent.errors.startingDateDoesNotOccurAfterTheEndingDate'));
         return isDateBefore(value, this.parent?.toDate);
@@ -80,7 +81,7 @@ const LogsOverview = (props: IActivityLogs) => {
           >
             {({ values, handleChange, handleSubmit, resetForm }) => (
               <>
-                <ComponentExchange
+                <FilterComponent
                   textType={textType}
                   values={values}
                   resetForm={resetForm}

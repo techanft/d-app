@@ -2,7 +2,9 @@
   "anftDapp": {
     "global": {
       "errors": {
-        "pleaseConnectWallet": "Please connect to your wallet!"
+        "pleaseConnectWallet": "Please connect to your wallet!",
+        "errorSubmittingForm": "Error in submitting form",
+        "qrScanError": "Error in scanning QR code"
       },
       "modal": {
         "confirm": "CONFIRM",
@@ -35,7 +37,7 @@
       "connectWallet": "Connect Wallet",
       "dashboard": "Dashboard",
       "filter": {
-        "filter": "Filter",
+        "filter": "Search",
         "city": "City",
         "dist": "District",
         "classify": "Classify",
@@ -54,6 +56,7 @@
 
     "listingComponent": {
       "listingValue": "Value",
+      "dailyPayment": "Daily Payment",
       "noListingFound": "No listing found",
       "primaryInfo": {
         "ownershipStatus": {
@@ -182,7 +185,8 @@
       "confirmDeltWorkerPermission": "Continue to remove this worker",
       "addressWallet": "Address Wallet",
       "addressValidation": "Address wallet is invalid!",
-      "addressIsRequired": "This field is required!"
+      "addressIsRequired": "This field is required!",
+      "workerAuthorized": "This address is already authorized"
     },
     "copyTextToClipBoard": {
       "copied": "Copied"

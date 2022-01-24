@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'));
+const Listings = React.lazy(() => import('./views/listings/Listings'));
 
 const LogsOverview = React.lazy(() => import('./views/logsOverview/LogsOverview'));
 
@@ -14,8 +14,7 @@ const WorkersList = React.lazy(() => import('./views/listings/actions/WorkersLis
 
 // https://github.com/ReactTraining/react-router/tree/master/packages/react-router-config
 const routes = [
-  // { path: '/', exact: true, name: 'Home' },
-  { path: '/listings', name: 'Dashboard', component: Dashboard, exact: true },
+  { path: '/listings', name: 'Listings', component: Listings, exact: true },
   { path: '/logs-overview', name: 'LogsOverview', component: LogsOverview, exact: true },
   {
     path: '/:id/detail',
