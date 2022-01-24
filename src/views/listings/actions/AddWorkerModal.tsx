@@ -94,7 +94,7 @@ const AddWorkerPermission = (props: ICancelWorkerPermission) => {
     return output;
   };
 
-  const closeModal = () => () => {
+  const closeModal = () => {
     setVisible(false);
     setIsScanQrMode(false);
     formikRef.current?.resetForm();
@@ -118,7 +118,7 @@ const AddWorkerPermission = (props: ICancelWorkerPermission) => {
   };
 
   return (
-    <CModal show={visible} onClose={closeModal()} closeOnBackdrop={false} centered className="border-radius-modal">
+    <CModal show={visible} onClose={closeModal} closeOnBackdrop={false} centered className="border-radius-modal">
       <CModalHeader>
         {isScanQrMode ? (
           <CButton className="p-0" onClick={() => setIsScanQrMode(false)}>
@@ -202,7 +202,7 @@ const AddWorkerPermission = (props: ICancelWorkerPermission) => {
                 <CCol>
                   <CButton
                     className="px-2 w-100 btn-font-style btn btn-outline-primary btn-radius-50"
-                    onClick={closeModal()}
+                    onClick={closeModal}
                   >
                     {t('anftDapp.global.modal.cancel')}
                   </CButton>
