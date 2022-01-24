@@ -4,14 +4,16 @@ import { BigNumber } from 'ethers';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import { formatBNToken } from '../../shared/casual-helpers';
 import Loading from '../../shared/components/Loading';
+import { IAsset } from '../../shared/models/assets.model';
 import { IParams } from '../../shared/models/base.model';
 import { RootState } from '../../shared/reducers';
 import { getEntities } from '../assets/assets.api';
 import { assetsSelectors, fetchingEntities, setFilterState as setStoredFilterState } from '../assets/assets.reducer';
 import './index.scss';
+import { IListingParams } from './Listing';
 
 export interface IListingShortInfo {
   id: number;
@@ -79,12 +81,18 @@ const Listings = () => {
     };
   };
 
+  const { id: listingBeingDetailedId } = useParams<IListingParams>();
+
+  const hideDetailedListing = ({ id }: IAsset) => {
+    return Number(listingBeingDetailedId) === id ? 'd-none' : '';
+  };
+
   return (
     <CRow className={`mx-0`}>
-      {assets.length ? (
+      {assets.length && !entitiesLoading ? (
         <>
           {assets.map((item, index) => (
-            <CCol xs={12} key={`listing-${index}`} className="px-0">
+            <CCol xs={12} key={`listing-${index}`} className={`px-0 ${hideDetailedListing(item)}`}>
               <div
                 className="media info-box bg-white mx-3 my-2 p-2 align-items-center rounded shadow-sm"
                 onClick={onRedirecting(`/${item.id}/detail`)}
@@ -120,8 +128,9 @@ const Listings = () => {
       ) : (
         <CCol xs={12}>
           {entitiesLoading ? ( //Still loading and waiting for results
-            <Loading /> 
-          ) : ( //Finished loading and no result found
+            <Loading />
+          ) : (
+            //Finished loading and no result found
             <div className="alert alert-warning my-3">
               <span>{t('anftDapp.listingComponent.noListingFound')}</span>
             </div>
