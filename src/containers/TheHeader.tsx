@@ -15,7 +15,7 @@ import {
   CLink,
   CRow,
   CSelect,
-  CSubheader,
+  CSubheader
 } from '@coreui/react';
 import { faSyncAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
