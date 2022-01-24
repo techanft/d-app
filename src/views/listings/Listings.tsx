@@ -81,7 +81,7 @@ const Listings = () => {
 
   return (
     <CRow className={`mx-0`}>
-      {assets.length ? (
+      {assets.length && !entitiesLoading ? (
         <>
           {assets.map((item, index) => (
             <CCol xs={12} key={`listing-${index}`} className="px-0">
@@ -120,8 +120,9 @@ const Listings = () => {
       ) : (
         <CCol xs={12}>
           {entitiesLoading ? ( //Still loading and waiting for results
-            <Loading /> 
-          ) : ( //Finished loading and no result found
+            <Loading />
+          ) : (
+            //Finished loading and no result found
             <div className="alert alert-warning my-3">
               <span>{t('anftDapp.listingComponent.noListingFound')}</span>
             </div>

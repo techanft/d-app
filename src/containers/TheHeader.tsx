@@ -15,7 +15,7 @@ import {
   CLink,
   CRow,
   CSelect,
-  CSubheader,
+  CSubheader
 } from '@coreui/react';
 import { faSyncAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -32,7 +32,7 @@ import { getEntities } from '../views/assets/assets.api';
 import {
   fetchingEntities,
   setFilterState as setStoredFilterState,
-  softReset as assetsSoftReset,
+  softReset as assetsSoftReset
 } from '../views/assets/assets.reducer';
 import { IAssetFilter } from '../views/listings/Listings';
 import { softReset as transactionsSoftReset } from '../views/transactions/transactions.reducer';
@@ -41,7 +41,7 @@ import {
   getContractWithSigner,
   getProviderLogin,
   getSigner,
-  getTokenBalance,
+  getTokenBalance
 } from '../views/wallet/wallet.api';
 import { resetSigner, softReset as walletSoftReset } from '../views/wallet/wallet.reducer';
 import { toggleSidebar } from './reducer';
@@ -105,7 +105,7 @@ const TheHeader = () => {
     errorMessage: walletErrorMessage,
   } = useSelector((state: RootState) => state.wallet);
   const { initialState: assetsInitialState } = useSelector((state: RootState) => state.assets);
-  const { errorMessage: assetErrorMessage, fetchEntitiesSuccess } = assetsInitialState;
+  const { errorMessage: assetErrorMessage } = assetsInitialState;
 
   const { errorMessage: transactionErrorMessage } = useSelector((state: RootState) => state.transactions);
 
@@ -187,14 +187,6 @@ const TheHeader = () => {
 
   const [isDropdownFilterShowing, setIsDropdownFilterShowing] = useState<boolean>(false);
 
-  useEffect(() => {
-    if (fetchEntitiesSuccess) {
-      setIsDropdownFilterShowing(false);
-      dispatch(assetsSoftReset());
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fetchEntitiesSuccess]);
-
   return (
     <>
       <CHeader className="header-container d-block shadow-sm border-0" withSubheader>
@@ -249,6 +241,7 @@ const TheHeader = () => {
                       dispatch(fetchingEntities());
                       dispatch(getEntities({ fields: values, provider }));
                       dispatch(setStoredFilterState(values));
+                      setIsDropdownFilterShowing(false);
                     } catch (error) {
                       console.log(`Error submitting form ${error}`);
                       ToastError(`Error submitting form ${error}`);
