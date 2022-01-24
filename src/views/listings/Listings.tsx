@@ -100,12 +100,19 @@ const Listings = () => {
                 <img src={item.images} alt="realEstateImg" className="rounded" />
                 <div className="media-body align-items-around ml-2">
                   <span className="info-box-text text-dark">{`${item.id} Yên Sở - Hoàng Mai - Hà Nội`}</span>
-                  <p className={`info-box-token text-primary mt-2 mb-0`}>
-                    {t('anftDapp.listingComponent.listingValue')}: {formatBNToken(item.value, true)}
-                  </p>
-                  <p className={`info-box-commissionRate text-success mt-2 mb-0`}>
-                    <CIcon name="cil-flower" /> {formatBNToken(item.dailyPayment, true)}
-                  </p>
+                  <table className={`w-100`}>
+                    <tbody>
+                      <tr className={`info-box-token text-primary mt-2 mb-0`}>
+                        <td>{t('anftDapp.listingComponent.listingValue')}</td>
+                        <td className={`text-right`}>{formatBNToken(item.value, true)} </td>
+                      </tr>
+                      <tr className={`info-box-commissionRate text-success mt-2 mb-0`}>
+                        <td>{t('anftDapp.listingComponent.dailyPayment')}</td>
+                        <td className={`text-right`}>{formatBNToken(item.dailyPayment, true)} </td>
+                      </tr>
+                    </tbody>
+                  </table>
+        
                 </div>
               </div>
             </CCol>
