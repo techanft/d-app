@@ -12,7 +12,7 @@ import Primary from './info/Primary';
 import Secondary from './info/Secondary';
 import Listings from './Listings';
 
-interface IListingParams {
+export interface IListingParams {
   [x: string]: string;
 }
 
