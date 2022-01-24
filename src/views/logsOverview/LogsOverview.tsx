@@ -56,6 +56,7 @@ const LogsOverview = (props: IActivityLogs) => {
       'is-before-end',
       t('anftDapp.activityLogsComponent.errors.startingDateDoesNotOccurAfterTheEndingDate'),
       function (value) {
+        if (!value || !this.parent.toDate) return true;
         !isDateBefore(value, this.parent?.toDate) &&
           ToastError(t('anftDapp.activityLogsComponent.errors.startingDateDoesNotOccurAfterTheEndingDate'));
         return isDateBefore(value, this.parent?.toDate);
