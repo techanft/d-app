@@ -138,15 +138,14 @@ const AddWorkerPermission = (props: ICancelWorkerPermission) => {
         onSubmit={async (rawValues) => {
           try {
             const value = handleRawFormValues(rawValues);
-            const workerExisted = await checkWorkerStatus(value.contract, rawValues.address, true);
-            if (workerExisted) {
-              throw Error('Worker Exsisted');
-            }
+            const workerAuthorized = await checkWorkerStatus(value.contract, rawValues.address, true);
+            if (workerAuthorized) throw Error(t('anftDapp.workersListComponent.workerAuthorized'));
+            
             dispatch(fetching());
             dispatch(proceedTransaction(value));
           } catch (error) {
             console.log(`Error submitting form ${error}`);
-            ToastError(`Error submitting form ${error}`);
+            ToastError(`${t('anftDapp.global.errors.errorSubmittingForm')}: ${error}`);
             dispatch(softReset());
           }
         }}

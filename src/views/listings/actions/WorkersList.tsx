@@ -172,7 +172,7 @@ const WorkersList = (props: IWorkersList) => {
         dispatch(fetching());
         dispatch(proceedTransaction(value));
       } catch (error) {
-        ToastError(`Error submitting form ${error}`);
+        ToastError(`${t('anftDapp.global.errors.errorSubmittingForm')}: ${error}`);
         dispatch(softReset());
       }
     }

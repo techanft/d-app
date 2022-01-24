@@ -15,7 +15,7 @@ import {
   CLink,
   CRow,
   CSelect,
-  CSubheader
+  CSubheader,
 } from '@coreui/react';
 import { faSyncAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -32,7 +32,7 @@ import { getEntities } from '../views/assets/assets.api';
 import {
   fetchingEntities,
   setFilterState as setStoredFilterState,
-  softReset as assetsSoftReset
+  softReset as assetsSoftReset,
 } from '../views/assets/assets.reducer';
 import { IAssetFilter } from '../views/listings/Listings';
 import { softReset as transactionsSoftReset } from '../views/transactions/transactions.reducer';
@@ -41,7 +41,7 @@ import {
   getContractWithSigner,
   getProviderLogin,
   getSigner,
-  getTokenBalance
+  getTokenBalance,
 } from '../views/wallet/wallet.api';
 import { resetSigner, softReset as walletSoftReset } from '../views/wallet/wallet.reducer';
 import { toggleSidebar } from './reducer';
@@ -244,7 +244,7 @@ const TheHeader = () => {
                       setIsDropdownFilterShowing(false);
                     } catch (error) {
                       console.log(`Error submitting form ${error}`);
-                      ToastError(`Error submitting form ${error}`);
+                      ToastError(`${t('anftDapp.global.errors.errorSubmittingForm')}: ${error}`);
                     }
                   }}
                 >

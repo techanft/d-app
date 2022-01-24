@@ -2,7 +2,8 @@
   "anftDapp": {
     "global": {
       "errors": {
-        "pleaseConnectWallet": "Please connect to your wallet!"
+        "pleaseConnectWallet": "Please connect to your wallet!",
+        "errorSubmittingForm": "Error in submitting form"
       },
       "modal": {
         "confirm": "CONFIRM",
@@ -54,6 +55,7 @@
 
     "listingComponent": {
       "listingValue": "Value",
+      "dailyPayment": "Daily Payment",
       "noListingFound": "No listing found",
       "primaryInfo": {
         "ownershipStatus": {
@@ -182,7 +184,8 @@
       "confirmDeltWorkerPermission": "Continue to remove this worker",
       "addressWallet": "Address Wallet",
       "addressValidation": "Address wallet is invalid!",
-      "addressIsRequired": "This field is required!"
+      "addressIsRequired": "This field is required!",
+      "workerAuthorized": "This address is already authorized"
     },
     "copyTextToClipBoard": {
       "copied": "Copied"

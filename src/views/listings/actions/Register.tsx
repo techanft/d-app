@@ -457,7 +457,7 @@ const Register = (props: IRegisterProps) => {
                                       dispatch(proceedTransaction(value));
                                     } catch (error) {
                                       console.log(`Error submitting form ${error}`);
-                                      ToastError(`Error submitting form ${error}`);
+                                      ToastError(`${t('anftDapp.global.errors.errorSubmittingForm')}: ${error}`);
                                     }
                                   }}
                                 >

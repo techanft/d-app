@@ -7,6 +7,7 @@ import {
   cilFilter,
   cilFilterX,
   cilFlower,
+  cilMoney,
   cilHistory,
   cilMenu,
   cilMinus,
@@ -18,8 +19,6 @@ import {
 } from '@coreui/icons/js/free';
 
 export const icons = Object.assign(
-  {},
-  {},
   {
     cilAccountLogout,
     cilArrowCircleTop,
@@ -36,6 +35,7 @@ export const icons = Object.assign(
     cilFilterX,
     cilMinus,
     cilPlus,
+    cilMoney
   },
   {
     cifVn,

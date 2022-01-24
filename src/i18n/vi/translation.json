@@ -2,7 +2,8 @@
   "anftDapp": {
     "global": {
       "errors": {
-        "pleaseConnectWallet": "Vui lòng liên kết ví!"
+        "pleaseConnectWallet": "Vui lòng liên kết ví!",
+        "errorSubmittingForm": "Lỗi gửi biểu mẫu"
       },
       "modal": {
         "confirm": "XÁC NHẬN",
@@ -53,7 +54,8 @@
     },
 
     "listingComponent": {
-      "listingValue": "Giá trị BĐS",
+      "listingValue": "Giá trị",
+      "dailyPayment": "Chi phí khai thác",
       "noListingFound": "Không tìm thấy bản ghi nào",
       "primaryInfo": {
         "ownershipStatus": {
@@ -181,7 +183,8 @@
       "confirmDeltWorkerPermission": "Bạn chắc chắn muốn tước quyền khai thác của",
       "addressWallet": "Địa chỉ ví",
       "addressValidation": "Địa chỉ ví không hợp lệ!",
-      "addressIsRequired": "Địa chỉ ví không được bỏ trống!"
+      "addressIsRequired": "Địa chỉ ví không được bỏ trống!",
+      "workerAuthorized": "Địa chỉ này đã được ủy quyền"
     },
     "copyTextToClipBoard": {
       "copied": "Đã sao chép"
