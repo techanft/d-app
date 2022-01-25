@@ -3,6 +3,7 @@ import {
   CCol,
   CForm,
   CFormGroup,
+  CFormText,
   CInput,
   CInvalidFeedback,
   CLabel,
@@ -293,6 +294,7 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                       <CInvalidFeedback className={errors.dateCount && touched.dateCount ? 'd-block' : 'd-none'}>
                         {errors.dateCount}
                       </CInvalidFeedback>
+                      <CFormText>{t('anftDapp.listingComponent.extendOwnership.noticeText')}</CFormText>
                     </CCol>
                   </CFormGroup>
                   <CFormGroup row className={`mt-4`}>

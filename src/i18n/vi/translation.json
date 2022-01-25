@@ -103,7 +103,8 @@
         "balanceIsNotEnough": "ANFT trong ví không đủ!",
         "incorrectInputType": "Số ANFT không hợp lệ!",
         "inputIsRequired": "Vui lòng không để trống ô này!",
-        "minimumOwnership": "Thời gian sở hữu tối thiểu là 1.0 ngày!"
+        "minimumOwnership": "Thời gian sở hữu tối thiểu là 1.0 ngày!",
+        "noticeText": "Thời gian sở hữu sẽ được tính từ thời điểm hiện tại đến cuối ngày được chọn (Ví dụ: 23 giờ 58 phút ngày 12/12/2022)"
       },
       "withdrawToken": {
         "maximumWithdrawable": "Số ngày rút tối đa",
@@ -116,7 +117,8 @@
         "days": "Ngày",
         "remainingDays": "Số ngày sở hữu còn lại",
         "ownershipRange": "Thời gian sở hữu",
-        "exceedingWithdrawErr": "Số ngày rút ra không vượt quá {{amount}} ngày!"
+        "exceedingWithdrawErr": "Số ngày rút ra không vượt quá {{amount}} ngày!",
+        "noticeText": "Thời gian sở hữu sau khi rút tối thiểu là 1.0 ngày"
       }
     },
 
