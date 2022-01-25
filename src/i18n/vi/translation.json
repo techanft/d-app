@@ -118,7 +118,7 @@
         "remainingDays": "Số ngày sở hữu còn lại",
         "ownershipRange": "Thời gian sở hữu",
         "exceedingWithdrawErr": "Số ngày rút ra không vượt quá {{amount}} ngày!",
-        "noticeText": "Thời gian sở hữu sau khi rút tối thiểu là 1.0 ngày"
+        "noticeText": "Thời gian sở hữu tối thiểu sau khi rút là 1.0 ngày"
       }
     },
 
