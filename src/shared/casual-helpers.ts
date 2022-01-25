@@ -129,8 +129,8 @@ export const calculateSpendingFromSecond = (dailyPayment: BigNumber, diffSecond:
 
 export const getSecondDifftoEndDate = (startDate: moment.Moment) => {
   const endOfStartDate = moment(startDate).endOf('day');
-  const endOfStartDateMinus90Second = endOfStartDate.subtract(90, 'second');
-  const duration = moment.duration(endOfStartDateMinus90Second.diff(startDate));
+  const endOfStartDateMinus29Minutes = endOfStartDate.subtract(29, 'minutes');
+  const duration = moment.duration(endOfStartDateMinus29Minutes.diff(startDate));
   return duration.asSeconds();
 };
 
