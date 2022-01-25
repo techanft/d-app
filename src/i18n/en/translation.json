@@ -104,7 +104,7 @@
         "incorrectInputType": "Incorrect input type!",
         "inputIsRequired": "This field is required!",
         "minimumOwnership": "Minimum ownership for the listing is 1.0 day!",
-        "noticeText": "Ownership will be started from now to the end of the selected day (e.g: December 12th at 23h58m)"
+        "noticeText": "Ownership will be started from now to the end of the selected day (23:30 {{day}})"
       },
       "withdrawToken": {
         "maximumWithdrawable": "Maximum Days",

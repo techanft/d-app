@@ -104,7 +104,7 @@
         "incorrectInputType": "Số ANFT không hợp lệ!",
         "inputIsRequired": "Vui lòng không để trống ô này!",
         "minimumOwnership": "Thời gian sở hữu tối thiểu là 1.0 ngày!",
-        "noticeText": "Thời gian sở hữu sẽ được tính từ thời điểm hiện tại đến cuối ngày được chọn (Ví dụ: 23 giờ 58 phút ngày 12/12/2022)"
+        "noticeText": "Thời gian sở hữu sẽ được tính từ thời điểm hiện tại đến cuối ngày được chọn (23:30 {{day}})"
       },
       "withdrawToken": {
         "maximumWithdrawable": "Số ngày rút tối đa",
