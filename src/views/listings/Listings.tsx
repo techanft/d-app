@@ -1,4 +1,3 @@
-import CIcon from '@coreui/icons-react';
 import { CCol, CPagination, CRow } from '@coreui/react';
 import { BigNumber } from 'ethers';
 import React, { useEffect, useState } from 'react';

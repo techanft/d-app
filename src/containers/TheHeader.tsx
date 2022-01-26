@@ -7,7 +7,6 @@ import {
   CDropdownToggle,
   CForm,
   CHeader,
-  CHeaderBrand,
   CHeaderNav,
   CHeaderNavItem,
   CInputCheckbox,
