@@ -7,7 +7,6 @@ import {
   CDropdownToggle,
   CForm,
   CHeader,
-  CHeaderBrand,
   CHeaderNav,
   CHeaderNavItem,
   CInputCheckbox,
@@ -15,7 +14,7 @@ import {
   CLink,
   CRow,
   CSelect,
-  CSubheader
+  CSubheader,
 } from '@coreui/react';
 import { faSyncAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -190,11 +189,6 @@ const TheHeader = () => {
   return (
     <>
       <CHeader className="header-container d-block shadow-sm border-0" withSubheader>
-        <CHeaderNav>
-          <CHeaderBrand className="mx-auto">
-            <p className="m-0 content-title text-white">ANFT D-APP V1.0</p>
-          </CHeaderBrand>
-        </CHeaderNav>
         <CHeaderNav className={`${isDashboardView ? 'justify-content-between' : ''} bg-white px-2`}>
           <CHeaderNavItem>
             <CButton className="text-primary p-0 border-0 d-lg-none" onClick={toggleSidebarMobile}>

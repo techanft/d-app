@@ -1,11 +1,13 @@
 import CIcon from '@coreui/icons-react';
-import { CLink, CSidebar, CSidebarBrand } from '@coreui/react';
-import { faGlobe } from '@fortawesome/free-solid-svg-icons';
+import { CLink, CSidebar, CSidebarBrand, CSidebarFooter, CTooltip } from '@coreui/react';
+import { faGlobe, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
+import Logo from '../assets/img/logo.png';
+import { formatBNToken } from '../shared/casual-helpers';
 import { Dropdown } from '../shared/enumeration/dropdown';
 import { Language } from '../shared/enumeration/language';
 import { RootState } from '../shared/reducers';
@@ -24,6 +26,7 @@ const TheSidebar = () => {
   const dispatch = useDispatch();
   const containerState = useSelector((state: RootState) => state.container);
   const { sidebarShow } = containerState;
+  const { tokenBalance, signerAddress } = useSelector((state: RootState) => state.wallet);
 
   const { i18n, t } = useTranslation();
 
@@ -95,10 +98,26 @@ const TheSidebar = () => {
             Add icon for this nav item
           */}
           <CLink className={`c-sidebar-nav-link ${highlightNavItem('/logs-overview')}`} to={'/logs-overview'}>
-            <CIcon name="cil-history" className={`c-sidebar-nav-icon text-primary`} />  {t('anftDapp.listingComponent.activityLogs')}
+            <CIcon name="cil-history" className={`c-sidebar-nav-icon text-primary`} />{' '}
+            {t('anftDapp.listingComponent.activityLogs')}
           </CLink>
         </li>
       </ul>
+      <CSidebarFooter className={`text-center bg-white`}>
+        <span className="text-primary">
+          <CIcon src={Logo} height={30} />
+          {signerAddress && tokenBalance ? (
+            <>
+              <span className="mx-1">{formatBNToken(tokenBalance, false)}</span>
+              <CTooltip placement="top" content={t('anftDapp.listingComponent.extendOwnership.tokenBalance')}>
+                <FontAwesomeIcon icon={faInfoCircle} size="sm" />
+              </CTooltip>
+            </>
+          ) : (
+            ''
+          )}
+        </span>
+      </CSidebarFooter>
     </CSidebar>
   );
 };

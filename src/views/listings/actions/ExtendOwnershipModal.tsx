@@ -3,6 +3,7 @@ import {
   CCol,
   CForm,
   CFormGroup,
+  CFormText,
   CInput,
   CInvalidFeedback,
   CLabel,
@@ -17,17 +18,18 @@ import { BigNumber } from 'ethers';
 import { Formik, FormikProps } from 'formik';
 import moment from 'moment';
 import React, { useEffect, useRef } from 'react';
-import { useTranslation } from 'react-i18next';
 import { DateRangePicker } from 'react-dates';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
+import { APP_LOCAL_DATE_FORMAT } from '../../../config/constants';
 import { LISTING_INSTANCE } from '../../../shared/blockchain-helpers';
 import {
   calculateDateDifference,
   calculateSpendingFromSecond,
   checkDateRange,
-  convertBnToDecimal,
   checkOwnershipExpired,
+  convertBnToDecimal,
   convertDecimalToBn,
   convertUnixToDate,
   formatBNToken,
@@ -293,6 +295,11 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                       <CInvalidFeedback className={errors.dateCount && touched.dateCount ? 'd-block' : 'd-none'}>
                         {errors.dateCount}
                       </CInvalidFeedback>
+                        <CFormText>
+                          {t('anftDapp.listingComponent.extendOwnership.noticeText', {
+                            day: `${values.endDate.format(APP_LOCAL_DATE_FORMAT)}`,
+                          })}
+                        </CFormText>
                     </CCol>
                   </CFormGroup>
                   <CFormGroup row className={`mt-4`}>

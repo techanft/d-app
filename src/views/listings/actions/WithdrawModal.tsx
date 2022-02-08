@@ -3,6 +3,7 @@ import {
   CCol,
   CForm,
   CFormGroup,
+  CFormText,
   CInput,
   CInvalidFeedback,
   CLabel,
@@ -258,6 +259,7 @@ const WithdrawModal = (props: IWithdrawModal) => {
                             amount: `${totalDays - 1}`,
                           })}
                       </CInvalidFeedback>
+                      <CFormText>{t('anftDapp.listingComponent.withdrawToken.noticeText')}</CFormText>
                     </CCol>
                   </CFormGroup>
                   <CFormGroup row className={`mt-4`}>

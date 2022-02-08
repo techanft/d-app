@@ -5,11 +5,6 @@ body {
   font-style: normal;
   font-weight: 500;
 
-  .header-container,
-  .c-sidebar.c-sidebar-light .c-sidebar-brand {
-    box-shadow: none;
-    background-color: #2f2f2f;
-  }
   .sub-header {
     background-color: $white;
     border-bottom: none;
@@ -187,6 +182,10 @@ body {
     .c-icon {
       vertical-align: top;
     }
+  }
+
+  .c-sidebar-footer {
+    border-top: 1px solid $light;
   }
 }
 

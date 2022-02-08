@@ -103,7 +103,8 @@
         "balanceIsNotEnough": "Your balance is not enough",
         "incorrectInputType": "Incorrect input type!",
         "inputIsRequired": "This field is required!",
-        "minimumOwnership": "Minimum ownership for the listing is 1.0 day!"
+        "minimumOwnership": "Minimum ownership for the listing is 1.0 day!",
+        "noticeText": "Ownership will be started from now to the end of the selected day (23:30 {{day}})"
       },
       "withdrawToken": {
         "maximumWithdrawable": "Maximum Days",
@@ -116,7 +117,8 @@
         "days": "Day(s)",
         "remainingDays": "Remaining Days",
         "ownershipRange": "Ownership Range",
-        "exceedingWithdrawErr": "Withdraw days cannot exceed {{amount}} day(s)!"
+        "exceedingWithdrawErr": "Withdraw days cannot exceed {{amount}} day(s)!",
+        "noticeText": "Ownership after withdrawing must be at least 1.0 day"
       }
     },
 
