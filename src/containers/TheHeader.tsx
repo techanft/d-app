@@ -14,10 +14,8 @@ import {
   CLink,
   CRow,
   CSelect,
-  CSubheader,
+  CSubheader
 } from '@coreui/react';
-import { faSyncAlt } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Formik, FormikProps } from 'formik';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -31,7 +29,7 @@ import { getEntities } from '../views/assets/assets.api';
 import {
   fetchingEntities,
   setFilterState as setStoredFilterState,
-  softReset as assetsSoftReset,
+  softReset as assetsSoftReset
 } from '../views/assets/assets.reducer';
 import { IAssetFilter } from '../views/listings/Listings';
 import { softReset as transactionsSoftReset } from '../views/transactions/transactions.reducer';
@@ -40,7 +38,7 @@ import {
   getContractWithSigner,
   getProviderLogin,
   getSigner,
-  getTokenBalance,
+  getTokenBalance
 } from '../views/wallet/wallet.api';
 import { resetSigner, softReset as walletSoftReset } from '../views/wallet/wallet.reducer';
 import { toggleSidebar } from './reducer';
@@ -247,7 +245,7 @@ const TheHeader = () => {
                       <div className="modal-title-style d-flex justify-content-end px-3 py-2">
                         <CLabel className="m-auto pl-3"> {t('anftDapp.headerComponent.filter.filter')}</CLabel>
                         <CButton className="p-0 text-primary" onClick={resetForm}>
-                          <FontAwesomeIcon icon={faSyncAlt} />
+                          <CIcon name="cil-sync" size="lg" />
                         </CButton>
                       </div>
                       <CRow className="mx-2">

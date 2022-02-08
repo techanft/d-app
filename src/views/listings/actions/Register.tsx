@@ -18,7 +18,7 @@ import {
   CLink,
   CRow
 } from '@coreui/react';
-import { faPen, faSyncAlt } from '@fortawesome/free-solid-svg-icons';
+import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { BigNumber } from 'ethers';
 import { Formik, FormikProps } from 'formik';
@@ -550,7 +550,7 @@ const Register = (props: IRegisterProps) => {
                                                     onClick={onRefreshAmountToReturn(item.id)}
                                                     className="p-0 ml-2"
                                                   >
-                                                    <FontAwesomeIcon icon={faSyncAlt} className="text-primary" />
+                                                    <CIcon name="cil-sync" size="lg" className='text-primary'/>
                                                   </CButton>
                                                 </p>
                                               </CCol>
