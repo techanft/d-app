@@ -102,6 +102,12 @@ const TheSidebar = () => {
             {t('anftDapp.listingComponent.activityLogs')}
           </CLink>
         </li>
+        <li className={`c-sidebar-nav-item`}>
+          <CLink className={`c-sidebar-nav-link`} target="_blank" href="https://dapp-guide.anft.vn">
+            <CIcon name="cil-book" className={`c-sidebar-nav-icon text-primary`} />{' '}
+            {t('anftDapp.sidebarComponent.userGuide')}
+          </CLink>
+        </li>
       </ul>
       <CSidebarFooter className={`text-center bg-white`}>
         <span className="text-primary">
