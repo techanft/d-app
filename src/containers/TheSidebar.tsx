@@ -70,13 +70,6 @@ const TheSidebar = () => {
           </CLink>
         </li>
         <li className={`c-sidebar-nav-item `}>
-          {/* 
-            overview => logs-overview;
-            change route and component names
-          */}
-          {/* 
-            Add icon for this nav item
-          */}
           <CLink className={`c-sidebar-nav-link ${highlightNavItem('/logs-overview')}`} to={'/logs-overview'}>
             <CIcon name="cil-history" className={`c-sidebar-nav-icon text-primary`} />{' '}
             {t('anftDapp.listingComponent.activityLogs')}
