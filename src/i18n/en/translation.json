@@ -30,7 +30,8 @@
         "language": "Language",
         "vietnamese": "Vietnamese",
         "english": "English"
-      }
+      },
+      "userGuide": "User Guide"
     },
 
     "headerComponent": {
