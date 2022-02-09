@@ -61,7 +61,7 @@ const TheSidebar = () => {
       unfoldable
       onShowChange={(val: boolean) => dispatch(toggleSidebar(val))}
     >
-      <CSidebarBrand className="header-container">ANFT D-APP</CSidebarBrand>
+      <CSidebarBrand>ANFT D-APP</CSidebarBrand>
       <ul className="c-sidebar-nav h-100 ps">
         <li className={`c-sidebar-nav-dropdown ${LANGUAGE ? 'c-show' : ''}`}>
           <CLink className="c-sidebar-nav-dropdown-toggle" onClick={setDDCurrying(Dropdown.LANGUAGE, !LANGUAGE)}>
@@ -103,7 +103,7 @@ const TheSidebar = () => {
           </CLink>
         </li>
         <li className={`c-sidebar-nav-item`}>
-          <CLink className={`c-sidebar-nav-link`} target="_blank" href="https://dapp-guide.anft.vn">
+          <CLink className={`c-sidebar-nav-link`} target="_blank" rel="noreferrer noopener" href="https://dapp-guide.anft.vn">
             <CIcon name="cil-book" className={`c-sidebar-nav-icon text-primary`} />{' '}
             {t('anftDapp.sidebarComponent.userGuide')}
           </CLink>
