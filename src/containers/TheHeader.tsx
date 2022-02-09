@@ -14,7 +14,7 @@ import {
   CLink,
   CRow,
   CSelect,
-  CSubheader
+  CSubheader,
 } from '@coreui/react';
 import { Formik, FormikProps } from 'formik';
 import React, { useEffect, useRef, useState } from 'react';
@@ -29,7 +29,7 @@ import { getEntities } from '../views/assets/assets.api';
 import {
   fetchingEntities,
   setFilterState as setStoredFilterState,
-  softReset as assetsSoftReset
+  softReset as assetsSoftReset,
 } from '../views/assets/assets.reducer';
 import { IAssetFilter } from '../views/listings/Listings';
 import { softReset as transactionsSoftReset } from '../views/transactions/transactions.reducer';
@@ -38,7 +38,7 @@ import {
   getContractWithSigner,
   getProviderLogin,
   getSigner,
-  getTokenBalance
+  getTokenBalance,
 } from '../views/wallet/wallet.api';
 import { resetSigner, softReset as walletSoftReset } from '../views/wallet/wallet.reducer';
 import { toggleSidebar } from './reducer';
@@ -257,6 +257,7 @@ const TheHeader = () => {
                               value={values[e] || ''}
                               id={e}
                               name={e}
+                              disabled
                             >
                               <option value="">{t(`anftDapp.headerComponent.filter.${e}`)}</option>
                               {listingsFilter[e]?.map((o, i) => (
@@ -300,7 +301,7 @@ const TheHeader = () => {
       >
         <CRow className="w-100 p-1">
           <CCol xs={4} className="px-2">
-            <CSelect className="btn-radius-50 text-dark px-2 content-title">
+            <CSelect className="btn-radius-50 text-dark px-2 content-title" disabled>
               <option value="">{t('anftDapp.headerComponent.filter.type')}</option>
               {dataFilterDemo.map((e, i) => (
                 <option value={e.value} key={`type-key-${i}`}>
@@ -310,7 +311,7 @@ const TheHeader = () => {
             </CSelect>
           </CCol>
           <CCol xs={4} className="px-2">
-            <CSelect className="btn-radius-50 text-dark px-2 content-title">
+            <CSelect className="btn-radius-50 text-dark px-2 content-title" disabled>
               <option value="">{t('anftDapp.headerComponent.filter.state')}</option>
               {dataFilterDemo.map((e, i) => (
                 <option value={e.value} key={`state-key-${i}`}>
@@ -320,7 +321,7 @@ const TheHeader = () => {
             </CSelect>
           </CCol>
           <CCol xs={4} className="px-2">
-            <CSelect className="btn-radius-50 text-dark px-2 content-title">
+            <CSelect className="btn-radius-50 text-dark px-2 content-title" disabled>
               <option value="">{t('anftDapp.headerComponent.filter.services')}</option>
               {dataFilterDemo.map((e, i) => (
                 <option value={e.value} key={`services-key-${i}`}>
