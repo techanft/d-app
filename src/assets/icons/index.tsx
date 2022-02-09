@@ -17,7 +17,6 @@ import {
   cilQrCode,
   cilTrash,
   cilX,
-  cilSync,
   cilBook
 } from '@coreui/icons/js/free';
 
@@ -40,7 +39,6 @@ export const icons = Object.assign(
     cilMoney,
     cilFullscreen,
     cilFullscreenExit,
-    cilSync,
     cilBook
   },
   {

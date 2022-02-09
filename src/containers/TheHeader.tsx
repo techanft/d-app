@@ -16,6 +16,8 @@ import {
   CSelect,
   CSubheader,
 } from '@coreui/react';
+import { faSyncAlt } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Formik, FormikProps } from 'formik';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -245,7 +247,7 @@ const TheHeader = () => {
                       <div className="modal-title-style d-flex justify-content-end px-3 py-2">
                         <CLabel className="m-auto pl-3"> {t('anftDapp.headerComponent.filter.filter')}</CLabel>
                         <CButton className="p-0 text-primary" onClick={resetForm}>
-                          <CIcon name="cil-sync" size="lg" />
+                          <FontAwesomeIcon icon={faSyncAlt} size='lg' />
                         </CButton>
                       </div>
                       <CRow className="mx-2">

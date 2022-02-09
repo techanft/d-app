@@ -16,9 +16,9 @@ import {
   CInvalidFeedback,
   CLabel,
   CLink,
-  CRow
+  CRow,
 } from '@coreui/react';
-import { faPen } from '@fortawesome/free-solid-svg-icons';
+import { faPen, faSyncAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { BigNumber } from 'ethers';
 import { Formik, FormikProps } from 'formik';
@@ -35,7 +35,7 @@ import {
   convertUnixToDate,
   formatBNToken,
   insertCommas,
-  unInsertCommas
+  unInsertCommas,
 } from '../../../shared/casual-helpers';
 import ConfirmationLoading from '../../../shared/components/ConfirmationLoading';
 import ConfirmModal from '../../../shared/components/ConfirmModal';
@@ -366,7 +366,8 @@ const Register = (props: IRegisterProps) => {
               <CCardTitle className="listing-card-title mb-0 px-3 py-2 w-100">
                 <p className="mb-2 text-white content-title">202 Yên Sở - Hoàng Mai - Hà Nội</p>
                 <p className="mb-0 text-white detail-title-font">
-                  {t('anftDapp.registerComponent.activitiesCount')} <b>{listing?.options ? listing.options.length : 0}</b>
+                  {t('anftDapp.registerComponent.activitiesCount')}{' '}
+                  <b>{listing?.options ? listing.options.length : 0}</b>
                 </p>
               </CCardTitle>
             </CCardBody>
@@ -550,7 +551,7 @@ const Register = (props: IRegisterProps) => {
                                                     onClick={onRefreshAmountToReturn(item.id)}
                                                     className="p-0 ml-2"
                                                   >
-                                                    <CIcon name="cil-sync" size="lg" className='text-primary'/>
+                                                    <FontAwesomeIcon icon={faSyncAlt} className="text-primary" />
                                                   </CButton>
                                                 </p>
                                               </CCol>
