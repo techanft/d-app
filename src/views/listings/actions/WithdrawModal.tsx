@@ -12,7 +12,7 @@ import {
   CModalFooter,
   CModalHeader,
   CModalTitle,
-  CRow
+  CRow,
 } from '@coreui/react';
 import { Formik, FormikProps } from 'formik';
 import moment from 'moment';
@@ -29,7 +29,7 @@ import {
   convertDecimalToBn,
   insertCommas,
   returnMaxEndDate,
-  unInsertCommas
+  unInsertCommas,
 } from '../../../shared/casual-helpers';
 import { ToastError } from '../../../shared/components/Toast';
 import { EventType } from '../../../shared/enumeration/eventType';
@@ -223,12 +223,10 @@ const WithdrawModal = (props: IWithdrawModal) => {
                   </CFormGroup>
 
                   <CFormGroup row>
-                    <CCol xs={12}>
+                    <CCol xs={6}>
                       <CLabel className="recharge-token-title">
                         {t('anftDapp.listingComponent.withdrawToken.withdrawDays')}
                       </CLabel>
-                    </CCol>
-                    <CCol xs={12}>
                       <CInput
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                           const withdrawDay = Number(unInsertCommas(e.target.value));
@@ -243,7 +241,7 @@ const WithdrawModal = (props: IWithdrawModal) => {
                             setFieldValue('endDate', extendValue);
                           } else {
                             const extendValue = moment(startDate);
-                            setFieldValue('remainingDays', '_');
+                            setFieldValue('remainingDays', '0');
                             setFieldValue('endDate', extendValue);
                           }
                         }}
@@ -251,8 +249,24 @@ const WithdrawModal = (props: IWithdrawModal) => {
                         autoComplete="off"
                         name="withdraw"
                         value={values.withdraw ? insertCommas(values.withdraw) : ''}
-                        className="btn-radius-50 InputMaxWidth"
+                        className="btn-radius-50"
                       />
+                    </CCol>
+                    <CCol xs={6} className="spending-estimation text-right">
+                      <CLabel className="recharge-token-title">
+                        {t('anftDapp.listingComponent.withdrawToken.returnEstimation')}
+                      </CLabel>
+                      <CInput
+                        value={`${
+                          values.withdraw > 0 && values.startDate && Number(values.remainingDays)
+                            ? insertCommas(calculateWithdrawPriceByDays(values.withdraw))
+                            : '0'
+                        } ANFT`}
+                        className="btn-radius-50"
+                        disabled
+                      />
+                    </CCol>
+                    <CCol xs={12} className="mt-2">
                       <CInvalidFeedback className={errors.withdraw && touched.withdraw ? 'd-block' : 'd-none'}>
                         {errors.withdraw ||
                           t('anftDapp.listingComponent.withdrawToken.exceedingWithdrawErr', {
@@ -262,7 +276,7 @@ const WithdrawModal = (props: IWithdrawModal) => {
                       <CFormText>{t('anftDapp.listingComponent.withdrawToken.noticeText')}</CFormText>
                     </CCol>
                   </CFormGroup>
-                  <CFormGroup row className={`mt-4`}>
+                  <CFormGroup row className={`mb-0`}>
                     <CCol xs={6}>
                       <CLabel className="withdraw-token-title">
                         {t('anftDapp.listingComponent.withdrawToken.remainingDays')}
@@ -271,21 +285,6 @@ const WithdrawModal = (props: IWithdrawModal) => {
                     <CCol xs={6}>
                       <p className="text-primary text-right">
                         {values.remainingDays} {t('anftDapp.listingComponent.withdrawToken.days')}
-                      </p>
-                    </CCol>
-                  </CFormGroup>
-                  <CFormGroup row>
-                    <CCol xs={6}>
-                      <CLabel className="recharge-token-title">
-                        {t('anftDapp.listingComponent.withdrawToken.returnEstimation')}
-                      </CLabel>
-                    </CCol>
-                    <CCol xs={6}>
-                      <p className="text-primary text-right">
-                        {values.withdraw > 0 && values.startDate && Number(values.remainingDays)
-                          ? insertCommas(calculateWithdrawPriceByDays(values.withdraw))
-                          : '_'}{' '}
-                        ANFT
                       </p>
                     </CCol>
                   </CFormGroup>

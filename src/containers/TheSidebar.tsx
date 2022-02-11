@@ -1,6 +1,6 @@
 import CIcon from '@coreui/icons-react';
 import { CLink, CSidebar, CSidebarBrand, CSidebarFooter, CTooltip } from '@coreui/react';
-import { faGlobe, faHomeAlt, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
+import { faGlobe, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -65,13 +65,13 @@ const TheSidebar = () => {
       <ul className="c-sidebar-nav h-100 ps">
         <li className={`c-sidebar-nav-item `}>
           <CLink className={`c-sidebar-nav-link ${highlightNavItem('/listings')}`} to={'/listings'}>
-            <FontAwesomeIcon icon={faHomeAlt} size="lg" className={`c-sidebar-nav-icon text-primary`} />{' '}
+            <CIcon name="cil-home" size="lg" className={`c-sidebar-nav-icon text-primary`} />{' '}
             {t('anftDapp.headerComponent.dashboard')}
           </CLink>
         </li>
         <li className={`c-sidebar-nav-item `}>
           <CLink className={`c-sidebar-nav-link ${highlightNavItem('/logs-overview')}`} to={'/logs-overview'}>
-            <CIcon name="cil-history" className={`c-sidebar-nav-icon text-primary`} />{' '}
+            <CIcon name="cil-history" size="lg" className={`c-sidebar-nav-icon text-primary`} />{' '}
             {t('anftDapp.listingComponent.activityLogs')}
           </CLink>
         </li>
@@ -82,13 +82,13 @@ const TheSidebar = () => {
             rel="noreferrer noopener"
             href="https://dapp-guide.anft.vn"
           >
-            <CIcon name="cil-book" className={`c-sidebar-nav-icon text-primary`} />{' '}
+            <CIcon name="cil-book" size="lg" className={`c-sidebar-nav-icon text-primary`} />{' '}
             {t('anftDapp.sidebarComponent.userGuide')}
           </CLink>
         </li>
         <li className={`c-sidebar-nav-dropdown ${LANGUAGE ? 'c-show' : ''}`}>
           <CLink className="c-sidebar-nav-dropdown-toggle" onClick={setDDCurrying(Dropdown.LANGUAGE, !LANGUAGE)}>
-            <FontAwesomeIcon icon={faGlobe} className="c-sidebar-nav-icon text-primary" />
+            <FontAwesomeIcon icon={faGlobe} size="lg" className="c-sidebar-nav-icon text-primary" />
             {t('anftDapp.sidebarComponent.language.language')}
           </CLink>
           <ul className="c-sidebar-nav-dropdown-items">
@@ -98,7 +98,7 @@ const TheSidebar = () => {
                 onClick={changeLanguageI18n(Language.vi)}
               >
                 {t('anftDapp.sidebarComponent.language.vietnamese')}
-                <CIcon name="cif-vn" className={`ml-1`} />
+                <CIcon name="cif-vn" size="lg" className={`ml-1`} />
               </CLink>
             </li>
             <li className={`c-sidebar-nav-item`}>
@@ -107,7 +107,7 @@ const TheSidebar = () => {
                 onClick={changeLanguageI18n(Language.en)}
               >
                 {t('anftDapp.sidebarComponent.language.english')}
-                <CIcon name="cif-us" className={`ml-1`} />
+                <CIcon name="cif-us" size="lg" className={`ml-1`} />
               </CLink>
             </li>
           </ul>

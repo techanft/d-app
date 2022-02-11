@@ -22,7 +22,8 @@
           "ethereumIsNotInitializedErrMsg": "Ethereum chưa được khởi tạo. Vui lòng cài đặt ví Ethereum trong trình duyệt của bạn",
           "reload": "Tải lại"
         }
-      }
+      },
+      "noItemText": "Không có bản ghi"
     },
 
     "sidebarComponent": {

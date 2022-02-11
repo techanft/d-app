@@ -12,7 +12,7 @@ import {
   CModalFooter,
   CModalHeader,
   CModalTitle,
-  CRow,
+  CRow
 } from '@coreui/react';
 import { BigNumber } from 'ethers';
 import { Formik, FormikProps } from 'formik';
@@ -36,7 +36,7 @@ import {
   getSecondDifftoEndDate,
   insertCommas,
   returnMaxEndDate,
-  unInsertCommas,
+  unInsertCommas
 } from '../../../shared/casual-helpers';
 import { ToastError } from '../../../shared/components/Toast';
 import { EventType } from '../../../shared/enumeration/eventType';
@@ -264,13 +264,11 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                       />
                     </CCol>
                   </CFormGroup>
-                  <CFormGroup row>
-                    <CCol xs={12}>
+                  <CFormGroup row className={`mb-0`}>
+                    <CCol xs={6}>
                       <CLabel className="recharge-token-title">
                         {t('anftDapp.listingComponent.withdrawToken.days')}
                       </CLabel>
-                    </CCol>
-                    <CCol xs={12}>
                       <CInput
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                           const extendDay = Number(unInsertCommas(e.target.value));
@@ -290,31 +288,32 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                         autoComplete="off"
                         name="dateCount"
                         value={values.dateCount ? insertCommas(values.dateCount) : ''}
-                        className="btn-radius-50 InputMaxWidth"
+                        className="btn-radius-50"
                       />
-                      <CInvalidFeedback className={errors.dateCount && touched.dateCount ? 'd-block' : 'd-none'}>
-                        {errors.dateCount}
-                      </CInvalidFeedback>
-                        <CFormText>
-                          {t('anftDapp.listingComponent.extendOwnership.noticeText', {
-                            day: `${values.endDate.format(APP_LOCAL_DATE_FORMAT)}`,
-                          })}
-                        </CFormText>
                     </CCol>
-                  </CFormGroup>
-                  <CFormGroup row className={`mt-4`}>
-                    <CCol xs={6}>
+                    <CCol xs={6} className="spending-estimation text-right">
                       <CLabel className="recharge-token-title">
                         {t('anftDapp.listingComponent.extendOwnership.spendingEstimation')}
                       </CLabel>
+                      <CInput
+                        value={`${
+                          values.dateCount > 0 && values.startDate
+                            ? insertCommas(calculateExtendPriceByDays(values.dateCount, values.startDate))
+                            : '0'
+                        } ANFT`}
+                        className="btn-radius-50"
+                        disabled
+                      />
                     </CCol>
-                    <CCol xs={6}>
-                      <p className="text-primary text-right">
-                        {values.dateCount > 0 && values.startDate
-                          ? insertCommas(calculateExtendPriceByDays(values.dateCount, values.startDate))
-                          : '0'}{' '}
-                        ANFT
-                      </p>
+                    <CCol xs={12} className="mt-2">
+                      <CInvalidFeedback className={errors.dateCount && touched.dateCount ? 'd-block' : 'd-none'}>
+                        {errors.dateCount}
+                      </CInvalidFeedback>
+                      <CFormText>
+                        {t('anftDapp.listingComponent.extendOwnership.noticeText', {
+                          day: `${values.endDate.format(APP_LOCAL_DATE_FORMAT)}`,
+                        })}
+                      </CFormText>
                     </CCol>
                   </CFormGroup>
                 </CCol>
