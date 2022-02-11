@@ -28,7 +28,7 @@ import {
   calculateDateDifference,
   calculateSpendingFromSecond,
   checkDateRange,
-  checkOwnershipExpired,
+  checkOwnershipAboutToExpired,
   convertBnToDecimal,
   convertDecimalToBn,
   convertUnixToDate,
@@ -96,7 +96,7 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [submitted]);
 
-  const ownershipExpired = listing?.ownership ? checkOwnershipExpired(listing.ownership.toNumber()) : false;
+  const ownershipExpired = listing?.ownership ? checkOwnershipAboutToExpired(listing.ownership.toNumber()) : false;
 
   const getStartDate = (): moment.Moment => {
     const currentDate = moment();

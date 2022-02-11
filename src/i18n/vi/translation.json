@@ -63,9 +63,11 @@
       "primaryInfo": {
         "ownershipStatus": {
           "owned": "Đã sở hữu",
-          "ownershipExpired": "Đã hết hạn sở hữu. BĐS có thể bị chiếm bởi người khác!",
-          "ownedByAnotherAddress": "Đã có chủ sở hữu",
-          "notOwned": "Có thể sở hữu"
+          "ownershipExpired": "Quyền sở hữu đã hết hạn. Người khác có thể chiếm quyền sở hữu đối với listing này!",
+          "ownedByAnotherAddress": "Listing đang được sở hữu bởi người khác",
+          "notOwned": "Listing này chưa có người sở hữu",
+          "ownershipAboutToExpire":"Quyền sở hữu chuẩn bị hết hạn. Tính từ thời điểm {{time}} listing có thể bị chiếm bởi người khác",
+          "ownershipAbleToExtends":"Bạn có thể chiếm quyền sở hữu đối với listing này"
         },
         "blockchainAddress": "Địa chỉ Blockchain",
         "currentOwner": "Chủ sở hữu",

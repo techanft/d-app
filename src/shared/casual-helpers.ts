@@ -61,9 +61,16 @@ export const formatBNToken = (input: BigNumber | undefined, displaySymbol: boole
 
 export const checkOwnershipExpired = (timestamp: number): boolean => {
   const currTimstamp = moment().unix();
-  const oneDaySoonerTimestamp = moment.unix(timestamp).subtract(1, 'days').unix();
-  return currTimstamp >= oneDaySoonerTimestamp;
+  return currTimstamp >= timestamp;
 };
+
+
+export const checkOwnershipAboutToExpired = (timestamp: number): boolean => {
+  const currTimstamp = moment().unix();
+  const dayBeforeTimestamp = moment.unix(timestamp).subtract(1, 'days').unix();  
+  return currTimstamp >= dayBeforeTimestamp;
+};
+
 
 export const convertUnixToDate = (timestamp: number): string => {
   return moment.unix(timestamp).format(APP_DATE_FORMAT);
