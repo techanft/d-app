@@ -23,7 +23,7 @@
           "reload": "Reload"
         }
       },
-      "noItemText": "No Items"
+      "noItemText": "No Record(s) Found"
     },
 
     "sidebarComponent": {

@@ -23,7 +23,7 @@
           "reload": "Tải lại"
         }
       },
-      "noItemText": "Chưa có thông tin"
+      "noItemText": "Không có bản ghi"
     },
 
     "sidebarComponent": {
