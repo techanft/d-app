@@ -326,6 +326,9 @@ const ListingInfo = (props: IListingInfoProps) => {
                     striped
                     items={workers?.results}
                     fields={workerFields}
+                    noItemsView={{
+                      noItems: t("anftDapp.global.noItemText"),
+                    }}
                     responsive
                     hover
                     header

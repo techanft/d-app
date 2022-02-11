@@ -72,6 +72,7 @@
       width: 45%;
       border-top-right-radius: 50px;
       border-bottom-right-radius: 50px;
+      text-align: center;
     }
     .DateInput_input__disabled {
       border-radius: 50px;
@@ -83,7 +84,7 @@
       font-size: 0.875rem;
       line-height: 1.5;
       padding: 0.375rem 0.75rem;
-      text-align: center
+      text-align: center;
       // border-top-right-radius: 50px;
       // border-bottom-right-radius: 50px;
     }
@@ -92,4 +93,26 @@
   .DateRangePickerInput__disabled {
     background: transparent;
   }
+  .DateInput_input__focused {
+    border-bottom: 2px solid #0088c2;
+    width: 95%;
+  }
+  .CalendarDay__selected,
+  .CalendarDay__selected:active,
+  .CalendarDay__selected:hover {
+    background: #0088c2;
+    border: 1px double #0088c2;
+    color: #fff;
+  }
+  .CalendarDay__selected_span {
+    background: #0088c2;
+    opacity: 0.4;
+    border: 1px double #7cd8ff;
+    color: #fff;
+  }
+}
+
+.spending-estimation .form-control {
+  text-align: end;
+  color: black;
 }

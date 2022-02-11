@@ -22,7 +22,8 @@
           "ethereumIsNotInitializedErrMsg": "Ethereum is not initialized. Please install an Ethereum wallet in your browser",
           "reload": "Reload"
         }
-      }
+      },
+      "noItemText": "No Items"
     },
 
     "sidebarComponent": {
