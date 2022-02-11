@@ -65,7 +65,9 @@
           "owned": "Owned",
           "ownershipExpired": "Ownership expired. Listing can be owned by another address!",
           "ownedByAnotherAddress": "Owned by another address",
-          "notOwned": "Able to extend ownership with this listing"
+          "notOwned": "Able to extend ownership with this listing",
+          "ownershipAboutToExpire": "Ownership is about to expire. From {{time}} this listing could be owned by another address",
+          "ownershipAbleToExtends": "Able to extend ownership with this listing"
         },
         "blockchainAddress": "Blockchain Address",
         "currentOwner": "Owner",

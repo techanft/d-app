@@ -19,6 +19,7 @@ import {
   faIdBadge
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import 'react-dates/initialize';
 import 'react-dates/lib/css/_datepicker.css';
@@ -26,6 +27,7 @@ import { TFunction, useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { TOKEN_SYMBOL } from '../../../config/constants';
 import {
+  checkOwnershipAboutToExpire,
   checkOwnershipExpired,
   convertUnixToDate,
   formatBNToken,
@@ -55,12 +57,21 @@ const ownershipText = (viewerAddr: string | undefined, listingInfo: IAsset, t: T
   if (!ownership || !owner) return '';
 
   const viewerIsOwner = viewerAddr === owner;
+  const ownershipAboutToExpire = checkOwnershipAboutToExpire(ownership.toNumber());
   const ownershipExpired = checkOwnershipExpired(ownership.toNumber());
 
   let textClassname;
   let textContent;
 
-  if (viewerIsOwner && !ownershipExpired) {
+  if (!viewerIsOwner && ownershipAboutToExpire) {
+    textClassname = 'text-success';
+    textContent = t('anftDapp.listingComponent.primaryInfo.ownershipStatus.ownershipAbleToExtends');
+  } else if (viewerIsOwner && ownershipAboutToExpire) {
+    textClassname = 'text-danger';
+    textContent = t('anftDapp.listingComponent.primaryInfo.ownershipStatus.ownershipAboutToExpire', {
+      time: convertUnixToDate(moment.unix(ownership.toNumber()).subtract(1, 'days').unix()),
+    });
+  } else if (viewerIsOwner && !ownershipExpired) {
     textClassname = 'text-success';
     textContent = t('anftDapp.listingComponent.primaryInfo.ownershipStatus.owned');
   } else if (viewerIsOwner && ownershipExpired) {
@@ -148,7 +159,7 @@ const ListingInfo = (props: IListingInfoProps) => {
   const { initialState } = useSelector((state: RootState) => state.assets);
   const { entityLoading } = initialState;
 
-  const ownershipExpired = listing?.ownership ? checkOwnershipExpired(listing.ownership.toNumber()) : false;
+  const ownershipExpired = listing?.ownership ? checkOwnershipAboutToExpire(listing.ownership.toNumber()) : false;
   const viewerIsOwner = Boolean(signerAddress && signerAddress === listing?.owner);
 
   const initialModalState: TModalsVisibility = {
@@ -247,7 +258,13 @@ const ListingInfo = (props: IListingInfoProps) => {
             <p className="detail-title-font my-2">{t('anftDapp.listingComponent.primaryInfo.blockchainAddress')}</p>
 
             {!entityLoading && listing?.address ? (
-              <p className='my-2'><CopyTextToClipBoard text={listing.address} inputClassName="my-2 value-text copy-address" iconClassName="m-0"/></p>
+              <p className="my-2">
+                <CopyTextToClipBoard
+                  text={listing.address}
+                  inputClassName="my-2 value-text copy-address"
+                  iconClassName="m-0"
+                />
+              </p>
             ) : (
               <InfoLoader width={155} height={27} />
             )}
@@ -261,7 +278,13 @@ const ListingInfo = (props: IListingInfoProps) => {
                 <p className="detail-title-font my-2">{t('anftDapp.listingComponent.primaryInfo.currentOwner')}</p>
 
                 {!entityLoading && listing?.owner ? (
-                  <p className='my-2'><CopyTextToClipBoard text={listing.owner} inputClassName="my-2 value-text copy-address" iconClassName="m-0"/></p>
+                  <p className="my-2">
+                    <CopyTextToClipBoard
+                      text={listing.owner}
+                      inputClassName="my-2 value-text copy-address"
+                      iconClassName="m-0"
+                    />
+                  </p>
                 ) : (
                   <InfoLoader width={155} height={27} />
                 )}
@@ -327,7 +350,7 @@ const ListingInfo = (props: IListingInfoProps) => {
                     items={workers?.results}
                     fields={workerFields}
                     noItemsView={{
-                      noItems: t("anftDapp.global.noItemText"),
+                      noItems: t('anftDapp.global.noItemText'),
                     }}
                     responsive
                     hover
