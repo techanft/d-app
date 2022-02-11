@@ -27,7 +27,7 @@ import { TFunction, useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { TOKEN_SYMBOL } from '../../../config/constants';
 import {
-  checkOwnershipAboutToExpired,
+  checkOwnershipAboutToExpire,
   checkOwnershipExpired,
   convertUnixToDate,
   formatBNToken,
@@ -57,16 +57,16 @@ const ownershipText = (viewerAddr: string | undefined, listingInfo: IAsset, t: T
   if (!ownership || !owner) return '';
 
   const viewerIsOwner = viewerAddr === owner;
-  const owershipCloseToExpired = checkOwnershipAboutToExpired(ownership.toNumber());
+  const ownershipAboutToExpire = checkOwnershipAboutToExpire(ownership.toNumber());
   const ownershipExpired = checkOwnershipExpired(ownership.toNumber());
 
   let textClassname;
   let textContent;
 
-  if (!viewerIsOwner && owershipCloseToExpired) {
+  if (!viewerIsOwner && ownershipAboutToExpire) {
     textClassname = 'text-success';
     textContent = t('anftDapp.listingComponent.primaryInfo.ownershipStatus.ownershipAbleToExtends');
-  } else if (viewerIsOwner && owershipCloseToExpired) {
+  } else if (viewerIsOwner && ownershipAboutToExpire) {
     textClassname = 'text-danger';
     textContent = t('anftDapp.listingComponent.primaryInfo.ownershipStatus.ownershipAboutToExpire', {
       time: convertUnixToDate(moment.unix(ownership.toNumber()).subtract(1, 'days').unix()),
@@ -159,7 +159,7 @@ const ListingInfo = (props: IListingInfoProps) => {
   const { initialState } = useSelector((state: RootState) => state.assets);
   const { entityLoading } = initialState;
 
-  const ownershipExpired = listing?.ownership ? checkOwnershipAboutToExpired(listing.ownership.toNumber()) : false;
+  const ownershipExpired = listing?.ownership ? checkOwnershipAboutToExpire(listing.ownership.toNumber()) : false;
   const viewerIsOwner = Boolean(signerAddress && signerAddress === listing?.owner);
 
   const initialModalState: TModalsVisibility = {

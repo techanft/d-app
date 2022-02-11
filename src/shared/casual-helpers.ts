@@ -60,15 +60,15 @@ export const formatBNToken = (input: BigNumber | undefined, displaySymbol: boole
 };
 
 export const checkOwnershipExpired = (timestamp: number): boolean => {
-  const currTimstamp = moment().unix();
-  return currTimstamp >= timestamp;
+  const currentTS = moment().unix();
+  return currentTS >= timestamp;
 };
 
 
-export const checkOwnershipAboutToExpired = (timestamp: number): boolean => {
-  const currTimstamp = moment().unix();
-  const dayBeforeTimestamp = moment.unix(timestamp).subtract(1, 'days').unix();  
-  return currTimstamp >= dayBeforeTimestamp;
+export const checkOwnershipAboutToExpire = (timestamp: number): boolean => {
+  const currentTS = moment().unix();
+  const ExpiredDateMinus24Hours = moment.unix(timestamp).subtract(1, 'days').unix();  
+  return currentTS >= ExpiredDateMinus24Hours;
 };
 
 

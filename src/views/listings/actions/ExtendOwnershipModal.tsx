@@ -27,9 +27,7 @@ import { LISTING_INSTANCE } from '../../../shared/blockchain-helpers';
 import {
   calculateDateDifference,
   calculateSpendingFromSecond,
-  checkDateRange,
-  checkOwnershipAboutToExpired,
-  convertBnToDecimal,
+  checkDateRange, checkOwnershipAboutToExpire, convertBnToDecimal,
   convertDecimalToBn,
   convertUnixToDate,
   formatBNToken,
@@ -96,12 +94,12 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [submitted]);
 
-  const ownershipExpired = listing?.ownership ? checkOwnershipAboutToExpired(listing.ownership.toNumber()) : false;
+  const aboutToExpire = listing?.ownership ? checkOwnershipAboutToExpire(listing.ownership.toNumber()) : false;
 
   const getStartDate = (): moment.Moment => {
     const currentDate = moment();
     const currentOwnership =
-      listing?.ownership && !ownershipExpired ? moment.unix(listing.ownership.toNumber()) : moment();
+      listing?.ownership && !aboutToExpire ? moment.unix(listing.ownership.toNumber()) : moment();
     const modalTypeToStartDateMapping: TModelTypeMappingMoment = {
       [ModalType.OWNERSHIP_EXTENSION]: currentOwnership,
       [ModalType.OWNERSHIP_REGISTER]: currentDate,
