@@ -377,6 +377,9 @@ const Register = (props: IRegisterProps) => {
             <>
               <CDataTable
                 striped
+                noItemsView={{
+                  noItems: t("anftDapp.global.noItemText"),
+                }}
                 items={listing.options}
                 fields={registerView}
                 responsive
