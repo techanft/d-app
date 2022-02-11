@@ -1,20 +1,20 @@
-import { CPagination } from '@coreui/react';
+import CIcon from '@coreui/icons-react';
+import { CLink, CPagination } from '@coreui/react';
 import moment from 'moment';
 import React from 'react';
 import { TFunction, useTranslation } from 'react-i18next';
 import { APP_DATE_FORMAT } from '../../config/constants';
 import { IRecordParams } from '../../views/records/records.api';
-import { calculateDateDifference, insertCommas, returnOptionNameById } from '../casual-helpers';
+import { calculateDateDifference, getEllipsisTxt, insertCommas, returnOptionNameById } from '../casual-helpers';
 import { RecordType } from '../enumeration/recordType';
 import {
   IRecordClaim,
   IRecordOwnership,
   IRecordRegister,
   IRecordUnRegister,
-  IRecordWithdraw
+  IRecordWithdraw,
 } from '../models/record.model';
 import { TableType, TRecordTypeArray } from './ActivityLogsContainer';
-import CopyTextToClipBoard from './CopyTextToClipboard';
 
 interface IActivityLogsTable {
   shouldDisplayBlockchainAddress: boolean;
@@ -34,13 +34,22 @@ interface IRecordTableProps<TableType> {
 
 type TRecordTypeMappingRender = { [key in RecordType]: ({ record, transFunc }: IRecordTableProps<any>) => JSX.Element };
 
-const renderRecordOwnerShip = ({ record, transFunc, shouldDisplayBlockchainAddress }: IRecordTableProps<IRecordOwnership>) => (
+const renderRecordOwnerShip = ({
+  record,
+  transFunc,
+  shouldDisplayBlockchainAddress,
+}: IRecordTableProps<IRecordOwnership>) => (
   <>
     {shouldDisplayBlockchainAddress && (
       <tr>
         <td>{transFunc('anftDapp.listingComponent.primaryInfo.blockchainAddress')}</td>
         <td className="text-right">
-          <CopyTextToClipBoard text={record.listingAddress} inputClassName="copy-address" iconClassName='m-0' />
+          <span>
+            {getEllipsisTxt(record.listingAddress)}{' '}
+            <CLink to={`/${record.listingId}/detail`}>
+              <CIcon name="cil-external-link" className="text-primay pb-1" size="lg"  />
+            </CLink>
+          </span>
         </td>
       </tr>
     )}
@@ -69,7 +78,12 @@ const renderRecordClaim = ({ record, transFunc, shouldDisplayBlockchainAddress }
       <tr>
         <td>{transFunc('anftDapp.listingComponent.primaryInfo.blockchainAddress')}</td>
         <td className="text-right">
-          <CopyTextToClipBoard text={record.listingAddress} inputClassName="copy-address" iconClassName='m-0'/>
+          <span>
+            {getEllipsisTxt(record.listingAddress)}{' '}
+            <CLink to={`/${record.listingId}/detail`}>
+              <CIcon name="cil-external-link" className="text-primay pb-1" size="lg"  />
+            </CLink>
+          </span>
         </td>
       </tr>
     )}
@@ -89,13 +103,22 @@ const renderRecordClaim = ({ record, transFunc, shouldDisplayBlockchainAddress }
   </>
 );
 
-const renderRecordRegister = ({ record, transFunc, shouldDisplayBlockchainAddress }: IRecordTableProps<IRecordRegister>) => (
+const renderRecordRegister = ({
+  record,
+  transFunc,
+  shouldDisplayBlockchainAddress,
+}: IRecordTableProps<IRecordRegister>) => (
   <>
     {shouldDisplayBlockchainAddress && (
       <tr>
         <td>{transFunc('anftDapp.listingComponent.primaryInfo.blockchainAddress')}</td>
         <td className="text-right">
-          <CopyTextToClipBoard text={record.listingAddress} inputClassName="copy-address" iconClassName='m-0'/>
+          <span>
+            {getEllipsisTxt(record.listingAddress)}{' '}
+            <CLink to={`/${record.listingId}/detail`}>
+              <CIcon name="cil-external-link" className="text-primay pb-1" size="lg"  />
+            </CLink>
+          </span>
         </td>
       </tr>
     )}
@@ -110,13 +133,22 @@ const renderRecordRegister = ({ record, transFunc, shouldDisplayBlockchainAddres
   </>
 );
 
-const renderRecordUnRegister = ({ record, transFunc, shouldDisplayBlockchainAddress }: IRecordTableProps<IRecordUnRegister>) => (
+const renderRecordUnRegister = ({
+  record,
+  transFunc,
+  shouldDisplayBlockchainAddress,
+}: IRecordTableProps<IRecordUnRegister>) => (
   <>
     {shouldDisplayBlockchainAddress && (
       <tr>
         <td>{transFunc('anftDapp.listingComponent.primaryInfo.blockchainAddress')}</td>
         <td className="text-right">
-          <CopyTextToClipBoard text={record.listingAddress} inputClassName="copy-address" iconClassName='m-0'/>
+          <span>
+            {getEllipsisTxt(record.listingAddress)}{' '}
+            <CLink to={`/${record.listingId}/detail`}>
+              <CIcon name="cil-external-link" className="text-primay pb-1" size="lg"  />
+            </CLink>
+          </span>{' '}
         </td>
       </tr>
     )}
@@ -127,13 +159,22 @@ const renderRecordUnRegister = ({ record, transFunc, shouldDisplayBlockchainAddr
   </>
 );
 
-const renderRecordWithdraw = ({ record, transFunc, shouldDisplayBlockchainAddress }: IRecordTableProps<IRecordWithdraw>) => (
+const renderRecordWithdraw = ({
+  record,
+  transFunc,
+  shouldDisplayBlockchainAddress,
+}: IRecordTableProps<IRecordWithdraw>) => (
   <>
     {shouldDisplayBlockchainAddress && (
       <tr>
         <td>{transFunc('anftDapp.listingComponent.primaryInfo.blockchainAddress')}</td>
         <td className="text-right">
-          <CopyTextToClipBoard text={record.listingAddress} inputClassName="copy-address" iconClassName='m-0'/>
+          <span>
+            {getEllipsisTxt(record.listingAddress)}{' '}
+            <CLink to={`/${record.listingId}/detail`}>
+              <CIcon name="cil-external-link" className="text-primay pb-1" size="lg"  />
+            </CLink>
+          </span>{' '}
         </td>
       </tr>
     )}
@@ -173,7 +214,16 @@ const recordMappingField: TRecordTypeMappingRender = {
 };
 
 const ActivityLogsTable = (props: IActivityLogsTable) => {
-  const { filterState, totalPages, loading, tableType, handlePaginationChange, results, recordType, shouldDisplayBlockchainAddress } = props;
+  const {
+    filterState,
+    totalPages,
+    loading,
+    tableType,
+    handlePaginationChange,
+    results,
+    recordType,
+    shouldDisplayBlockchainAddress,
+  } = props;
 
   const { t } = useTranslation();
 

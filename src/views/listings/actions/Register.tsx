@@ -579,7 +579,7 @@ const Register = (props: IRegisterProps) => {
                                               <CFormGroup row>
                                                 <CCol xs={12} className="d-flex justify-content-center mt-3">
                                                   <CButton
-                                                    className="btn-radius-50 btn btn-sm btn-primary mr-2"
+                                                    className="btn-radius-50 btn-primary mr-2"
                                                     onClick={checkTokenBalanceGteRegisterAmount(
                                                       submitForm,
                                                       item.stake.amount
@@ -588,7 +588,7 @@ const Register = (props: IRegisterProps) => {
                                                     {t('anftDapp.global.modal.confirm')}
                                                   </CButton>
                                                   <CButton
-                                                    className="btn-radius-50 btn btn-sm btn-outline-danger ml-2"
+                                                    className="btn-radius-50 btn-outline-danger ml-2"
                                                     variant="ghost"
                                                     onClick={onCancelEditingRegister(setFieldValue)}
                                                   >
@@ -600,13 +600,13 @@ const Register = (props: IRegisterProps) => {
                                               <CFormGroup row>
                                                 <CCol xs={12} className="d-flex justify-content-center mt-3">
                                                   <CButton
-                                                    className="btn-radius-50 btn btn-sm btn-success mr-2"
+                                                    className="btn-radius-50 btn-success mr-2"
                                                     onClick={onClaimReward(item.id, item.stake.amount)}
                                                   >
                                                     {t('anftDapp.registerComponent.claimReward.claimReward')}
                                                   </CButton>
                                                   <CButton
-                                                    className="btn-radius-50 btn btn-sm btn-outline-danger ml-2"
+                                                    className="btn-radius-50 btn-outline-danger ml-2"
                                                     variant="ghost"
                                                     onClick={onUnregister(item.id)}
                                                   >
@@ -620,7 +620,7 @@ const Register = (props: IRegisterProps) => {
                                           <CFormGroup row>
                                             <CCol xs={12} className="d-flex justify-content-center mt-3">
                                               <CButton
-                                                className="btn-radius-50 btn btn-sm btn-primary mr-2"
+                                                className="btn-radius-50 btn-primary mr-2"
                                                 type="submit"
                                               >
                                                 {t('anftDapp.registerComponent.register')}
