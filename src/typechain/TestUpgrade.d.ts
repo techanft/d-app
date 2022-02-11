@@ -22,9 +22,11 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
 interface TestUpgradeInterface extends ethers.utils.Interface {
   functions: {
+    "BURNER()": FunctionFragment;
     "COMMUNITY()": FunctionFragment;
     "DEFAULT_ADMIN_ROLE()": FunctionFragment;
     "ETF()": FunctionFragment;
+    "MINTER()": FunctionFragment;
     "PLATFORM_DEVELOPMENT()": FunctionFragment;
     "REAL_ESTATE_SERVICE()": FunctionFragment;
     "REGULATION_FUNDS()": FunctionFragment;
@@ -32,6 +34,7 @@ interface TestUpgradeInterface extends ethers.utils.Interface {
     "allowance(address,address)": FunctionFragment;
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
+    "burn(uint256)": FunctionFragment;
     "createListing(address,uint256)": FunctionFragment;
     "decimals()": FunctionFragment;
     "decreaseAllowance(address,uint256)": FunctionFragment;
@@ -44,6 +47,7 @@ interface TestUpgradeInterface extends ethers.utils.Interface {
     "increaseAllowance(address,uint256)": FunctionFragment;
     "initialize(address)": FunctionFragment;
     "listingStatus(address)": FunctionFragment;
+    "mint(address,uint256)": FunctionFragment;
     "name()": FunctionFragment;
     "renounceRole(bytes32,address)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
@@ -59,8 +63,12 @@ interface TestUpgradeInterface extends ethers.utils.Interface {
     "triggerOwnershipExtensionEvent(address,address,uint256,uint256,uint256)": FunctionFragment;
     "triggerRegisterEvent(address,uint256,uint256)": FunctionFragment;
     "triggerUnregisterEvent(address,uint256)": FunctionFragment;
+    "triggerUpdateListingIdEvent(uint256,uint256)": FunctionFragment;
     "triggerUpdateListingValueEvent(uint256)": FunctionFragment;
+    "triggerUpdateOptionRewardEvent(uint256,uint256)": FunctionFragment;
+    "triggerUpdateOwnerEvent(address,address)": FunctionFragment;
     "triggerUpdatePaymentEvent(uint256)": FunctionFragment;
+    "triggerUpdateValidatorEvent(address,address)": FunctionFragment;
     "triggerUpdateWorkerEvent(address,bool)": FunctionFragment;
     "triggerWithdrawEvent(address,uint256,uint256,uint256)": FunctionFragment;
     "updateStakingAddress(address)": FunctionFragment;
@@ -68,12 +76,14 @@ interface TestUpgradeInterface extends ethers.utils.Interface {
     "upgradeToAndCall(address,bytes)": FunctionFragment;
   };
 
+  encodeFunctionData(functionFragment: "BURNER", values?: undefined): string;
   encodeFunctionData(functionFragment: "COMMUNITY", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "DEFAULT_ADMIN_ROLE",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "ETF", values?: undefined): string;
+  encodeFunctionData(functionFragment: "MINTER", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "PLATFORM_DEVELOPMENT",
     values?: undefined
@@ -96,6 +106,7 @@ interface TestUpgradeInterface extends ethers.utils.Interface {
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "balanceOf", values: [string]): string;
+  encodeFunctionData(functionFragment: "burn", values: [BigNumberish]): string;
   encodeFunctionData(
     functionFragment: "createListing",
     values: [string, BigNumberish]
@@ -137,6 +148,10 @@ interface TestUpgradeInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "listingStatus",
     values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "mint",
+    values: [string, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(
@@ -193,12 +208,28 @@ interface TestUpgradeInterface extends ethers.utils.Interface {
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "triggerUpdateListingIdEvent",
+    values: [BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "triggerUpdateListingValueEvent",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "triggerUpdateOptionRewardEvent",
+    values: [BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "triggerUpdateOwnerEvent",
+    values: [string, string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "triggerUpdatePaymentEvent",
     values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "triggerUpdateValidatorEvent",
+    values: [string, string]
   ): string;
   encodeFunctionData(
     functionFragment: "triggerUpdateWorkerEvent",
@@ -218,12 +249,14 @@ interface TestUpgradeInterface extends ethers.utils.Interface {
     values: [string, BytesLike]
   ): string;
 
+  decodeFunctionResult(functionFragment: "BURNER", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "COMMUNITY", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "DEFAULT_ADMIN_ROLE",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "ETF", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "MINTER", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "PLATFORM_DEVELOPMENT",
     data: BytesLike
@@ -240,6 +273,7 @@ interface TestUpgradeInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "allowance", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "burn", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "createListing",
     data: BytesLike
@@ -273,6 +307,7 @@ interface TestUpgradeInterface extends ethers.utils.Interface {
     functionFragment: "listingStatus",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "renounceRole",
@@ -319,11 +354,27 @@ interface TestUpgradeInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "triggerUpdateListingIdEvent",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "triggerUpdateListingValueEvent",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "triggerUpdateOptionRewardEvent",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "triggerUpdateOwnerEvent",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "triggerUpdatePaymentEvent",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "triggerUpdateValidatorEvent",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -358,7 +409,11 @@ interface TestUpgradeInterface extends ethers.utils.Interface {
     "Transfer(address,address,uint256)": EventFragment;
     "Unregister(address,address,uint256)": EventFragment;
     "UpdateDailyPayment(address,uint256)": EventFragment;
+    "UpdateListingId(address,uint256,uint256)": EventFragment;
+    "UpdateOptionReward(address,uint256,uint256)": EventFragment;
+    "UpdateOwner(address,address,address)": EventFragment;
     "UpdateStakingAddr(address)": EventFragment;
+    "UpdateValidator(address,address,address)": EventFragment;
     "UpdateValue(address,uint256)": EventFragment;
     "UpdateWorker(address,address,bool)": EventFragment;
     "Upgraded(address)": EventFragment;
@@ -378,7 +433,11 @@ interface TestUpgradeInterface extends ethers.utils.Interface {
   getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Unregister"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "UpdateDailyPayment"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "UpdateListingId"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "UpdateOptionReward"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "UpdateOwner"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "UpdateStakingAddr"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "UpdateValidator"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "UpdateValue"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "UpdateWorker"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Upgraded"): EventFragment;
@@ -469,8 +528,40 @@ export type UpdateDailyPaymentEvent = TypedEvent<
   [string, BigNumber] & { _listing: string; _payment: BigNumber }
 >;
 
+export type UpdateListingIdEvent = TypedEvent<
+  [string, BigNumber, BigNumber] & {
+    _listing: string;
+    _prevId: BigNumber;
+    _newId: BigNumber;
+  }
+>;
+
+export type UpdateOptionRewardEvent = TypedEvent<
+  [string, BigNumber, BigNumber] & {
+    _listing: string;
+    _optionId: BigNumber;
+    _reward: BigNumber;
+  }
+>;
+
+export type UpdateOwnerEvent = TypedEvent<
+  [string, string, string] & {
+    _listing: string;
+    _prevOwner: string;
+    _newOwner: string;
+  }
+>;
+
 export type UpdateStakingAddrEvent = TypedEvent<
   [string] & { _stakingAddr: string }
+>;
+
+export type UpdateValidatorEvent = TypedEvent<
+  [string, string, string] & {
+    _listing: string;
+    _prevValidator: string;
+    _newValidator: string;
+  }
 >;
 
 export type UpdateValueEvent = TypedEvent<
@@ -541,11 +632,15 @@ export class TestUpgrade extends BaseContract {
   interface: TestUpgradeInterface;
 
   functions: {
+    BURNER(overrides?: CallOverrides): Promise<[string]>;
+
     COMMUNITY(overrides?: CallOverrides): Promise<[string]>;
 
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
     ETF(overrides?: CallOverrides): Promise<[string]>;
+
+    MINTER(overrides?: CallOverrides): Promise<[string]>;
 
     PLATFORM_DEVELOPMENT(overrides?: CallOverrides): Promise<[string]>;
 
@@ -568,6 +663,11 @@ export class TestUpgrade extends BaseContract {
     ): Promise<ContractTransaction>;
 
     balanceOf(account: string, overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    burn(
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     createListing(
       _owner: string,
@@ -627,6 +727,12 @@ export class TestUpgrade extends BaseContract {
       arg0: string,
       overrides?: CallOverrides
     ): Promise<[boolean, boolean] & { _isCreated: boolean; _active: boolean }>;
+
+    mint(
+      to: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     name(overrides?: CallOverrides): Promise<[string]>;
 
@@ -706,13 +812,37 @@ export class TestUpgrade extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    triggerUpdateListingIdEvent(
+      _prevId: BigNumberish,
+      _newId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     triggerUpdateListingValueEvent(
       _value: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    triggerUpdateOptionRewardEvent(
+      _optionId: BigNumberish,
+      _reward: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    triggerUpdateOwnerEvent(
+      _prevOwner: string,
+      _newOwner: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     triggerUpdatePaymentEvent(
       _payment: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    triggerUpdateValidatorEvent(
+      _prevValidator: string,
+      _newValidator: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -747,11 +877,15 @@ export class TestUpgrade extends BaseContract {
     ): Promise<ContractTransaction>;
   };
 
+  BURNER(overrides?: CallOverrides): Promise<string>;
+
   COMMUNITY(overrides?: CallOverrides): Promise<string>;
 
   DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
   ETF(overrides?: CallOverrides): Promise<string>;
+
+  MINTER(overrides?: CallOverrides): Promise<string>;
 
   PLATFORM_DEVELOPMENT(overrides?: CallOverrides): Promise<string>;
 
@@ -774,6 +908,11 @@ export class TestUpgrade extends BaseContract {
   ): Promise<ContractTransaction>;
 
   balanceOf(account: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+  burn(
+    amount: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   createListing(
     _owner: string,
@@ -833,6 +972,12 @@ export class TestUpgrade extends BaseContract {
     arg0: string,
     overrides?: CallOverrides
   ): Promise<[boolean, boolean] & { _isCreated: boolean; _active: boolean }>;
+
+  mint(
+    to: string,
+    amount: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   name(overrides?: CallOverrides): Promise<string>;
 
@@ -912,13 +1057,37 @@ export class TestUpgrade extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  triggerUpdateListingIdEvent(
+    _prevId: BigNumberish,
+    _newId: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   triggerUpdateListingValueEvent(
     _value: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  triggerUpdateOptionRewardEvent(
+    _optionId: BigNumberish,
+    _reward: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  triggerUpdateOwnerEvent(
+    _prevOwner: string,
+    _newOwner: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   triggerUpdatePaymentEvent(
     _payment: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  triggerUpdateValidatorEvent(
+    _prevValidator: string,
+    _newValidator: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -953,11 +1122,15 @@ export class TestUpgrade extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    BURNER(overrides?: CallOverrides): Promise<string>;
+
     COMMUNITY(overrides?: CallOverrides): Promise<string>;
 
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
     ETF(overrides?: CallOverrides): Promise<string>;
+
+    MINTER(overrides?: CallOverrides): Promise<string>;
 
     PLATFORM_DEVELOPMENT(overrides?: CallOverrides): Promise<string>;
 
@@ -980,6 +1153,8 @@ export class TestUpgrade extends BaseContract {
     ): Promise<boolean>;
 
     balanceOf(account: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    burn(amount: BigNumberish, overrides?: CallOverrides): Promise<void>;
 
     createListing(
       _owner: string,
@@ -1036,6 +1211,12 @@ export class TestUpgrade extends BaseContract {
       arg0: string,
       overrides?: CallOverrides
     ): Promise<[boolean, boolean] & { _isCreated: boolean; _active: boolean }>;
+
+    mint(
+      to: string,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     name(overrides?: CallOverrides): Promise<string>;
 
@@ -1112,13 +1293,37 @@ export class TestUpgrade extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    triggerUpdateListingIdEvent(
+      _prevId: BigNumberish,
+      _newId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     triggerUpdateListingValueEvent(
       _value: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
+    triggerUpdateOptionRewardEvent(
+      _optionId: BigNumberish,
+      _reward: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    triggerUpdateOwnerEvent(
+      _prevOwner: string,
+      _newOwner: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     triggerUpdatePaymentEvent(
       _payment: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    triggerUpdateValidatorEvent(
+      _prevValidator: string,
+      _newValidator: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1422,6 +1627,60 @@ export class TestUpgrade extends BaseContract {
       { _listing: string; _payment: BigNumber }
     >;
 
+    "UpdateListingId(address,uint256,uint256)"(
+      _listing?: null,
+      _prevId?: null,
+      _newId?: null
+    ): TypedEventFilter<
+      [string, BigNumber, BigNumber],
+      { _listing: string; _prevId: BigNumber; _newId: BigNumber }
+    >;
+
+    UpdateListingId(
+      _listing?: null,
+      _prevId?: null,
+      _newId?: null
+    ): TypedEventFilter<
+      [string, BigNumber, BigNumber],
+      { _listing: string; _prevId: BigNumber; _newId: BigNumber }
+    >;
+
+    "UpdateOptionReward(address,uint256,uint256)"(
+      _listing?: null,
+      _optionId?: null,
+      _reward?: null
+    ): TypedEventFilter<
+      [string, BigNumber, BigNumber],
+      { _listing: string; _optionId: BigNumber; _reward: BigNumber }
+    >;
+
+    UpdateOptionReward(
+      _listing?: null,
+      _optionId?: null,
+      _reward?: null
+    ): TypedEventFilter<
+      [string, BigNumber, BigNumber],
+      { _listing: string; _optionId: BigNumber; _reward: BigNumber }
+    >;
+
+    "UpdateOwner(address,address,address)"(
+      _listing?: null,
+      _prevOwner?: null,
+      _newOwner?: null
+    ): TypedEventFilter<
+      [string, string, string],
+      { _listing: string; _prevOwner: string; _newOwner: string }
+    >;
+
+    UpdateOwner(
+      _listing?: null,
+      _prevOwner?: null,
+      _newOwner?: null
+    ): TypedEventFilter<
+      [string, string, string],
+      { _listing: string; _prevOwner: string; _newOwner: string }
+    >;
+
     "UpdateStakingAddr(address)"(
       _stakingAddr?: null
     ): TypedEventFilter<[string], { _stakingAddr: string }>;
@@ -1429,6 +1688,24 @@ export class TestUpgrade extends BaseContract {
     UpdateStakingAddr(
       _stakingAddr?: null
     ): TypedEventFilter<[string], { _stakingAddr: string }>;
+
+    "UpdateValidator(address,address,address)"(
+      _listing?: null,
+      _prevValidator?: null,
+      _newValidator?: null
+    ): TypedEventFilter<
+      [string, string, string],
+      { _listing: string; _prevValidator: string; _newValidator: string }
+    >;
+
+    UpdateValidator(
+      _listing?: null,
+      _prevValidator?: null,
+      _newValidator?: null
+    ): TypedEventFilter<
+      [string, string, string],
+      { _listing: string; _prevValidator: string; _newValidator: string }
+    >;
 
     "UpdateValue(address,uint256)"(
       _listing?: null,
@@ -1508,11 +1785,15 @@ export class TestUpgrade extends BaseContract {
   };
 
   estimateGas: {
+    BURNER(overrides?: CallOverrides): Promise<BigNumber>;
+
     COMMUNITY(overrides?: CallOverrides): Promise<BigNumber>;
 
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
     ETF(overrides?: CallOverrides): Promise<BigNumber>;
+
+    MINTER(overrides?: CallOverrides): Promise<BigNumber>;
 
     PLATFORM_DEVELOPMENT(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1535,6 +1816,11 @@ export class TestUpgrade extends BaseContract {
     ): Promise<BigNumber>;
 
     balanceOf(account: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    burn(
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     createListing(
       _owner: string,
@@ -1594,6 +1880,12 @@ export class TestUpgrade extends BaseContract {
     ): Promise<BigNumber>;
 
     listingStatus(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    mint(
+      to: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     name(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1673,13 +1965,37 @@ export class TestUpgrade extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    triggerUpdateListingIdEvent(
+      _prevId: BigNumberish,
+      _newId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     triggerUpdateListingValueEvent(
       _value: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    triggerUpdateOptionRewardEvent(
+      _optionId: BigNumberish,
+      _reward: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    triggerUpdateOwnerEvent(
+      _prevOwner: string,
+      _newOwner: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     triggerUpdatePaymentEvent(
       _payment: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    triggerUpdateValidatorEvent(
+      _prevValidator: string,
+      _newValidator: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1715,6 +2031,8 @@ export class TestUpgrade extends BaseContract {
   };
 
   populateTransaction: {
+    BURNER(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     COMMUNITY(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     DEFAULT_ADMIN_ROLE(
@@ -1722,6 +2040,8 @@ export class TestUpgrade extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     ETF(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    MINTER(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     PLATFORM_DEVELOPMENT(
       overrides?: CallOverrides
@@ -1750,6 +2070,11 @@ export class TestUpgrade extends BaseContract {
     balanceOf(
       account: string,
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    burn(
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     createListing(
@@ -1812,6 +2137,12 @@ export class TestUpgrade extends BaseContract {
     listingStatus(
       arg0: string,
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    mint(
+      to: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -1892,13 +2223,37 @@ export class TestUpgrade extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    triggerUpdateListingIdEvent(
+      _prevId: BigNumberish,
+      _newId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     triggerUpdateListingValueEvent(
       _value: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    triggerUpdateOptionRewardEvent(
+      _optionId: BigNumberish,
+      _reward: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    triggerUpdateOwnerEvent(
+      _prevOwner: string,
+      _newOwner: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     triggerUpdatePaymentEvent(
       _payment: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    triggerUpdateValidatorEvent(
+      _prevValidator: string,
+      _newValidator: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
