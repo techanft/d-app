@@ -1,6 +1,6 @@
 import CIcon from '@coreui/icons-react';
 import { CLink, CSidebar, CSidebarBrand, CSidebarFooter, CTooltip } from '@coreui/react';
-import { faGlobe, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
+import { faGlobe, faHomeAlt, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -61,8 +61,31 @@ const TheSidebar = () => {
       unfoldable
       onShowChange={(val: boolean) => dispatch(toggleSidebar(val))}
     >
-      <CSidebarBrand className="header-container">ANFT D-APP</CSidebarBrand>
+      <CSidebarBrand>ANFT D-APP</CSidebarBrand>
       <ul className="c-sidebar-nav h-100 ps">
+        <li className={`c-sidebar-nav-item `}>
+          <CLink className={`c-sidebar-nav-link ${highlightNavItem('/listings')}`} to={'/listings'}>
+            <FontAwesomeIcon icon={faHomeAlt} size="lg" className={`c-sidebar-nav-icon text-primary`} />{' '}
+            {t('anftDapp.headerComponent.dashboard')}
+          </CLink>
+        </li>
+        <li className={`c-sidebar-nav-item `}>
+          <CLink className={`c-sidebar-nav-link ${highlightNavItem('/logs-overview')}`} to={'/logs-overview'}>
+            <CIcon name="cil-history" className={`c-sidebar-nav-icon text-primary`} />{' '}
+            {t('anftDapp.listingComponent.activityLogs')}
+          </CLink>
+        </li>
+        <li className={`c-sidebar-nav-item`}>
+          <CLink
+            className={`c-sidebar-nav-link`}
+            target="_blank"
+            rel="noreferrer noopener"
+            href="https://dapp-guide.anft.vn"
+          >
+            <CIcon name="cil-book" className={`c-sidebar-nav-icon text-primary`} />{' '}
+            {t('anftDapp.sidebarComponent.userGuide')}
+          </CLink>
+        </li>
         <li className={`c-sidebar-nav-dropdown ${LANGUAGE ? 'c-show' : ''}`}>
           <CLink className="c-sidebar-nav-dropdown-toggle" onClick={setDDCurrying(Dropdown.LANGUAGE, !LANGUAGE)}>
             <FontAwesomeIcon icon={faGlobe} className="c-sidebar-nav-icon text-primary" />
@@ -88,19 +111,6 @@ const TheSidebar = () => {
               </CLink>
             </li>
           </ul>
-        </li>
-        <li className={`c-sidebar-nav-item `}>
-          {/* 
-            overview => logs-overview;
-            change route and component names
-          */}
-          {/* 
-            Add icon for this nav item
-          */}
-          <CLink className={`c-sidebar-nav-link ${highlightNavItem('/logs-overview')}`} to={'/logs-overview'}>
-            <CIcon name="cil-history" className={`c-sidebar-nav-icon text-primary`} />{' '}
-            {t('anftDapp.listingComponent.activityLogs')}
-          </CLink>
         </li>
       </ul>
       <CSidebarFooter className={`text-center bg-white`}>
