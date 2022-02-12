@@ -159,7 +159,8 @@ const ListingInfo = (props: IListingInfoProps) => {
   const { initialState } = useSelector((state: RootState) => state.assets);
   const { entityLoading } = initialState;
 
-  const ownershipExpired = listing?.ownership ? checkOwnershipAboutToExpire(listing.ownership.toNumber()) : false;
+  const ownershipExpired = listing?.ownership ? checkOwnershipExpired(listing.ownership.toNumber()) : false;
+  const ownershipAboutToExpire = listing?.ownership ? checkOwnershipAboutToExpire(listing.ownership.toNumber()) : false;
   const viewerIsOwner = Boolean(signerAddress && signerAddress === listing?.owner);
 
   const initialModalState: TModalsVisibility = {
@@ -202,7 +203,7 @@ const ListingInfo = (props: IListingInfoProps) => {
 
   const onRegisteringOwnership = () => {
     if (viewerIsOwner) return;
-    if (!ownershipExpired) return ToastError(t('anftDapp.listingComponent.extendOwnership.cannotRegisterOwnership'));
+    if (!ownershipAboutToExpire) return ToastError(t('anftDapp.listingComponent.extendOwnership.cannotRegisterOwnership'));
     handleModalVisibility(ModalType.OWNERSHIP_REGISTER, true);
   };
 
@@ -293,7 +294,7 @@ const ListingInfo = (props: IListingInfoProps) => {
               <CCol xs={6}>
                 <p className="detail-title-font my-2">{t('anftDapp.listingComponent.primaryInfo.ownershipPeriod')}</p>
                 {!entityLoading && listing?.ownership ? (
-                  <p className={`my-2 value-text ${ownershipExpired ? 'text-danger' : 'text-success'}`}>
+                  <p className={`my-2 value-text ${ownershipAboutToExpire ? 'text-warning' : 'text-success'}`}>
                     {convertUnixToDate(listing.ownership.toNumber())}
                   </p>
                 ) : (
@@ -395,7 +396,7 @@ const ListingInfo = (props: IListingInfoProps) => {
                   <CRow className="mx-0">
                     <p
                       onClick={onRegisteringOwnership}
-                      className={`m-0 ${viewerIsOwner || !ownershipExpired ? 'text-secondary' : 'text-primary'}`}
+                      className={`m-0 ${viewerIsOwner || !ownershipAboutToExpire ? 'text-secondary' : 'text-primary'}`}
                     >
                       <FontAwesomeIcon icon={faEdit} />{' '}
                       {t('anftDapp.listingComponent.primaryInfo.investmentActivities.registerOwnership')}
