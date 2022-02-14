@@ -21,7 +21,8 @@
           "invalidNetworkErrMsg": "Invalid network detected. Please go to Metamask and switch to BSC network to use the application",
           "ethereumIsNotInitializedErrMsg": "Ethereum is not initialized. Please install an Ethereum wallet in your browser",
           "reload": "Reload"
-        }
+        },
+        "noticeText": "Notice: From 23:30 - {{aboutToExpire}} to 23:30 - {{expired}}, another address is able to take the ownership of this listing"
       },
       "noItemText": "No Record(s) Found"
     },
@@ -106,7 +107,7 @@
         "incorrectInputType": "Incorrect input type!",
         "inputIsRequired": "This field is required!",
         "minimumOwnership": "Minimum ownership for the listing is 1.0 day!",
-        "noticeText": "Ownership will be started from now to the end of the selected day (23:30 {{day}})"
+        "noticeText": "Ownership will be started from now to the end of the selected day (23:30 - {{day}})"
       },
       "withdrawToken": {
         "maximumWithdrawable": "Maximum Days",

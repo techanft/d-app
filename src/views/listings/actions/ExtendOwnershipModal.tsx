@@ -12,7 +12,7 @@ import {
   CModalFooter,
   CModalHeader,
   CModalTitle,
-  CRow
+  CRow,
 } from '@coreui/react';
 import { BigNumber } from 'ethers';
 import { Formik, FormikProps } from 'formik';
@@ -36,7 +36,7 @@ import {
   getSecondDifftoEndDate,
   insertCommas,
   returnMaxEndDate,
-  unInsertCommas
+  unInsertCommas,
 } from '../../../shared/casual-helpers';
 import { ToastError } from '../../../shared/components/Toast';
 import { EventType } from '../../../shared/enumeration/eventType';
@@ -313,6 +313,14 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                         {t('anftDapp.listingComponent.extendOwnership.noticeText', {
                           day: `${values.endDate.format(APP_LOCAL_DATE_FORMAT)}`,
                         })}
+                      </CFormText>
+                      <CFormText>
+                        <p className={`text-danger m-0`}>
+                          {t('anftDapp.global.modal.noticeText', {
+                            aboutToExpire: `${moment(values.endDate).subtract(1, 'd').format(APP_LOCAL_DATE_FORMAT)}`,
+                            expired: `${values.endDate.format(APP_LOCAL_DATE_FORMAT)}`,
+                          })}
+                        </p>
                       </CFormText>
                     </CCol>
                   </CFormGroup>
