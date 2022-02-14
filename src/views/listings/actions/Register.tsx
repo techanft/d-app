@@ -48,7 +48,7 @@ import useWindowDimensions from '../../../shared/hooks/useWindowDimensions';
 import { IOption } from '../../../shared/models/options.model';
 import { RootState } from '../../../shared/reducers';
 import { getEntity, getOptionsWithStakes } from '../../assets/assets.api';
-import { fetchingEntity, selectEntityById } from '../../assets/assets.reducer';
+import { fetchingEntity, selectEntityById, softReset } from '../../assets/assets.reducer';
 import { baseSetterArgs } from '../../transactions/settersMapping';
 import { IProceedTxBody, proceedTransaction } from '../../transactions/transactions.api';
 import { fetching, hardReset } from '../../transactions/transactions.reducer';
@@ -104,7 +104,7 @@ const Register = (props: IRegisterProps) => {
   const { tokenBalance } = useSelector((state: RootState) => state.wallet);
   const { success, submitted } = useSelector((state: RootState) => state.transactions);
 
-  const { entityLoading } = initialState;
+  const { entityLoading, fetchEntitySuccess } = initialState;
 
   const listing = useSelector(selectEntityById(Number(id)));
 
@@ -236,14 +236,28 @@ const Register = (props: IRegisterProps) => {
   }, [id]);
 
   useEffect(() => {
-    if (success && provider && listing && signerAddress) {
+    if (success && provider) {
+      dispatch(fetchingEntity());
+      dispatch(
+        getEntity({
+          id: Number(id),
+          provider,
+        })
+      );
+      dispatch(softReset());
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [success]);
+
+  useEffect(() => {
+    if (fetchEntitySuccess && listing && signerAddress && provider) {
       dispatch(fetchingEntity());
       dispatch(getOptionsWithStakes({ listing, stakeholder: signerAddress, provider }));
       dispatch(hardReset());
       setDetails([]);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [success]);
+  }, [fetchEntitySuccess]);
 
   useEffect(() => {
     if (listing && signerAddress && provider) {
@@ -378,7 +392,7 @@ const Register = (props: IRegisterProps) => {
               <CDataTable
                 striped
                 noItemsView={{
-                  noItems: t("anftDapp.global.noItemText"),
+                  noItems: t('anftDapp.global.noItemText'),
                 }}
                 items={listing.options}
                 fields={registerView}
@@ -619,10 +633,7 @@ const Register = (props: IRegisterProps) => {
                                         ) : (
                                           <CFormGroup row>
                                             <CCol xs={12} className="d-flex justify-content-center mt-3">
-                                              <CButton
-                                                className="btn-radius-50 btn-primary mr-2"
-                                                type="submit"
-                                              >
+                                              <CButton className="btn-radius-50 btn-primary mr-2" type="submit">
                                                 {t('anftDapp.registerComponent.register')}
                                               </CButton>
                                             </CCol>
