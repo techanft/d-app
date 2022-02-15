@@ -104,7 +104,7 @@ const Register = (props: IRegisterProps) => {
   const { tokenBalance } = useSelector((state: RootState) => state.wallet);
   const { success, submitted } = useSelector((state: RootState) => state.transactions);
 
-  const { entityLoading, fetchEntitySuccess } = initialState;
+  const { entityLoading, fetchEntitySuccess, updateEntitySuccess } = initialState;
 
   const listing = useSelector(selectEntityById(Number(id)));
 
@@ -254,10 +254,16 @@ const Register = (props: IRegisterProps) => {
       dispatch(fetchingEntity());
       dispatch(getOptionsWithStakes({ listing, stakeholder: signerAddress, provider }));
       dispatch(hardReset());
-      setDetails([]);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchEntitySuccess]);
+
+  useEffect(() => {
+    if (updateEntitySuccess) {
+      setDetails([]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [updateEntitySuccess]);
 
   useEffect(() => {
     if (listing && signerAddress && provider) {
@@ -434,7 +440,7 @@ const Register = (props: IRegisterProps) => {
                           <CCardBody className="px-3">
                             <CRow className="align-items-center">
                               <CCol xs={12}>
-                                {submitted && !success ? (
+                                {submitted && !success && updateEntitySuccess ? (
                                   <CRow>
                                     <CCol xs={12} className="d-flex justify-content-center">
                                       <ConfirmationLoading />
