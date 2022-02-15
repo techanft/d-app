@@ -70,7 +70,8 @@ const AddWorkerPermission = (props: ICancelWorkerPermission) => {
       .required(t('anftDapp.workersListComponent.addressIsRequired'))
       .test('address-validation', t('anftDapp.workersListComponent.addressValidation'), function (value) {
         return utils.isAddress(value || '');
-      }),
+      })
+      .nullable(),
   });
 
   const handleRawFormValues = (input: IIntialValues): IProceedTxBody => {
@@ -105,7 +106,7 @@ const AddWorkerPermission = (props: ICancelWorkerPermission) => {
   const handleErrorFile = (err: any) => {
     console.log(`${t('anftDapp.global.errors.qrScanError')}: ${err}`);
   };
-  
+
   const handleScanFile = (result: string | null) => {
     if (result) {
       setIsScanQrMode(false);
@@ -127,7 +128,9 @@ const AddWorkerPermission = (props: ICancelWorkerPermission) => {
         ) : (
           ''
         )}
-        <CModalTitle className="modal-title-style m-auto">{t('anftDapp.workersListComponent.addWorkerPermission')}</CModalTitle>
+        <CModalTitle className="modal-title-style m-auto">
+          {t('anftDapp.workersListComponent.addWorkerPermission')}
+        </CModalTitle>
       </CModalHeader>
 
       <Formik<IIntialValues>
@@ -140,7 +143,7 @@ const AddWorkerPermission = (props: ICancelWorkerPermission) => {
             const value = handleRawFormValues(rawValues);
             const workerAuthorized = await checkWorkerStatus(value.contract, rawValues.address, true);
             if (workerAuthorized) throw Error(t('anftDapp.workersListComponent.workerAuthorized'));
-            
+
             dispatch(fetching());
             dispatch(proceedTransaction(value));
           } catch (error) {

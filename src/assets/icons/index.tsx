@@ -20,7 +20,8 @@ import {
   cilBook,
   cilHome,
   cilFindInPage,
-  cilDescription
+  cilDescription,
+  cilCheckAlt
 
 } from '@coreui/icons/js/free';
 
@@ -46,7 +47,8 @@ export const icons = Object.assign(
     cilBook,
     cilHome,
     cilFindInPage,
-    cilDescription
+    cilDescription,
+    cilCheckAlt
   },
   {
     cifVn,

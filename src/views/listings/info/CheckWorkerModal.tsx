@@ -1,18 +1,18 @@
 import CIcon from '@coreui/icons-react';
 import {
-  CButton,
-  CCol,
-  CForm,
-  CInput,
-  CInputGroup,
-  CInputGroupAppend,
-  CInvalidFeedback,
-  CModal,
-  CModalBody,
-  CModalFooter,
-  CModalHeader,
-  CModalTitle,
-  CRow,
+    CButton,
+    CCol,
+    CForm,
+    CInput,
+    CInputGroup,
+    CInputGroupAppend,
+    CInvalidFeedback,
+    CModal,
+    CModalBody,
+    CModalFooter,
+    CModalHeader,
+    CModalTitle,
+    CRow
 } from '@coreui/react';
 import { faChevronLeft } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -51,17 +51,20 @@ const CheckWorkerModal = (props: ICancelWorkerPermission) => {
       .required(t('anftDapp.workersListComponent.addressIsRequired'))
       .test('address-validation', t('anftDapp.workersListComponent.addressValidation'), function (value) {
         return utils.isAddress(value || '');
-      }),
+      })
+      .nullable(),
   });
 
   const closeModal = () => {
     setVisible(false);
     setIsScanQrMode(false);
     setCheckingResult('');
+    setIsWorkerAuthorized(undefined);
     formikRef.current?.resetForm();
   };
 
-  const [checkingResult, setCheckingResult] = useState<string>();
+  const [checkingResult, setCheckingResult] = useState<string>('');
+  const [isWorkerAuthorized, setIsWorkerAuthorized] = useState<boolean | undefined>(undefined);
   const [isScanQrMode, setIsScanQrMode] = useState<boolean>(false);
 
   const handleErrorFile = (err: any) => {
@@ -77,6 +80,24 @@ const CheckWorkerModal = (props: ICancelWorkerPermission) => {
   const onScanFile = () => {
     setIsScanQrMode(true);
     formikRef.current?.resetForm();
+  };
+
+  const handleCheckingResult = () => {
+    if (isWorkerAuthorized === undefined) return;
+    if (isWorkerAuthorized) {
+      return (
+        <p className="mb-0 mt-2 text-success">
+          <CIcon name="cil-check-alt" /> {checkingResult}
+        </p>
+      );
+    } else {
+      return (
+        <p className="mb-0 mt-2 text-danger">
+          <CIcon name="cil-x" />
+          {checkingResult}
+        </p>
+      );
+    }
   };
 
   return (
@@ -101,8 +122,10 @@ const CheckWorkerModal = (props: ICancelWorkerPermission) => {
         onSubmit={(values) => {
           if (workers?.results.find((e) => e.worker === values.address)) {
             setCheckingResult(t('anftDapp.listingComponent.primaryInfo.checkWorker.workerAuthorized'));
+            setIsWorkerAuthorized(true);
           } else {
             setCheckingResult(t('anftDapp.listingComponent.primaryInfo.checkWorker.workerNotAuthorized'));
+            setIsWorkerAuthorized(false);
           }
         }}
       >
@@ -138,6 +161,7 @@ const CheckWorkerModal = (props: ICancelWorkerPermission) => {
                           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                             setFieldValue(`address`, e.target.value);
                             setCheckingResult('');
+                            setIsWorkerAuthorized(undefined);
                           }}
                           autoComplete="off"
                           value={values.address || ''}
@@ -154,8 +178,8 @@ const CheckWorkerModal = (props: ICancelWorkerPermission) => {
                         {errors.address}
                       </CInvalidFeedback>
                     </CCol>
-                    <CCol xs={12} className={!!errors.address && touched.address ? 'd-none' : 'd-block'}>
-                      <p className="mb-0 mt-2 text-primary">{checkingResult}</p>
+                    <CCol xs={12} className={!!errors.address && touched.address ? 'd-none' : 'd-block text-center'}>
+                      {handleCheckingResult()}
                     </CCol>
                   </CRow>
                 )}
