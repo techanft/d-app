@@ -244,7 +244,7 @@ const Register = (props: IRegisterProps) => {
           provider,
         })
       );
-      dispatch(softReset());
+      dispatch(softReset());    //reset fetchEntitySuccess state
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [success]);
@@ -253,7 +253,7 @@ const Register = (props: IRegisterProps) => {
     if (fetchEntitySuccess && listing && signerAddress && provider) {
       dispatch(fetchingEntity());
       dispatch(getOptionsWithStakes({ listing, stakeholder: signerAddress, provider }));
-      dispatch(hardReset());
+      dispatch(hardReset());      //reset transactions state
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchEntitySuccess]);
@@ -275,7 +275,7 @@ const Register = (props: IRegisterProps) => {
 
   const initialValues: IRegister = {
     registerAmount: 0,
-  };
+  };  
 
   useEffect(() => {
     if (submitted) {
@@ -440,7 +440,7 @@ const Register = (props: IRegisterProps) => {
                           <CCardBody className="px-3">
                             <CRow className="align-items-center">
                               <CCol xs={12}>
-                                {submitted && !success && updateEntitySuccess ? (
+                                {submitted || !updateEntitySuccess ? (
                                   <CRow>
                                     <CCol xs={12} className="d-flex justify-content-center">
                                       <ConfirmationLoading />
