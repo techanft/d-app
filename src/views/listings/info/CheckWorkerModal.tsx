@@ -1,18 +1,18 @@
 import CIcon from '@coreui/icons-react';
 import {
-    CButton,
-    CCol,
-    CForm,
-    CInput,
-    CInputGroup,
-    CInputGroupAppend,
-    CInvalidFeedback,
-    CModal,
-    CModalBody,
-    CModalFooter,
-    CModalHeader,
-    CModalTitle,
-    CRow
+  CButton,
+  CCol,
+  CForm,
+  CInput,
+  CInputGroup,
+  CInputGroupAppend,
+  CInvalidFeedback,
+  CModal,
+  CModalBody,
+  CModalFooter,
+  CModalHeader,
+  CModalTitle,
+  CRow,
 } from '@coreui/react';
 import { faChevronLeft } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -169,7 +169,15 @@ const CheckWorkerModal = (props: ICancelWorkerPermission) => {
                           className="btn-radius-50"
                         />
                         <CInputGroupAppend>
-                          <CButton color="primary" className="btn-radius-50 py-0 px-3" onClick={onScanFile}>
+                          <CButton
+                            color="primary"
+                            className="btn-radius-50 py-0 px-3"
+                            onClick={() => {
+                              onScanFile();
+                              setCheckingResult('');
+                              setIsWorkerAuthorized(undefined);
+                            }}
+                          >
                             <CIcon name="cil-qr-code" />
                           </CButton>
                         </CInputGroupAppend>
