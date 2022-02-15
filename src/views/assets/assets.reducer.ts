@@ -82,13 +82,13 @@ const { actions, reducer } = createSlice({
     },
     [getOptionsWithStakes.fulfilled.type]: (state, { payload }: PayloadAction<IAsset>) => {
       assetsAdapter.upsertOne(state, payload);
-      state.initialState.fetchEntitySuccess = true;
+      state.initialState.updateEntitySuccess = true;
       state.initialState.entityLoading = false;
     },
     [getOptionsWithStakes.rejected.type]: (state, { payload }: PayloadAction<any>) => {
       state.initialState.errorMessage = payload?.message;
+      state.initialState.updateEntitySuccess = false;
       state.initialState.entityLoading = false;
-      state.initialState.fetchEntitySuccess = false;
     },
   },
 });

@@ -18,22 +18,14 @@ import { faChevronLeft } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { utils } from 'ethers';
 import { Formik, FormikProps } from 'formik';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import QrReader from 'react-qr-reader';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import * as Yup from 'yup';
-import { checkWorkerStatus, LISTING_INSTANCE } from '../../../shared/blockchain-helpers';
-import { ToastError } from '../../../shared/components/Toast';
-import { EventType } from '../../../shared/enumeration/eventType';
 import { RootState } from '../../../shared/reducers';
-import { selectEntityById } from '../../assets/assets.reducer';
-import { baseSetterArgs } from '../../transactions/settersMapping';
-import { IProceedTxBody, proceedTransaction } from '../../transactions/transactions.api';
-import { fetching, softReset } from '../../transactions/transactions.reducer';
 
 interface ICancelWorkerPermission {
-  listingId: number;
   visible: boolean;
   setVisible: (visible: boolean) => void;
 }
@@ -46,24 +38,13 @@ const initialValues: IIntialValues = {
   address: '',
 };
 
-const AddWorkerPermission = (props: ICancelWorkerPermission) => {
-  const { visible, setVisible, listingId } = props;
+const CheckWorkerModal = (props: ICancelWorkerPermission) => {
+  const { visible, setVisible } = props;
   const { t } = useTranslation();
-
+  const { initialState: recordInitialState } = useSelector((state: RootState) => state.records);
+  const { workers } = recordInitialState.workerInitialState;
   // FormikRef is type-able https://github.com/jaredpalmer/formik/issues/2290
   const formikRef = useRef<FormikProps<IIntialValues>>(null);
-  const dispatch = useDispatch();
-  const listing = useSelector(selectEntityById(listingId));
-  const { signer } = useSelector((state: RootState) => state.wallet);
-  const { submitted, loading } = useSelector((state: RootState) => state.transactions);
-
-  useEffect(() => {
-    if (submitted) {
-      setVisible(false);
-      formikRef.current?.resetForm();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [submitted]);
 
   const validationSchema = Yup.object().shape({
     address: Yup.string()
@@ -74,34 +55,17 @@ const AddWorkerPermission = (props: ICancelWorkerPermission) => {
       .nullable(),
   });
 
-  const handleRawFormValues = (input: IIntialValues): IProceedTxBody => {
-    if (!listing?.address) {
-      throw Error('Error getting listing address');
-    }
-    if (!signer) {
-      throw Error('No Signer found');
-    }
-    const instance = LISTING_INSTANCE({ address: listing.address, signer });
-    if (!instance) {
-      throw Error('Error in generating contract instance');
-    }
-    const output: IProceedTxBody = {
-      listingId,
-      contract: instance,
-      type: EventType.UPDATE_WORKER,
-      args: { ...baseSetterArgs, _worker: input.address },
-    };
-
-    return output;
-  };
+  const [checkingResult, setCheckingResult] = useState<string>('');
+  const [isWorkerAuthorized, setIsWorkerAuthorized] = useState<boolean | undefined>(undefined);
+  const [isScanQrMode, setIsScanQrMode] = useState<boolean>(false);
 
   const closeModal = () => {
     setVisible(false);
     setIsScanQrMode(false);
+    setCheckingResult('');
+    setIsWorkerAuthorized(undefined);
     formikRef.current?.resetForm();
   };
-
-  const [isScanQrMode, setIsScanQrMode] = useState<boolean>(false);
 
   const handleErrorFile = (err: any) => {
     console.log(`${t('anftDapp.global.errors.qrScanError')}: ${err}`);
@@ -118,6 +82,15 @@ const AddWorkerPermission = (props: ICancelWorkerPermission) => {
     formikRef.current?.resetForm();
   };
 
+  const handleCheckingResult = () => {
+    if (isWorkerAuthorized === undefined) return;
+    return (
+      <p className={`mb-0 mt-2 ${isWorkerAuthorized ? 'text-success' : 'text-danger'}`}>
+        <CIcon name={`${isWorkerAuthorized ? 'cil-check-circle' : 'cil-x-circle'}`} /> {checkingResult}
+      </p>
+    );
+  };
+
   return (
     <CModal show={visible} onClose={closeModal} closeOnBackdrop={false} centered className="border-radius-modal">
       <CModalHeader>
@@ -129,31 +102,23 @@ const AddWorkerPermission = (props: ICancelWorkerPermission) => {
           ''
         )}
         <CModalTitle className="modal-title-style m-auto">
-          {t('anftDapp.workersListComponent.addWorkerPermission')}
+          {t('anftDapp.listingComponent.primaryInfo.checkWorker.checkWorker')}
         </CModalTitle>
       </CModalHeader>
-
       <Formik<IIntialValues>
         innerRef={formikRef}
         enableReinitialize
         initialValues={initialValues}
         validationSchema={validationSchema}
-        onSubmit={async (rawValues) => {
-          try {
-            const value = handleRawFormValues(rawValues);
-            const workerAuthorized = await checkWorkerStatus(value.contract, rawValues.address, true);
-            if (workerAuthorized) throw Error(t('anftDapp.workersListComponent.workerAuthorized'));
-
-            dispatch(fetching());
-            dispatch(proceedTransaction(value));
-          } catch (error) {
-            console.log(`Error submitting form ${error}`);
-            ToastError(`${t('anftDapp.global.errors.errorSubmittingForm')}: ${error}`);
-            dispatch(softReset());
-          }
+        onSubmit={(values) => {
+          if (!workers) return;
+          const isWorker = Boolean(workers.results.find((e) => e.worker === values.address));
+          setIsWorkerAuthorized(isWorker);
+          const translationKey = isWorker ? 'workerAuthorized' : 'workerNotAuthorized';
+          setCheckingResult(t(`anftDapp.listingComponent.primaryInfo.checkWorker.${translationKey}`));
         }}
       >
-        {({ values, errors, touched, handleChange, handleSubmit, handleBlur, setFieldValue }) => (
+        {({ values, errors, touched, handleSubmit, handleBlur, setFieldValue }) => (
           <CForm onSubmit={handleSubmit}>
             <>
               <CModalBody>
@@ -182,14 +147,26 @@ const AddWorkerPermission = (props: ICancelWorkerPermission) => {
                           type="text"
                           id="address"
                           name="address"
-                          onChange={handleChange}
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                            setFieldValue(`address`, e.target.value);
+                            setCheckingResult('');
+                            setIsWorkerAuthorized(undefined);
+                          }}
                           autoComplete="off"
                           value={values.address || ''}
                           onBlur={handleBlur}
                           className="btn-radius-50"
                         />
                         <CInputGroupAppend>
-                          <CButton color="primary" className="btn-radius-50 py-0 px-3" onClick={onScanFile}>
+                          <CButton
+                            color="primary"
+                            className="btn-radius-50 py-0 px-3"
+                            onClick={() => {
+                              onScanFile();
+                              setCheckingResult('');
+                              setIsWorkerAuthorized(undefined);
+                            }}
+                          >
                             <CIcon name="cil-qr-code" />
                           </CButton>
                         </CInputGroupAppend>
@@ -197,6 +174,9 @@ const AddWorkerPermission = (props: ICancelWorkerPermission) => {
                       <CInvalidFeedback className={!!errors.address && touched.address ? 'd-block' : 'd-none'}>
                         {errors.address}
                       </CInvalidFeedback>
+                    </CCol>
+                    <CCol xs={12} className={!!errors.address && touched.address ? 'd-none' : 'd-block text-center'}>
+                      {handleCheckingResult()}
                     </CCol>
                   </CRow>
                 )}
@@ -211,11 +191,7 @@ const AddWorkerPermission = (props: ICancelWorkerPermission) => {
                   </CButton>
                 </CCol>
                 <CCol>
-                  <CButton
-                    disabled={loading}
-                    className="px-2 w-100 btn btn-primary btn-font-style btn-radius-50"
-                    type="submit"
-                  >
+                  <CButton className="px-2 w-100 btn btn-primary btn-font-style btn-radius-50" type="submit">
                     {t('anftDapp.global.modal.confirm')}
                   </CButton>
                 </CCol>
@@ -228,4 +204,4 @@ const AddWorkerPermission = (props: ICancelWorkerPermission) => {
   );
 };
 
-export default AddWorkerPermission;
+export default CheckWorkerModal;

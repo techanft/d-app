@@ -21,7 +21,8 @@
           "invalidNetworkErrMsg": "Mạng không hợp lệ. Vui lòng vào Metamask và chuyển sang mạng BSC để sử dụng ứng dụng",
           "ethereumIsNotInitializedErrMsg": "Ethereum chưa được khởi tạo. Vui lòng cài đặt ví Ethereum trong trình duyệt của bạn",
           "reload": "Tải lại"
-        }
+        },
+        "noticeText": "Lưu ý: Thời gian từ 23:30 - {{aboutToExpire}} đến 23:30 - {{expired}}, BĐS này có thể bị người khác chốt quyền sở hữu"
       },
       "noItemText": "Không có bản ghi"
     },
@@ -76,6 +77,12 @@
         "totalStake": "Tổng stake",
         "workersCount": "Số người khai khác",
         "workersList": "Xem quyền khai thác",
+        "checkWorker": {
+          "checkWorker": "Xác minh khai thác",
+          "workerAuthorized": "Địa chỉ này đã được ủy quyền",
+          "workerNotAuthorized": "Địa chỉ này chưa được ủy quyền",
+          "checkWorkerInfo": "Địa chỉ này chưa có quyền khai thác nào"
+        },
         "investmentActivities": {
           "investmentActivities": "Hoạt động đầu tư",
           "registerOwnership": "Đăng ký sở hữu",
@@ -108,7 +115,7 @@
         "incorrectInputType": "Số ANFT không hợp lệ!",
         "inputIsRequired": "Vui lòng không để trống ô này!",
         "minimumOwnership": "Thời gian sở hữu tối thiểu là 1.0 ngày!",
-        "noticeText": "Thời gian sở hữu sẽ được tính từ thời điểm hiện tại đến cuối ngày được chọn (23:30 {{day}})"
+        "noticeText": "Thời gian sở hữu sẽ được tính từ thời điểm hiện tại đến cuối ngày được chọn (23:30 - {{day}})"
       },
       "withdrawToken": {
         "maximumWithdrawable": "Số ngày rút tối đa",
@@ -172,7 +179,8 @@
         "initialOwnership": "Sở hữu trước rút",
         "newOwnership": "Sở hữu sau rút",
         "claimTime": "Thời gian nhận thưởng"
-      },"errors": {
+      },
+      "errors": {
         "startingDateDoesNotOccurAfterTheEndingDate": "Ngày bắt đầu không được xảy ra sau ngày kết thúc",
         "endingDateDoesNotOccurBeforeTheStartingDate": "Ngày kết thúc không được xảy ra trước ngày bắt đầu"
       },

@@ -48,7 +48,7 @@ import useWindowDimensions from '../../../shared/hooks/useWindowDimensions';
 import { IOption } from '../../../shared/models/options.model';
 import { RootState } from '../../../shared/reducers';
 import { getEntity, getOptionsWithStakes } from '../../assets/assets.api';
-import { fetchingEntity, selectEntityById } from '../../assets/assets.reducer';
+import { fetchingEntity, selectEntityById, softReset } from '../../assets/assets.reducer';
 import { baseSetterArgs } from '../../transactions/settersMapping';
 import { IProceedTxBody, proceedTransaction } from '../../transactions/transactions.api';
 import { fetching, hardReset } from '../../transactions/transactions.reducer';
@@ -104,7 +104,7 @@ const Register = (props: IRegisterProps) => {
   const { tokenBalance } = useSelector((state: RootState) => state.wallet);
   const { success, submitted } = useSelector((state: RootState) => state.transactions);
 
-  const { entityLoading } = initialState;
+  const { entityLoading, fetchEntitySuccess, updateEntitySuccess } = initialState;
 
   const listing = useSelector(selectEntityById(Number(id)));
 
@@ -224,6 +224,9 @@ const Register = (props: IRegisterProps) => {
   };
 
   useEffect(() => {
+    /**
+     * Initial entity fetching
+     */
     if (!id || !provider) return;
     dispatch(fetchingEntity());
     dispatch(
@@ -236,16 +239,48 @@ const Register = (props: IRegisterProps) => {
   }, [id]);
 
   useEffect(() => {
-    if (success && provider && listing && signerAddress) {
+    /**
+     * Fetching entity after a successful tx to calculate reward
+     */
+    if (success && provider) {
       dispatch(fetchingEntity());
-      dispatch(getOptionsWithStakes({ listing, stakeholder: signerAddress, provider }));
-      dispatch(hardReset());
-      setDetails([]);
+      dispatch(
+        getEntity({
+          id: Number(id),
+          provider,
+        })
+      );
+      dispatch(softReset()); //reset fetchEntitySuccess state
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [success]);
 
   useEffect(() => {
+    /**
+     * Fetching options's stakes after successfully fetching entity
+     */
+    if (fetchEntitySuccess && listing && signerAddress && provider) {
+      dispatch(fetchingEntity());
+      dispatch(getOptionsWithStakes({ listing, stakeholder: signerAddress, provider }));
+      dispatch(hardReset()); //reset transactions state
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fetchEntitySuccess]);
+
+  useEffect(() => {
+    /**
+     * Close toggle of option after get options with stake successfully
+     */
+    if (updateEntitySuccess) {
+      setDetails([]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [updateEntitySuccess]);
+
+  useEffect(() => {
+    /**
+     * Get options with stakes when connect wallet/signerAddress changes
+     */
     if (listing && signerAddress && provider) {
       dispatch(fetchingEntity());
       dispatch(getOptionsWithStakes({ listing, stakeholder: signerAddress, provider }));
@@ -258,6 +293,9 @@ const Register = (props: IRegisterProps) => {
   };
 
   useEffect(() => {
+    /**
+     * Close Modal when submitted successfully
+     */
     if (submitted) {
       setModalVisibility(initialModalState);
     }
@@ -378,7 +416,7 @@ const Register = (props: IRegisterProps) => {
               <CDataTable
                 striped
                 noItemsView={{
-                  noItems: t("anftDapp.global.noItemText"),
+                  noItems: t('anftDapp.global.noItemText'),
                 }}
                 items={listing.options}
                 fields={registerView}
@@ -420,7 +458,7 @@ const Register = (props: IRegisterProps) => {
                           <CCardBody className="px-3">
                             <CRow className="align-items-center">
                               <CCol xs={12}>
-                                {submitted && !success ? (
+                                {submitted || !updateEntitySuccess ? (
                                   <CRow>
                                     <CCol xs={12} className="d-flex justify-content-center">
                                       <ConfirmationLoading />
@@ -579,7 +617,7 @@ const Register = (props: IRegisterProps) => {
                                               <CFormGroup row>
                                                 <CCol xs={12} className="d-flex justify-content-center mt-3">
                                                   <CButton
-                                                    className="btn-radius-50 btn btn-sm btn-primary mr-2"
+                                                    className="btn-radius-50 btn-primary mr-2"
                                                     onClick={checkTokenBalanceGteRegisterAmount(
                                                       submitForm,
                                                       item.stake.amount
@@ -588,7 +626,7 @@ const Register = (props: IRegisterProps) => {
                                                     {t('anftDapp.global.modal.confirm')}
                                                   </CButton>
                                                   <CButton
-                                                    className="btn-radius-50 btn btn-sm btn-outline-danger ml-2"
+                                                    className="btn-radius-50 btn-outline-danger ml-2"
                                                     variant="ghost"
                                                     onClick={onCancelEditingRegister(setFieldValue)}
                                                   >
@@ -600,13 +638,13 @@ const Register = (props: IRegisterProps) => {
                                               <CFormGroup row>
                                                 <CCol xs={12} className="d-flex justify-content-center mt-3">
                                                   <CButton
-                                                    className="btn-radius-50 btn btn-sm btn-success mr-2"
+                                                    className="btn-radius-50 btn-success mr-2"
                                                     onClick={onClaimReward(item.id, item.stake.amount)}
                                                   >
                                                     {t('anftDapp.registerComponent.claimReward.claimReward')}
                                                   </CButton>
                                                   <CButton
-                                                    className="btn-radius-50 btn btn-sm btn-outline-danger ml-2"
+                                                    className="btn-radius-50 btn-outline-danger ml-2"
                                                     variant="ghost"
                                                     onClick={onUnregister(item.id)}
                                                   >
@@ -619,10 +657,7 @@ const Register = (props: IRegisterProps) => {
                                         ) : (
                                           <CFormGroup row>
                                             <CCol xs={12} className="d-flex justify-content-center mt-3">
-                                              <CButton
-                                                className="btn-radius-50 btn btn-sm btn-primary mr-2"
-                                                type="submit"
-                                              >
+                                              <CButton className="btn-radius-50 btn-primary mr-2" type="submit">
                                                 {t('anftDapp.registerComponent.register')}
                                               </CButton>
                                             </CCol>
