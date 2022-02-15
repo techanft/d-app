@@ -55,6 +55,10 @@ const CheckWorkerModal = (props: ICancelWorkerPermission) => {
       .nullable(),
   });
 
+  const [checkingResult, setCheckingResult] = useState<string>('');
+  const [isWorkerAuthorized, setIsWorkerAuthorized] = useState<boolean | undefined>(undefined);
+  const [isScanQrMode, setIsScanQrMode] = useState<boolean>(false);
+
   const closeModal = () => {
     setVisible(false);
     setIsScanQrMode(false);
@@ -62,10 +66,6 @@ const CheckWorkerModal = (props: ICancelWorkerPermission) => {
     setIsWorkerAuthorized(undefined);
     formikRef.current?.resetForm();
   };
-
-  const [checkingResult, setCheckingResult] = useState<string>('');
-  const [isWorkerAuthorized, setIsWorkerAuthorized] = useState<boolean | undefined>(undefined);
-  const [isScanQrMode, setIsScanQrMode] = useState<boolean>(false);
 
   const handleErrorFile = (err: any) => {
     console.log(`${t('anftDapp.global.errors.qrScanError')}: ${err}`);
@@ -84,20 +84,11 @@ const CheckWorkerModal = (props: ICancelWorkerPermission) => {
 
   const handleCheckingResult = () => {
     if (isWorkerAuthorized === undefined) return;
-    if (isWorkerAuthorized) {
-      return (
-        <p className="mb-0 mt-2 text-success">
-          <CIcon name="cil-check-alt" /> {checkingResult}
-        </p>
-      );
-    } else {
-      return (
-        <p className="mb-0 mt-2 text-danger">
-          <CIcon name="cil-x" />
-          {checkingResult}
-        </p>
-      );
-    }
+    return (
+      <p className={`mb-0 mt-2 ${isWorkerAuthorized ? 'text-success' : 'text-danger'}`}>
+        <CIcon name={`${isWorkerAuthorized ? 'cil-check-circle' : 'cil-x-circle'}`} /> {checkingResult}
+      </p>
+    );
   };
 
   return (
@@ -120,7 +111,9 @@ const CheckWorkerModal = (props: ICancelWorkerPermission) => {
         initialValues={initialValues}
         validationSchema={validationSchema}
         onSubmit={(values) => {
-          if (workers?.results.find((e) => e.worker === values.address)) {
+          if (!workers) return;
+          const isWorker = Boolean(workers.results.find((e) => e.worker === values.address));
+          if (isWorker) {
             setCheckingResult(t('anftDapp.listingComponent.primaryInfo.checkWorker.workerAuthorized'));
             setIsWorkerAuthorized(true);
           } else {
