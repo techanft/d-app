@@ -236,6 +236,9 @@ const Register = (props: IRegisterProps) => {
   }, [id]);
 
   useEffect(() => {
+    /**
+     * Fetching listing when transactions succeed to calculate StakeHolder reward
+     */
     if (success && provider) {
       dispatch(fetchingEntity());
       dispatch(
@@ -244,7 +247,7 @@ const Register = (props: IRegisterProps) => {
           provider,
         })
       );
-      dispatch(softReset());    //reset fetchEntitySuccess state
+      dispatch(softReset()); //reset fetchEntitySuccess state
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [success]);
@@ -253,12 +256,15 @@ const Register = (props: IRegisterProps) => {
     if (fetchEntitySuccess && listing && signerAddress && provider) {
       dispatch(fetchingEntity());
       dispatch(getOptionsWithStakes({ listing, stakeholder: signerAddress, provider }));
-      dispatch(hardReset());      //reset transactions state
+      dispatch(hardReset()); //reset transactions state
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchEntitySuccess]);
 
   useEffect(() => {
+    /**
+     * Close toggle of option after get options with stake successfully
+     */
     if (updateEntitySuccess) {
       setDetails([]);
     }
@@ -266,6 +272,9 @@ const Register = (props: IRegisterProps) => {
   }, [updateEntitySuccess]);
 
   useEffect(() => {
+    /**
+     * Get options with stakes when connect wallet/signerAddress changes
+     */
     if (listing && signerAddress && provider) {
       dispatch(fetchingEntity());
       dispatch(getOptionsWithStakes({ listing, stakeholder: signerAddress, provider }));
@@ -275,9 +284,12 @@ const Register = (props: IRegisterProps) => {
 
   const initialValues: IRegister = {
     registerAmount: 0,
-  };  
+  };
 
   useEffect(() => {
+    /**
+     * Close Modal when submitted successfully
+     */
     if (submitted) {
       setModalVisibility(initialModalState);
     }

@@ -1,3 +1,4 @@
+import CIcon from '@coreui/icons-react';
 import {
   CButton,
   CCard,
@@ -15,8 +16,7 @@ import {
   faArrowAltCircleUp,
   faClipboard,
   faDonate,
-  faEdit,
-  faIdBadge
+  faEdit
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
@@ -29,8 +29,7 @@ import {
   checkOwnershipExpired,
   convertUnixToDate,
   formatBNToken,
-  formatLocalDatetime,
-  getEllipsisTxt
+  formatLocalDatetime
 } from '../../../shared/casual-helpers';
 import ConfirmationLoading from '../../../shared/components/ConfirmationLoading';
 import CopyTextToClipBoard from '../../../shared/components/CopyTextToClipboard';
@@ -49,6 +48,7 @@ import { hardReset } from '../../transactions/transactions.reducer';
 import ExtendOwnershipModal from '../actions/ExtendOwnershipModal';
 import WithdrawTokenModal from '../actions/WithdrawModal';
 import '../index.scss';
+import CheckWorkerModal from './CheckWorkerModal';
 
 const ownershipText = (viewerAddr: string | undefined, listingInfo: IAsset, t: TFunction<'translation', undefined>) => {
   const { ownership, owner } = listingInfo;
@@ -200,6 +200,8 @@ const ListingInfo = (props: IListingInfoProps) => {
     handleModalVisibility(ModalType.OWNERSHIP_WITHDRAW, true);
   };
 
+  const [isCheckWorker, setIsCheckWorker] = useState<boolean>(false);
+
   return (
     <CContainer fluid className="px-0">
       <CCol xs={12} className="p-0">
@@ -247,7 +249,13 @@ const ListingInfo = (props: IListingInfoProps) => {
             <p className="detail-title-font my-2">{t('anftDapp.listingComponent.primaryInfo.blockchainAddress')}</p>
 
             {!entityLoading && listing?.address ? (
-              <p className='my-2'><CopyTextToClipBoard text={listing.address} inputClassName="my-2 value-text copy-address" iconClassName="m-0"/></p>
+              <p className="my-2">
+                <CopyTextToClipBoard
+                  text={listing.address}
+                  inputClassName="my-2 value-text copy-address"
+                  iconClassName="m-0"
+                />
+              </p>
             ) : (
               <InfoLoader width={155} height={27} />
             )}
@@ -261,7 +269,13 @@ const ListingInfo = (props: IListingInfoProps) => {
                 <p className="detail-title-font my-2">{t('anftDapp.listingComponent.primaryInfo.currentOwner')}</p>
 
                 {!entityLoading && listing?.owner ? (
-                  <p className='my-2'><CopyTextToClipBoard text={listing.owner} inputClassName="my-2 value-text copy-address" iconClassName="m-0"/></p>
+                  <p className="my-2">
+                    <CopyTextToClipBoard
+                      text={listing.owner}
+                      inputClassName="my-2 value-text copy-address"
+                      iconClassName="m-0"
+                    />
+                  </p>
                 ) : (
                   <InfoLoader width={155} height={27} />
                 )}
@@ -312,9 +326,17 @@ const ListingInfo = (props: IListingInfoProps) => {
             )}
           </CCol>
 
-          <CCol xs={12} className="text-center">
+          <CCol xs={6} className="text-left">
             <p className="text-primary my-2" onClick={toggleCollapseVisibility(CollapseType.WORKER_LIST)}>
-              <FontAwesomeIcon icon={faIdBadge} /> <u>{t('anftDapp.listingComponent.primaryInfo.workersList')}</u>
+              <CIcon name="cil-description" className="mr-1 pb-1" size="lg" />
+              {t('anftDapp.listingComponent.primaryInfo.workersList')}
+            </p>
+          </CCol>
+
+          <CCol xs={6} className="text-left">
+            <p className="text-primary my-2" onClick={() => setIsCheckWorker(true)}>
+              <CIcon name="cil-find-in-page" className="mr-1 pb-1" size="lg" />
+              {t('anftDapp.listingComponent.primaryInfo.checkWorker.checkWorker')}
             </p>
           </CCol>
 
@@ -327,14 +349,18 @@ const ListingInfo = (props: IListingInfoProps) => {
                     items={workers?.results}
                     fields={workerFields}
                     noItemsView={{
-                      noItems: t("anftDapp.global.noItemText"),
+                      noItems: t('anftDapp.global.noItemText'),
                     }}
                     responsive
                     hover
                     header
                     scopedSlots={{
                       address: (item: IRecordWorker) => {
-                        return <td>{getEllipsisTxt(item.worker, 10) || '_'}</td>;
+                        return (
+                          <td>
+                            <CopyTextToClipBoard text={item.worker} textNumber={10} iconClassName="m-0" />
+                          </td>
+                        );
                       },
                       createdDate: (item: IRecordWorker) => {
                         return <td>{formatLocalDatetime(item.createdDate)}</td>;
@@ -460,6 +486,7 @@ const ListingInfo = (props: IListingInfoProps) => {
               setVisibility={(key: boolean) => handleModalVisibility(ModalType.OWNERSHIP_WITHDRAW, key)}
             />
           )}
+          <CheckWorkerModal visible={isCheckWorker} setVisible={setIsCheckWorker} />
         </CRow>
       </CCol>
     </CContainer>

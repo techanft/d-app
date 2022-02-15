@@ -75,6 +75,11 @@
         "totalStake": "Tổng stake",
         "workersCount": "Số người khai khác",
         "workersList": "Xem quyền khai thác",
+        "checkWorker": {
+          "checkWorker": "Xác minh khai thác",
+          "workerAuthorized": "Địa chỉ này đã được ủy quyền",
+          "workerNotAuthorized": "Địa chỉ này chưa được ủy quyền"
+        },
         "investmentActivities": {
           "investmentActivities": "Hoạt động đầu tư",
           "registerOwnership": "Đăng ký sở hữu",

@@ -75,6 +75,11 @@
         "totalStake": "Total Stake",
         "workersCount": "Workers Count",
         "workersList": "Workers List",
+        "checkWorker": {
+          "checkWorker": "Check Worker",
+          "workerAuthorized": "This address is already authorized",
+          "workerNotAuthorized": "This address is not authorized"
+        },
         "investmentActivities": {
           "investmentActivities": "Investment Activities",
           "registerOwnership": "Register for Ownership",
