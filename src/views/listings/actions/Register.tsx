@@ -224,6 +224,9 @@ const Register = (props: IRegisterProps) => {
   };
 
   useEffect(() => {
+    /**
+     * Initial entity fetching
+     */
     if (!id || !provider) return;
     dispatch(fetchingEntity());
     dispatch(
@@ -237,7 +240,7 @@ const Register = (props: IRegisterProps) => {
 
   useEffect(() => {
     /**
-     * Fetching listing when transactions succeed to calculate StakeHolder reward
+     * Fetching entity after a successful tx to calculate reward
      */
     if (success && provider) {
       dispatch(fetchingEntity());
@@ -253,6 +256,9 @@ const Register = (props: IRegisterProps) => {
   }, [success]);
 
   useEffect(() => {
+    /**
+     * Fetching options's stakes after successfully fetching entity
+     */
     if (fetchEntitySuccess && listing && signerAddress && provider) {
       dispatch(fetchingEntity());
       dispatch(getOptionsWithStakes({ listing, stakeholder: signerAddress, provider }));
