@@ -77,7 +77,7 @@
         "workersList": "Workers List",
         "checkWorker": {
           "checkWorker": "Check Worker",
-          "workerAuthorized": "This address is already authorized",
+          "workerAuthorized": "This address is authorized",
           "workerNotAuthorized": "This address is not authorized"
         },
         "investmentActivities": {
