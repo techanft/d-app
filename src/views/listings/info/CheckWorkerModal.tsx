@@ -113,13 +113,9 @@ const CheckWorkerModal = (props: ICancelWorkerPermission) => {
         onSubmit={(values) => {
           if (!workers) return;
           const isWorker = Boolean(workers.results.find((e) => e.worker === values.address));
-          if (isWorker) {
-            setCheckingResult(t('anftDapp.listingComponent.primaryInfo.checkWorker.workerAuthorized'));
-            setIsWorkerAuthorized(true);
-          } else {
-            setCheckingResult(t('anftDapp.listingComponent.primaryInfo.checkWorker.workerNotAuthorized'));
-            setIsWorkerAuthorized(false);
-          }
+          setIsWorkerAuthorized(isWorker);
+          const translationKey = isWorker ? 'workerAuthorized' : 'workerNotAuthorized';
+          setCheckingResult(t(`anftDapp.listingComponent.primaryInfo.checkWorker.${translationKey}`));
         }}
       >
         {({ values, errors, touched, handleSubmit, handleBlur, setFieldValue }) => (
