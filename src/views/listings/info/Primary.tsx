@@ -9,14 +9,14 @@ import {
   CDataTable,
   CLink,
   CPagination,
-  CRow
+  CRow,
 } from '@coreui/react';
 import {
   faArrowAltCircleDown,
   faArrowAltCircleUp,
   faClipboard,
   faDonate,
-  faEdit
+  faEdit,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
@@ -29,12 +29,12 @@ import {
   checkOwnershipExpired,
   convertUnixToDate,
   formatBNToken,
-  formatLocalDatetime
+  formatLocalDatetime,
 } from '../../../shared/casual-helpers';
 import ConfirmationLoading from '../../../shared/components/ConfirmationLoading';
 import CopyTextToClipBoard from '../../../shared/components/CopyTextToClipboard';
 import InfoLoader from '../../../shared/components/InfoLoader';
-import { ToastError } from '../../../shared/components/Toast';
+import { ToastError, ToastInfo } from '../../../shared/components/Toast';
 import { CollapseType, ModalType, TCollapseVisibility, TModalsVisibility } from '../../../shared/enumeration/modalType';
 import useWindowDimensions from '../../../shared/hooks/useWindowDimensions';
 import { IAsset } from '../../../shared/models/assets.model';
@@ -202,6 +202,14 @@ const ListingInfo = (props: IListingInfoProps) => {
 
   const [isCheckWorker, setIsCheckWorker] = useState<boolean>(false);
 
+  const onCheckingWorker = () => {
+    if (!workers?.count) {
+      ToastInfo(t('anftDapp.listingComponent.primaryInfo.checkWorker.checkWorkerInfo'));
+    } else {
+      setIsCheckWorker(true);
+    }
+  };
+
   return (
     <CContainer fluid className="px-0">
       <CCol xs={12} className="p-0">
@@ -334,7 +342,7 @@ const ListingInfo = (props: IListingInfoProps) => {
           </CCol>
 
           <CCol xs={6} className="text-left">
-            <p className="text-primary my-2" onClick={() => setIsCheckWorker(true)}>
+            <p className="text-primary my-2" onClick={onCheckingWorker}>
               <CIcon name="cil-find-in-page" className="mr-1 pb-1" size="lg" />
               {t('anftDapp.listingComponent.primaryInfo.checkWorker.checkWorker')}
             </p>

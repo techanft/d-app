@@ -78,7 +78,8 @@
         "checkWorker": {
           "checkWorker": "Xác minh khai thác",
           "workerAuthorized": "Địa chỉ này đã được ủy quyền",
-          "workerNotAuthorized": "Địa chỉ này chưa được ủy quyền"
+          "workerNotAuthorized": "Địa chỉ này chưa được ủy quyền",
+          "checkWorkerInfo": "Địa chỉ này chưa có quyền khai thác nào"
         },
         "investmentActivities": {
           "investmentActivities": "Hoạt động đầu tư",

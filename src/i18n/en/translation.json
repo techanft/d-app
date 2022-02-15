@@ -77,8 +77,9 @@
         "workersList": "Workers List",
         "checkWorker": {
           "checkWorker": "Check Worker",
-          "workerAuthorized": "This address is already authorized",
-          "workerNotAuthorized": "This address is not authorized"
+          "workerAuthorized": "This address is authorized",
+          "workerNotAuthorized": "This address is not authorized",
+          "checkWorkerInfo": "Workers list is empty"
         },
         "investmentActivities": {
           "investmentActivities": "Investment Activities",
@@ -196,7 +197,7 @@
       "addressWallet": "Address Wallet",
       "addressValidation": "Address wallet is invalid!",
       "addressIsRequired": "This field is required!",
-      "workerAuthorized": "This address is already authorized"
+      "workerAuthorized": "This address is authorized"
     },
     "copyTextToClipBoard": {
       "copied": "Copied"
