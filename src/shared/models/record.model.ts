@@ -2,6 +2,8 @@ export interface IRecord {
   id: number;
   createdDate: Date;
   listingAddress: string;
+  txHash: null | string;
+  listingId: number;
 }
 
 export interface IRecordWorker extends IRecord {
@@ -9,7 +11,6 @@ export interface IRecordWorker extends IRecord {
 }
 
 export interface IRecordOwnership extends IRecord {
-  listingId: number;
   previousOwner: string;
   newOwner: string;
   from: string;
@@ -18,7 +19,6 @@ export interface IRecordOwnership extends IRecord {
 }
 
 export interface IRecordClaim extends IRecord {
-  listingId: number;
   stakeholder: string;
   from: string;
   to: string;
@@ -26,20 +26,17 @@ export interface IRecordClaim extends IRecord {
 }
 
 export interface IRecordRegister extends IRecord {
-  listingId: number;
   stakeholder: string;
   optionId: string;
   amount: string;
 }
 
 export interface IRecordUnRegister extends IRecord {
-  listingId: number;
   stakeholder: string;
   optionId: string;
 }
 
 export interface IRecordWithdraw extends IRecord {
-  listingId: number;
   owner: string;
   amount: string;
   initialOwnership: string;

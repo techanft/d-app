@@ -179,7 +179,9 @@
         "amount": "Amount",
         "initialOwnership": "Initial Ownership",
         "newOwnership": "New Ownership",
-        "claimTime": "Claim Time"
+        "claimTime": "Claim Time",
+        "txHash": "Hash",
+        "listing": "Listing"
       },
       "errors": {
         "startingDateDoesNotOccurAfterTheEndingDate": "Starting Date does not occur after the Ending Date",
