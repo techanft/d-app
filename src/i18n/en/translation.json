@@ -39,6 +39,7 @@
     "headerComponent": {
       "connectWallet": "Connect Wallet",
       "dashboard": "Dashboard",
+      "demoNotice": "These following listings are just for demo purposes",
       "filter": {
         "filter": "Search",
         "city": "City",

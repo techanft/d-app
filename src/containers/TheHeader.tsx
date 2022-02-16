@@ -302,6 +302,11 @@ const TheHeader = () => {
         className={`${isDashboardView ? '' : 'd-none'} sub-header mt-2 justify-content-center align-items-center`}
       >
         <CRow className="w-100 p-1">
+          <CCol xs={12}>
+          <p className={`text-center alert alert-warning font-size-075`}>
+          {t('anftDapp.headerComponent.demoNotice')}
+          </p>
+          </CCol>
           <CCol xs={4} className="px-2">
             <CSelect className="btn-radius-50 text-dark px-2 content-title" disabled>
               <option value="">{t('anftDapp.headerComponent.filter.type')}</option>
