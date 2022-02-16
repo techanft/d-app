@@ -12,15 +12,16 @@ export const BSC_TESTNET_CONFIG = {
 
 export const RINKEBY_TESTNET_CONFIG = {
   chainId: '0x04',
-  rpcUrls: ['https://rinkey.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161/'],
-  chainName: 'Ethereum Rinkeby',
+  rpcUrls: ['https://rinkeby.infura.io/v3/'],
+  chainName: 'Ethereum Rinkeby Testnet',
   nativeCurrency: {
     name: 'ETH',
     symbol: 'ETH',
     decimals: 18,
   },
-  blockExplorerUrls: ['https://rinkey.etherscan.io/'],
+  blockExplorerUrls: ['https://rinkeby.etherscan.io'],
 };
+
 export const BSC_MAINNET_CONFIG = {
   chainId: '0x38',
   rpcUrls: ['https://bsc-dataseed.binance.org/'],
