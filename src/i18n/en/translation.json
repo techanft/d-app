@@ -39,6 +39,7 @@
     "headerComponent": {
       "connectWallet": "Connect Wallet",
       "dashboard": "Dashboard",
+      "demoNotice": "These following listings are just for demo purposes",
       "filter": {
         "filter": "Search",
         "city": "City",
@@ -178,7 +179,9 @@
         "amount": "Amount",
         "initialOwnership": "Initial Ownership",
         "newOwnership": "New Ownership",
-        "claimTime": "Claim Time"
+        "claimTime": "Claim Time",
+        "txHash": "Hash",
+        "listing": "Listing"
       },
       "errors": {
         "startingDateDoesNotOccurAfterTheEndingDate": "Starting Date does not occur after the Ending Date",

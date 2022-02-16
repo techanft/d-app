@@ -236,7 +236,7 @@ const ListingInfo = (props: IListingInfoProps) => {
       <CCol className="m-0 p-0">
         <CRow className="listing-address-info m-0 p-0">
           <CCol xs={12} className="text-dark btn-font-style mt-3">
-            202 Yên Sở - Hoàng Mai - Hà Nội
+            {`BĐS thử nghiệm ${listingId}`}
           </CCol>
 
           <CCol xs={12} className="text-primary total-token my-3">
@@ -346,14 +346,14 @@ const ListingInfo = (props: IListingInfoProps) => {
             )}
           </CCol>
 
-          <CCol xs={6} className="text-center">
+          <CCol xs={6} className="text-left">
             <p className="text-primary my-2" onClick={toggleCollapseVisibility(CollapseType.WORKER_LIST)}>
               <CIcon name="cil-description" className="mr-1 pb-1" size="lg" />
               {t('anftDapp.listingComponent.primaryInfo.workersList')}
             </p>
           </CCol>
 
-          <CCol xs={6} className="text-center">
+          <CCol xs={6} className="text-left">
             <p className="text-primary my-2" onClick={onCheckingWorker}>
               <CIcon name="cil-find-in-page" className="mr-1 pb-1" size="lg" />
               {t('anftDapp.listingComponent.primaryInfo.checkWorker.checkWorker')}

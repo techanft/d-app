@@ -1,9 +1,8 @@
-import CIcon from '@coreui/icons-react';
 import { CLink, CPagination } from '@coreui/react';
 import moment from 'moment';
 import React from 'react';
 import { TFunction, useTranslation } from 'react-i18next';
-import { APP_DATE_FORMAT } from '../../config/constants';
+import { APP_DATE_FORMAT, BLOCKCHAIN_NETWORK } from '../../config/constants';
 import { IRecordParams } from '../../views/records/records.api';
 import { calculateDateDifference, getEllipsisTxt, insertCommas, returnOptionNameById } from '../casual-helpers';
 import { RecordType } from '../enumeration/recordType';
@@ -12,7 +11,7 @@ import {
   IRecordOwnership,
   IRecordRegister,
   IRecordUnRegister,
-  IRecordWithdraw,
+  IRecordWithdraw
 } from '../models/record.model';
 import { TableType, TRecordTypeArray } from './ActivityLogsContainer';
 
@@ -40,14 +39,39 @@ const renderRecordOwnerShip = ({
   shouldDisplayBlockchainAddress,
 }: IRecordTableProps<IRecordOwnership>) => (
   <>
+    <tr>
+      <td>{transFunc('anftDapp.activityLogsComponent.activityLogsTable.listing')}</td>
+      <td className="text-right text-truncate" style={{ maxWidth: '100px' }}>
+        <CLink to={`/${record.listingId}/detail`}>{`BĐS thử nghiệm ${record.listingId}`}</CLink>
+      </td>
+    </tr>
+    {record.txHash && (
+      <tr>
+        <td>{transFunc('anftDapp.activityLogsComponent.activityLogsTable.txHash')}</td>
+        <td className="text-right">
+          <span>
+            <CLink
+              target="_blank"
+              rel="noreferrer noopener"
+              href={`${BLOCKCHAIN_NETWORK.blockExplorerUrls}/tx/${record.txHash}`}
+            >
+              {getEllipsisTxt(record.txHash, 6)}
+            </CLink>
+          </span>
+        </td>
+      </tr>
+    )}
     {shouldDisplayBlockchainAddress && (
       <tr>
         <td>{transFunc('anftDapp.listingComponent.primaryInfo.blockchainAddress')}</td>
         <td className="text-right">
           <span>
-            {getEllipsisTxt(record.listingAddress)}{' '}
-            <CLink to={`/${record.listingId}/detail`}>
-              <CIcon name="cil-external-link" className="text-primay pb-1" size="lg"  />
+            <CLink
+              target="_blank"
+              rel="noreferrer noopener"
+              href={`${BLOCKCHAIN_NETWORK.blockExplorerUrls}/address/${record.listingAddress}`}
+            >
+              {getEllipsisTxt(record.listingAddress, 6)}
             </CLink>
           </span>
         </td>
@@ -74,14 +98,39 @@ const renderRecordOwnerShip = ({
 
 const renderRecordClaim = ({ record, transFunc, shouldDisplayBlockchainAddress }: IRecordTableProps<IRecordClaim>) => (
   <>
+    <tr>
+      <td>{transFunc('anftDapp.activityLogsComponent.activityLogsTable.listing')}</td>
+      <td className="text-right text-truncate" style={{ maxWidth: '100px' }}>
+        <CLink to={`/${record.listingId}/detail`}>{`BĐS thử nghiệm ${record.listingId}`}</CLink>
+      </td>
+    </tr>
+    {record.txHash && (
+      <tr>
+        <td>{transFunc('anftDapp.activityLogsComponent.activityLogsTable.txHash')}</td>
+        <td className="text-right">
+          <span>
+            <CLink
+              target="_blank"
+              rel="noreferrer noopener"
+              href={`${BLOCKCHAIN_NETWORK.blockExplorerUrls}/tx/${record.txHash}`}
+            >
+              {getEllipsisTxt(record.txHash, 6)}
+            </CLink>
+          </span>
+        </td>
+      </tr>
+    )}
     {shouldDisplayBlockchainAddress && (
       <tr>
         <td>{transFunc('anftDapp.listingComponent.primaryInfo.blockchainAddress')}</td>
         <td className="text-right">
           <span>
-            {getEllipsisTxt(record.listingAddress)}{' '}
-            <CLink to={`/${record.listingId}/detail`}>
-              <CIcon name="cil-external-link" className="text-primay pb-1" size="lg"  />
+            <CLink
+              target="_blank"
+              rel="noreferrer noopener"
+              href={`${BLOCKCHAIN_NETWORK.blockExplorerUrls}/address/${record.listingAddress}`}
+            >
+              {getEllipsisTxt(record.listingAddress, 6)}
             </CLink>
           </span>
         </td>
@@ -89,7 +138,7 @@ const renderRecordClaim = ({ record, transFunc, shouldDisplayBlockchainAddress }
     )}
     <tr>
       <td>{transFunc('anftDapp.activityLogsComponent.activityLogsTable.amount')}</td>
-      <td className="text-right">{insertCommas(record.amount || '', 10)}</td>
+      <td className="text-right">{insertCommas(record.amount || '', 6)}</td>
     </tr>
 
     <tr>
@@ -109,14 +158,39 @@ const renderRecordRegister = ({
   shouldDisplayBlockchainAddress,
 }: IRecordTableProps<IRecordRegister>) => (
   <>
+    <tr>
+      <td>{transFunc('anftDapp.activityLogsComponent.activityLogsTable.listing')}</td>
+      <td className="text-right text-truncate" style={{ maxWidth: '100px' }}>
+        <CLink to={`/${record.listingId}/detail`}>{`BĐS thử nghiệm ${record.listingId}`}</CLink>
+      </td>
+    </tr>
+    {record.txHash && (
+      <tr>
+        <td>{transFunc('anftDapp.activityLogsComponent.activityLogsTable.txHash')}</td>
+        <td className="text-right">
+          <span>
+            <CLink
+              target="_blank"
+              rel="noreferrer noopener"
+              href={`${BLOCKCHAIN_NETWORK.blockExplorerUrls}/tx/${record.txHash}`}
+            >
+              {getEllipsisTxt(record.txHash, 6)}
+            </CLink>
+          </span>
+        </td>
+      </tr>
+    )}
     {shouldDisplayBlockchainAddress && (
       <tr>
         <td>{transFunc('anftDapp.listingComponent.primaryInfo.blockchainAddress')}</td>
         <td className="text-right">
           <span>
-            {getEllipsisTxt(record.listingAddress)}{' '}
-            <CLink to={`/${record.listingId}/detail`}>
-              <CIcon name="cil-external-link" className="text-primay pb-1" size="lg"  />
+            <CLink
+              target="_blank"
+              rel="noreferrer noopener"
+              href={`${BLOCKCHAIN_NETWORK.blockExplorerUrls}/address/${record.listingAddress}`}
+            >
+              {getEllipsisTxt(record.listingAddress, 6)}
             </CLink>
           </span>
         </td>
@@ -139,16 +213,41 @@ const renderRecordUnRegister = ({
   shouldDisplayBlockchainAddress,
 }: IRecordTableProps<IRecordUnRegister>) => (
   <>
+    <tr>
+      <td>{transFunc('anftDapp.activityLogsComponent.activityLogsTable.listing')}</td>
+      <td className="text-right text-truncate" style={{ maxWidth: '100px' }}>
+        <CLink to={`/${record.listingId}/detail`}>{`BĐS thử nghiệm ${record.listingId}`}</CLink>
+      </td>
+    </tr>
+    {record.txHash && (
+      <tr>
+        <td>{transFunc('anftDapp.activityLogsComponent.activityLogsTable.txHash')}</td>
+        <td className="text-right">
+          <span>
+            <CLink
+              target="_blank"
+              rel="noreferrer noopener"
+              href={`${BLOCKCHAIN_NETWORK.blockExplorerUrls}/tx/${record.txHash}`}
+            >
+              {getEllipsisTxt(record.txHash, 6)}
+            </CLink>
+          </span>
+        </td>
+      </tr>
+    )}
     {shouldDisplayBlockchainAddress && (
       <tr>
         <td>{transFunc('anftDapp.listingComponent.primaryInfo.blockchainAddress')}</td>
         <td className="text-right">
           <span>
-            {getEllipsisTxt(record.listingAddress)}{' '}
-            <CLink to={`/${record.listingId}/detail`}>
-              <CIcon name="cil-external-link" className="text-primay pb-1" size="lg"  />
+            <CLink
+              target="_blank"
+              rel="noreferrer noopener"
+              href={`${BLOCKCHAIN_NETWORK.blockExplorerUrls}/address/${record.listingAddress}`}
+            >
+              {getEllipsisTxt(record.listingAddress, 6)}
             </CLink>
-          </span>{' '}
+          </span>
         </td>
       </tr>
     )}
@@ -165,16 +264,41 @@ const renderRecordWithdraw = ({
   shouldDisplayBlockchainAddress,
 }: IRecordTableProps<IRecordWithdraw>) => (
   <>
+    <tr>
+      <td>{transFunc('anftDapp.activityLogsComponent.activityLogsTable.listing')}</td>
+      <td className="text-right text-truncate" style={{ maxWidth: '100px' }}>
+        <CLink to={`/${record.listingId}/detail`}>{`BĐS thử nghiệm ${record.listingId}`}</CLink>
+      </td>
+    </tr>
+    {record.txHash && (
+      <tr>
+        <td>{transFunc('anftDapp.activityLogsComponent.activityLogsTable.txHash')}</td>
+        <td className="text-right">
+          <span>
+            <CLink
+              target="_blank"
+              rel="noreferrer noopener"
+              href={`${BLOCKCHAIN_NETWORK.blockExplorerUrls}/tx/${record.txHash}`}
+            >
+              {getEllipsisTxt(record.txHash, 6)}
+            </CLink>
+          </span>
+        </td>
+      </tr>
+    )}
     {shouldDisplayBlockchainAddress && (
       <tr>
         <td>{transFunc('anftDapp.listingComponent.primaryInfo.blockchainAddress')}</td>
         <td className="text-right">
           <span>
-            {getEllipsisTxt(record.listingAddress)}{' '}
-            <CLink to={`/${record.listingId}/detail`}>
-              <CIcon name="cil-external-link" className="text-primay pb-1" size="lg"  />
+            <CLink
+              target="_blank"
+              rel="noreferrer noopener"
+              href={`${BLOCKCHAIN_NETWORK.blockExplorerUrls}/address/${record.listingAddress}`}
+            >
+              {getEllipsisTxt(record.listingAddress, 6)}
             </CLink>
-          </span>{' '}
+          </span>
         </td>
       </tr>
     )}
