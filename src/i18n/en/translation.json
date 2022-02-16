@@ -18,7 +18,7 @@
           "deviceErr": "Device Error!",
           "deviceErrMsg": "Our application is current not supporting Desktop. Please switch to a mobile device",
           "walletErr": "Wallet Error!",
-          "invalidNetworkErrMsg": "Invalid network detected. Please go to Metamask and switch to Rinkeby network to use the application",
+          "invalidNetworkErrMsg": "Invalid network detected. Please go to Metamask and switch to BSC network to use the application",
           "ethereumIsNotInitializedErrMsg": "Ethereum is not initialized. Please install an Ethereum wallet in your browser",
           "reload": "Reload"
         },

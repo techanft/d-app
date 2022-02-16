@@ -18,7 +18,7 @@
           "deviceErr": "Lỗi thiết bị!",
           "deviceErrMsg": "Ứng dụng hiện tại chỉ hỗ trợ thiết bị di động. Vui lòng chuyển sang thiết bị di động để sử dụng ứng dụng",
           "walletErr": "Lỗi tích hợp ví!",
-          "invalidNetworkErrMsg": "Mạng không hợp lệ. Vui lòng vào Metamask và chuyển sang mạng Rinkeby để sử dụng ứng dụng",
+          "invalidNetworkErrMsg": "Mạng không hợp lệ. Vui lòng vào Metamask và chuyển sang mạng BSC để sử dụng ứng dụng",
           "ethereumIsNotInitializedErrMsg": "Ethereum chưa được khởi tạo. Vui lòng cài đặt ví Ethereum trong trình duyệt của bạn",
           "reload": "Tải lại"
         },
