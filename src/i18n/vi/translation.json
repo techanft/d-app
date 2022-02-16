@@ -39,6 +39,7 @@
     "headerComponent": {
       "connectWallet": "Liên kết ví",
       "dashboard": "Trang chủ",
+      "demoNotice": "Các BĐS hiện nay chỉ dùng để Demo thử nghiệm, giúp người dùng có trải nghiệm ban đầu.",
       "filter": {
         "filter": "Tìm kiếm",
         "city": "Tỉnh/ Thành phố",

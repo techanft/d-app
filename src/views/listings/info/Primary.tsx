@@ -236,7 +236,7 @@ const ListingInfo = (props: IListingInfoProps) => {
       <CCol className="m-0 p-0">
         <CRow className="listing-address-info m-0 p-0">
           <CCol xs={12} className="text-dark btn-font-style mt-3">
-            202 Yên Sở - Hoàng Mai - Hà Nội
+            {`BĐS thử nghiệm ${listingId}`}
           </CCol>
 
           <CCol xs={12} className="text-primary total-token my-3">
