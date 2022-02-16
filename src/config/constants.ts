@@ -1,5 +1,5 @@
 import { IWindowEth } from '../shared/models/base.model';
-import { BSC_MAINNET_CONFIG, BSC_TESTNET_CONFIG } from './chains';
+import { BSC_MAINNET_CONFIG, RINKEBY_TESTNET_CONFIG } from './chains';
 
 export const APP_DATE_FORMAT = 'HH:mm - DD/MM/YY';
 export const APP_TIMESTAMP_FORMAT = 'DD/MM/YY HH:mm:ss';
@@ -18,4 +18,4 @@ export const SERVER_API_URL = 'https://dapp-dev.anft.vn/api/';
 export const _window = window as unknown as IWindowEth;
 // export const CHAIN_ID = 97;
 const TESTNET_MODE = true;
-export const BLOCKCHAIN_NETWORK = TESTNET_MODE ? BSC_TESTNET_CONFIG : BSC_MAINNET_CONFIG
+export const BLOCKCHAIN_NETWORK = TESTNET_MODE ? RINKEBY_TESTNET_CONFIG : BSC_MAINNET_CONFIG
