@@ -54,7 +54,7 @@ const SubmissionModal = () => {
         <CLabel className="text-primary mt-5 d-block">
           {transaction ? (
             <CLink
-              href={`${BLOCKCHAIN_NETWORK.blockExplorerUrls}tx/${transaction.contractTransaction.hash}`}
+              href={`${BLOCKCHAIN_NETWORK.blockExplorerUrls}/tx/${transaction.contractTransaction.hash}`}
               target="_blank"
             >
               {t('anftDapp.global.modal.submissionModal.content')}{' '}
