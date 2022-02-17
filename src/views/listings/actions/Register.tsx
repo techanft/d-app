@@ -625,7 +625,7 @@ const Register = (props: IRegisterProps) => {
                                                       submitForm,
                                                       item.stake.amount
                                                     )}
-                                                    disabled={isSubmitting && loading}
+                                                    disabled={(isSubmitting && loading) || !updateEntitySuccess}
                                                   >
                                                     {t('anftDapp.global.modal.confirm')}
                                                   </CButton>
@@ -633,7 +633,7 @@ const Register = (props: IRegisterProps) => {
                                                     className="btn-radius-50 btn-outline-danger ml-2"
                                                     variant="ghost"
                                                     onClick={onCancelEditingRegister(setFieldValue)}
-                                                    disabled={isSubmitting && loading}
+                                                    disabled={(isSubmitting && loading) || !updateEntitySuccess}
                                                   >
                                                     {t('anftDapp.global.modal.cancel')}
                                                   </CButton>
@@ -645,7 +645,7 @@ const Register = (props: IRegisterProps) => {
                                                   <CButton
                                                     className="btn-radius-50 btn-success mr-2"
                                                     onClick={onClaimReward(item.id, item.stake.amount)}
-                                                    disabled={isSubmitting && loading}
+                                                    disabled={(isSubmitting && loading) || !updateEntitySuccess}
                                                   >
                                                     {t('anftDapp.registerComponent.claimReward.claimReward')}
                                                   </CButton>
@@ -653,7 +653,7 @@ const Register = (props: IRegisterProps) => {
                                                     className="btn-radius-50 btn-outline-danger ml-2"
                                                     variant="ghost"
                                                     onClick={onUnregister(item.id)}
-                                                    disabled={isSubmitting && loading}
+                                                    disabled={(isSubmitting && loading) || !updateEntitySuccess}
                                                   >
                                                     {t('anftDapp.registerComponent.unregister.unregister')}
                                                   </CButton>
@@ -667,7 +667,7 @@ const Register = (props: IRegisterProps) => {
                                               <CButton
                                                 className="btn-radius-50 btn-primary mr-2"
                                                 type="submit"
-                                                disabled={isSubmitting && loading}
+                                                disabled={(isSubmitting && loading) || !updateEntitySuccess}
                                               >
                                                 {t('anftDapp.registerComponent.register')}
                                               </CButton>
