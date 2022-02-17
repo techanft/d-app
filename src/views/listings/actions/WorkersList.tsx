@@ -113,6 +113,7 @@ const WorkersList = (props: IWorkersList) => {
   useEffect(() => {
     if (errorMessage) {
       setDeltAlrtMdl(false);
+      setIsFormSubmitted(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [errorMessage]);

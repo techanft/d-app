@@ -102,7 +102,7 @@ const Register = (props: IRegisterProps) => {
 
   const { initialState } = useSelector((state: RootState) => state.assets);
   const { tokenBalance } = useSelector((state: RootState) => state.wallet);
-  const { success, submitted } = useSelector((state: RootState) => state.transactions);
+  const { success, submitted, loading } = useSelector((state: RootState) => state.transactions);
 
   const { entityLoading, fetchEntitySuccess, updateEntitySuccess } = initialState;
 
@@ -380,6 +380,8 @@ const Register = (props: IRegisterProps) => {
       submitForm();
     };
 
+  const isLoadingTransactionAndFetchingOptions = submitted || !updateEntitySuccess;
+
   return (
     <CContainer fluid className="mx-0 my-2">
       <SubmissionModal />
@@ -458,7 +460,7 @@ const Register = (props: IRegisterProps) => {
                           <CCardBody className="px-3">
                             <CRow className="align-items-center">
                               <CCol xs={12}>
-                                {submitted || !updateEntitySuccess ? (
+                                {isLoadingTransactionAndFetchingOptions ? (
                                   <CRow>
                                     <CCol xs={12} className="d-flex justify-content-center">
                                       <ConfirmationLoading />
@@ -511,6 +513,7 @@ const Register = (props: IRegisterProps) => {
                                     handleSubmit,
                                     setFieldValue,
                                     submitForm,
+                                    isSubmitting,
                                   }) => (
                                     <CForm className="form-horizontal" onSubmit={handleSubmit}>
                                       <CFormGroup row>
@@ -622,6 +625,7 @@ const Register = (props: IRegisterProps) => {
                                                       submitForm,
                                                       item.stake.amount
                                                     )}
+                                                    disabled={isSubmitting && loading}
                                                   >
                                                     {t('anftDapp.global.modal.confirm')}
                                                   </CButton>
@@ -629,6 +633,7 @@ const Register = (props: IRegisterProps) => {
                                                     className="btn-radius-50 btn-outline-danger ml-2"
                                                     variant="ghost"
                                                     onClick={onCancelEditingRegister(setFieldValue)}
+                                                    disabled={isSubmitting && loading}
                                                   >
                                                     {t('anftDapp.global.modal.cancel')}
                                                   </CButton>
@@ -640,6 +645,7 @@ const Register = (props: IRegisterProps) => {
                                                   <CButton
                                                     className="btn-radius-50 btn-success mr-2"
                                                     onClick={onClaimReward(item.id, item.stake.amount)}
+                                                    disabled={isSubmitting && loading}
                                                   >
                                                     {t('anftDapp.registerComponent.claimReward.claimReward')}
                                                   </CButton>
@@ -647,6 +653,7 @@ const Register = (props: IRegisterProps) => {
                                                     className="btn-radius-50 btn-outline-danger ml-2"
                                                     variant="ghost"
                                                     onClick={onUnregister(item.id)}
+                                                    disabled={isSubmitting && loading}
                                                   >
                                                     {t('anftDapp.registerComponent.unregister.unregister')}
                                                   </CButton>
@@ -657,7 +664,11 @@ const Register = (props: IRegisterProps) => {
                                         ) : (
                                           <CFormGroup row>
                                             <CCol xs={12} className="d-flex justify-content-center mt-3">
-                                              <CButton className="btn-radius-50 btn-primary mr-2" type="submit">
+                                              <CButton
+                                                className="btn-radius-50 btn-primary mr-2"
+                                                type="submit"
+                                                disabled={isSubmitting && loading}
+                                              >
                                                 {t('anftDapp.registerComponent.register')}
                                               </CButton>
                                             </CCol>
