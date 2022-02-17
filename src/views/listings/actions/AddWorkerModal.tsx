@@ -143,7 +143,6 @@ const AddWorkerPermission = (props: ICancelWorkerPermission) => {
             const value = handleRawFormValues(rawValues);
             const workerAuthorized = await checkWorkerStatus(value.contract, rawValues.address, true);
             if (workerAuthorized) throw Error(t('anftDapp.workersListComponent.workerAuthorized'));
-
             dispatch(fetching());
             dispatch(proceedTransaction(value));
           } catch (error) {
@@ -153,7 +152,7 @@ const AddWorkerPermission = (props: ICancelWorkerPermission) => {
           }
         }}
       >
-        {({ values, errors, touched, handleChange, handleSubmit, handleBlur, setFieldValue }) => (
+        {({ values, errors, touched, handleChange, handleSubmit, handleBlur, setFieldValue, isSubmitting }) => (
           <CForm onSubmit={handleSubmit}>
             <>
               <CModalBody>
@@ -212,7 +211,7 @@ const AddWorkerPermission = (props: ICancelWorkerPermission) => {
                 </CCol>
                 <CCol>
                   <CButton
-                    disabled={loading}
+                    disabled={loading || isSubmitting}
                     className="px-2 w-100 btn btn-primary btn-font-style btn-radius-50"
                     type="submit"
                   >

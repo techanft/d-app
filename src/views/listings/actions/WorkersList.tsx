@@ -9,7 +9,7 @@ import {
   CDataTable,
   CLabel,
   CPagination,
-  CRow
+  CRow,
 } from '@coreui/react';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -60,7 +60,7 @@ const WorkersList = (props: IWorkersList) => {
   const listing = useSelector(selectEntityById(Number(id)));
   const { signer, provider, signerAddress } = useSelector((state: RootState) => state.wallet);
   const { initialState } = useSelector((state: RootState) => state.records);
-  const { success, submitted } = useSelector((state: RootState) => state.transactions);
+  const { success, submitted, errorMessage } = useSelector((state: RootState) => state.transactions);
   const { loading, workers, errorMessage: workerErrorMessage } = initialState.workerInitialState;
   const { initialState: assetsInitialState } = useSelector((state: RootState) => state.assets);
   const { entityLoading } = assetsInitialState;
@@ -109,6 +109,13 @@ const WorkersList = (props: IWorkersList) => {
       setDeltAlrtMdl(false);
     }
   }, [submitted]);
+
+  useEffect(() => {
+    if (errorMessage) {
+      setDeltAlrtMdl(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [errorMessage]);
 
   useEffect(() => {
     if (!id || !provider) return;
@@ -164,22 +171,27 @@ const WorkersList = (props: IWorkersList) => {
 
   const [entityToDelete, setEntityToDelete] = useState<string>('');
   const [delAlrtMdl, setDeltAlrtMdl] = useState<boolean>(false);
+  const [isFormSubmitted, setIsFormSubmitted] = useState<Boolean>(false);
 
   const onDelMldConfrmed = () => {
+    if (isFormSubmitted) return;
     if (entityToDelete !== undefined) {
       try {
+        setIsFormSubmitted(true);
         const value = handleRawFormValues(entityToDelete);
         dispatch(fetching());
         dispatch(proceedTransaction(value));
       } catch (error) {
         ToastError(`${t('anftDapp.global.errors.errorSubmittingForm')}: ${error}`);
         dispatch(softReset());
+        setIsFormSubmitted(false);
       }
     }
   };
   const onDelMldAbort = () => {
     setEntityToDelete('');
     setDeltAlrtMdl(false);
+    setIsFormSubmitted(false);
   };
 
   const onEntityRemoval = (address: string) => (): void => {
@@ -192,6 +204,8 @@ const WorkersList = (props: IWorkersList) => {
   type TSetAWPModal = React.Dispatch<React.SetStateAction<boolean>>;
 
   const setRequestListener = (key: boolean, setRequestState: TSetAWPModal) => (): void => setRequestState(key);
+
+  const isLoadingTransaction = (submitted && !success) || (success && !loading);
 
   return (
     <CContainer fluid className="mx-0 my-2">
@@ -226,7 +240,7 @@ const WorkersList = (props: IWorkersList) => {
             <Loading />
           ) : (
             <>
-              {(submitted && !success) || (success && !loading) ? (
+              {isLoadingTransaction ? (
                 <CCol xs={12} className="d-flex justify-content-center my-2">
                   <ConfirmationLoading />
                 </CCol>
@@ -238,7 +252,7 @@ const WorkersList = (props: IWorkersList) => {
                 items={workers?.results}
                 fields={fields}
                 noItemsView={{
-                  noItems: t("anftDapp.global.noItemText"),
+                  noItems: t('anftDapp.global.noItemText'),
                 }}
                 responsive
                 hover
@@ -247,20 +261,24 @@ const WorkersList = (props: IWorkersList) => {
                   address: (item: IRecordWorker) => {
                     return (
                       <td>
-                        <CopyTextToClipBoard text={item.worker} textNumber={10} iconClassName='m-0'/>
+                        <CopyTextToClipBoard text={item.worker} textNumber={10} iconClassName="m-0" />
                       </td>
                     );
                   },
                   action: (item: IRecordWorker) => {
                     return (
                       <td className="text-center">
-                        <CButton
-                          className="text-danger p-0"
-                          disabled={listing ? !validateOwnership(signerAddress, listing) : true}
-                          onClick={onEntityRemoval(item.worker || '_')}
-                        >
+                        {!isLoadingTransaction ? (
+                          <CButton
+                            className="text-danger p-0"
+                            disabled={listing ? !validateOwnership(signerAddress, listing) : true}
+                            onClick={onEntityRemoval(item.worker || '_')}
+                          >
+                            <CIcon name="cil-trash" />
+                          </CButton>
+                        ) : (
                           <CIcon name="cil-trash" />
-                        </CButton>
+                        )}
                       </td>
                     );
                   },
