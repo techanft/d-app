@@ -1,10 +1,10 @@
 import { BigNumber, ethers } from 'ethers';
 import listingArtifact from '../assets/artifacts/Listing.json';
-// import TokenImplementation from '../assets/deployments/bsc-testnet/Token_Implementation.json';
-// import TokenProxy from '../assets/deployments/bsc-testnet/Token_Proxy.json';
-import TokenImplementation from '../assets/deployments/rinkeby/Token_Implementation.json';
-import TokenProxy from '../assets/deployments/rinkeby/Token_Proxy.json';
-import { BLOCKCHAIN_NETWORK, _window } from '../config/constants';
+import testTokenImplementation from '../assets/deployments/rinkeby/Token_Implementation.json';
+import testTokenProxy from '../assets/deployments/rinkeby/Token_Proxy.json';
+import mainTokenImplementation from '../assets/deployments/bsc-mainnet/Token_Implementation.json';
+import mainTokenProxy from '../assets/deployments/bsc-mainnet/Token_Proxy.json';
+import { BLOCKCHAIN_NETWORK, USING_TESTNET, _window } from '../config/constants';
 import { Listing, Token } from '../typechain';
 import { convertDecimalToBn } from './casual-helpers';
 import { IAsset } from './models/assets.model';
@@ -17,9 +17,9 @@ interface ITokenInstance {
 
 export const TOKEN_INSTANCE = ({ signer, provider }: ITokenInstance): Token | null => {
   try {
-    const contractAddress = TokenProxy.address;
     if (!signer && !provider) throw String('requires either signer or provider to generate a instance');
-    const contractABI = TokenImplementation.abi;
+    const contractAddress = USING_TESTNET ? testTokenProxy.address : mainTokenProxy.address;
+    const contractABI = USING_TESTNET ?  testTokenImplementation.abi : mainTokenImplementation.address;
     return new ethers.Contract(contractAddress, contractABI, signer || provider) as Token;
   } catch (error) {
     console.log(`Error getting token instance: ${error}`);
