@@ -21,7 +21,8 @@
           "invalidNetworkErrMsg": "Invalid network detected. Please go to Metamask and switch to BSC network to use the application",
           "ethereumIsNotInitializedErrMsg": "Ethereum is not initialized. Please install an Ethereum wallet in your browser",
           "reload": "Reload"
-        }
+        },
+        "noticeText": "Notice: From 23:30 - {{aboutToExpire}} to 23:30 - {{expired}}, another address is able to take the ownership of this listing"
       },
       "noItemText": "No Record(s) Found"
     },
@@ -38,6 +39,7 @@
     "headerComponent": {
       "connectWallet": "Connect Wallet",
       "dashboard": "Dashboard",
+      "demoNotice": "These following listings are just for demo purposes",
       "filter": {
         "filter": "Search",
         "city": "City",
@@ -76,6 +78,12 @@
         "totalStake": "Total Stake",
         "workersCount": "Workers Count",
         "workersList": "Workers List",
+        "checkWorker": {
+          "checkWorker": "Check Worker",
+          "workerAuthorized": "This address is authorized",
+          "workerNotAuthorized": "This address is not authorized",
+          "checkWorkerInfo": "Workers list is empty"
+        },
         "investmentActivities": {
           "investmentActivities": "Investment Activities",
           "registerOwnership": "Register for Ownership",
@@ -108,7 +116,7 @@
         "incorrectInputType": "Incorrect input type!",
         "inputIsRequired": "This field is required!",
         "minimumOwnership": "Minimum ownership for the listing is 1.0 day!",
-        "noticeText": "Ownership will be started from now to the end of the selected day (23:30 {{day}})"
+        "noticeText": "Ownership will be started from now to the end of the selected day (23:30 - {{day}})"
       },
       "withdrawToken": {
         "maximumWithdrawable": "Maximum Days",
@@ -171,7 +179,9 @@
         "amount": "Amount",
         "initialOwnership": "Initial Ownership",
         "newOwnership": "New Ownership",
-        "claimTime": "Claim Time"
+        "claimTime": "Claim Time",
+        "txHash": "Hash",
+        "listing": "Listing"
       },
       "errors": {
         "startingDateDoesNotOccurAfterTheEndingDate": "Starting Date does not occur after the Ending Date",
@@ -192,7 +202,7 @@
       "addressWallet": "Address Wallet",
       "addressValidation": "Address wallet is invalid!",
       "addressIsRequired": "This field is required!",
-      "workerAuthorized": "This address is already authorized"
+      "workerAuthorized": "This address is authorized"
     },
     "copyTextToClipBoard": {
       "copied": "Copied"

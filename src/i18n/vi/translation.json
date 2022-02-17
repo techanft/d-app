@@ -21,7 +21,8 @@
           "invalidNetworkErrMsg": "Mạng không hợp lệ. Vui lòng vào Metamask và chuyển sang mạng BSC để sử dụng ứng dụng",
           "ethereumIsNotInitializedErrMsg": "Ethereum chưa được khởi tạo. Vui lòng cài đặt ví Ethereum trong trình duyệt của bạn",
           "reload": "Tải lại"
-        }
+        },
+        "noticeText": "Lưu ý: Thời gian từ 23:30 - {{aboutToExpire}} đến 23:30 - {{expired}}, BĐS này có thể bị người khác chốt quyền sở hữu"
       },
       "noItemText": "Không có bản ghi"
     },
@@ -38,6 +39,7 @@
     "headerComponent": {
       "connectWallet": "Liên kết ví",
       "dashboard": "Trang chủ",
+      "demoNotice": "Các BĐS hiện nay chỉ dùng để Demo thử nghiệm, giúp người dùng có trải nghiệm ban đầu.",
       "filter": {
         "filter": "Tìm kiếm",
         "city": "Tỉnh/ Thành phố",
@@ -63,11 +65,11 @@
       "primaryInfo": {
         "ownershipStatus": {
           "owned": "Đã sở hữu",
-          "ownershipExpired": "Quyền sở hữu đã hết hạn. Người khác có thể chốt quyền sở hữu đối với listing này!",
-          "ownedByAnotherAddress": "Listing đang được sở hữu bởi người khác",
-          "notOwned": "Listing này chưa có người sở hữu",
-          "ownershipAboutToExpire":"Quyền sở hữu chuẩn bị hết hạn. Tính từ thời điểm {{time}} listing có thể bị sở hữu bởi người khác",
-          "ownershipAbleToExtends":"Bạn có thể chốt quyền sở hữu đối với listing này"
+          "ownershipExpired": "Quyền sở hữu đã hết hạn. Người khác có thể chiếm quyền sở hữu đối với BĐS này!",
+          "ownedByAnotherAddress": "BĐS đang được sở hữu bởi người khác",
+          "notOwned": "BĐS này chưa có người sở hữu",
+          "ownershipAboutToExpire":"Quyền sở hữu chuẩn bị hết hạn. Tính từ thời điểm {{time}} BĐS có thể bị chiếm bởi người khác",
+          "ownershipAbleToExtends":"Bạn có thể chiếm quyền sở hữu đối với BĐS này"
         },
         "blockchainAddress": "Địa chỉ Blockchain",
         "currentOwner": "Chủ sở hữu",
@@ -76,6 +78,12 @@
         "totalStake": "Tổng stake",
         "workersCount": "Số người khai khác",
         "workersList": "Xem quyền khai thác",
+        "checkWorker": {
+          "checkWorker": "Xác minh khai thác",
+          "workerAuthorized": "Địa chỉ này đã được ủy quyền",
+          "workerNotAuthorized": "Địa chỉ này chưa được ủy quyền",
+          "checkWorkerInfo": "BĐS này chưa có quyền khai thác nào"
+        },
         "investmentActivities": {
           "investmentActivities": "Hoạt động đầu tư",
           "registerOwnership": "Chốt quyền sở hữu",
@@ -108,7 +116,7 @@
         "incorrectInputType": "Số ANFT không hợp lệ!",
         "inputIsRequired": "Vui lòng không để trống ô này!",
         "minimumOwnership": "Thời gian sở hữu tối thiểu là 1.0 ngày!",
-        "noticeText": "Thời gian sở hữu sẽ được tính từ thời điểm hiện tại đến cuối ngày được chọn (23:30 {{day}})"
+        "noticeText": "Thời gian sở hữu sẽ được tính từ thời điểm hiện tại đến cuối ngày được chọn (23:30 - {{day}})"
       },
       "withdrawToken": {
         "maximumWithdrawable": "Số ngày rút tối đa",
@@ -171,8 +179,11 @@
         "amount": "Số ANFT",
         "initialOwnership": "Sở hữu trước rút",
         "newOwnership": "Sở hữu sau rút",
-        "claimTime": "Thời gian nhận thưởng"
-      },"errors": {
+        "claimTime": "Thời gian nhận thưởng",
+        "txHash": "Mã giao dịch",
+        "listing": "Bất động sản"
+      },
+      "errors": {
         "startingDateDoesNotOccurAfterTheEndingDate": "Ngày bắt đầu không được xảy ra sau ngày kết thúc",
         "endingDateDoesNotOccurBeforeTheStartingDate": "Ngày kết thúc không được xảy ra trước ngày bắt đầu"
       },

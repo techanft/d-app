@@ -102,7 +102,7 @@ const Listings = () => {
               >
                 <img src={item.images} alt="realEstateImg" className="rounded" />
                 <div className="media-body align-items-around ml-2">
-                  <span className="info-box-text text-dark">{`${item.id} Yên Sở - Hoàng Mai - Hà Nội`}</span>
+                  <span className="info-box-text text-dark">{`BĐS thử nghiệm ${item.id}`}</span>
                   <table className={`w-100 mt-1`}>
                     <tbody>
                       <tr className={`info-box-daily-payment text-primary mt-2 mb-0`}>

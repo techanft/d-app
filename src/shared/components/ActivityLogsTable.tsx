@@ -1,10 +1,10 @@
-import { CPagination } from '@coreui/react';
+import { CLink, CPagination } from '@coreui/react';
 import moment from 'moment';
 import React from 'react';
 import { TFunction, useTranslation } from 'react-i18next';
-import { APP_DATE_FORMAT } from '../../config/constants';
+import { APP_DATE_FORMAT, BLOCKCHAIN_NETWORK } from '../../config/constants';
 import { IRecordParams } from '../../views/records/records.api';
-import { calculateDateDifference, insertCommas, returnOptionNameById } from '../casual-helpers';
+import { calculateDateDifference, getEllipsisTxt, insertCommas, returnOptionNameById } from '../casual-helpers';
 import { RecordType } from '../enumeration/recordType';
 import {
   IRecordClaim,
@@ -14,7 +14,6 @@ import {
   IRecordWithdraw
 } from '../models/record.model';
 import { TableType, TRecordTypeArray } from './ActivityLogsContainer';
-import CopyTextToClipBoard from './CopyTextToClipboard';
 
 interface IActivityLogsTable {
   shouldDisplayBlockchainAddress: boolean;
@@ -34,13 +33,47 @@ interface IRecordTableProps<TableType> {
 
 type TRecordTypeMappingRender = { [key in RecordType]: ({ record, transFunc }: IRecordTableProps<any>) => JSX.Element };
 
-const renderRecordOwnerShip = ({ record, transFunc, shouldDisplayBlockchainAddress }: IRecordTableProps<IRecordOwnership>) => (
+const renderRecordOwnerShip = ({
+  record,
+  transFunc,
+  shouldDisplayBlockchainAddress,
+}: IRecordTableProps<IRecordOwnership>) => (
   <>
+    <tr>
+      <td>{transFunc('anftDapp.activityLogsComponent.activityLogsTable.listing')}</td>
+      <td className="text-right text-truncate" style={{ maxWidth: '100px' }}>
+        <CLink to={`/${record.listingId}/detail`}>{`BĐS thử nghiệm ${record.listingId}`}</CLink>
+      </td>
+    </tr>
+    {record.txHash && (
+      <tr>
+        <td>{transFunc('anftDapp.activityLogsComponent.activityLogsTable.txHash')}</td>
+        <td className="text-right">
+          <span>
+            <CLink
+              target="_blank"
+              rel="noreferrer noopener"
+              href={`${BLOCKCHAIN_NETWORK.blockExplorerUrls}/tx/${record.txHash}`}
+            >
+              {getEllipsisTxt(record.txHash, 6)}
+            </CLink>
+          </span>
+        </td>
+      </tr>
+    )}
     {shouldDisplayBlockchainAddress && (
       <tr>
         <td>{transFunc('anftDapp.listingComponent.primaryInfo.blockchainAddress')}</td>
         <td className="text-right">
-          <CopyTextToClipBoard text={record.listingAddress} inputClassName="copy-address" iconClassName='m-0' />
+          <span>
+            <CLink
+              target="_blank"
+              rel="noreferrer noopener"
+              href={`${BLOCKCHAIN_NETWORK.blockExplorerUrls}/address/${record.listingAddress}`}
+            >
+              {getEllipsisTxt(record.listingAddress, 6)}
+            </CLink>
+          </span>
         </td>
       </tr>
     )}
@@ -65,17 +98,47 @@ const renderRecordOwnerShip = ({ record, transFunc, shouldDisplayBlockchainAddre
 
 const renderRecordClaim = ({ record, transFunc, shouldDisplayBlockchainAddress }: IRecordTableProps<IRecordClaim>) => (
   <>
+    <tr>
+      <td>{transFunc('anftDapp.activityLogsComponent.activityLogsTable.listing')}</td>
+      <td className="text-right text-truncate" style={{ maxWidth: '100px' }}>
+        <CLink to={`/${record.listingId}/detail`}>{`BĐS thử nghiệm ${record.listingId}`}</CLink>
+      </td>
+    </tr>
+    {record.txHash && (
+      <tr>
+        <td>{transFunc('anftDapp.activityLogsComponent.activityLogsTable.txHash')}</td>
+        <td className="text-right">
+          <span>
+            <CLink
+              target="_blank"
+              rel="noreferrer noopener"
+              href={`${BLOCKCHAIN_NETWORK.blockExplorerUrls}/tx/${record.txHash}`}
+            >
+              {getEllipsisTxt(record.txHash, 6)}
+            </CLink>
+          </span>
+        </td>
+      </tr>
+    )}
     {shouldDisplayBlockchainAddress && (
       <tr>
         <td>{transFunc('anftDapp.listingComponent.primaryInfo.blockchainAddress')}</td>
         <td className="text-right">
-          <CopyTextToClipBoard text={record.listingAddress} inputClassName="copy-address" iconClassName='m-0'/>
+          <span>
+            <CLink
+              target="_blank"
+              rel="noreferrer noopener"
+              href={`${BLOCKCHAIN_NETWORK.blockExplorerUrls}/address/${record.listingAddress}`}
+            >
+              {getEllipsisTxt(record.listingAddress, 6)}
+            </CLink>
+          </span>
         </td>
       </tr>
     )}
     <tr>
       <td>{transFunc('anftDapp.activityLogsComponent.activityLogsTable.amount')}</td>
-      <td className="text-right">{insertCommas(record.amount || '', 10)}</td>
+      <td className="text-right">{insertCommas(record.amount || '', 6)}</td>
     </tr>
 
     <tr>
@@ -89,13 +152,47 @@ const renderRecordClaim = ({ record, transFunc, shouldDisplayBlockchainAddress }
   </>
 );
 
-const renderRecordRegister = ({ record, transFunc, shouldDisplayBlockchainAddress }: IRecordTableProps<IRecordRegister>) => (
+const renderRecordRegister = ({
+  record,
+  transFunc,
+  shouldDisplayBlockchainAddress,
+}: IRecordTableProps<IRecordRegister>) => (
   <>
+    <tr>
+      <td>{transFunc('anftDapp.activityLogsComponent.activityLogsTable.listing')}</td>
+      <td className="text-right text-truncate" style={{ maxWidth: '100px' }}>
+        <CLink to={`/${record.listingId}/detail`}>{`BĐS thử nghiệm ${record.listingId}`}</CLink>
+      </td>
+    </tr>
+    {record.txHash && (
+      <tr>
+        <td>{transFunc('anftDapp.activityLogsComponent.activityLogsTable.txHash')}</td>
+        <td className="text-right">
+          <span>
+            <CLink
+              target="_blank"
+              rel="noreferrer noopener"
+              href={`${BLOCKCHAIN_NETWORK.blockExplorerUrls}/tx/${record.txHash}`}
+            >
+              {getEllipsisTxt(record.txHash, 6)}
+            </CLink>
+          </span>
+        </td>
+      </tr>
+    )}
     {shouldDisplayBlockchainAddress && (
       <tr>
         <td>{transFunc('anftDapp.listingComponent.primaryInfo.blockchainAddress')}</td>
         <td className="text-right">
-          <CopyTextToClipBoard text={record.listingAddress} inputClassName="copy-address" iconClassName='m-0'/>
+          <span>
+            <CLink
+              target="_blank"
+              rel="noreferrer noopener"
+              href={`${BLOCKCHAIN_NETWORK.blockExplorerUrls}/address/${record.listingAddress}`}
+            >
+              {getEllipsisTxt(record.listingAddress, 6)}
+            </CLink>
+          </span>
         </td>
       </tr>
     )}
@@ -110,13 +207,47 @@ const renderRecordRegister = ({ record, transFunc, shouldDisplayBlockchainAddres
   </>
 );
 
-const renderRecordUnRegister = ({ record, transFunc, shouldDisplayBlockchainAddress }: IRecordTableProps<IRecordUnRegister>) => (
+const renderRecordUnRegister = ({
+  record,
+  transFunc,
+  shouldDisplayBlockchainAddress,
+}: IRecordTableProps<IRecordUnRegister>) => (
   <>
+    <tr>
+      <td>{transFunc('anftDapp.activityLogsComponent.activityLogsTable.listing')}</td>
+      <td className="text-right text-truncate" style={{ maxWidth: '100px' }}>
+        <CLink to={`/${record.listingId}/detail`}>{`BĐS thử nghiệm ${record.listingId}`}</CLink>
+      </td>
+    </tr>
+    {record.txHash && (
+      <tr>
+        <td>{transFunc('anftDapp.activityLogsComponent.activityLogsTable.txHash')}</td>
+        <td className="text-right">
+          <span>
+            <CLink
+              target="_blank"
+              rel="noreferrer noopener"
+              href={`${BLOCKCHAIN_NETWORK.blockExplorerUrls}/tx/${record.txHash}`}
+            >
+              {getEllipsisTxt(record.txHash, 6)}
+            </CLink>
+          </span>
+        </td>
+      </tr>
+    )}
     {shouldDisplayBlockchainAddress && (
       <tr>
         <td>{transFunc('anftDapp.listingComponent.primaryInfo.blockchainAddress')}</td>
         <td className="text-right">
-          <CopyTextToClipBoard text={record.listingAddress} inputClassName="copy-address" iconClassName='m-0'/>
+          <span>
+            <CLink
+              target="_blank"
+              rel="noreferrer noopener"
+              href={`${BLOCKCHAIN_NETWORK.blockExplorerUrls}/address/${record.listingAddress}`}
+            >
+              {getEllipsisTxt(record.listingAddress, 6)}
+            </CLink>
+          </span>
         </td>
       </tr>
     )}
@@ -127,13 +258,47 @@ const renderRecordUnRegister = ({ record, transFunc, shouldDisplayBlockchainAddr
   </>
 );
 
-const renderRecordWithdraw = ({ record, transFunc, shouldDisplayBlockchainAddress }: IRecordTableProps<IRecordWithdraw>) => (
+const renderRecordWithdraw = ({
+  record,
+  transFunc,
+  shouldDisplayBlockchainAddress,
+}: IRecordTableProps<IRecordWithdraw>) => (
   <>
+    <tr>
+      <td>{transFunc('anftDapp.activityLogsComponent.activityLogsTable.listing')}</td>
+      <td className="text-right text-truncate" style={{ maxWidth: '100px' }}>
+        <CLink to={`/${record.listingId}/detail`}>{`BĐS thử nghiệm ${record.listingId}`}</CLink>
+      </td>
+    </tr>
+    {record.txHash && (
+      <tr>
+        <td>{transFunc('anftDapp.activityLogsComponent.activityLogsTable.txHash')}</td>
+        <td className="text-right">
+          <span>
+            <CLink
+              target="_blank"
+              rel="noreferrer noopener"
+              href={`${BLOCKCHAIN_NETWORK.blockExplorerUrls}/tx/${record.txHash}`}
+            >
+              {getEllipsisTxt(record.txHash, 6)}
+            </CLink>
+          </span>
+        </td>
+      </tr>
+    )}
     {shouldDisplayBlockchainAddress && (
       <tr>
         <td>{transFunc('anftDapp.listingComponent.primaryInfo.blockchainAddress')}</td>
         <td className="text-right">
-          <CopyTextToClipBoard text={record.listingAddress} inputClassName="copy-address" iconClassName='m-0'/>
+          <span>
+            <CLink
+              target="_blank"
+              rel="noreferrer noopener"
+              href={`${BLOCKCHAIN_NETWORK.blockExplorerUrls}/address/${record.listingAddress}`}
+            >
+              {getEllipsisTxt(record.listingAddress, 6)}
+            </CLink>
+          </span>
         </td>
       </tr>
     )}
@@ -173,7 +338,16 @@ const recordMappingField: TRecordTypeMappingRender = {
 };
 
 const ActivityLogsTable = (props: IActivityLogsTable) => {
-  const { filterState, totalPages, loading, tableType, handlePaginationChange, results, recordType, shouldDisplayBlockchainAddress } = props;
+  const {
+    filterState,
+    totalPages,
+    loading,
+    tableType,
+    handlePaginationChange,
+    results,
+    recordType,
+    shouldDisplayBlockchainAddress,
+  } = props;
 
   const { t } = useTranslation();
 

@@ -2,6 +2,8 @@ export interface IRecord {
   id: number;
   createdDate: Date;
   listingAddress: string;
+  txHash: null | string;
+  listingId: number;
 }
 
 export interface IRecordWorker extends IRecord {
