@@ -13,9 +13,8 @@ export const HTML_DATE_TIME_INPUT_FORMAT = 'YYYY-MM-DDTHH:mm';
 export const DATE_SUBMIT_FORMAT = 'YYYY-MM-DD';
 export const MAX_SUPPLY = 1232000000;
 export const TOKEN_SYMBOL = 'ANFT';
-export const SERVER_API_URL = 'https://dapp-dev.anft.vn/api/';
-// export const SCAN_URL = 'https://testnet.bscscan.com/';
 export const _window = window as unknown as IWindowEth;
-// export const CHAIN_ID = 97;
-const TESTNET_MODE = true;
-export const BLOCKCHAIN_NETWORK = TESTNET_MODE ? RINKEBY_TESTNET_CONFIG : BSC_MAINNET_CONFIG
+
+export const USING_TESTNET = false; // Network toggler 
+export const SERVER_API_URL = USING_TESTNET ?  'https://dapp-dev.anft.vn/api/' : 'https://app.anft.vn/api/' ;
+export const BLOCKCHAIN_NETWORK = USING_TESTNET ? RINKEBY_TESTNET_CONFIG : BSC_MAINNET_CONFIG
