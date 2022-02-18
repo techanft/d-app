@@ -22,7 +22,6 @@ import {
   fetchingWorker
 } from '../../views/records/records.reducer';
 import { RecordType } from '../enumeration/recordType';
-import { IGetAllResp } from '../models/base.model';
 import {
   IRecordClaim,
   IRecordOwnership,
