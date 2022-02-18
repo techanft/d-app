@@ -56,7 +56,7 @@ const TheSidebar = () => {
 
   return (
     <CSidebar
-      className="c-sidebar-light text-sm "
+      className="c-sidebar-light text-sm border-0"
       show={sidebarShow}
       unfoldable
       onShowChange={(val: boolean) => dispatch(toggleSidebar(val))}
