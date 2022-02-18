@@ -17,8 +17,9 @@ import {
   CLabel,
   CLink,
   CRow,
+  CTooltip,
 } from '@coreui/react';
-import { faPen, faSyncAlt } from '@fortawesome/free-solid-svg-icons';
+import { faInfoCircle, faPen, faSyncAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { BigNumber } from 'ethers';
 import { Formik, FormikProps } from 'formik';
@@ -470,23 +471,38 @@ const Register = (props: IRegisterProps) => {
                                   ''
                                 )}
                                 <CFormGroup row>
-                                  <CCol xs={5}>
-                                    <CLabel className="font-weight-bold my-2">
-                                      {t('anftDapp.listingComponent.extendOwnership.tokenBalance')}
-                                    </CLabel>
-                                  </CCol>
-                                  <CCol xs={7}>
-                                    <p className="text-primary my-2">{formatBNToken(tokenBalance, true)}</p>
+                                  <CCol xs={12}>
+                                    <p className="content-title text-primary font-weight-bold my-2 w-100 text-center">
+                                      {item.name ? item.name : '_'}
+                                    </p>
                                   </CCol>
                                 </CFormGroup>
-                                <CFormGroup row>
+                                <CFormGroup row className="align-items-center">
                                   <CCol xs={5}>
                                     <CLabel className="font-weight-bold my-2">
                                       {t('anftDapp.listingComponent.primaryInfo.totalStake')}
                                     </CLabel>
                                   </CCol>
                                   <CCol xs={7}>
-                                    <p className="text-primary my-2">{formatBNToken(item.totalStake, true)}</p>
+                                    <p className="text-primary my-2 text-right">
+                                      {formatBNToken(item.totalStake, true)}
+                                      <CTooltip
+                                        placement="bottom"
+                                        content={t('anftDapp.registerComponent.totalStakeDescription')}
+                                      >
+                                        <FontAwesomeIcon icon={faInfoCircle} size="sm" className="ml-2" />
+                                      </CTooltip>
+                                    </p>
+                                  </CCol>
+                                </CFormGroup>
+                                <CFormGroup row className="align-items-center">
+                                  <CCol xs={5}>
+                                    <CLabel className="font-weight-bold my-2">
+                                      {t('anftDapp.listingComponent.extendOwnership.tokenBalance')}
+                                    </CLabel>
+                                  </CCol>
+                                  <CCol xs={7}>
+                                    <p className="text-primary my-2 text-right">{formatBNToken(tokenBalance, true)}</p>
                                   </CCol>
                                 </CFormGroup>
                                 <Formik
@@ -516,13 +532,13 @@ const Register = (props: IRegisterProps) => {
                                     isSubmitting,
                                   }) => (
                                     <CForm className="form-horizontal" onSubmit={handleSubmit}>
-                                      <CFormGroup row>
+                                      <CFormGroup row className="align-items-center justify-content-between">
                                         <CCol xs={5}>
                                           <p className="font-weight-bold my-2">
                                             {t('anftDapp.registerComponent.registerAmount')}
                                           </p>
                                         </CCol>
-                                        <CCol xs={7}>
+                                        <CCol xs={7} md={5}>
                                           <CInputGroup>
                                             <CInput
                                               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -582,14 +598,14 @@ const Register = (props: IRegisterProps) => {
                                       {item.stake?.amount ? (
                                         !item.stake.amount.eq(0) ? (
                                           <>
-                                            <CFormGroup row>
+                                            <CFormGroup row className="align-items-center">
                                               <CCol xs={5}>
                                                 <p className="font-weight-bold my-2">
                                                   {t('anftDapp.registerComponent.rewardToken')}
                                                 </p>
                                               </CCol>
                                               <CCol xs={7}>
-                                                <p className="text-primary my-2">
+                                                <p className="text-primary my-2 text-right">
                                                   {amountToReturn ? formatBNToken(amountToReturn, true, 10) : 0}
                                                   <CButton
                                                     onClick={onRefreshAmountToReturn(item.id)}
@@ -601,14 +617,14 @@ const Register = (props: IRegisterProps) => {
                                               </CCol>
                                             </CFormGroup>
                                             {item.stake?.start && !item.stake.start.eq(0) ? (
-                                              <CFormGroup row>
+                                              <CFormGroup row className="align-items-center">
                                                 <CCol xs={5}>
                                                   <p className="font-weight-bold my-2">
                                                     {t('anftDapp.registerComponent.stakeStart')}
                                                   </p>
                                                 </CCol>
                                                 <CCol xs={7}>
-                                                  <p className="my-2">
+                                                  <p className="my-2 text-right">
                                                     {convertUnixToDate(item.stake?.start.toNumber())}
                                                   </p>
                                                 </CCol>

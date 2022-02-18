@@ -161,7 +161,8 @@
       "minimumRegister": "Mức đăng ký tối thiểu là 1.0 ANFT!",
       "insufficientBalanceToClaimReward": "ANFT trong ví không đủ để nhận thưởng!",
       "rewardToken": "Token thưởng",
-      "stakeStart": "Bắt đầu stake"
+      "stakeStart": "Bắt đầu stake",
+      "totalStakeDescription": "Tổng các lượt đăng ký nhận thưởng đối với hoạt động này"
     },
 
     "activityLogsComponent": {
