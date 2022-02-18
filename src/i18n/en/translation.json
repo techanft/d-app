@@ -161,7 +161,8 @@
       "minimumRegister": "Minimum register for the activity is 1.0 token!",
       "insufficientBalanceToClaimReward": "Insufficient balance to claim reward!",
       "rewardToken": " Reward Amount",
-      "stakeStart": "Stake From"
+      "stakeStart": "Stake From",
+      "totalStakeDescription": "Total registered amount for this activity"
     },
 
     "activityLogsComponent": {
