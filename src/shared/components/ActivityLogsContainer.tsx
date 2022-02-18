@@ -47,7 +47,8 @@ export type TRecordTypeArray =
   | IRecordWorker
   | IRecordWithdraw;
 
-type TAsyncThunkRecord<T> = AsyncThunk<IGetAllResp<T>, IRecordParams, {}>;
+// export type TAsyncThunkRecord<T> = AsyncThunk<IGetAllResp<T>, IRecordParams, {}>;
+export type TAsyncThunkRecord<T> = AsyncThunk<any, IRecordParams, {}>; // Typescript error
 
 type TRecordTypeMappingApi = {
   [RecordType.REGISTER]: TAsyncThunkRecord<IRecordRegister>;
