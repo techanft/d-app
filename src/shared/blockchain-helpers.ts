@@ -19,7 +19,7 @@ export const TOKEN_INSTANCE = ({ signer, provider }: ITokenInstance): Token | nu
   try {
     if (!signer && !provider) throw String('requires either signer or provider to generate a instance');
     const contractAddress = USING_TESTNET ? testTokenProxy.address : mainTokenProxy.address;
-    const contractABI = USING_TESTNET ?  testTokenImplementation.abi : mainTokenImplementation.address;
+    const contractABI = USING_TESTNET ?  testTokenImplementation.abi : mainTokenImplementation.abi;
     return new ethers.Contract(contractAddress, contractABI, signer || provider) as Token;
   } catch (error) {
     console.log(`Error getting token instance: ${error}`);
