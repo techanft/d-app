@@ -1,6 +1,8 @@
-import React from 'react';
+import CIcon from '@coreui/icons-react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { TheContent, TheHeader } from '.';
+import Logo from '../assets/img/logo.png';
 import ErrorModal from '../shared/components/ErrorModal';
 import useDeviceDetect from '../shared/hooks/useDeviceDetect';
 import { RootState } from '../shared/reducers';
@@ -11,9 +13,26 @@ const TheLayout = () => {
 
   const { isMobile } = useDeviceDetect();
 
+  const [displayLogoScreen, setDisplayLogoScreen] = useState<boolean>(true);
+
+  const logoScreen = (
+    <div className="d-flex w-100 vh-100">
+      <CIcon src={Logo} height={80} className="m-auto" />
+    </div>
+  );
+  
+  useEffect(() => {
+    const hiddenLogoScreen = window.setTimeout(() => {
+      setDisplayLogoScreen(false);
+    }, 1500);
+    return () => window.clearTimeout(hiddenLogoScreen);
+  }, []);
+
   return (
     <div className="dapp-layout">
-      {!isMobile ? (
+      {displayLogoScreen ? (
+        logoScreen
+      ) : !isMobile ? (
         <ErrorModal
           errMsg="anftDapp.global.modal.errorModal.deviceErrMsg"
           title="anftDapp.global.modal.errorModal.deviceErr"
@@ -23,16 +42,20 @@ const TheLayout = () => {
         <>
           {!providerErrorMessage ? (
             <>
-            <TheSidebar/>
-            <div className="c-wrapper">
-              <TheHeader />
-              <div className="c-body">
-                <TheContent />
+              <TheSidebar />
+              <div className="c-wrapper">
+                <TheHeader />
+                <div className="c-body">
+                  <TheContent />
+                </div>
               </div>
-            </div>
             </>
           ) : (
-            <ErrorModal errMsg={providerErrorMessage} title="anftDapp.global.modal.errorModal.walletErr" autoReload={true} />
+            <ErrorModal
+              errMsg={providerErrorMessage}
+              title="anftDapp.global.modal.errorModal.walletErr"
+              autoReload={true}
+            />
           )}
         </>
       )}
