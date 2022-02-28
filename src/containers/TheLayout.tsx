@@ -1,9 +1,10 @@
 import CIcon from '@coreui/icons-react';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useSelector } from 'react-redux';
 import { TheContent, TheHeader } from '.';
 import Logo from '../assets/img/logo.png';
 import ErrorModal from '../shared/components/ErrorModal';
+import useCountdownTimer from '../shared/hooks/useCountdownTimer';
 import useDeviceDetect from '../shared/hooks/useDeviceDetect';
 import { RootState } from '../shared/reducers';
 import TheSidebar from './TheSidebar';
@@ -12,27 +13,19 @@ const TheLayout = () => {
   const { providerErrorMessage } = useSelector((state: RootState) => state.wallet);
 
   const { isMobile } = useDeviceDetect();
-
-  const [displayLogoScreen, setDisplayLogoScreen] = useState<boolean>(true);
+  const shouldDisplayLogoScreen = useCountdownTimer({ seconds: 2 });
 
   const logoScreen = (
     <div className="d-flex w-100 vh-100">
-      <CIcon src={Logo} height={80} className="m-auto" />
+      <CIcon src={Logo} height={100} className="m-auto" />
     </div>
   );
-  
-  useEffect(() => {
-    const hiddenLogoScreen = window.setTimeout(() => {
-      setDisplayLogoScreen(false);
-    }, 1500);
-    return () => window.clearTimeout(hiddenLogoScreen);
-  }, []);
+
+  if (shouldDisplayLogoScreen) return logoScreen; 
 
   return (
     <div className="dapp-layout">
-      {displayLogoScreen ? (
-        logoScreen
-      ) : !isMobile ? (
+      {!isMobile ? (
         <ErrorModal
           errMsg="anftDapp.global.modal.errorModal.deviceErrMsg"
           title="anftDapp.global.modal.errorModal.deviceErr"
