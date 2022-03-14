@@ -15,6 +15,6 @@ export const MAX_SUPPLY = 1232000000;
 export const TOKEN_SYMBOL = 'ANFT';
 export const _window = window as unknown as IWindowEth;
 
-export const USING_TESTNET = false; // Network toggler 
+export const USING_TESTNET = true; // Network toggler 
 export const SERVER_API_URL = USING_TESTNET ?  'https://dapp-dev.anft.vn/api/' : 'https://app.anft.vn/api/' ;
 export const BLOCKCHAIN_NETWORK = USING_TESTNET ? RINKEBY_TESTNET_CONFIG : BSC_MAINNET_CONFIG
