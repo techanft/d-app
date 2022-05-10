@@ -14,4 +14,6 @@ export interface IAsset {
   validator: string | undefined;
   totalStake: BigNumber | undefined;
   options: IOption[];
+  fee: number | null;
+  price: number | null;
 }

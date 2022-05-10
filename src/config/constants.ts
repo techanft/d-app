@@ -1,5 +1,5 @@
 import { IWindowEth } from '../shared/models/base.model';
-import { BSC_MAINNET_CONFIG, RINKEBY_TESTNET_CONFIG } from './chains';
+import { BSC_MAINNET_CONFIG, BSC_TESTNET_CONFIG } from './chains';
 
 export const APP_DATE_FORMAT = 'HH:mm - DD/MM/YY';
 export const APP_TIMESTAMP_FORMAT = 'DD/MM/YY HH:mm:ss';
@@ -17,4 +17,6 @@ export const _window = window as unknown as IWindowEth;
 
 export const USING_TESTNET = true; // Network toggler 
 export const SERVER_API_URL = USING_TESTNET ?  'https://dapp-dev.anft.vn/api/' : 'https://app.anft.vn/api/' ;
-export const BLOCKCHAIN_NETWORK = USING_TESTNET ? RINKEBY_TESTNET_CONFIG : BSC_MAINNET_CONFIG
+// export const SERVER_API_URL = USING_TESTNET ?  'https://anfteco.vn/api/' : 'https://app.anft.vn/api/' ;
+// export const BLOCKCHAIN_NETWORK = USING_TESTNET ? RINKEBY_TESTNET_CONFIG : BSC_MAINNET_CONFIG
+export const BLOCKCHAIN_NETWORK = USING_TESTNET ? BSC_TESTNET_CONFIG : BSC_MAINNET_CONFIG

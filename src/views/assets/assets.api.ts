@@ -10,7 +10,8 @@ import { baseOptions, IOption, IStake } from '../../shared/models/options.model'
 import { Listing } from '../../typechain';
 import { IAssetFilter } from '../listings/Listings';
 
-const prefix = 'assets';
+// const prefix = 'assets';
+const prefix = 'public/listings';
 
 // APIs calling centralized server
 interface IGetEntities {
@@ -21,7 +22,7 @@ interface IGetEntities {
 export const getEntities = createAsyncThunk(`get-all-${prefix}`, async ({fields, provider}: IGetEntities, thunkAPI) => {
   try {
     const params = pickBy(fields);
-    const { data } = await axios.get<IGetAllResp<IAsset> >(`${prefix}`, { params });
+    const { data } = await axios.get<IGetAllResp<IAsset> >(`https://anfteco.vn/api/public/listings`, { params: {...params, level: 'PRIMARY'} });
     // Attemp to fetch blockchain data
     const listingsPartialInfo = await getListingsPartialInfo(data.results, provider);
     data.results = listingsPartialInfo;
@@ -37,7 +38,7 @@ interface IGetEntity {
 }
 export const getEntity = createAsyncThunk(`get-single-${prefix}`, async ({id, provider}: IGetEntity, thunkAPI) => {
   try {
-    const { data } = await axios.get<IAsset>(`${prefix}/${id}`);
+    const { data } = await axios.get<IAsset>(`https://anfteco.vn/api/public/listings/${id}`);
     return await getListingCompleteInfo(data, provider);
   } catch (error: any) {
     return thunkAPI.rejectWithValue(error.response.data);

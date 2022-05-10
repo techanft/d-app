@@ -1,12 +1,10 @@
 import { CCol, CPagination, CRow } from '@coreui/react';
-import { BigNumber } from 'ethers';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
-import { formatBNToken } from '../../shared/casual-helpers';
+import { returnTheFirstImage } from '../../shared/casual-helpers';
 import Loading from '../../shared/components/Loading';
-import useWindowDimensions from '../../shared/hooks/useWindowDimensions';
 import { IAsset } from '../../shared/models/assets.model';
 import { IParams } from '../../shared/models/base.model';
 import { RootState } from '../../shared/reducers';
@@ -14,16 +12,6 @@ import { getEntities } from '../assets/assets.api';
 import { assetsSelectors, fetchingEntities, setFilterState as setStoredFilterState } from '../assets/assets.reducer';
 import './index.scss';
 import { IListingParams } from './Listing';
-
-export interface IListingShortInfo {
-  id: number;
-  infoImg: string;
-  infoText: string | JSX.Element;
-  infoToken: BigNumber;
-  commissionRate: string;
-  address: string;
-  tHash: string;
-}
 
 export interface IAssetFilter extends IParams {
   owner?: string;
@@ -52,7 +40,7 @@ const Listings = () => {
   const { initialState } = useSelector((state: RootState) => state.assets);
   const { provider, signerAddress } = useSelector((state: RootState) => state.wallet);
   const { totalItems, entitiesLoading, filterState: storedFilterState } = initialState;
-  const assets = useSelector(assetsSelectors.selectAll);
+  const assets = useSelector(assetsSelectors.selectAll);  
 
   const { t } = useTranslation();
 
@@ -87,8 +75,8 @@ const Listings = () => {
     return Number(listingBeingDetailedId) === id ? 'd-none' : '';
   };
 
-  const {width} = useWindowDimensions();
-  const minimumWidthDisplayingTokenSymbol = 360
+  // const {width} = useWindowDimensions();
+  // const minimumWidthDisplayingTokenSymbol = 360
 
   return (
     <CRow className={`mx-0`}>
@@ -100,18 +88,21 @@ const Listings = () => {
                 className="media info-box bg-white mx-3 my-2 p-2 align-items-center rounded shadow-sm"
                 onClick={onRedirecting(`/${item.id}/detail`)}
               >
-                <img src={item.images} alt="realEstateImg" className="rounded" />
+                {/* <img src={item.images} alt="realEstateImg" className="rounded" /> */}
+                <img src={returnTheFirstImage(item.images)} alt="realEstateImg" className="rounded" />
                 <div className="media-body align-items-around ml-2">
                   <span className="info-box-text text-dark">{`BĐS thử nghiệm ${item.id}`}</span>
                   <table className={`w-100 mt-1`}>
                     <tbody>
                       <tr className={`info-box-daily-payment text-primary mt-2 mb-0`}>
                         <td>{t('anftDapp.listingComponent.listingValue')}</td>
-                        <td className={`text-right`}>{formatBNToken(item.value, width > minimumWidthDisplayingTokenSymbol)} </td>
+                        {/* <td className={`text-right`}>{formatBNToken(item.value, width > minimumWidthDisplayingTokenSymbol)} </td> */}
+                        <td className={`text-right`}>{item.price} </td>
                       </tr>
                       <tr className={`info-box-daily-payment text-success mt-2 mb-0`}>
                         <td>{t('anftDapp.listingComponent.dailyPayment')}</td>
-                        <td className={`text-right`}>{formatBNToken(item.dailyPayment, width > minimumWidthDisplayingTokenSymbol)} </td>
+                        {/* <td className={`text-right`}>{formatBNToken(item.dailyPayment, width > minimumWidthDisplayingTokenSymbol)} </td> */}
+                        <td className={`text-right`}>{item.fee} </td>
                       </tr>
                     </tbody>
                   </table>

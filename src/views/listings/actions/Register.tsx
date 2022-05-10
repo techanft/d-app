@@ -36,6 +36,7 @@ import {
   convertUnixToDate,
   formatBNToken,
   insertCommas,
+  returnTheFirstImage,
   unInsertCommas,
 } from '../../../shared/casual-helpers';
 import ConfirmationLoading from '../../../shared/components/ConfirmationLoading';
@@ -398,7 +399,7 @@ const Register = (props: IRegisterProps) => {
         <CCol xs={12}>
           <CCard className="mt-1 listing-img-card mb-0">
             {!entityLoading && listing ? (
-              <img src={listing.images} alt="listingImg" className="w-100 h-100" />
+              <img src={returnTheFirstImage(listing.images)} alt="listingImg" className="w-100 h-100" />
             ) : (
               // Ensuring 16:9 ratio for image and image loader
               <InfoLoader width={screenWidth} height={screenWidth / 1.77} />

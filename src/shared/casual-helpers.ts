@@ -171,3 +171,8 @@ export const isDateBefore = (input: string | undefined, compared: string | undef
 export const isDateAfter = (input: string | undefined, compared: string | undefined) => {
   return moment(moment(input)).isAfter(moment(compared));
 };
+
+export const returnTheFirstImage = (images: string) : string => {
+  const formatImages = images ? JSON.parse(images) : [];
+  return formatImages[0];
+}
