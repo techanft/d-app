@@ -25,7 +25,8 @@ import 'react-dates/initialize';
 import 'react-dates/lib/css/_datepicker.css';
 import { TFunction, useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
-import { TOKEN_SYMBOL } from '../../../config/constants';
+import { useHistory } from 'react-router-dom';
+import { MANAGEMENT_SITE_URL, TOKEN_SYMBOL } from '../../../config/constants';
 import {
   checkOwnershipAboutToExpire,
   checkOwnershipExpired,
@@ -113,7 +114,7 @@ const ListingInfo = (props: IListingInfoProps) => {
   const { initialState: recordInitialState } = useSelector((state: RootState) => state.records);
   const { loading: loadingWorkers, workers, errorMessage: workerErrorMessage } = recordInitialState.workerInitialState;
   const { success, submitted } = useSelector((state: RootState) => state.transactions);
-
+  const history = useHistory();
   const { t } = useTranslation();
 
   const workerFields = [
@@ -204,7 +205,9 @@ const ListingInfo = (props: IListingInfoProps) => {
 
   const onRegisteringOwnership = () => {
     if (viewerIsOwner) return;
-    if (!ownershipAboutToExpire) return ToastError(t('anftDapp.listingComponent.extendOwnership.cannotRegisterOwnership'));
+    if (!ownershipAboutToExpire) {
+      return ToastError(t('anftDapp.listingComponent.extendOwnership.cannotRegisterOwnership'));
+    }
     handleModalVisibility(ModalType.OWNERSHIP_REGISTER, true);
   };
 
@@ -236,8 +239,17 @@ const ListingInfo = (props: IListingInfoProps) => {
 
       <CCol className="m-0 p-0">
         <CRow className="listing-address-info m-0 p-0">
-          <CCol xs={12} className="text-dark btn-font-style mt-3">
+          <CCol xs={12} className="text-dark btn-font-style mt-3 d-flex justify-content-between align-items-center">
             {`BĐS thử nghiệm ${listingId}`}
+            <CLink
+              target="_blank"
+              rel="noreferrer noopener"
+              href={`${MANAGEMENT_SITE_URL}/#/listings/primary/${listingId}/detail`}
+            >
+              <CButton className=" btn btn-primary btn-font-style btn-radius-50">
+                {t('anftDapp.listingComponent.secondaryInfo.details')}
+              </CButton>
+            </CLink>
           </CCol>
 
           <CCol xs={12} className="text-primary total-token my-3">

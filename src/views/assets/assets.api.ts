@@ -2,6 +2,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { BigNumber, ethers } from 'ethers';
 import { pickBy } from 'lodash';
 import axios from '../../config/axios-interceptor';
+import { MANAGEMENT_SITE_URL } from '../../config/constants';
 import { LISTING_INSTANCE } from '../../shared/blockchain-helpers';
 import { ToastInfo } from '../../shared/components/Toast';
 import { IAsset } from '../../shared/models/assets.model';
@@ -22,7 +23,7 @@ interface IGetEntities {
 export const getEntities = createAsyncThunk(`get-all-${prefix}`, async ({fields, provider}: IGetEntities, thunkAPI) => {
   try {
     const params = pickBy(fields);
-    const { data } = await axios.get<IGetAllResp<IAsset> >(`https://anfteco.vn/api/public/listings`, { params: {...params, level: 'PRIMARY'} });
+    const { data } = await axios.get<IGetAllResp<IAsset> >(`${MANAGEMENT_SITE_URL}api/public/listings`, { params: {...params, level: 'PRIMARY'} });
     // Attemp to fetch blockchain data
     const listingsPartialInfo = await getListingsPartialInfo(data.results, provider);
     data.results = listingsPartialInfo;

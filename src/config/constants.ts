@@ -16,7 +16,8 @@ export const TOKEN_SYMBOL = 'ANFT';
 export const _window = window as unknown as IWindowEth;
 
 export const USING_TESTNET = true; // Network toggler 
-export const SERVER_API_URL = USING_TESTNET ?  'https://dapp-dev.anft.vn/api/' : 'https://app.anft.vn/api/' ;
-// export const SERVER_API_URL = USING_TESTNET ?  'https://anfteco.vn/api/' : 'https://app.anft.vn/api/' ;
-// export const BLOCKCHAIN_NETWORK = USING_TESTNET ? RINKEBY_TESTNET_CONFIG : BSC_MAINNET_CONFIG
+
+export const SERVICE_API_URL = USING_TESTNET ?  'https://dapp-dev.anft.vn/api/' : 'https://app.anft.vn/api/' ;
+export const MANAGEMENT_SITE_URL = 'https://anfteco.vn/';
+
 export const BLOCKCHAIN_NETWORK = USING_TESTNET ? BSC_TESTNET_CONFIG : BSC_MAINNET_CONFIG
