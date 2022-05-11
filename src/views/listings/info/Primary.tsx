@@ -244,7 +244,7 @@ const ListingInfo = (props: IListingInfoProps) => {
             <CLink
               target="_blank"
               rel="noreferrer noopener"
-              href={`${MANAGEMENT_SITE_URL}/#/listings/primary/${listingId}/detail`}
+              href={`${MANAGEMENT_SITE_URL}#/listings/primary/${listingId}/detail`}
             >
               <CButton className=" btn btn-primary btn-font-style btn-radius-50">
                 {t('anftDapp.listingComponent.secondaryInfo.details')}
