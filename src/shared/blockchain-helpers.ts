@@ -1,7 +1,7 @@
 import { BigNumber, ethers } from 'ethers';
 import listingArtifact from '../assets/artifacts/Listing.json';
-import testTokenImplementation from '../assets/deployments/rinkeby/Token_Implementation.json';
-import testTokenProxy from '../assets/deployments/rinkeby/Token_Proxy.json';
+import testTokenImplementation from '../assets/deployments/bsc-testnet/Token_Implementation.json';
+import testTokenProxy from '../assets/deployments/bsc-testnet/Token_Proxy.json';
 import mainTokenImplementation from '../assets/deployments/bsc-mainnet/Token_Implementation.json';
 import mainTokenProxy from '../assets/deployments/bsc-mainnet/Token_Proxy.json';
 import { BLOCKCHAIN_NETWORK, USING_TESTNET, _window } from '../config/constants';
