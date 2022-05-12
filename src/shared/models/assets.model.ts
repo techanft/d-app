@@ -2,7 +2,7 @@ import { BigNumber } from 'ethers';
 import { IOption } from './options.model';
 
 export interface IAsset {
-  id: number;
+  id: string;
   createdDate: Date;
   address: string;
   images: string;
@@ -14,6 +14,6 @@ export interface IAsset {
   validator: string | undefined;
   totalStake: BigNumber | undefined;
   options: IOption[];
-  fee: number | null;
-  price: number | null;
+  name: string;
+  period: number;
 }

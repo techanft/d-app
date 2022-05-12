@@ -3,8 +3,9 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
-import { returnTheFirstImage } from '../../shared/casual-helpers';
+import { formatBNToken, returnTheFirstImage } from '../../shared/casual-helpers';
 import Loading from '../../shared/components/Loading';
+import useWindowDimensions from '../../shared/hooks/useWindowDimensions';
 import { IAsset } from '../../shared/models/assets.model';
 import { IParams } from '../../shared/models/base.model';
 import { RootState } from '../../shared/reducers';
@@ -40,7 +41,7 @@ const Listings = () => {
   const { initialState } = useSelector((state: RootState) => state.assets);
   const { provider, signerAddress } = useSelector((state: RootState) => state.wallet);
   const { totalItems, entitiesLoading, filterState: storedFilterState } = initialState;
-  const assets = useSelector(assetsSelectors.selectAll);  
+  const assets = useSelector(assetsSelectors.selectAll);
 
   const { t } = useTranslation();
 
@@ -72,11 +73,11 @@ const Listings = () => {
   const { id: listingBeingDetailedId } = useParams<IListingParams>();
 
   const hideDetailedListing = ({ id }: IAsset) => {
-    return Number(listingBeingDetailedId) === id ? 'd-none' : '';
+    return listingBeingDetailedId === id ? 'd-none' : '';
   };
 
-  // const {width} = useWindowDimensions();
-  // const minimumWidthDisplayingTokenSymbol = 360
+  const { width } = useWindowDimensions();
+  const minimumWidthDisplayingTokenSymbol = 360;
 
   return (
     <CRow className={`mx-0`}>
@@ -88,25 +89,25 @@ const Listings = () => {
                 className="media info-box bg-white mx-3 my-2 p-2 align-items-center rounded shadow-sm"
                 onClick={onRedirecting(`/${item.id}/detail`)}
               >
-                {/* <img src={item.images} alt="realEstateImg" className="rounded" /> */}
                 <img src={returnTheFirstImage(item.images)} alt="realEstateImg" className="rounded" />
                 <div className="media-body align-items-around ml-2">
-                  <span className="info-box-text text-dark">{`BĐS thử nghiệm ${item.id}`}</span>
+                  <span className="info-box-text text-dark">{item.name ? item.name : '_'}</span>
                   <table className={`w-100 mt-1`}>
                     <tbody>
                       <tr className={`info-box-daily-payment text-primary mt-2 mb-0`}>
                         <td>{t('anftDapp.listingComponent.listingValue')}</td>
-                        {/* <td className={`text-right`}>{formatBNToken(item.value, width > minimumWidthDisplayingTokenSymbol)} </td> */}
-                        <td className={`text-right`}>{item.price} </td>
+                        <td className={`text-right`}>
+                          {formatBNToken(item.value, width > minimumWidthDisplayingTokenSymbol)}
+                        </td>
                       </tr>
                       <tr className={`info-box-daily-payment text-success mt-2 mb-0`}>
                         <td>{t('anftDapp.listingComponent.dailyPayment')}</td>
-                        {/* <td className={`text-right`}>{formatBNToken(item.dailyPayment, width > minimumWidthDisplayingTokenSymbol)} </td> */}
-                        <td className={`text-right`}>{item.fee} </td>
+                        <td className={`text-right`}>
+                          {formatBNToken(item.dailyPayment, width > minimumWidthDisplayingTokenSymbol)}
+                        </td>
                       </tr>
                     </tbody>
                   </table>
-        
                 </div>
               </div>
             </CCol>

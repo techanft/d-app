@@ -9,14 +9,14 @@ import {
   CDataTable,
   CLink,
   CPagination,
-  CRow,
+  CRow
 } from '@coreui/react';
 import {
   faArrowAltCircleDown,
   faArrowAltCircleUp,
   faClipboard,
   faDonate,
-  faEdit,
+  faEdit
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import moment from 'moment';
@@ -25,7 +25,6 @@ import 'react-dates/initialize';
 import 'react-dates/lib/css/_datepicker.css';
 import { TFunction, useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
-import { useHistory } from 'react-router-dom';
 import { MANAGEMENT_SITE_URL, TOKEN_SYMBOL } from '../../../config/constants';
 import {
   checkOwnershipAboutToExpire,
@@ -33,7 +32,7 @@ import {
   convertUnixToDate,
   formatBNToken,
   formatLocalDatetime,
-  returnTheFirstImage,
+  returnTheFirstImage
 } from '../../../shared/casual-helpers';
 import ConfirmationLoading from '../../../shared/components/ConfirmationLoading';
 import CopyTextToClipBoard from '../../../shared/components/CopyTextToClipboard';
@@ -114,7 +113,6 @@ const ListingInfo = (props: IListingInfoProps) => {
   const { initialState: recordInitialState } = useSelector((state: RootState) => state.records);
   const { loading: loadingWorkers, workers, errorMessage: workerErrorMessage } = recordInitialState.workerInitialState;
   const { success, submitted } = useSelector((state: RootState) => state.transactions);
-  const history = useHistory();
   const { t } = useTranslation();
 
   const workerFields = [
@@ -240,7 +238,7 @@ const ListingInfo = (props: IListingInfoProps) => {
       <CCol className="m-0 p-0">
         <CRow className="listing-address-info m-0 p-0">
           <CCol xs={12} className="text-dark btn-font-style mt-3 d-flex justify-content-between align-items-center">
-            {`BĐS thử nghiệm ${listingId}`}
+            {listing?.name ? listing.name : '_'}
             <CLink
               target="_blank"
               rel="noreferrer noopener"
