@@ -12,11 +12,11 @@ import {
   CModalFooter,
   CModalHeader,
   CModalTitle,
-  CRow,
+  CRow
 } from '@coreui/react';
 import { BigNumber } from 'ethers';
 import { Formik, FormikProps } from 'formik';
-import moment from 'moment';
+import moment, { Moment } from 'moment';
 import React, { useEffect, useRef } from 'react';
 import { DateRangePicker } from 'react-dates';
 import { useTranslation } from 'react-i18next';
@@ -27,14 +27,16 @@ import { LISTING_INSTANCE } from '../../../shared/blockchain-helpers';
 import {
   calculateDateDifference,
   calculateSpendingFromSecond,
-  checkDateRange, checkOwnershipAboutToExpire, convertBnToDecimal,
+  checkDateRange,
+  checkOwnershipAboutToExpire,
+  convertBnToDecimal,
   convertDecimalToBn,
   convertUnixToDate,
   formatBNToken,
   getSecondDifftoEndDate,
   insertCommas,
   returnMaxEndDate,
-  unInsertCommas,
+  unInsertCommas
 } from '../../../shared/casual-helpers';
 import { ToastError } from '../../../shared/components/Toast';
 import { EventType } from '../../../shared/enumeration/eventType';
@@ -63,6 +65,11 @@ interface IIntialValues {
   dateCount: number;
 }
 
+const isCurrentDatePlusValueOverdue = (value: number, expiredDate: Moment) => {
+  const currDate = moment();
+  return currDate.add(value, 'day') <= expiredDate;
+};
+
 const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
   const { isVisible, setVisibility, listingId, title, modelType } = props;
   const dispatch = useDispatch();
@@ -75,6 +82,8 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
   const { submitted } = useSelector((state: RootState) => state.transactions);
 
   const { t } = useTranslation();
+
+  const expiredLicenseDate = moment(listing?.licenseDate).add(listing?.licensePeriod, 'year');
 
   const closeModal = () => {
     setVisibility(false);
@@ -139,7 +148,25 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
       .typeError(t('anftDapp.listingComponent.extendOwnership.incorrectInputType'))
       .min(1, t('anftDapp.listingComponent.extendOwnership.minimumOwnership'))
       .max(getExtenableDayFromTokenBalance(), t('anftDapp.listingComponent.extendOwnership.balanceIsNotEnough'))
-      .required(t('anftDapp.listingComponent.extendOwnership.inputIsRequired')),
+      .required(t('anftDapp.listingComponent.extendOwnership.inputIsRequired'))
+      .test(
+        'dateCount-must-lt-period',
+        t('anftDapp.listingComponent.extendOwnership.exceedingPeriod', { day: `${listing?.period}` }),
+        function (value: number | undefined) {
+          if (!value || !listing?.period) return true;
+          return value <= listing.period;
+        }
+      )
+      .test(
+        'dateCount-must-lt-license',
+        t('anftDapp.listingComponent.extendOwnership.exceedingLicenseExpirationDate', {
+          day: `${expiredLicenseDate.format(APP_LOCAL_DATE_FORMAT)}`,
+        }),
+        function (value: number | undefined) {
+          if (!value || !listing?.licensePeriod || !listing?.licenseDate) return true;
+          return isCurrentDatePlusValueOverdue(value, expiredLicenseDate);
+        }
+      ),
   });
 
   const handleRawFormValues = (input: IIntialValues): IProceedTxBody => {

@@ -16,4 +16,6 @@ export interface IAsset {
   options: IOption[];
   name: string;
   period: number;
+  licenseDate: string | undefined;
+  licensePeriod: number | undefined;  
 }
