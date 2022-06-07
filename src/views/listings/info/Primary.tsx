@@ -9,14 +9,14 @@ import {
   CDataTable,
   CLink,
   CPagination,
-  CRow,
+  CRow
 } from '@coreui/react';
 import {
   faArrowAltCircleDown,
   faArrowAltCircleUp,
   faClipboard,
   faDonate,
-  faEdit,
+  faEdit
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import moment from 'moment';
@@ -33,7 +33,7 @@ import {
   convertUnixToDate,
   formatBNToken,
   formatLocalDatetime,
-  returnTheFirstImage,
+  returnTheFirstImage
 } from '../../../shared/casual-helpers';
 import ConfirmationLoading from '../../../shared/components/ConfirmationLoading';
 import CopyTextToClipBoard from '../../../shared/components/CopyTextToClipboard';
@@ -65,26 +65,27 @@ const ownershipText = (viewerAddr: string | undefined, listingInfo: IAsset, t: T
   let textClassname;
   let textContent;
 
-  if (!viewerIsOwner && ownershipAboutToExpire) {
-    textClassname = 'text-success';
-    textContent = t('anftDapp.listingComponent.primaryInfo.ownershipStatus.ownershipAbleToExtends');
-  } else if (viewerIsOwner && ownershipAboutToExpire) {
-    textClassname = 'text-danger';
-    textContent = t('anftDapp.listingComponent.primaryInfo.ownershipStatus.ownershipAboutToExpire', {
-      time: convertUnixToDate(moment.unix(ownership.toNumber()).subtract(1, 'days').unix()),
-    });
-  } else if (viewerIsOwner && !ownershipExpired) {
-    textClassname = 'text-success';
-    textContent = t('anftDapp.listingComponent.primaryInfo.ownershipStatus.owned');
-  } else if (viewerIsOwner && ownershipExpired) {
-    textClassname = 'text-danger';
-    textContent = t('anftDapp.listingComponent.primaryInfo.ownershipStatus.ownershipExpired');
-  } else if (!viewerIsOwner && !ownershipExpired) {
-    textClassname = 'text-danger';
-    textContent = t('anftDapp.listingComponent.primaryInfo.ownershipStatus.ownedByAnotherAddress');
-  } else if (!viewerIsOwner && ownershipExpired) {
-    textClassname = 'text-success';
-    textContent = t('anftDapp.listingComponent.primaryInfo.ownershipStatus.notOwned');
+  if (ownershipAboutToExpire) {
+    if (ownershipExpired) {
+      // Ownership actually expired
+      textClassname = viewerIsOwner ? 'text-danger' : 'text-success';
+      textContent = viewerIsOwner
+        ? t('anftDapp.listingComponent.primaryInfo.ownershipStatus.ownershipExpired')
+        : t('anftDapp.listingComponent.primaryInfo.ownershipStatus.notOwned');
+    } else {
+      // 24 hours before the ownership actually expires
+      textClassname = viewerIsOwner ? 'text-warning' : 'text-success';
+      textContent = viewerIsOwner
+        ? t('anftDapp.listingComponent.primaryInfo.ownershipStatus.ownershipAboutToExpire', {
+            time: convertUnixToDate(moment.unix(ownership.toNumber()).subtract(1, 'days').unix()),
+          })
+        : t('anftDapp.listingComponent.primaryInfo.ownershipStatus.ownershipAbleToExtends');
+    }
+  } else {
+    textClassname = viewerIsOwner ? 'text-success' : 'text-danger';
+    textContent = viewerIsOwner
+      ? t('anftDapp.listingComponent.primaryInfo.ownershipStatus.owned')
+      : t('anftDapp.listingComponent.primaryInfo.ownershipStatus.ownershipExpired');
   }
 
   return <p className={`ownership-checked m-0 ${textClassname}`}>{textContent}</p>;
@@ -205,9 +206,8 @@ const ListingInfo = (props: IListingInfoProps) => {
 
   const onRegisteringOwnership = () => {
     if (viewerIsOwner) return;
-    if (!ownershipAboutToExpire) {
+    if (!ownershipAboutToExpire)
       return ToastError(t('anftDapp.listingComponent.extendOwnership.cannotRegisterOwnership'));
-    }
     handleModalVisibility(ModalType.OWNERSHIP_REGISTER, true);
   };
 
