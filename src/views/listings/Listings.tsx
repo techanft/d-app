@@ -14,6 +14,11 @@ import { assetsSelectors, fetchingEntities, setFilterState as setStoredFilterSta
 import './index.scss';
 import { IListingParams } from './Listing';
 
+export enum ExchangeType {
+  PRIMARY = 'PRIMARY',
+  SECONDARY = 'SECONDARY',
+}
+
 export interface IAssetFilter extends IParams {
   owner?: string;
   city?: string;
@@ -24,12 +29,14 @@ export interface IAssetFilter extends IParams {
   orientation?: string;
   dailyPayment?: string;
   quality?: string;
+  level: ExchangeType
 }
 
 const initialFilterState: IAssetFilter = {
   page: 0,
   size: 5,
   sort: 'createdDate,desc',
+  level: ExchangeType.PRIMARY
 };
 
 const Listings = () => {

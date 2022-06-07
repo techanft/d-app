@@ -23,7 +23,7 @@ interface IGetEntities {
 export const getEntities = createAsyncThunk(`get-all-${prefix}`, async ({fields, provider}: IGetEntities, thunkAPI) => {
   try {
     const params = pickBy(fields);
-    const { data } = await axios.get<IGetAllResp<IAsset> >(`${MANAGEMENT_SITE_URL}api/public/listings`, { params: {...params, level: 'PRIMARY'} });
+    const { data } = await axios.get<IGetAllResp<IAsset> >(`${MANAGEMENT_SITE_URL}api/public/listings`, { params });
     // Attemp to fetch blockchain data
     const listingsPartialInfo = await getListingsPartialInfo(data.results, provider);
     data.results = listingsPartialInfo;
@@ -39,7 +39,7 @@ interface IGetEntity {
 }
 export const getEntity = createAsyncThunk(`get-single-${prefix}`, async ({id, provider}: IGetEntity, thunkAPI) => {
   try {
-    const { data } = await axios.get<IAsset>(`https://anfteco.vn/api/public/listings/${id}`);
+    const { data } = await axios.get<IAsset>(`${MANAGEMENT_SITE_URL}api/public/listings/${id}`);
     return await getListingCompleteInfo(data, provider);
   } catch (error: any) {
     return thunkAPI.rejectWithValue(error.response.data);
