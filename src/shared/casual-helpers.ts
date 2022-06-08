@@ -64,13 +64,11 @@ export const checkOwnershipExpired = (timestamp: number): boolean => {
   return currentTS >= timestamp;
 };
 
-
 export const checkOwnershipAboutToExpire = (timestamp: number): boolean => {
   const currentTS = moment().unix();
-  const ExpiredDateMinus24Hours = moment.unix(timestamp).subtract(1, 'days').unix();  
+  const ExpiredDateMinus24Hours = moment.unix(timestamp).subtract(1, 'days').unix();
   return currentTS >= ExpiredDateMinus24Hours;
 };
-
 
 export const convertUnixToDate = (timestamp: number): string => {
   return moment.unix(timestamp).format(APP_DATE_FORMAT);
@@ -172,7 +170,11 @@ export const isDateAfter = (input: string | undefined, compared: string | undefi
   return moment(moment(input)).isAfter(moment(compared));
 };
 
-export const returnTheFirstImage = (images: string) : string => {
-  const formatImages = images ? JSON.parse(images) : [];
-  return formatImages[0];
-}
+export const returnTheFirstImage = (images: string): string => {
+  try {
+    const formatImages = JSON.parse(images);
+    return formatImages[0] || '';
+  } catch (error) {
+    return '';
+  }
+};
