@@ -1,4 +1,4 @@
-import { CCol, CPagination, CRow } from '@coreui/react';
+import { CCard, CCardBody, CCardText, CCardTitle, CCol, CImg, CPagination, CRow } from '@coreui/react';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
@@ -29,14 +29,18 @@ export interface IAssetFilter extends IParams {
   orientation?: string;
   dailyPayment?: string;
   quality?: string;
-  level: ExchangeType
+  level: ExchangeType;
+}
+
+interface IViewComponent {
+  item: IAsset;
 }
 
 const initialFilterState: IAssetFilter = {
   page: 0,
-  size: 5,
+  size: 12,
   sort: 'createdDate,desc',
-  level: ExchangeType.PRIMARY
+  level: ExchangeType.PRIMARY,
 };
 
 const Listings = () => {
@@ -86,66 +90,98 @@ const Listings = () => {
   const { width } = useWindowDimensions();
   const minimumWidthDisplayingTokenSymbol = 360;
 
+  const ListView = ({ item }: IViewComponent) => (
+    <CCol md={12} className={`px-0 ${hideDetailedListing(item)} d-block d-xl-none`}>
+      <div
+        className="media info-box bg-white mx-3 my-2 p-2 align-items-center rounded shadow-sm"
+        onClick={onRedirecting(`/${item.id}/detail`)}
+      >
+        <img src={returnTheFirstImage(item.images)} alt="realEstateImg" className="rounded" />
+        <div className="media-body align-items-around ml-2">
+          <span className="info-box-text text-dark">{item.name ? item.name : '_'}</span>
+          <table className={`w-100 mt-1`}>
+            <tbody>
+              <tr className={`info-box-daily-payment text-primary mt-2 mb-0`}>
+                <td>{t('anftDapp.listingComponent.listingValue')}</td>
+                <td className={`text-right`}>{formatBNToken(item.value, width > minimumWidthDisplayingTokenSymbol)}</td>
+              </tr>
+              <tr className={`info-box-daily-payment text-success mt-2 mb-0`}>
+                <td>{t('anftDapp.listingComponent.dailyPayment')}</td>
+                <td className={`text-right`}>
+                  {formatBNToken(item.dailyPayment, width > minimumWidthDisplayingTokenSymbol)}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </CCol>
+  );
+
+  const GridView = ({ item }: IViewComponent) => (
+    <CCol xl={4} className={`p-3 ${hideDetailedListing(item)} d-none d-xl-block`}>
+      <CCard className="h-100" onClick={onRedirecting(`/${item.id}/detail`)}>
+        <CCard className="m-0">
+          <CImg src={returnTheFirstImage(item.images)} height={300} alt="realEstateImg" />
+        </CCard>
+        <CCard className="m-0 h-100 pb-0">
+          <CCardBody className="pb-0">
+            <CCardTitle>{`BĐS thử nghiệm ${item.id}`}</CCardTitle>
+            <div className="d-flex justify-content-between text-primary">
+              <CCardText>{t('anftDapp.listingComponent.listingValue')}</CCardText>
+              <CCardText>{formatBNToken(item.value, width > minimumWidthDisplayingTokenSymbol)}</CCardText>
+            </div>
+            <div className="d-flex justify-content-between text-success">
+              <CCardText>{t('anftDapp.listingComponent.dailyPayment')}</CCardText>
+              <CCardText> {formatBNToken(item.dailyPayment, width > minimumWidthDisplayingTokenSymbol)}</CCardText>
+            </div>
+          </CCardBody>
+        </CCard>
+      </CCard>
+    </CCol>
+  );
+
   return (
     <CRow className={`mx-0`}>
-      {assets.length && !entitiesLoading ? (
-        <>
-          {assets.map((item, index) => (
-            <CCol xs={12} key={`listing-${index}`} className={`px-0 ${hideDetailedListing(item)}`}>
-              <div
-                className="media info-box bg-white mx-3 my-2 p-2 align-items-center rounded shadow-sm"
-                onClick={onRedirecting(`/${item.id}/detail`)}
-              >
-                <img src={returnTheFirstImage(item.images)} alt="realEstateImg" className="rounded" />
-                <div className="media-body align-items-around ml-2">
-                  <span className="info-box-text text-dark">{item.name ? item.name : '_'}</span>
-                  <table className={`w-100 mt-1`}>
-                    <tbody>
-                      <tr className={`info-box-daily-payment text-primary mt-2 mb-0`}>
-                        <td>{t('anftDapp.listingComponent.listingValue')}</td>
-                        <td className={`text-right`}>
-                          {formatBNToken(item.value, width > minimumWidthDisplayingTokenSymbol)}
-                        </td>
-                      </tr>
-                      <tr className={`info-box-daily-payment text-success mt-2 mb-0`}>
-                        <td>{t('anftDapp.listingComponent.dailyPayment')}</td>
-                        <td className={`text-right`}>
-                          {formatBNToken(item.dailyPayment, width > minimumWidthDisplayingTokenSymbol)}
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </CCol>
-          ))}
-          <CCol xs={12} className="p-0">
-            {totalPages > 1 && !insideDetailView ? (
-              <CPagination
-                disabled={entitiesLoading}
-                activePage={filterState.page + 1}
-                pages={totalPages}
-                onActivePageChange={handlePaginationChange}
-                align="center"
-                className="mt-2"
-              />
-            ) : (
-              ''
-            )}
-          </CCol>
-        </>
-      ) : (
-        <CCol xs={12}>
-          {entitiesLoading ? ( //Still loading and waiting for results
-            <Loading />
+      <CCol md={12}>
+        <CRow>
+          {assets.length && !entitiesLoading ? (
+            <>
+              {assets.map((item, index) => (
+                <React.Fragment key={`list-${index}`}>
+                  <ListView item={item} />
+                  <GridView item={item} />
+                </React.Fragment>
+              ))}
+              <CCol xs={12} className="p-0">
+                {totalPages > 1 && !insideDetailView ? (
+                  <CPagination
+                    disabled={entitiesLoading}
+                    activePage={filterState.page + 1}
+                    pages={totalPages}
+                    onActivePageChange={handlePaginationChange}
+                    align="center"
+                    className="mt-2"
+                  />
+                ) : (
+                  ''
+                )}
+              </CCol>
+            </>
           ) : (
-            //Finished loading and no result found
-            <div className="alert alert-warning my-3">
-              <span>{t('anftDapp.listingComponent.noListingFound')}</span>
-            </div>
+            <CCol xs={12}>
+              {entitiesLoading ? ( //Still loading and waiting for results
+                <Loading />
+              ) : (
+                //Finished loading and no result found
+                <div className="alert alert-warning my-3">
+                  <span>{t('anftDapp.listingComponent.noListingFound')}</span>
+                </div>
+              )}
+            </CCol>
           )}
-        </CCol>
-      )}
+        </CRow>
+      </CCol>
     </CRow>
   );
 };

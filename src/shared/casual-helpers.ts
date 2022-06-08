@@ -178,3 +178,23 @@ export const returnTheFirstImage = (images: string): string => {
     return '';
   }
 };
+
+interface IFraction {
+  numerator: number;
+  denominator: number;
+}
+
+const reduceFraction = (numerator: number, denominator: number): IFraction => {
+  const fractionCal = (num1st: number, num2nd: number): number => {
+    return num2nd ? fractionCal(num2nd, num1st % num2nd) : num1st;
+  };
+  const result = fractionCal(numerator, denominator);
+  return { numerator: numerator / result, denominator: denominator / result };
+};
+
+export const calculateRatio = (firstNumb: number, secondNumb: number): IFraction => {
+  const fraction = reduceFraction(firstNumb, secondNumb);
+  if (fraction.numerator === 1) return fraction;
+  const reduceDenominator = Math.round(fraction.denominator / fraction.numerator);
+  return { numerator: 1, denominator: reduceDenominator };
+};

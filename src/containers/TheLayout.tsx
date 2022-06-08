@@ -25,13 +25,13 @@ const TheLayout = () => {
 
   return (
     <div className="dapp-layout">
-      {!isMobile ? (
+      {/* {!isMobile ? (
         <ErrorModal
           errMsg="anftDapp.global.modal.errorModal.deviceErrMsg"
           title="anftDapp.global.modal.errorModal.deviceErr"
           autoReload={false}
         />
-      ) : (
+      ) : ( */}
         <>
           {!providerErrorMessage ? (
             <>
@@ -51,7 +51,7 @@ const TheLayout = () => {
             />
           )}
         </>
-      )}
+      {/* )} */}
     </div>
   );
 };
