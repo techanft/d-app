@@ -169,7 +169,7 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
     dateCount: calculateDateDifference(startDate, endDate),
     profit: 0,
     priceStatus: PriceStatus.LOW,
-    riskLevel: RiskLevel.VERY_LOW,
+    riskLevel: RiskLevel.VERY_HIGH,
   };
 
   const getExtenableDayFromTokenBalance = (): number => {
