@@ -1,4 +1,5 @@
 import { BigNumber } from 'ethers';
+import { IDurationRisk } from './listingType.model';
 import { IOption } from './options.model';
 
 export interface IAsset {
@@ -16,4 +17,8 @@ export interface IAsset {
   options: IOption[];
   fee: number | null;
   price: number | null;
+  typeId: string;
+  rentCost?: number;
+  goodPrice: number;
+  durationRisk: IDurationRisk;
 }
