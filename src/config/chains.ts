@@ -1,6 +1,7 @@
 export const BSC_TESTNET_CONFIG = {
   chainId: '0x61',
-  rpcUrls: ['https://data-seed-prebsc-1-s1.binance.org:8545/'],
+  rpcUrls: ['wss://bsc-ws-node.nariox.org:443 '],
+  // rpcUrls: ['https://data-seed-prebsc-1-s3.binance.org:8545/'],
   chainName: 'Binance Smart Chain TESTNET',
   nativeCurrency: {
     name: 'BNB',

@@ -59,7 +59,7 @@ const ActivityLogs = (props: IActivityLogs) => {
             )}
             <CCardBody className="p-0 listing-card-body">
               <CCardTitle className="listing-card-title mb-0 px-3 py-2 w-100" innerRef={scrollRef}>
-                <p className="mb-2 text-white content-title">{`BĐS thử nghiệm ${id}`}</p>
+                <p className="mb-2 text-white content-title">{listing?.name ? listing.name : '_'}</p>
                 <p className="mb-0 text-white detail-title-font">
                   {t('anftDapp.listingComponent.primaryInfo.blockchainAddress')}{' '}
                   <b>

@@ -3,7 +3,7 @@ import { IDurationRisk } from './listingType.model';
 import { IOption } from './options.model';
 
 export interface IAsset {
-  id: number;
+  id: string;
   createdDate: Date;
   address: string;
   images: string;
@@ -21,4 +21,8 @@ export interface IAsset {
   rentCost?: number;
   goodPrice: number;
   durationRisk: IDurationRisk;
+  name: string;
+  period: number;
+  licenseDate: string | undefined;
+  licensePeriod: number | undefined;  
 }
