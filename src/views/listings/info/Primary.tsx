@@ -81,10 +81,11 @@ const ownershipText = (viewerAddr: string | undefined, listingInfo: IAsset, t: T
         : t('anftDapp.listingComponent.primaryInfo.ownershipStatus.ownershipAbleToExtends');
     }
   } else {
+    // Ownership still active
     textClassname = viewerIsOwner ? 'text-success' : 'text-danger';
     textContent = viewerIsOwner
       ? t('anftDapp.listingComponent.primaryInfo.ownershipStatus.owned')
-      : t('anftDapp.listingComponent.primaryInfo.ownershipStatus.ownershipExpired');
+      : t('anftDapp.listingComponent.primaryInfo.ownershipStatus.ownedByAnotherAddress');
   }
 
   return <p className={`ownership-checked m-0 ${textClassname}`}>{textContent}</p>;
