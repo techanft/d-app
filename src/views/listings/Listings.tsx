@@ -34,7 +34,6 @@ export interface IAssetFilter extends IParams {
 
 interface IViewComponent {
   item: IAsset;
-  index: number;
 }
 
 const initialFilterState: IAssetFilter = {
@@ -91,8 +90,8 @@ const Listings = () => {
   const { width } = useWindowDimensions();
   const minimumWidthDisplayingTokenSymbol = 360;
 
-  const ListView = ({ item, index }: IViewComponent) => (
-    <CCol md={12} key={`listing-${index}`} className={`px-0 ${hideDetailedListing(item)} d-block d-xl-none`}>
+  const ListView = ({ item }: IViewComponent) => (
+    <CCol md={12} className={`px-0 ${hideDetailedListing(item)} d-block d-xl-none`}>
       <div
         className="media info-box bg-white mx-3 my-2 p-2 align-items-center rounded shadow-sm"
         onClick={onRedirecting(`/${item.id}/detail`)}
@@ -119,8 +118,8 @@ const Listings = () => {
     </CCol>
   );
 
-  const GridView = ({ item, index }: IViewComponent) => (
-    <CCol xl={4} key={`listing-${index}`} className={`p-3 ${hideDetailedListing(item)} d-none d-xl-block`}>
+  const GridView = ({ item }: IViewComponent) => (
+    <CCol xl={4} className={`p-3 ${hideDetailedListing(item)} d-none d-xl-block`}>
       <CCard className="h-100" onClick={onRedirecting(`/${item.id}/detail`)}>
         <CCard className="m-0">
           <CImg src={returnTheFirstImage(item.images)} height={300} alt="realEstateImg" />
@@ -149,10 +148,10 @@ const Listings = () => {
           {assets.length && !entitiesLoading ? (
             <>
               {assets.map((item, index) => (
-                <>
-                  <ListView item={item} index={index} />
-                  <GridView item={item} index={index} />
-                </>
+                <React.Fragment key={`list-${index}`}>
+                  <ListView item={item} />
+                  <GridView item={item} />
+                </React.Fragment>
               ))}
               <CCol xs={12} className="p-0">
                 {totalPages > 1 && !insideDetailView ? (
