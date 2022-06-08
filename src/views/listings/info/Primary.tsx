@@ -9,14 +9,14 @@ import {
   CDataTable,
   CLink,
   CPagination,
-  CRow,
+  CRow
 } from '@coreui/react';
 import {
   faArrowAltCircleDown,
   faArrowAltCircleUp,
   faClipboard,
   faDonate,
-  faEdit,
+  faEdit
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import moment from 'moment';
@@ -25,13 +25,14 @@ import 'react-dates/initialize';
 import 'react-dates/lib/css/_datepicker.css';
 import { TFunction, useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
-import { TOKEN_SYMBOL } from '../../../config/constants';
+import { MANAGEMENT_SITE_URL, TOKEN_SYMBOL } from '../../../config/constants';
 import {
   checkOwnershipAboutToExpire,
   checkOwnershipExpired,
   convertUnixToDate,
   formatBNToken,
   formatLocalDatetime,
+  returnTheFirstImage
 } from '../../../shared/casual-helpers';
 import ConfirmationLoading from '../../../shared/components/ConfirmationLoading';
 import CopyTextToClipBoard from '../../../shared/components/CopyTextToClipboard';
@@ -80,10 +81,11 @@ const ownershipText = (viewerAddr: string | undefined, listingInfo: IAsset, t: T
         : t('anftDapp.listingComponent.primaryInfo.ownershipStatus.ownershipAbleToExtends');
     }
   } else {
+    // Ownership still active
     textClassname = viewerIsOwner ? 'text-success' : 'text-danger';
     textContent = viewerIsOwner
       ? t('anftDapp.listingComponent.primaryInfo.ownershipStatus.owned')
-      : t('anftDapp.listingComponent.primaryInfo.ownershipStatus.ownershipExpired');
+      : t('anftDapp.listingComponent.primaryInfo.ownershipStatus.ownedByAnotherAddress');
   }
 
   return <p className={`ownership-checked m-0 ${textClassname}`}>{textContent}</p>;
@@ -113,7 +115,6 @@ const ListingInfo = (props: IListingInfoProps) => {
   const { initialState: recordInitialState } = useSelector((state: RootState) => state.records);
   const { loading: loadingWorkers, workers, errorMessage: workerErrorMessage } = recordInitialState.workerInitialState;
   const { success, submitted } = useSelector((state: RootState) => state.transactions);
-
   const { t } = useTranslation();
 
   const workerFields = [
@@ -204,8 +205,9 @@ const ListingInfo = (props: IListingInfoProps) => {
 
   const onRegisteringOwnership = () => {
     if (viewerIsOwner) return;
-    if (!ownershipAboutToExpire)
+    if (!ownershipAboutToExpire) {
       return ToastError(t('anftDapp.listingComponent.extendOwnership.cannotRegisterOwnership'));
+    }
     handleModalVisibility(ModalType.OWNERSHIP_REGISTER, true);
   };
 
@@ -228,7 +230,7 @@ const ListingInfo = (props: IListingInfoProps) => {
     <CContainer fluid className="px-0">
       <CCol xs={12} className="p-0">
         {!entityLoading && listing ? (
-          <img src={listing.images} className="w-100 h-100" alt="listingImg" />
+          <img src={returnTheFirstImage(listing.images)} className="w-100 h-100" alt="listingImg" />
         ) : (
           // Ensuring 16:9 ratio for image and image loader
           <InfoLoader width={screenWidth} height={screenWidth / 1.77} />
@@ -237,8 +239,17 @@ const ListingInfo = (props: IListingInfoProps) => {
 
       <CCol className="m-0 p-0">
         <CRow className="listing-address-info m-0 p-0">
-          <CCol xs={12} className="text-dark btn-font-style mt-3">
-            {`BĐS thử nghiệm ${listingId}`}
+          <CCol xs={12} className="text-dark btn-font-style mt-3 d-flex justify-content-between align-items-center">
+            {listing?.name ? listing.name : '_'}
+            <CLink
+              target="_blank"
+              rel="noreferrer noopener"
+              href={`${MANAGEMENT_SITE_URL}#/listings/primary/${listingId}/detail`}
+            >
+              <CButton className=" btn btn-primary btn-font-style btn-radius-50">
+                {t('anftDapp.listingComponent.secondaryInfo.details')}
+              </CButton>
+            </CLink>
           </CCol>
 
           <CCol xs={12} className="text-primary total-token my-3">

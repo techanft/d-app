@@ -116,7 +116,9 @@
         "incorrectInputType": "Incorrect input type!",
         "inputIsRequired": "This field is required!",
         "minimumOwnership": "Minimum ownership for the listing is 1.0 day!",
-        "noticeText": "Ownership will be started from now to the end of the selected day (23:30 - {{day}})"
+        "noticeText": "Ownership will be started from now to the end of the selected day (23:30 - {{day}})",
+        "exceedingPeriod": "Ownership days cannot exceed the maximum ownership period: {{day}} days",
+        "exceedingLicenseExpirationDate": "Ownership days cannot exceed the license expiration date: {{day}}"
       },
       "withdrawToken": {
         "maximumWithdrawable": "Maximum Days",

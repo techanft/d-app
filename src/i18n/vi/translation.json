@@ -116,7 +116,9 @@
         "incorrectInputType": "Số ANFT không hợp lệ!",
         "inputIsRequired": "Vui lòng không để trống ô này!",
         "minimumOwnership": "Thời gian sở hữu tối thiểu là 1.0 ngày!",
-        "noticeText": "Thời gian sở hữu sẽ được tính từ thời điểm hiện tại đến cuối ngày được chọn (23:30 - {{day}})"
+        "noticeText": "Thời gian sở hữu sẽ được tính từ thời điểm hiện tại đến cuối ngày được chọn (23:30 - {{day}})",
+        "exceedingPeriod": "Số ngày sở hữu không được vượt quá kỳ sở hữu tối đa: {{day}} ngày",
+        "exceedingLicenseExpirationDate": "Thời gian sở hữu không được vượt quá ngày hết hạn cấp phép của BĐS: {{day}}"
       },
       "withdrawToken": {
         "maximumWithdrawable": "Số ngày rút tối đa",

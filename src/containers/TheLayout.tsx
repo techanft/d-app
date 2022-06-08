@@ -13,7 +13,7 @@ const TheLayout = () => {
   const { providerErrorMessage } = useSelector((state: RootState) => state.wallet);
 
   const { isMobile } = useDeviceDetect();
-  const shouldDisplayLogoScreen = useCountdownTimer({ seconds: 2 });
+  const shouldDisplayLogoScreen = useCountdownTimer({ seconds: 1 });
 
   const logoScreen = (
     <div className="d-flex w-100 vh-100">

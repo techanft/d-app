@@ -33,7 +33,7 @@ import {
   setFilterState as setStoredFilterState,
   softReset as assetsSoftReset,
 } from '../views/assets/assets.reducer';
-import { IAssetFilter } from '../views/listings/Listings';
+import { ExchangeType, IAssetFilter } from '../views/listings/Listings';
 import { softReset as transactionsSoftReset } from '../views/transactions/transactions.reducer';
 import {
   getAddress,
@@ -69,6 +69,7 @@ const initialValues: IAssetFilter = {
   page: 0,
   size: 5,
   sort: 'createdDate,desc',
+  level: ExchangeType.PRIMARY
 };
 
 type TListingsFilter = {
@@ -181,7 +182,11 @@ const TheHeader = () => {
   }, [signerAddress]);
 
   const handleRawValues = (values: IAssetFilter): IAssetFilter => {
-    return { ...values, owner: Boolean(values.owner) ? signerAddress : undefined };
+    return {
+      ...values,
+      owner: Boolean(values.owner) ? signerAddress : undefined,
+      level: Boolean(values.owner) ? ExchangeType.SECONDARY : ExchangeType.PRIMARY,
+    };
   };
 
   const [isDropdownFilterShowing, setIsDropdownFilterShowing] = useState<boolean>(false);
@@ -247,7 +252,7 @@ const TheHeader = () => {
                       <div className="modal-title-style d-flex justify-content-end px-3 py-2">
                         <CLabel className="m-auto pl-3"> {t('anftDapp.headerComponent.filter.filter')}</CLabel>
                         <CButton className="p-0 text-primary" onClick={resetForm}>
-                          <FontAwesomeIcon icon={faSyncAlt} size='lg' />
+                          <FontAwesomeIcon icon={faSyncAlt} size="lg" />
                         </CButton>
                       </div>
                       <CRow className="mx-2">
@@ -303,9 +308,9 @@ const TheHeader = () => {
       >
         <CRow className="w-100 p-1">
           <CCol xs={12}>
-          <p className={`text-center alert alert-warning font-size-075`}>
-          {t('anftDapp.headerComponent.demoNotice')}
-          </p>
+            <p className={`text-center alert alert-warning font-size-075`}>
+              {t('anftDapp.headerComponent.demoNotice')}
+            </p>
           </CCol>
           <CCol xs={4} className="px-2">
             <CSelect className="btn-radius-50 text-dark px-2 content-title" disabled>
