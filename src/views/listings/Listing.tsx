@@ -71,8 +71,8 @@ const Listing = (props: IListingProps) => {
       <Secondary />
       <CRow className="mx-0">
         <CCol xs={12} className="text-center mt-3">
-          <CLink to={`/${Number(id)}/activity-logs`}>
-            <CIcon name="cil-history" /> <u>{t('anftDapp.listingComponent.activityLogs')}</u>
+          <CLink to={`/${Number(id)}/activity-logs`} className='text-decoration-none'>
+            <CIcon name="cil-history" /> {t('anftDapp.listingComponent.activityLogs')}
           </CLink>
         </CCol>
         <CCol xs={12}>

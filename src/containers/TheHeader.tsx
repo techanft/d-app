@@ -194,7 +194,7 @@ const TheHeader = () => {
   return (
     <>
       <CHeader className="header-container d-block shadow-sm border-0" withSubheader>
-        <CHeaderNav className={`${isDashboardView ? 'justify-content-between' : ''} bg-white px-2`}>
+        <CHeaderNav className={`bg-white px-2`}>
           <CHeaderNavItem>
             <CButton className="text-primary p-0 border-0 d-lg-none" onClick={toggleSidebarMobile}>
               <CIcon name="cil-menu" size="xl" />
@@ -203,12 +203,12 @@ const TheHeader = () => {
               <CIcon name="cil-menu" size="xl" />
             </CButton>
           </CHeaderNavItem>
-          <CHeaderNavItem className={`${isDashboardView ? '' : 'ml-3'}`}>
+          <CHeaderNavItem className={`ml-3`}>
             <CLink to="/listings">
               <p className="header-title content-title mb-0">{t('anftDapp.headerComponent.dashboard')}</p>
             </CLink>
           </CHeaderNavItem>
-          <CHeaderNavItem className={`${isDashboardView ? '' : 'ml-auto'}`}>
+          <CHeaderNavItem className={`${isDashboardView ? 'mr-3 ml-auto' : 'ml-auto'}`}>
             <CButton className="btn-link-wallet btn-radius-50 px-2 btn-font-style" onClick={onConnectWallet}>
               {signerAddress ? (
                 <b>

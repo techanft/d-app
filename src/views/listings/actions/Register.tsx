@@ -435,7 +435,7 @@ const Register = (props: IRegisterProps) => {
                           toggleDetails(item.id.toString());
                         }}
                       >
-                        <span className="text-primary d-inline-block text-truncate" style={{ maxWidth: '100px' }}>
+                        <span className="text-primary d-inline-block text-truncate cursor-pointer" style={{ maxWidth: '100px' }}>
                           {item.name ? item.name : '_'}
                         </span>
                       </td>
