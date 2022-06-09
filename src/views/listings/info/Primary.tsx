@@ -360,14 +360,14 @@ const ListingInfo = (props: IListingInfoProps) => {
           </CCol>
 
           <CCol xs={6} className="text-left">
-            <p className="text-primary my-2" onClick={toggleCollapseVisibility(CollapseType.WORKER_LIST)}>
+            <p className="text-primary my-2 cursor-pointer" onClick={toggleCollapseVisibility(CollapseType.WORKER_LIST)}>
               <CIcon name="cil-description" className="mr-1 pb-1" size="lg" />
               {t('anftDapp.listingComponent.primaryInfo.workersList')}
             </p>
           </CCol>
 
           <CCol xs={6} className="text-left">
-            <p className="text-primary my-2" onClick={onCheckingWorker}>
+            <p className="text-primary my-2 cursor-pointer" onClick={onCheckingWorker}>
               <CIcon name="cil-find-in-page" className="mr-1 pb-1" size="lg" />
               {t('anftDapp.listingComponent.primaryInfo.checkWorker.checkWorker')}
             </p>
@@ -431,14 +431,14 @@ const ListingInfo = (props: IListingInfoProps) => {
                   <CRow className="mx-0">
                     <p
                       onClick={onRegisteringOwnership}
-                      className={`m-0 ${viewerIsOwner || !ownershipAboutToExpire ? 'text-secondary' : 'text-primary'}`}
+                      className={`m-0 cursor-pointer ${viewerIsOwner || !ownershipAboutToExpire ? 'text-secondary' : 'text-primary'}`}
                     >
                       <FontAwesomeIcon icon={faEdit} />{' '}
                       {t('anftDapp.listingComponent.primaryInfo.investmentActivities.registerOwnership')}
                     </p>
                   </CRow>
                   <CRow className="mt-2 mx-0">
-                    <CLink to={`/${listingId}/register`}>
+                    <CLink to={`/${listingId}/register`} className='text-decoration-none'>
                       <FontAwesomeIcon icon={faDonate} />{' '}
                       {t('anftDapp.listingComponent.primaryInfo.investmentActivities.registerClaimReward')}
                     </CLink>
@@ -466,7 +466,7 @@ const ListingInfo = (props: IListingInfoProps) => {
                   <CRow className="mx-0">
                     <p
                       onClick={onWithdrawToken}
-                      className={`m-0 ${ownershipExpired ? 'text-secondary' : 'text-primary'}`}
+                      className={`m-0 cursor-pointer ${ownershipExpired ? 'text-secondary' : 'text-primary'}`}
                     >
                       <FontAwesomeIcon icon={faArrowAltCircleUp} />{' '}
                       {t('anftDapp.listingComponent.primaryInfo.ownershipManagement.withdrawToken')}
@@ -476,14 +476,14 @@ const ListingInfo = (props: IListingInfoProps) => {
                   <CRow className="my-2 mx-0">
                     <p
                       onClick={() => handleModalVisibility(ModalType.OWNERSHIP_EXTENSION, true)}
-                      className={`m-0 text-primary`}
+                      className={`m-0 cursor-pointer text-primary`}
                     >
                       <FontAwesomeIcon icon={faArrowAltCircleDown} />{' '}
                       {t('anftDapp.listingComponent.primaryInfo.ownershipManagement.extendOwnership')}
                     </p>
                   </CRow>
                   <CRow className="mx-0">
-                    <CLink to={`/${listingId}/workers-list`}>
+                    <CLink to={`/${listingId}/workers-list`} className='text-decoration-none'>
                       <FontAwesomeIcon icon={faClipboard} />{' '}
                       {t('anftDapp.listingComponent.primaryInfo.ownershipManagement.workerManagement')}
                     </CLink>

@@ -93,7 +93,7 @@ const Listings = () => {
   const ListView = ({ item }: IViewComponent) => (
     <CCol md={12} className={`px-0 ${hideDetailedListing(item)} d-block d-xl-none`}>
       <div
-        className="media info-box bg-white mx-3 my-2 p-2 align-items-center rounded shadow-sm"
+        className="media info-box bg-white mx-3 my-2 p-2 align-items-center rounded shadow-sm cursor-pointer"
         onClick={onRedirecting(`/${item.id}/detail`)}
       >
         <img src={returnTheFirstImage(item.images)} alt="realEstateImg" className="rounded" />
@@ -120,13 +120,13 @@ const Listings = () => {
 
   const GridView = ({ item }: IViewComponent) => (
     <CCol xl={4} className={`p-3 ${hideDetailedListing(item)} d-none d-xl-block`}>
-      <CCard className="h-100" onClick={onRedirecting(`/${item.id}/detail`)}>
-        <CCard className="m-0">
-          <CImg src={returnTheFirstImage(item.images)} height={300} alt="realEstateImg" />
+      <CCard className="h-100 cursor-pointer" onClick={onRedirecting(`/${item.id}/detail`)}>
+        <CCard className="m-0 border-0">
+          <CImg src={returnTheFirstImage(item.images)} height={300} alt="realEstateImg" className='rounded-top'/>
         </CCard>
-        <CCard className="m-0 h-100 pb-0">
+        <CCard className="m-0 h-100 pb-0 border-0">
           <CCardBody className="pb-0">
-            <CCardTitle>{`BĐS thử nghiệm ${item.id}`}</CCardTitle>
+            <CCardTitle>{item.name ? item.name : '_'}</CCardTitle>
             <div className="d-flex justify-content-between text-primary">
               <CCardText>{t('anftDapp.listingComponent.listingValue')}</CCardText>
               <CCardText>{formatBNToken(item.value, width > minimumWidthDisplayingTokenSymbol)}</CCardText>
