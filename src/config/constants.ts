@@ -1,5 +1,5 @@
 import { IWindowEth } from '../shared/models/base.model';
-import { BSC_MAINNET_CONFIG, BSC_TESTNET_CONFIG } from './chains';
+import { BSC_MAINNET_CONFIG, CRONOS_TESTNET_CONFIG } from './chains';
 
 export const APP_DATE_FORMAT = 'HH:mm - DD/MM/YY';
 export const APP_TIMESTAMP_FORMAT = 'DD/MM/YY HH:mm:ss';
@@ -20,4 +20,4 @@ export const USING_TESTNET = true; // Network toggler
 export const SERVICE_API_URL = USING_TESTNET ?  'https://dapp-dev.anft.vn/api/' : 'https://app.anft.vn/api/' ;
 export const MANAGEMENT_SITE_URL = 'https://anfteco.vn/';
 
-export const BLOCKCHAIN_NETWORK = USING_TESTNET ? BSC_TESTNET_CONFIG : BSC_MAINNET_CONFIG
+export const BLOCKCHAIN_NETWORK = USING_TESTNET ? CRONOS_TESTNET_CONFIG : BSC_MAINNET_CONFIG
