@@ -1,7 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { ethers } from 'ethers';
-import { BLOCKCHAIN_NETWORK, _window } from '../../config/constants';
-import { promptUserToSwitchChain, TOKEN_INSTANCE } from '../../shared/blockchain-helpers';
+import { _window } from '../../config/constants';
+import { TOKEN_INSTANCE } from '../../shared/blockchain-helpers';
 
 interface IContractSigner {
   contract: ethers.Contract;
@@ -75,10 +75,10 @@ export const getProvider = createAsyncThunk('getProvider', async (_, thunkAPI) =
     const provider = new ethers.providers.Web3Provider(_window.ethereum);
     const { chainId } = await provider.getNetwork();
 
-    if (ethers.utils.hexlify(chainId) !== BLOCKCHAIN_NETWORK.chainId) {
-      promptUserToSwitchChain();
-      throw Error(INVALID_NETWORK_ERR);
-    }
+    // if (ethers.utils.hexlify(chainId) !== BLOCKCHAIN_NETWORK.chainId) {
+    //   promptUserToSwitchChain();
+    //   throw Error(INVALID_NETWORK_ERR);
+    // }
 
     return provider;
   } catch (error) {

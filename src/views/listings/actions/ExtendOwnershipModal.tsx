@@ -14,7 +14,8 @@ import {
   CModalTitle,
   CProgress,
   CProgressBar,
-  CRow
+  CRow,
+  CSelect
 } from '@coreui/react';
 import { BigNumber } from 'ethers';
 import { Formik, FormikProps } from 'formik';
@@ -42,6 +43,7 @@ import {
   unInsertCommas
 } from '../../../shared/casual-helpers';
 import { ToastError } from '../../../shared/components/Toast';
+import { CommercialTypes, mapCommercialTypes } from '../../../shared/enumeration/comercialType';
 import { EventType } from '../../../shared/enumeration/eventType';
 import { mapPriceStatusBadge, PriceStatus } from '../../../shared/enumeration/goodPrice';
 import { ModalType } from '../../../shared/enumeration/modalType';
@@ -89,6 +91,7 @@ interface IIntialValues {
   profit: number;
   priceStatus: PriceStatus;
   riskLevel: RiskLevel;
+  commercialTypes: CommercialTypes;
 }
 
 interface IRiskValue {
@@ -170,6 +173,7 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
     profit: 0,
     priceStatus: PriceStatus.LOW,
     riskLevel: RiskLevel.VERY_HIGH,
+    commercialTypes: CommercialTypes.SELL,
   };
 
   const getExtenableDayFromTokenBalance = (): number => {
@@ -293,12 +297,18 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
     return riskLevel;
   };
 
+  const USD_TO_VND_RATIO = 23300;
+  const ANFT_TO_USD_RATIO = 1;
+  //api get real-time price of token from pancakeswap: https://api.pancakeswap.info/api/v2/tokens/{token_address}
+
+  const ANFT_TO_VND_RATIO = ANFT_TO_USD_RATIO * USD_TO_VND_RATIO;
+
   const listingData = {
-    sellPrice: listing?.price || 0,
-    pricePerDay: listing?.fee || 0,
-    goodPrice: listing?.goodPrice || 0,
-    rentPrice: listing?.rentCost || 0,
-    isSell: listing?.rentCost ? false : true,
+    sellPrice: listing?.price && listing?.price > 0 ? listing?.price / ANFT_TO_VND_RATIO : 0,
+    pricePerDay: listing?.fee && listing?.fee > 0 ? listing?.fee / ANFT_TO_VND_RATIO : 0,
+    goodPrice: listing?.goodPrice && listing?.goodPrice > 0 ? listing?.goodPrice / ANFT_TO_VND_RATIO : 0,
+    rentPrice: listing?.rentCost && listing?.rentCost > 0 ? listing?.rentCost / ANFT_TO_VND_RATIO : 0,
+    ratio: ANFT_TO_VND_RATIO,
     maximumStage: Number(listing?.durationRisk?.value) || 0,
   };
 
@@ -343,18 +353,22 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
     [RiskLevel.LOW]: profitsValue.LOW,
     [RiskLevel.VERY_LOW]: profitsValue.VERY_LOW,
   };
-
-  const calculateProfit = (price: number, risk: RiskLevel, priceStatus: PriceStatus) => {
+  const calculateProfit = (
+    price: number,
+    risk: RiskLevel,
+    priceStatus: PriceStatus,
+    commercialTypes: CommercialTypes
+  ) => {
     const riskLevelInx = riskLevelArray.indexOf(risk);
     const findNextRisk = risk !== RiskLevel.VERY_HIGH ? riskLevelArray[riskLevelInx + 1] : risk;
     const profit = mappingSuccessRateToProfits[priceStatus === PriceStatus.HIGH ? findNextRisk : risk];
-    const ownerPrice = listingData.isSell ? listingData.sellPrice : listingData.rentPrice;
+    const ownerPrice = commercialTypes === CommercialTypes.SELL ? listingData.sellPrice : listingData.rentPrice;
     const diff = price <= ownerPrice ? 0 : (price - ownerPrice) * profit;
     return diff;
   };
 
-  const checkPriceisGood = (price: number): PriceStatus => {
-    if (listingData.isSell) {
+  const checkPriceisGood = (price: number, commercialTypes: CommercialTypes): PriceStatus => {
+    if (commercialTypes === CommercialTypes.SELL) {
       if (price <= listingData.sellPrice) return PriceStatus.LOW;
       if (listingData.sellPrice < price && price <= listingData.goodPrice) return PriceStatus.GOOD;
       return PriceStatus.HIGH;
@@ -391,7 +405,7 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
           }
         }}
       >
-        {({ values, errors, touched, setFieldValue, handleSubmit, handleBlur }) => (
+        {({ values, errors, touched, setFieldValue, handleSubmit,  handleChange }) => (
           <CForm onSubmit={handleSubmit}>
             <CModalBody>
               <CRow>
@@ -433,6 +447,31 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                   </CFormGroup>
                   <CFormGroup row>
                     <CCol xs={12}>
+                      <CLabel className="recharge-token-title">Hình thức sở hữu:</CLabel>
+                    </CCol>
+                    <CCol xs={12}>
+                      <CSelect
+                        name="commercialTypes"
+                        onChange={handleChange}
+                        value={values.commercialTypes}
+                        id="commercialTypes"
+                      >
+                        {listing && listing.commercialTypes ? (
+                          <>
+                            {listing.commercialTypes.map((item, index) => (
+                              <option value={item} key={index}>
+                                {mapCommercialTypes[item]}
+                              </option>
+                            ))}
+                          </>
+                        ) : (
+                          ''
+                        )}
+                      </CSelect>
+                    </CCol>
+                  </CFormGroup>
+                  <CFormGroup row>
+                    <CCol xs={12}>
                       <CLabel className="recharge-token-title">Giá bán trên sàn thứ cấp (VND):</CLabel>
                     </CCol>
                     <CCol xs={12}>
@@ -442,7 +481,10 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                         className="btn-radius-50"
                         type="text"
                         onChange={(e: React.FormEvent<HTMLInputElement>) => {
-                          const priceStatus = checkPriceisGood(Number(unInsertCommas(e.currentTarget.value)));
+                          const priceStatus = checkPriceisGood(
+                            Number(unInsertCommas(e.currentTarget.value)),
+                            values.commercialTypes
+                          );
                           setFieldValue('price', unInsertCommas(e.currentTarget.value));
                           setFieldValue('priceStatus', priceStatus);
                           setFieldValue(
@@ -450,7 +492,8 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                             calculateProfit(
                               Number(unInsertCommas(e.currentTarget.value)),
                               values.riskLevel,
-                              priceStatus
+                              priceStatus,
+                              values.commercialTypes
                             )
                           );
                         }}
@@ -512,7 +555,10 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                               'day'
                             );
                             const riskLevel = handleRiskProgressValue(Number(e.currentTarget.value));
-                            setFieldValue('profit', calculateProfit(values.price, riskLevel, values.priceStatus));
+                            setFieldValue(
+                              'profit',
+                              calculateProfit(values.price, riskLevel, values.priceStatus, values.commercialTypes)
+                            );
                             setFieldValue('riskLevel', riskLevel);
                             setFieldValue('dateCount', extendDay);
                             setFieldValue('endDate', extendDate);
