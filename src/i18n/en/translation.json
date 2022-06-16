@@ -107,6 +107,20 @@
       },
       "activityLogs": "Activity Logs",
       "moreListing": "More Listing",
+      "successLevel": {
+        "VERY_HIGH": "Verry Low",
+        "HIGH": "Low",
+        "MEDIUM": "Medium",
+        "LOW": "High",
+        "VERY_LOW": "Verry High"
+      },
+      "methods": {
+        "SELL": "Sell",
+        "FRANCHISE_ONE": "Franchise one",
+        "FRANCHISE": "Franchises",
+        "AUTONOMY": "Autonomy",
+        "RENT":"Rent"
+      },
       "extendOwnership": {
         "currentOwnership": "Current Ownership",
         "tokenBalance": "Token Balance",
@@ -119,6 +133,17 @@
         "noticeText": "Ownership will be started from now to the end of the selected day (23:30 - {{day}})",
         "exceedingPeriod": "Ownership days cannot exceed the maximum ownership period: {{day}} days",
         "exceedingLicenseExpirationDate": "Ownership days cannot exceed the license expiration date: {{day}}"
+        ,"priceStatus": {
+          "LOW": "Your price is too Low",
+          "GOOD": "Your price is Good Price",
+          "HIGH": "Your price is High Price"
+        },
+        "undefined": "Undefined",
+        "comercialType": "Comercial Type",
+        "secondaryPrice": "Selling price on the secondary floor",
+        "profit": "Expected profit",
+        "successRate": "Success rate",
+        "profitRatio": "Profit rate"
       },
       "withdrawToken": {
         "maximumWithdrawable": "Maximum Days",

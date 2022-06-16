@@ -1,5 +1,5 @@
 import { BigNumber } from 'ethers';
-import { CommercialTypes } from '../enumeration/comercialType';
+import { CommercialTypes, Methods } from '../enumeration/comercialType';
 import { IDurationRisk } from './listingType.model';
 import { IOption } from './options.model';
 
@@ -25,6 +25,7 @@ export interface IAsset {
   name: string;
   period: number;
   licenseDate: string | undefined;
-  licensePeriod: number | undefined;  
-  commercialTypes: CommercialTypes[]
+  licensePeriod: number | undefined;
+  commercialTypes: CommercialTypes[];
+  option: Methods;
 }

@@ -43,7 +43,7 @@ import {
   unInsertCommas
 } from '../../../shared/casual-helpers';
 import { ToastError } from '../../../shared/components/Toast';
-import { CommercialTypes, mapCommercialTypes } from '../../../shared/enumeration/comercialType';
+import { CommercialTypes, Methods } from '../../../shared/enumeration/comercialType';
 import { EventType } from '../../../shared/enumeration/eventType';
 import { mapPriceStatusBadge, PriceStatus } from '../../../shared/enumeration/goodPrice';
 import { ModalType } from '../../../shared/enumeration/modalType';
@@ -247,27 +247,27 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
   const mappingSuccessRate: TMappingSuccessRate = {
     [RiskLevel.VERY_HIGH]: {
       value: 5,
-      text: 'Rất Thấp',
+      text: t('anftDapp.listingComponent.successLevel.VERY_HIGH'),
       color: 'danger',
     },
     [RiskLevel.HIGH]: {
       value: 25,
-      text: 'Thấp',
+      text: t('anftDapp.listingComponent.successLevel.HIGH'),
       color: 'warning',
     },
     [RiskLevel.MEDIUM]: {
       value: 50,
-      text: 'Bình thường',
+      text: t('anftDapp.listingComponent.successLevel.MEDIUM'),
       color: 'primary',
     },
     [RiskLevel.LOW]: {
       value: 75,
-      text: 'Cao',
+      text: t('anftDapp.listingComponent.successLevel.LOW'),
       color: 'info',
     },
     [RiskLevel.VERY_LOW]: {
       value: 100,
-      text: 'Rất Cao',
+      text: t('anftDapp.listingComponent.successLevel.VERY_LOW'),
       color: 'success',
     },
   };
@@ -339,11 +339,11 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
     HIGH: getProfitsValue(RiskLevel.HIGH),
     VERY_HIGH: getProfitsValue(RiskLevel.VERY_HIGH),
   };
-
+  //t('anftDapp.listingComponent.successLevel.VERY_HIGH')
   const mappingPriceStatusToText: TMappingPriceStatusToText = {
-    [PriceStatus.LOW]: 'Giá của bạn quá Thấp',
-    [PriceStatus.GOOD]: 'Giá của bạn là Giá Tốt',
-    [PriceStatus.HIGH]: 'Giá của bạn là Giá Cao',
+    [PriceStatus.LOW]: t('anftDapp.listingComponent.extendOwnership.priceStatus.LOW'),
+    [PriceStatus.GOOD]: t('anftDapp.listingComponent.extendOwnership.priceStatus.GOOD'),
+    [PriceStatus.HIGH]: t('anftDapp.listingComponent.extendOwnership.priceStatus.HIGH'),
   };
 
   const mappingSuccessRateToProfits: TMappingSuccessRateToProfits = {
@@ -363,7 +363,8 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
     const findNextRisk = risk !== RiskLevel.VERY_HIGH ? riskLevelArray[riskLevelInx + 1] : risk;
     const profit = mappingSuccessRateToProfits[priceStatus === PriceStatus.HIGH ? findNextRisk : risk];
     const ownerPrice = commercialTypes === CommercialTypes.SELL ? listingData.sellPrice : listingData.rentPrice;
-    const diff = price <= ownerPrice ? 0 : (price - ownerPrice) * profit;
+    const profitPercent = profit / 100;
+    const diff = price <= ownerPrice ? 0 : (price - ownerPrice) * profitPercent;
     return diff;
   };
 
@@ -379,7 +380,7 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
   };
 
   const calculateProfitRatio = (days: number, profit: number): string => {
-    if (!profit || !days) return 'Không xác định';
+    if (!profit || !days) return t('anftDapp.listingComponent.extendOwnership.undefined');
     const totalInputDaysAmount = days * listingData.pricePerDay;
     const ratio = calculateRatio(totalInputDaysAmount, profit);
     return `${ratio.numerator} : ${insertCommas(ratio.denominator)}`;
@@ -405,7 +406,7 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
           }
         }}
       >
-        {({ values, errors, touched, setFieldValue, handleSubmit,  handleChange }) => (
+        {({ values, errors, touched, setFieldValue, handleSubmit, handleChange }) => (
           <CForm onSubmit={handleSubmit}>
             <CModalBody>
               <CRow>
@@ -445,34 +446,50 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                       <p className="text-primary text-right">{formatBNToken(tokenBalance, true)}</p>
                     </CCol>
                   </CFormGroup>
+                  {listing && listing.option === Methods.SELL ? (
+                    <CFormGroup row>
+                      <CCol xs={6}>
+                        <CLabel className="recharge-token-title">
+                          {t('anftDapp.listingComponent.extendOwnership.comercialType')}:
+                        </CLabel>
+                      </CCol>
+                      <CCol xs={6}>
+                        <p className="text-primary text-right">{t("anftDapp.listingComponent.methods.SELL")}</p>
+                      </CCol>
+                    </CFormGroup>
+                  ) : (
+                    <CFormGroup row>
+                      <CCol xs={12}>
+                        <CLabel className="recharge-token-title">
+                          {t('anftDapp.listingComponent.extendOwnership.comercialType')}:
+                        </CLabel>
+                      </CCol>
+                      <CCol xs={12}>
+                        <CSelect
+                          name="commercialTypes"
+                          onChange={handleChange}
+                          value={values.commercialTypes}
+                          id="commercialTypes"
+                        >
+                          {listing && listing.commercialTypes ? (
+                            <>
+                              {listing.commercialTypes.map((item, index) => (
+                                <option value={item} key={index}>
+                                  {t(`anftDapp.listingComponent.methods.${item}`)}
+                                </option>
+                              ))}
+                            </>
+                          ) : (
+                            ''
+                          )}
+                        </CSelect>
+                      </CCol>
+                    </CFormGroup>
+                  )}
+
                   <CFormGroup row>
                     <CCol xs={12}>
-                      <CLabel className="recharge-token-title">Hình thức sở hữu:</CLabel>
-                    </CCol>
-                    <CCol xs={12}>
-                      <CSelect
-                        name="commercialTypes"
-                        onChange={handleChange}
-                        value={values.commercialTypes}
-                        id="commercialTypes"
-                      >
-                        {listing && listing.commercialTypes ? (
-                          <>
-                            {listing.commercialTypes.map((item, index) => (
-                              <option value={item} key={index}>
-                                {mapCommercialTypes[item]}
-                              </option>
-                            ))}
-                          </>
-                        ) : (
-                          ''
-                        )}
-                      </CSelect>
-                    </CCol>
-                  </CFormGroup>
-                  <CFormGroup row>
-                    <CCol xs={12}>
-                      <CLabel className="recharge-token-title">Giá bán trên sàn thứ cấp (VND):</CLabel>
+                      <CLabel className="recharge-token-title">{t("anftDapp.listingComponent.extendOwnership.secondaryPrice")}:</CLabel>
                     </CCol>
                     <CCol xs={12}>
                       <CInput
@@ -608,15 +625,15 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                   </CFormGroup>
                   <CFormGroup row>
                     <CCol xs={4}>
-                      <CLabel className="fw-bold ">Lợi nhuận dự kiến:</CLabel>
+                      <CLabel className="fw-bold ">{t("anftDapp.listingComponent.extendOwnership.profit")}:</CLabel>
                     </CCol>
                     <CCol xs={8}>
-                      <p className="text-primary text-right">{insertCommas(values.profit)} (VND)</p>
+                      <p className="text-primary text-right">{insertCommas(values.profit)} ANFT</p>
                     </CCol>
                   </CFormGroup>
                   <CFormGroup row>
                     <CCol xs={12}>
-                      <CLabel className="fw-bold">Tỉ lệ thành công:</CLabel>
+                      <CLabel className="fw-bold">{t("anftDapp.listingComponent.extendOwnership.successRate")}:</CLabel>
                     </CCol>
                     <CCol xs={12}>
                       <CProgress>
@@ -632,7 +649,7 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                   </CFormGroup>
                   <CFormGroup row>
                     <CCol xs={4}>
-                      <CLabel className="fw-bold ">Tỉ lệ lợi nhuận:</CLabel>
+                      <CLabel className="fw-bold ">{t("anftDapp.listingComponent.extendOwnership.profitRatio")}:</CLabel>
                     </CCol>
                     <CCol xs={8}>
                       <p className="text-primary text-right">{calculateProfitRatio(values.dateCount, values.profit)}</p>
