@@ -5,14 +5,13 @@ import { TheContent, TheHeader } from '.';
 import Logo from '../assets/img/logo.png';
 import ErrorModal from '../shared/components/ErrorModal';
 import useCountdownTimer from '../shared/hooks/useCountdownTimer';
-import useDeviceDetect from '../shared/hooks/useDeviceDetect';
 import { RootState } from '../shared/reducers';
 import TheSidebar from './TheSidebar';
 
 const TheLayout = () => {
   const { providerErrorMessage } = useSelector((state: RootState) => state.wallet);
 
-  const { isMobile } = useDeviceDetect();
+  // const { isMobile } = useDeviceDetect();
   const shouldDisplayLogoScreen = useCountdownTimer({ seconds: 1 });
 
   const logoScreen = (
