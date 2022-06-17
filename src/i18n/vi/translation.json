@@ -68,8 +68,8 @@
           "ownershipExpired": "Quyền sở hữu đã hết hạn. Người khác có thể chiếm quyền sở hữu đối với BĐS này!",
           "ownedByAnotherAddress": "BĐS đang được sở hữu bởi người khác",
           "notOwned": "BĐS này chưa có người sở hữu",
-          "ownershipAboutToExpire":"Quyền sở hữu chuẩn bị hết hạn. Tính từ thời điểm {{time}} BĐS có thể bị chiếm bởi người khác",
-          "ownershipAbleToExtends":"Bạn có thể chiếm quyền sở hữu đối với BĐS này"
+          "ownershipAboutToExpire": "Quyền sở hữu chuẩn bị hết hạn. Tính từ thời điểm {{time}} BĐS có thể bị chiếm bởi người khác",
+          "ownershipAbleToExtends": "Bạn có thể chiếm quyền sở hữu đối với BĐS này"
         },
         "blockchainAddress": "Địa chỉ Blockchain",
         "currentOwner": "Chủ sở hữu",
@@ -107,6 +107,20 @@
       },
       "activityLogs": "Lịch sử hoạt động",
       "moreListing": "Xem thêm BĐS",
+      "successLevel": {
+        "VERY_HIGH": "Rất Thấp",
+        "HIGH": "Thấp",
+        "MEDIUM": "Bình thường",
+        "LOW": "Cao",
+        "VERY_LOW": "Rất Cao"
+      },
+      "methods": {
+        "SELL": "Bán",
+        "FRANCHISE_ONE": "Ủy Quyền 1 Lần",
+        "FRANCHISE": "Ủy Quyền nhiều Lần",
+        "AUTONOMY": "Tự Quyền",
+         "RENT":"Thuê"
+      },
       "extendOwnership": {
         "currentOwnership": "Thời gian sở hữu hiện tại",
         "tokenBalance": "ANFT trong ví",
@@ -118,7 +132,18 @@
         "minimumOwnership": "Thời gian sở hữu tối thiểu là 1.0 ngày!",
         "noticeText": "Thời gian sở hữu sẽ được tính từ thời điểm hiện tại đến cuối ngày được chọn (23:30 - {{day}})",
         "exceedingPeriod": "Số ngày sở hữu không được vượt quá kỳ sở hữu tối đa: {{day}} ngày",
-        "exceedingLicenseExpirationDate": "Thời gian sở hữu không được vượt quá ngày hết hạn cấp phép của BĐS: {{day}}"
+        "exceedingLicenseExpirationDate": "Thời gian sở hữu không được vượt quá ngày hết hạn cấp phép của BĐS: {{day}}",
+        "priceStatus": {
+          "LOW": "Giá của bạn quá Thấp",
+          "GOOD": "Giá của bạn là Giá Tốt",
+          "HIGH": "Giá của bạn là Giá Cao"
+        },
+        "undefined": "Không xác định",
+        "comercialType": "Hình thức sở hữu",
+        "secondaryPrice": "Giá bán trên sàn thứ cấp",
+        "profit": "Lợi nhuận dự kiến",
+        "successRate": "Tỉ lệ thành công",
+        "profitRatio": "Tỉ lệ lợi nhuận"
       },
       "withdrawToken": {
         "maximumWithdrawable": "Số ngày rút tối đa",
