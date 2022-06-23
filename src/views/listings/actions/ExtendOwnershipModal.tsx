@@ -398,7 +398,8 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
       return PriceStatus.HIGH;
     } else {
       if (price <= listingData.rentPrice) return PriceStatus.LOW;
-      return PriceStatus.GOOD;
+      if (listingData.rentPrice < price && price <= listingData.goodRentPrice) return PriceStatus.GOOD;
+      return PriceStatus.HIGH;
     }
   };
 
