@@ -165,11 +165,15 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
 
   const getComercialTypes = () => {
     const commercialTypes = listing?.commercialTypes;
-    if (commercialTypes && commercialTypes.length > 1) {
+    if (
+      commercialTypes &&
+      commercialTypes.includes(CommercialTypes.RENT) &&
+      commercialTypes.includes(CommercialTypes.SELL)
+    ) {
       return CommercialTypes.SELL;
     }
 
-    if (commercialTypes && commercialTypes.length === 1 && commercialTypes[0] === CommercialTypes.RENT) {
+    if (commercialTypes && commercialTypes.length === 1 && commercialTypes.includes(CommercialTypes.RENT)) {
       return CommercialTypes.RENT;
     }
 
@@ -178,10 +182,14 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
 
   const getComercialTypesName = () => {
     const commercialTypes = listing?.commercialTypes;
-    if (commercialTypes && commercialTypes.length > 1) {
+    if (
+      commercialTypes &&
+      commercialTypes.includes(CommercialTypes.RENT) &&
+      commercialTypes.includes(CommercialTypes.SELL)
+    ) {
       return 'SELL_RENT';
     }
-    if (commercialTypes && commercialTypes.length === 1 && commercialTypes[0] === CommercialTypes.RENT) {
+    if (commercialTypes && commercialTypes.length === 1 && commercialTypes.includes(CommercialTypes.RENT)) {
       return 'RENT';
     }
     return 'SELL';
