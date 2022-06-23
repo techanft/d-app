@@ -119,7 +119,8 @@
         "FRANCHISE_ONE": "Ủy Quyền 1 Lần",
         "FRANCHISE": "Ủy Quyền nhiều Lần",
         "AUTONOMY": "Tự Quyền",
-         "RENT":"Thuê"
+         "RENT":"Thuê",
+         "SELL_RENT":"Bán và Thuê"
       },
       "extendOwnership": {
         "currentOwnership": "Thời gian sở hữu hiện tại",
@@ -139,8 +140,9 @@
           "HIGH": "Giá của bạn là Giá Cao"
         },
         "undefined": "Không xác định",
-        "comercialType": "Hình thức sở hữu",
+        "comercialType": "Hình thức khai thác",
         "secondaryPrice": "Giá bán trên sàn thứ cấp",
+        "secondaryRent": "Giá thuê trên sàn thứ cấp",
         "profit": "Lợi nhuận dự kiến",
         "successRate": "Tỉ lệ thành công",
         "profitRatio": "Tỉ lệ lợi nhuận"

@@ -28,4 +28,5 @@ export interface IAsset {
   licensePeriod: number | undefined;
   commercialTypes: CommercialTypes[];
   option: Methods;
+  goodRentCost?: number;
 }
