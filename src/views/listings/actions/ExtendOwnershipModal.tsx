@@ -14,7 +14,7 @@ import {
   CModalTitle,
   CProgress,
   CProgressBar,
-  CRow
+  CRow,
 } from '@coreui/react';
 import { BigNumber } from 'ethers';
 import { Formik, FormikProps } from 'formik';
@@ -37,9 +37,10 @@ import {
   convertUnixToDate,
   formatBNToken,
   getSecondDifftoEndDate,
+  includeMultiple,
   insertCommas,
   returnMaxEndDate,
-  unInsertCommas
+  unInsertCommas,
 } from '../../../shared/casual-helpers';
 import { ToastError } from '../../../shared/components/Toast';
 import { CommercialTypes } from '../../../shared/enumeration/comercialType';
@@ -53,7 +54,7 @@ import { selectEntityById } from '../../assets/assets.reducer';
 import { getEntity } from '../../productType/category.api';
 import {
   fetching as fetchingCategory,
-  selectEntityById as selectCategoryById
+  selectEntityById as selectCategoryById,
 } from '../../productType/category.reducer';
 import { baseSetterArgs } from '../../transactions/settersMapping';
 import { IProceedTxBody, proceedTransaction } from '../../transactions/transactions.api';
@@ -163,17 +164,16 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
   const startDate = getStartDate();
   const endDate = moment(startDate).add(1, 'day').endOf('day');
 
+  const commercialTypes = listing?.commercialTypes || [];
+  const bothSellAndRentMethods = includeMultiple(commercialTypes, CommercialTypes.RENT, CommercialTypes.SELL);
+  const onlyRentMethod = commercialTypes?.length === 1 && commercialTypes.includes(CommercialTypes.RENT);
+
   const getComercialTypes = () => {
-    const commercialTypes = listing?.commercialTypes;
-    if (
-      commercialTypes &&
-      commercialTypes.includes(CommercialTypes.RENT) &&
-      commercialTypes.includes(CommercialTypes.SELL)
-    ) {
+    if (bothSellAndRentMethods) {
       return CommercialTypes.SELL;
     }
 
-    if (commercialTypes && commercialTypes.length === 1 && commercialTypes.includes(CommercialTypes.RENT)) {
+    if (onlyRentMethod) {
       return CommercialTypes.RENT;
     }
 
@@ -181,15 +181,10 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
   };
 
   const getComercialTypesName = () => {
-    const commercialTypes = listing?.commercialTypes;
-    if (
-      commercialTypes &&
-      commercialTypes.includes(CommercialTypes.RENT) &&
-      commercialTypes.includes(CommercialTypes.SELL)
-    ) {
+    if (bothSellAndRentMethods) {
       return 'SELL_RENT';
     }
-    if (commercialTypes && commercialTypes.length === 1 && commercialTypes.includes(CommercialTypes.RENT)) {
+    if (onlyRentMethod) {
       return 'RENT';
     }
     return 'SELL';
