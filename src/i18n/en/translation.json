@@ -119,7 +119,8 @@
         "FRANCHISE_ONE": "Franchise one",
         "FRANCHISE": "Franchises",
         "AUTONOMY": "Autonomy",
-        "RENT":"Rent"
+        "RENT":"Rent",
+        "SELL_RENT":"Sell and Rent"
       },
       "extendOwnership": {
         "currentOwnership": "Current Ownership",
@@ -141,6 +142,7 @@
         "undefined": "Undefined",
         "comercialType": "Comercial Type",
         "secondaryPrice": "Selling price on the secondary floor",
+        "secondaryRent": "Rent price on the secondary floor",
         "profit": "Expected profit",
         "successRate": "Success rate",
         "profitRatio": "Profit rate"

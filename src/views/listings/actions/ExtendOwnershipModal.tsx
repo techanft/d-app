@@ -15,7 +15,6 @@ import {
   CProgress,
   CProgressBar,
   CRow,
-  CSelect
 } from '@coreui/react';
 import { BigNumber } from 'ethers';
 import { Formik, FormikProps } from 'formik';
@@ -38,12 +37,13 @@ import {
   convertUnixToDate,
   formatBNToken,
   getSecondDifftoEndDate,
+  includeMultiple,
   insertCommas,
   returnMaxEndDate,
-  unInsertCommas
+  unInsertCommas,
 } from '../../../shared/casual-helpers';
 import { ToastError } from '../../../shared/components/Toast';
-import { CommercialTypes, Methods } from '../../../shared/enumeration/comercialType';
+import { CommercialTypes } from '../../../shared/enumeration/comercialType';
 import { EventType } from '../../../shared/enumeration/eventType';
 import { mapPriceStatusBadge, PriceStatus } from '../../../shared/enumeration/goodPrice';
 import { ModalType } from '../../../shared/enumeration/modalType';
@@ -54,7 +54,7 @@ import { selectEntityById } from '../../assets/assets.reducer';
 import { getEntity } from '../../productType/category.api';
 import {
   fetching as fetchingCategory,
-  selectEntityById as selectCategoryById
+  selectEntityById as selectCategoryById,
 } from '../../productType/category.reducer';
 import { baseSetterArgs } from '../../transactions/settersMapping';
 import { IProceedTxBody, proceedTransaction } from '../../transactions/transactions.api';
@@ -164,6 +164,32 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
   const startDate = getStartDate();
   const endDate = moment(startDate).add(1, 'day').endOf('day');
 
+  const commercialTypes = listing?.commercialTypes || [];
+  const bothSellAndRentMethods = includeMultiple(commercialTypes, CommercialTypes.RENT, CommercialTypes.SELL);
+  const onlyRentMethod = commercialTypes?.length === 1 && commercialTypes.includes(CommercialTypes.RENT);
+
+  const getComercialTypes = () => {
+    if (bothSellAndRentMethods) {
+      return CommercialTypes.SELL;
+    }
+
+    if (onlyRentMethod) {
+      return CommercialTypes.RENT;
+    }
+
+    return CommercialTypes.SELL;
+  };
+
+  const getComercialTypesName = () => {
+    if (bothSellAndRentMethods) {
+      return 'SELL_RENT';
+    }
+    if (onlyRentMethod) {
+      return 'RENT';
+    }
+    return 'SELL';
+  };
+
   const initialValues: IIntialValues = {
     price: 0,
     tokenAmount: 0,
@@ -173,7 +199,7 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
     profit: 0,
     priceStatus: PriceStatus.LOW,
     riskLevel: RiskLevel.VERY_HIGH,
-    commercialTypes: CommercialTypes.SELL,
+    commercialTypes: getComercialTypes(),
   };
 
   const getExtenableDayFromTokenBalance = (): number => {
@@ -307,12 +333,12 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
     sellPrice: listing?.price && listing?.price > 0 ? listing?.price / ANFT_TO_VND_RATIO : 0,
     pricePerDay: listing?.fee && listing?.fee > 0 ? listing?.fee / ANFT_TO_VND_RATIO : 0,
     goodPrice: listing?.goodPrice && listing?.goodPrice > 0 ? listing?.goodPrice / ANFT_TO_VND_RATIO : 0,
+    goodRentPrice: listing?.goodRentCost && listing?.goodRentCost > 0 ? listing?.goodRentCost / ANFT_TO_VND_RATIO : 0,
     rentPrice: listing?.rentCost && listing?.rentCost > 0 ? listing?.rentCost / ANFT_TO_VND_RATIO : 0,
     ratio: ANFT_TO_VND_RATIO,
     maximumStage: Number(listing?.durationRisk?.value) || 0,
+    period: listing?.period || 0,
   };
-
-  console.log(listingData);
 
   const getRiskValue = (type: RiskLevel): number => {
     const riskLevel = listingType?.risks.find((item) => item.type === type);
@@ -375,7 +401,8 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
       return PriceStatus.HIGH;
     } else {
       if (price <= listingData.rentPrice) return PriceStatus.LOW;
-      return PriceStatus.GOOD;
+      if (listingData.rentPrice < price && price <= listingData.goodRentPrice) return PriceStatus.GOOD;
+      return PriceStatus.HIGH;
     }
   };
 
@@ -446,50 +473,29 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                       <p className="text-primary text-right">{formatBNToken(tokenBalance, true)}</p>
                     </CCol>
                   </CFormGroup>
-                  {listing && listing.option === Methods.SELL ? (
-                    <CFormGroup row>
-                      <CCol xs={6}>
-                        <CLabel className="recharge-token-title">
-                          {t('anftDapp.listingComponent.extendOwnership.comercialType')}:
-                        </CLabel>
-                      </CCol>
-                      <CCol xs={6}>
-                        <p className="text-primary text-right">{t("anftDapp.listingComponent.methods.SELL")}</p>
-                      </CCol>
-                    </CFormGroup>
-                  ) : (
-                    <CFormGroup row>
-                      <CCol xs={12}>
-                        <CLabel className="recharge-token-title">
-                          {t('anftDapp.listingComponent.extendOwnership.comercialType')}:
-                        </CLabel>
-                      </CCol>
-                      <CCol xs={12}>
-                        <CSelect
-                          name="commercialTypes"
-                          onChange={handleChange}
-                          value={values.commercialTypes}
-                          id="commercialTypes"
-                        >
-                          {listing && listing.commercialTypes ? (
-                            <>
-                              {listing.commercialTypes.map((item, index) => (
-                                <option value={item} key={index}>
-                                  {t(`anftDapp.listingComponent.methods.${item}`)}
-                                </option>
-                              ))}
-                            </>
-                          ) : (
-                            ''
-                          )}
-                        </CSelect>
-                      </CCol>
-                    </CFormGroup>
-                  )}
+                  <CFormGroup row>
+                    <CCol xs={6}>
+                      <CLabel className="recharge-token-title">
+                        {t('anftDapp.listingComponent.extendOwnership.comercialType')}:
+                      </CLabel>
+                    </CCol>
+                    <CCol xs={6}>
+                      <p className="text-primary text-right">
+                        {t(`anftDapp.listingComponent.methods.${getComercialTypesName()}`)}
+                      </p>
+                    </CCol>
+                  </CFormGroup>
 
                   <CFormGroup row>
                     <CCol xs={12}>
-                      <CLabel className="recharge-token-title">{t("anftDapp.listingComponent.extendOwnership.secondaryPrice")}:</CLabel>
+                      <CLabel className="recharge-token-title">
+                        {t(
+                          `anftDapp.listingComponent.extendOwnership.${
+                            values.commercialTypes === CommercialTypes.RENT ? 'secondaryRent' : 'secondaryPrice'
+                          }`
+                        )}
+                        :
+                      </CLabel>
                     </CCol>
                     <CCol xs={12}>
                       <CInput
@@ -625,15 +631,17 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                   </CFormGroup>
                   <CFormGroup row>
                     <CCol xs={4}>
-                      <CLabel className="fw-bold ">{t("anftDapp.listingComponent.extendOwnership.profit")}:</CLabel>
+                      <CLabel className="fw-bold ">{t('anftDapp.listingComponent.extendOwnership.profit')}:</CLabel>
                     </CCol>
                     <CCol xs={8}>
-                      <p className="text-primary text-right">{insertCommas(values.profit)} ANFT</p>
+                      <p className="text-primary text-right">
+                        {values.profit ? insertCommas(values.profit) : '_'} ANFT
+                      </p>
                     </CCol>
                   </CFormGroup>
                   <CFormGroup row>
                     <CCol xs={12}>
-                      <CLabel className="fw-bold">{t("anftDapp.listingComponent.extendOwnership.successRate")}:</CLabel>
+                      <CLabel className="fw-bold">{t('anftDapp.listingComponent.extendOwnership.successRate')}:</CLabel>
                     </CCol>
                     <CCol xs={12}>
                       <CProgress>
@@ -649,7 +657,9 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                   </CFormGroup>
                   <CFormGroup row>
                     <CCol xs={4}>
-                      <CLabel className="fw-bold ">{t("anftDapp.listingComponent.extendOwnership.profitRatio")}:</CLabel>
+                      <CLabel className="fw-bold ">
+                        {t('anftDapp.listingComponent.extendOwnership.profitRatio')}:
+                      </CLabel>
                     </CCol>
                     <CCol xs={8}>
                       <p className="text-primary text-right">{calculateProfitRatio(values.dateCount, values.profit)}</p>
