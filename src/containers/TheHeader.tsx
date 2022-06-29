@@ -7,6 +7,7 @@ import {
   CDropdownToggle,
   CForm,
   CHeader,
+  CHeaderBrand,
   CHeaderNav,
   CHeaderNavItem,
   CInputCheckbox,
@@ -14,7 +15,7 @@ import {
   CLink,
   CRow,
   CSelect,
-  CSubheader,
+  CSubheader
 } from '@coreui/react';
 import { faSyncAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -23,15 +24,17 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
+import anftLogo from '../assets/img/ANT_logo_main_color.png';
 import { TOKEN_INSTANCE } from '../shared/blockchain-helpers';
 import { getEllipsisTxt } from '../shared/casual-helpers';
 import { ToastError, ToastInfo } from '../shared/components/Toast';
+import useDeviceDetect from '../shared/hooks/useDeviceDetect';
 import { RootState } from '../shared/reducers';
 import { getEntities } from '../views/assets/assets.api';
 import {
   fetchingEntities,
   setFilterState as setStoredFilterState,
-  softReset as assetsSoftReset,
+  softReset as assetsSoftReset
 } from '../views/assets/assets.reducer';
 import { ExchangeType, IAssetFilter } from '../views/listings/Listings';
 import { softReset as transactionsSoftReset } from '../views/transactions/transactions.reducer';
@@ -40,7 +43,7 @@ import {
   getContractWithSigner,
   getProviderLogin,
   getSigner,
-  getTokenBalance,
+  getTokenBalance
 } from '../views/wallet/wallet.api';
 import { resetSigner, softReset as walletSoftReset } from '../views/wallet/wallet.reducer';
 import { toggleSidebar } from './reducer';
@@ -69,7 +72,7 @@ const initialValues: IAssetFilter = {
   page: 0,
   size: 5,
   sort: 'createdDate,desc',
-  level: ExchangeType.PRIMARY
+  level: ExchangeType.PRIMARY,
 };
 
 type TListingsFilter = {
@@ -93,6 +96,7 @@ const TheHeader = () => {
   const dispatch = useDispatch();
   const location = useLocation().pathname;
 
+  const { isMobile } = useDeviceDetect();
   const isDashboardView = location.includes('/listings');
   const formikRef = useRef<FormikProps<IAssetFilter>>(null);
 
@@ -204,9 +208,15 @@ const TheHeader = () => {
             </CButton>
           </CHeaderNavItem>
           <CHeaderNavItem className={`ml-3`}>
-            <CLink to="/listings">
-              <p className="header-title content-title mb-0">{t('anftDapp.headerComponent.dashboard')}</p>
-            </CLink>
+            {isMobile ? (
+              <CLink to="/listings">
+                <p className="header-title content-title mb-0">{t('anftDapp.headerComponent.dashboard')}</p>
+              </CLink>
+            ) : (
+              <CHeaderBrand className="mx-auto " href="#/listings">
+                <img style={{ maxHeight: '40px' }} src={anftLogo} alt="" />
+              </CHeaderBrand>
+            )}
           </CHeaderNavItem>
           <CHeaderNavItem className={`${isDashboardView ? 'mr-3 ml-auto' : 'ml-auto'}`}>
             <CButton className="btn-link-wallet btn-radius-50 px-2 btn-font-style" onClick={onConnectWallet}>

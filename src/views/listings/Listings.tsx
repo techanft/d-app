@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
 import { formatBNToken, returnTheFirstImage } from '../../shared/casual-helpers';
 import Loading from '../../shared/components/Loading';
+import useDeviceDetect from '../../shared/hooks/useDeviceDetect';
 import useWindowDimensions from '../../shared/hooks/useWindowDimensions';
 import { IAsset } from '../../shared/models/assets.model';
 import { IParams } from '../../shared/models/base.model';
@@ -48,6 +49,7 @@ const Listings = () => {
   const { location } = history;
   const insideDetailView = location.pathname.includes('detail');
 
+  const { isMobile } = useDeviceDetect();
   const dispatch = useDispatch();
   const { initialState } = useSelector((state: RootState) => state.assets);
   const { provider, signerAddress } = useSelector((state: RootState) => state.wallet);
@@ -91,7 +93,7 @@ const Listings = () => {
   const minimumWidthDisplayingTokenSymbol = 360;
 
   const ListView = ({ item }: IViewComponent) => (
-    <CCol md={12} className={`px-0 ${hideDetailedListing(item)} d-block d-xl-none`}>
+    <CCol md={12} className={`px-0 ${hideDetailedListing(item)} `}>
       <div
         className="media info-box bg-white mx-3 my-2 p-2 align-items-center rounded shadow-sm cursor-pointer"
         onClick={onRedirecting(`/${item.id}/detail`)}
@@ -119,10 +121,10 @@ const Listings = () => {
   );
 
   const GridView = ({ item }: IViewComponent) => (
-    <CCol xl={4} className={`p-3 ${hideDetailedListing(item)} d-none d-xl-block`}>
+    <CCol sm={12} md={6} lg={6} xl={4}  className={`p-3 ${hideDetailedListing(item)} `}>
       <CCard className="h-100 cursor-pointer" onClick={onRedirecting(`/${item.id}/detail`)}>
         <CCard className="m-0 border-0">
-          <CImg src={returnTheFirstImage(item.images)} height={300} alt="realEstateImg" className='rounded-top'/>
+          <CImg src={returnTheFirstImage(item.images)} height={300} alt="realEstateImg" className="rounded-top" />
         </CCard>
         <CCard className="m-0 h-100 pb-0 border-0">
           <CCardBody className="pb-0">
@@ -149,8 +151,7 @@ const Listings = () => {
             <>
               {assets.map((item, index) => (
                 <React.Fragment key={`list-${index}`}>
-                  <ListView item={item} />
-                  <GridView item={item} />
+                  {isMobile ? <ListView item={item} /> : <GridView item={item} />}
                 </React.Fragment>
               ))}
               <CCol xs={12} className="p-0">
