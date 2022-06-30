@@ -274,3 +274,15 @@ body {
 .cursor-pointer {
   cursor: pointer;
 }
+
+.card-filter {
+  background-color: #f4fbff;
+  color: #1cb0ff;
+}
+
+.text-anft-gradiant {
+  box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.08);
+  background: linear-gradient(90deg, #6971ff 0%, #1cb0ff 100%);
+  --cui-btn-hover-bg: linear-gradient(90deg, #6971ff 0%, #1cb0ff 100%);
+  --cui-btn-active-bg: linear-gradient(90deg, #6971ff 0%, #1cb0ff 100%);
+}

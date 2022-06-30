@@ -1,10 +1,12 @@
-import { CCard, CCardBody, CCardText, CCardTitle, CCol, CImg, CPagination, CRow } from '@coreui/react';
+import { CCard, CCardBody, CCardText, CCardTitle, CCol, CContainer, CImg, CLabel, CPagination, CRow } from '@coreui/react';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
 import { formatBNToken, returnTheFirstImage } from '../../shared/casual-helpers';
+import FilterComponent from '../../shared/components/FilterComponent';
 import Loading from '../../shared/components/Loading';
+import { ExchangeType } from '../../shared/enumeration/exchangeType';
 import useDeviceDetect from '../../shared/hooks/useDeviceDetect';
 import useWindowDimensions from '../../shared/hooks/useWindowDimensions';
 import { IAsset } from '../../shared/models/assets.model';
@@ -14,11 +16,6 @@ import { getEntities } from '../assets/assets.api';
 import { assetsSelectors, fetchingEntities, setFilterState as setStoredFilterState } from '../assets/assets.reducer';
 import './index.scss';
 import { IListingParams } from './Listing';
-
-export enum ExchangeType {
-  PRIMARY = 'PRIMARY',
-  SECONDARY = 'SECONDARY',
-}
 
 export interface IAssetFilter extends IParams {
   owner?: string;
@@ -93,9 +90,9 @@ const Listings = () => {
   const minimumWidthDisplayingTokenSymbol = 360;
 
   const ListView = ({ item }: IViewComponent) => (
-    <CCol md={12} className={`px-0 ${hideDetailedListing(item)} `}>
+    <CCol md={12} className={`px-0 mx-0 ${hideDetailedListing(item)} `}>
       <div
-        className="media info-box bg-white mx-3 my-2 p-2 align-items-center rounded shadow-sm cursor-pointer"
+        className="media info-box bg-white my-2 p-2 align-items-center rounded shadow-sm cursor-pointer"
         onClick={onRedirecting(`/${item.id}/detail`)}
       >
         <img src={returnTheFirstImage(item.images)} alt="realEstateImg" className="rounded" />
@@ -121,10 +118,10 @@ const Listings = () => {
   );
 
   const GridView = ({ item }: IViewComponent) => (
-    <CCol sm={12} md={6} lg={6} xl={4}  className={`p-3 ${hideDetailedListing(item)} `}>
+    <CCol sm={12} md={6} lg={6} xl={`${insideDetailView ? '4' : '6'}`} className={`p-3 ${hideDetailedListing(item)} `}>
       <CCard className="h-100 cursor-pointer" onClick={onRedirecting(`/${item.id}/detail`)}>
         <CCard className="m-0 border-0">
-          <CImg src={returnTheFirstImage(item.images)} height={300} alt="realEstateImg" className="rounded-top" />
+          <CImg src={returnTheFirstImage(item.images)} height={250} alt="realEstateImg" className="rounded-top" />
         </CCard>
         <CCard className="m-0 h-100 pb-0 border-0">
           <CCardBody className="pb-0">
@@ -144,46 +141,58 @@ const Listings = () => {
   );
 
   return (
-    <CRow className={`mx-0`}>
-      <CCol md={12}>
-        <CRow>
-          {assets.length && !entitiesLoading ? (
-            <>
-              {assets.map((item, index) => (
-                <React.Fragment key={`list-${index}`}>
-                  {isMobile ? <ListView item={item} /> : <GridView item={item} />}
-                </React.Fragment>
-              ))}
-              <CCol xs={12} className="p-0">
-                {totalPages > 1 && !insideDetailView ? (
-                  <CPagination
-                    disabled={entitiesLoading}
-                    activePage={filterState.page + 1}
-                    pages={totalPages}
-                    onActivePageChange={handlePaginationChange}
-                    align="center"
-                    className="mt-2"
-                  />
+    <CContainer fluid={isMobile || insideDetailView}>
+      <CRow className={`mx-0`}>
+        <CCol md={12} lg={`${isMobile || insideDetailView ? '12' : '8'}`}>
+          <CRow>
+            {insideDetailView ? (
+              <CLabel className="text-primary content-title mt-3">{t('anftDapp.listingComponent.moreListing')}</CLabel>
+            ) : (
+              ''
+            )}
+            {assets.length && !entitiesLoading ? (
+              <>
+                {assets.map((item, index) => (
+                  <React.Fragment key={`list-${index}`}>
+                    {isMobile || insideDetailView ? <ListView item={item} /> : <GridView item={item} />}
+                  </React.Fragment>
+                ))}
+                <CCol xs={12} className="p-0">
+                  {totalPages > 1 && !insideDetailView ? (
+                    <CPagination
+                      disabled={entitiesLoading}
+                      activePage={filterState.page + 1}
+                      pages={totalPages}
+                      onActivePageChange={handlePaginationChange}
+                      align="center"
+                      className="mt-2"
+                    />
+                  ) : (
+                    ''
+                  )}
+                </CCol>
+              </>
+            ) : (
+              <CCol xs={12}>
+                {entitiesLoading ? ( //Still loading and waiting for results
+                  <Loading />
                 ) : (
-                  ''
+                  //Finished loading and no result found
+                  <div className="alert alert-warning my-3">
+                    <span>{t('anftDapp.listingComponent.noListingFound')}</span>
+                  </div>
                 )}
               </CCol>
-            </>
-          ) : (
-            <CCol xs={12}>
-              {entitiesLoading ? ( //Still loading and waiting for results
-                <Loading />
-              ) : (
-                //Finished loading and no result found
-                <div className="alert alert-warning my-3">
-                  <span>{t('anftDapp.listingComponent.noListingFound')}</span>
-                </div>
-              )}
-            </CCol>
-          )}
-        </CRow>
-      </CCol>
-    </CRow>
+            )}
+          </CRow>
+        </CCol>
+        <CCol md={12} lg={4} className={`${isMobile || insideDetailView ? 'd-none' : 'd-none d-lg-block'}`}>
+          <CRow className="p-3">
+            <FilterComponent />
+          </CRow>
+        </CCol>
+      </CRow>
+    </CContainer>
   );
 };
 

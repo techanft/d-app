@@ -18,7 +18,7 @@ const loading = (
 const TheContent = () => {
   const dispatch = useDispatch();
   const { provider } = useSelector((state: RootState) => state.wallet);
- 
+
   _window.ethereum.on('accountsChanged', () => {
     if (provider) {
       dispatch(getSigner(provider));
@@ -27,33 +27,33 @@ const TheContent = () => {
   _window.ethereum.on('chainChanged', (chainId: number) => {
     window.location.reload();
   });
-  
-  if (!provider) return <Loading/>
+
+  if (!provider) return <Loading />;
 
   return (
     <main className="c-main py-0">
       <CContainer fluid className="px-0">
-        <Suspense fallback={loading}>
-          <Switch>
-            {routes.map((route, idx) => {
-              return (
-                route.component && (
-                  <Route
-                    key={idx}
-                    path={route.path}
-                    exact={route.exact}
-                    render={(props) => (
-                      <CFade>
-                        <route.component {...props} />
-                      </CFade>
-                    )}
-                  />
-                )
-              );
-            })}
-            <Redirect from="/" to="/listings" />
-          </Switch>
-        </Suspense>
+            <Suspense fallback={loading}>
+              <Switch>
+                {routes.map((route, idx) => {
+                  return (
+                    route.component && (
+                      <Route
+                        key={idx}
+                        path={route.path}
+                        exact={route.exact}
+                        render={(props) => (
+                          <CFade>
+                            <route.component {...props} />
+                          </CFade>
+                        )}
+                      />
+                    )
+                  );
+                })}
+                <Redirect from="/" to="/listings" />
+              </Switch>
+            </Suspense>
       </CContainer>
     </main>
   );
