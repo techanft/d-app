@@ -2,32 +2,22 @@ import { cifUs, cifVn } from '@coreui/icons/js/flag';
 import {
   cilAccountLogout,
   cilArrowCircleLeft,
-  cilArrowCircleTop,
-  cilCopy,
-  cilExternalLink,
+  cilArrowCircleTop, cilBook, cilCheckCircle, cilChevronCircleDownAlt, cilCopy, cilDescription, cilExternalLink,
   cilFilter,
-  cilFilterX,
-  cilFullscreen,
+  cilFilterX, cilFindInPage, cilFullscreen,
   cilFullscreenExit,
-  cilHistory,
-  cilMenu,
+  cilHistory, cilHome, cilMenu,
   cilMinus,
   cilMoney,
   cilPlus,
   cilQrCode,
   cilTrash,
-  cilX,
-  cilBook,
-  cilHome,
-  cilFindInPage,
-  cilDescription,
-  cilXCircle,
-  cilCheckCircle
-
+  cilX, cilXCircle
 } from '@coreui/icons/js/free';
 
 export const icons = Object.assign(
   {
+    cilChevronCircleDownAlt,
     cilAccountLogout,
     cilArrowCircleTop,
     cilCopy,

@@ -8,6 +8,7 @@ import { returnTheFirstImage } from '../../../shared/casual-helpers';
 import ActivityLogsContainer from '../../../shared/components/ActivityLogsContainer';
 import CopyTextToClipBoard from '../../../shared/components/CopyTextToClipboard';
 import InfoLoader from '../../../shared/components/InfoLoader';
+import useDeviceDetect from '../../../shared/hooks/useDeviceDetect';
 import useWindowDimensions from '../../../shared/hooks/useWindowDimensions';
 import { RootState } from '../../../shared/reducers';
 import { getEntity } from '../../assets/assets.api';
@@ -28,6 +29,7 @@ const ActivityLogs = (props: IActivityLogs) => {
   const { provider } = useSelector((state: RootState) => state.wallet);
   const { initialState: assetsInitialState } = useSelector((state: RootState) => state.assets);
   const { entityLoading } = assetsInitialState;
+  const { isMobile } = useDeviceDetect();
 
   useEffect(() => {
     if (!id || !provider) return;
@@ -49,10 +51,12 @@ const ActivityLogs = (props: IActivityLogs) => {
           </CButton>
           <CLabel className="text-primary content-title ml-1">{t('anftDapp.listingComponent.activityLogs')}</CLabel>
         </CCol>
-        <CCol xs={12}>
+      </CRow>
+      <CRow className={'justify-content-center'}>
+        <CCol xs={`${isMobile ? '12' : '8'}`}>
           <CCard className="mt-1 listing-img-card mb-0">
             {!entityLoading && listing ? (
-              <img src={returnTheFirstImage(listing.images)} alt="listingImg" className="w-100 h-100" />
+              <img src={returnTheFirstImage(listing.images)} alt="listingImg" className="w-100" height={400} />
             ) : (
               // Ensuring 16:9 ratio for image and image loader
               <InfoLoader width={screenWidth} height={screenWidth / 1.77} />
@@ -77,14 +81,16 @@ const ActivityLogs = (props: IActivityLogs) => {
               </CCardTitle>
             </CCardBody>
           </CCard>
+          {listing?.address && (
+            <ActivityLogsContainer
+              shouldDisplayBlockchainAddress={false}
+              filterState={{ listingAddress: listing.address }}
+            />
+          )}
         </CCol>
 
-     {/* Ownership - Activity Logs */}
-        {listing?.address && (
-          <ActivityLogsContainer shouldDisplayBlockchainAddress={false} filterState={{ listingAddress: listing.address }} />
-        )}
+        {/* Ownership - Activity Logs */}
       </CRow>
-
     </CContainer>
   );
 };

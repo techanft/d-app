@@ -1,10 +1,11 @@
 import CIcon from '@coreui/icons-react';
-import { CCol, CLabel, CLink, CRow } from '@coreui/react';
+import { CCol, CContainer, CLink, CRow } from '@coreui/react';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
 import SubmissionModal from '../../shared/components/SubmissionModal';
+import useDeviceDetect from '../../shared/hooks/useDeviceDetect';
 import { RootState } from '../../shared/reducers';
 import { getEntity } from '../assets/assets.api';
 import { fetchingEntity, selectEntityById } from '../assets/assets.reducer';
@@ -27,9 +28,8 @@ const Listing = (props: IListingProps) => {
   const { match, history } = props;
   const { id } = match.params;
   const listing = useSelector(selectEntityById(Number(id)));
-
+  const { isMobile } = useDeviceDetect();
   const { t } = useTranslation();
-  
 
   useEffect(() => {
     /**
@@ -65,24 +65,32 @@ const Listing = (props: IListingProps) => {
   }, [errorMessage]);
 
   return (
-    <>
-      <SubmissionModal />
-      <Primary listingId={Number(id)} />
-      <Secondary />
-      <CRow className="mx-0">
-        <CCol xs={12} className="text-center mt-3">
-          <CLink to={`/${Number(id)}/activity-logs`} className='text-decoration-none'>
-            <CIcon name="cil-history" /> {t('anftDapp.listingComponent.activityLogs')}
-          </CLink>
+    <CContainer>
+      <CRow className={'justify-content-center'}>
+        <CCol xs={12} lg={`${isMobile ? '12' : '8'}`}>
+          <CRow className="mx-0">
+            <SubmissionModal />
+            <Primary listingId={Number(id)} />
+            <Secondary />
+
+            <CCol xs={12} className="text-center my-3">
+              <CLink to={`/${Number(id)}/activity-logs`} className="text-decoration-none">
+                <CIcon name="cil-history" /> {t('anftDapp.listingComponent.activityLogs')}
+              </CLink>
+            </CCol>
+            {/* <CCol xs={12}>
+              <CLabel className="text-primary content-title mt-3">{t('anftDapp.listingComponent.moreListing')}</CLabel>
+            </CCol> */}
+            {/* <CCol xs={12} className="px-0">
+            <Listings />
+          </CCol> */}
+          </CRow>
         </CCol>
-        <CCol xs={12}>
-          <CLabel className="text-primary content-title mt-3">{t('anftDapp.listingComponent.moreListing')}</CLabel>
-        </CCol>
-        <CCol xs={12} className="px-0">
+        <CCol xs={12} lg={`${isMobile ? '12' : '4'}`}>
           <Listings />
         </CCol>
       </CRow>
-    </>
+    </CContainer>
   );
 };
 

@@ -198,3 +198,10 @@ export const calculateRatio = (firstNumb: number, secondNumb: number): IFraction
   const reduceDenominator = Math.round(fraction.denominator / fraction.numerator);
   return { numerator: 1, denominator: reduceDenominator };
 };
+
+// This method checks if an array include multiple elements
+export const includeMultiple = <T>(superset: Array<T> = [], ...subset: Array<T>): boolean => {
+  return subset.every(function (value) {
+    return (superset.indexOf(value) >= 0);
+  });
+}
