@@ -5,13 +5,15 @@ import { TheContent, TheHeader } from '.';
 import Logo from '../assets/img/logo.png';
 import ErrorModal from '../shared/components/ErrorModal';
 import useCountdownTimer from '../shared/hooks/useCountdownTimer';
+import useDeviceDetect from '../shared/hooks/useDeviceDetect';
 import { RootState } from '../shared/reducers';
 import TheSidebar from './TheSidebar';
 
 const TheLayout = () => {
   const { providerErrorMessage } = useSelector((state: RootState) => state.wallet);
-
-  // const { isMobile } = useDeviceDetect();
+  const containerState = useSelector((state: RootState) => state.container);
+  const { sidebarShow } = containerState;
+  const { isMobile } = useDeviceDetect();
   const shouldDisplayLogoScreen = useCountdownTimer({ seconds: 1 });
 
   const logoScreen = (
@@ -20,7 +22,7 @@ const TheLayout = () => {
     </div>
   );
 
-  if (shouldDisplayLogoScreen) return logoScreen; 
+  if (shouldDisplayLogoScreen) return logoScreen;
 
   return (
     <div className="dapp-layout">
@@ -31,25 +33,25 @@ const TheLayout = () => {
           autoReload={false}
         />
       ) : ( */}
-        <>
-          {!providerErrorMessage ? (
-            <>
-              <TheSidebar />
-              <div className="c-wrapper">
-                <TheHeader />
-                <div className="c-body">
-                  <TheContent />
-                </div>
+      <>
+        {!providerErrorMessage ? (
+          <>
+            <TheSidebar />
+            <div className={`c-wrapper ${isMobile ? '' : 'ml-0'}`}>
+              <TheHeader />
+              <div className="c-body">
+                <TheContent />
               </div>
-            </>
-          ) : (
-            <ErrorModal
-              errMsg={providerErrorMessage}
-              title="anftDapp.global.modal.errorModal.walletErr"
-              autoReload={true}
-            />
-          )}
-        </>
+            </div>
+          </>
+        ) : (
+          <ErrorModal
+            errMsg={providerErrorMessage}
+            title="anftDapp.global.modal.errorModal.walletErr"
+            autoReload={true}
+          />
+        )}
+      </>
       {/* )} */}
     </div>
   );
