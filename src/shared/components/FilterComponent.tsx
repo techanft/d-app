@@ -83,19 +83,19 @@ const FilterComponent = () => {
             <div className="modal-title-style d-flex justify-content-end px-3 py-2">
               <CLabel className="m-auto pl-3"> {t('anftDapp.headerComponent.filter.filter')}</CLabel>
               <CButton className="p-0 text-primary" onClick={resetForm}>
-                <FontAwesomeIcon icon={faSyncAlt} size="lg" />
+                <FontAwesomeIcon icon={faSyncAlt} size="lg"/>
               </CButton>
             </div>
             <CRow className="mx-2">
               {listingsFilterKeys.map((e) => (
                 <CCol xs={12} className="px-2 text-center py-2" key={`listings-key-${e}`}>
                   <CSelect
-                    className="btn-radius-50 text-dark px-2 content-title"
+                    className="btn-radius-50 text-dark px-2 content-title filter-search-select"
                     onChange={handleChange}
                     value={values[e] || ''}
                     id={e}
                     name={e}
-                    // disabled
+                    disabled
                   >
                     <option value="">{t(`anftDapp.headerComponent.filter.${e}`)}</option>
                     {listingsFilter[e]?.map((o, i) => (
@@ -116,7 +116,7 @@ const FilterComponent = () => {
                   checked={Boolean(values.owner)}
                   disabled={!Boolean(signerAddress)}
                 />
-                <CLabel className="content-title pl-2 m-0">{t('anftDapp.headerComponent.filter.owned')}</CLabel>
+                <CLabel className="content-title pl-2 m-0 text-gradient">{t('anftDapp.headerComponent.filter.owned')}</CLabel>
               </CCol>
               <CCol xs={12} className="d-flex justify-content-center my-2">
                 <CButton className="btn btn-primary text-anft-gradiant border-0 btn-radius-50" type="submit">
