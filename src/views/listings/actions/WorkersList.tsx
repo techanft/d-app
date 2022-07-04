@@ -16,7 +16,7 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
 import { LISTING_INSTANCE } from '../../../shared/blockchain-helpers';
-import { getEllipsisTxt, validateOwnership } from '../../../shared/casual-helpers';
+import { getEllipsisTxt, returnTheFirstImage, validateOwnership } from '../../../shared/casual-helpers';
 import ConfirmationLoading from '../../../shared/components/ConfirmationLoading';
 import ConfirmModal from '../../../shared/components/ConfirmModal';
 import CopyTextToClipBoard from '../../../shared/components/CopyTextToClipboard';
@@ -221,14 +221,14 @@ const WorkersList = (props: IWorkersList) => {
         <CCol xs={12}>
           <CCard className="mt-1 listing-img-card mb-0">
             {!entityLoading && listing ? (
-              <img src={listing.images} alt="listingImg" className="w-100 h-100" />
+              <img src={returnTheFirstImage(listing.images)} alt="listingImg" className="w-100 h-100" />
             ) : (
               // Ensuring 16:9 ratio for image and image loader
               <InfoLoader width={screenWidth} height={screenWidth / 1.77} />
             )}
             <CCardBody className="p-0 listing-card-body">
               <CCardTitle className="listing-card-title mb-0 px-3 py-2 w-100">
-                <p className="mb-2 text-white content-title">{`BĐS thử nghiệm ${id}`}</p>
+                <p className="mb-2 text-white content-title">{listing?.name ? listing.name : '_'}</p>
                 <p className="mb-0 text-white detail-title-font">
                   {t('anftDapp.listingComponent.primaryInfo.workersCount')} <b>{workers?.count || 0}</b>
                 </p>
