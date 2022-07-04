@@ -15,7 +15,7 @@ export const MAX_SUPPLY = 1232000000;
 export const TOKEN_SYMBOL = 'ANFT';
 export const _window = window as unknown as IWindowEth;
 
-export const USING_TESTNET = true; // Network toggler 
+export const USING_TESTNET = false; // Network toggler 
 
 export const SERVICE_API_URL = USING_TESTNET ?  'https://dapp-dev.anfteco.io/api/' : 'https://app.anfteco.io/api/' ;
 export const MANAGEMENT_SITE_URL = 'https://anfteco.vn/';
