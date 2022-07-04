@@ -17,7 +17,7 @@ export const _window = window as unknown as IWindowEth;
 
 export const USING_TESTNET = true; // Network toggler 
 
-export const SERVICE_API_URL = USING_TESTNET ?  'https://dapp-dev.anft.vn/api/' : 'https://app.anft.vn/api/' ;
+export const SERVICE_API_URL = USING_TESTNET ?  'https://dapp-dev.anfteco.io/api/' : 'https://app.anfteco.io/api/' ;
 export const MANAGEMENT_SITE_URL = 'https://anfteco.vn/';
 
 export const BLOCKCHAIN_NETWORK = USING_TESTNET ? CRONOS_TESTNET_CONFIG : BSC_MAINNET_CONFIG

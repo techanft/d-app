@@ -248,7 +248,7 @@ const TheHeader = () => {
             </CHeaderNavItem>
             <CHeaderNavItem className={`mr-3 ml-auto ${isMobile ? 'd-none' : 'd-none d-lg-block'}`}>
               <CLink
-                href="https://dapp-guide.anft.vn "
+                href="https://dapp-guide.anfteco.io"
                 target="_blank"
                 rel="noreferrer noopener"
                 className={`text-dark  c-sidebar-nav-link`}
