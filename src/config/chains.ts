@@ -1,6 +1,6 @@
 export const BSC_TESTNET_CONFIG = {
   chainId: '0x61',
-  rpcUrls: ['https://data-seed-prebsc-1-s1.binance.org:8545/'],
+  rpcUrls: ['https://data-seed-prebsc-1-s3.binance.org:8545'],
   chainName: 'Binance Smart Chain TESTNET',
   nativeCurrency: {
     name: 'BNB',
@@ -32,4 +32,16 @@ export const BSC_MAINNET_CONFIG = {
     decimals: 18,
   },
   blockExplorerUrls: ['https://bscscan.com'],
+};
+
+export const CRONOS_TESTNET_CONFIG = {
+  chainId: '0x0152',
+  rpcUrls: ['https://cronos-testnet-3.crypto.org:8545/'],
+  chainName: 'CRONOS TESTNET',
+  nativeCurrency: {
+    name: 'Cronos',
+    symbol: 'TCRO',
+    decimals: 18,
+  },
+  blockExplorerUrls: ['https://testnet.cronoscan.com'],
 };

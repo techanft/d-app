@@ -16,6 +16,11 @@ export interface IInitialState {
   totalItems: number;
 }
 
+export interface IResponse<T> {
+  count: number;
+  results: T;
+}
+
 export interface IParams {
   size: number;
   page: number;

@@ -64,13 +64,11 @@ export const checkOwnershipExpired = (timestamp: number): boolean => {
   return currentTS >= timestamp;
 };
 
-
 export const checkOwnershipAboutToExpire = (timestamp: number): boolean => {
   const currentTS = moment().unix();
-  const ExpiredDateMinus24Hours = moment.unix(timestamp).subtract(1, 'days').unix();  
+  const ExpiredDateMinus24Hours = moment.unix(timestamp).subtract(1, 'days').unix();
   return currentTS >= ExpiredDateMinus24Hours;
 };
-
 
 export const convertUnixToDate = (timestamp: number): string => {
   return moment.unix(timestamp).format(APP_DATE_FORMAT);
@@ -171,3 +169,39 @@ export const isDateBefore = (input: string | undefined, compared: string | undef
 export const isDateAfter = (input: string | undefined, compared: string | undefined) => {
   return moment(moment(input)).isAfter(moment(compared));
 };
+
+export const returnTheFirstImage = (images: string): string => {
+  try {
+    const formatImages = JSON.parse(images);
+    return formatImages[0] || '';
+  } catch (error) {
+    return '';
+  }
+};
+
+interface IFraction {
+  numerator: number;
+  denominator: number;
+}
+
+const reduceFraction = (numerator: number, denominator: number): IFraction => {
+  const fractionCal = (num1st: number, num2nd: number): number => {
+    return num2nd ? fractionCal(num2nd, num1st % num2nd) : num1st;
+  };
+  const result = fractionCal(numerator, denominator);
+  return { numerator: numerator / result, denominator: denominator / result };
+};
+
+export const calculateRatio = (firstNumb: number, secondNumb: number): IFraction => {
+  const fraction = reduceFraction(firstNumb, secondNumb);
+  if (fraction.numerator === 1) return fraction;
+  const reduceDenominator = Math.round(fraction.denominator / fraction.numerator);
+  return { numerator: 1, denominator: reduceDenominator };
+};
+
+// This method checks if an array include multiple elements
+export const includeMultiple = <T>(superset: Array<T> = [], ...subset: Array<T>): boolean => {
+  return subset.every(function (value) {
+    return (superset.indexOf(value) >= 0);
+  });
+}

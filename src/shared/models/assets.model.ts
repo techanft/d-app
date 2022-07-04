@@ -1,8 +1,10 @@
 import { BigNumber } from 'ethers';
+import { CommercialTypes, Methods } from '../enumeration/comercialType';
+import { IDurationRisk } from './listingType.model';
 import { IOption } from './options.model';
 
 export interface IAsset {
-  id: number;
+  id: string;
   createdDate: Date;
   address: string;
   images: string;
@@ -14,4 +16,17 @@ export interface IAsset {
   validator: string | undefined;
   totalStake: BigNumber | undefined;
   options: IOption[];
+  fee: number | null;
+  price: number | null;
+  typeId: string;
+  rentCost?: number;
+  goodPrice: number;
+  durationRisk: IDurationRisk;
+  name: string;
+  period: number;
+  licenseDate: string | undefined;
+  licensePeriod: number | undefined;
+  commercialTypes: CommercialTypes[];
+  option: Methods;
+  goodRentCost?: number;
 }

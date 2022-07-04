@@ -1,14 +1,15 @@
+import CIcon from '@coreui/icons-react';
 import { CButton, CCol, CContainer, CLabel, CRow } from '@coreui/react';
 import { Formik } from 'formik';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { RouteComponentProps } from 'react-router-dom';
+import * as Yup from 'yup';
 import { isDateBefore } from '../../shared/casual-helpers';
 import ActivityLogsContainer from '../../shared/components/ActivityLogsContainer';
 import { FilterComponent, ISearchContent } from '../../shared/components/SearchContainer';
 import { ToastError } from '../../shared/components/Toast';
-import * as Yup from 'yup';
-import CIcon from '@coreui/icons-react';
+import useDeviceDetect from '../../shared/hooks/useDeviceDetect';
 interface IActivityLogs extends RouteComponentProps {}
 
 export interface IOverviewFilter {
@@ -20,6 +21,7 @@ export interface IOverviewFilter {
 const LogsOverview = (props: IActivityLogs) => {
   const { history } = props;
   const { t } = useTranslation();
+  const { isMobile } = useDeviceDetect();
 
   const [filterState, setFilterState] = useState<IOverviewFilter>({});
 
@@ -72,7 +74,8 @@ const LogsOverview = (props: IActivityLogs) => {
           </CButton>
           <CLabel className="text-primary content-title ml-1">{t('anftDapp.listingComponent.activityLogs')}</CLabel>
         </CCol>
-        <CCol xs={12}>
+        </CRow><CRow className={"justify-content-center"}>
+        <CCol xs={`${isMobile ? '12' : '8'}`}>
           <Formik
             initialValues={filterState}
             validationSchema={validationSchema}
@@ -93,8 +96,8 @@ const LogsOverview = (props: IActivityLogs) => {
               </>
             )}
           </Formik>
+          <ActivityLogsContainer shouldDisplayBlockchainAddress={true} filterState={filterState} />
         </CCol>
-        <ActivityLogsContainer shouldDisplayBlockchainAddress={true} filterState={filterState} />
       </CRow>
     </CContainer>
   );

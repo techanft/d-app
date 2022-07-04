@@ -11,9 +11,10 @@ import TheSidebar from './TheSidebar';
 
 const TheLayout = () => {
   const { providerErrorMessage } = useSelector((state: RootState) => state.wallet);
-
+  const containerState = useSelector((state: RootState) => state.container);
+  const { sidebarShow } = containerState;
   const { isMobile } = useDeviceDetect();
-  const shouldDisplayLogoScreen = useCountdownTimer({ seconds: 2 });
+  const shouldDisplayLogoScreen = useCountdownTimer({ seconds: 1 });
 
   const logoScreen = (
     <div className="d-flex w-100 vh-100">
@@ -21,37 +22,37 @@ const TheLayout = () => {
     </div>
   );
 
-  if (shouldDisplayLogoScreen) return logoScreen; 
+  if (shouldDisplayLogoScreen) return logoScreen;
 
   return (
     <div className="dapp-layout">
-      {!isMobile ? (
+      {/* {!isMobile ? (
         <ErrorModal
           errMsg="anftDapp.global.modal.errorModal.deviceErrMsg"
           title="anftDapp.global.modal.errorModal.deviceErr"
           autoReload={false}
         />
-      ) : (
-        <>
-          {!providerErrorMessage ? (
-            <>
-              <TheSidebar />
-              <div className="c-wrapper">
-                <TheHeader />
-                <div className="c-body">
-                  <TheContent />
-                </div>
+      ) : ( */}
+      <>
+        {!providerErrorMessage ? (
+          <>
+            <TheSidebar />
+            <div className={`c-wrapper ${isMobile ? '' : 'ml-0'}`}>
+              <TheHeader />
+              <div className="c-body">
+                <TheContent />
               </div>
-            </>
-          ) : (
-            <ErrorModal
-              errMsg={providerErrorMessage}
-              title="anftDapp.global.modal.errorModal.walletErr"
-              autoReload={true}
-            />
-          )}
-        </>
-      )}
+            </div>
+          </>
+        ) : (
+          <ErrorModal
+            errMsg={providerErrorMessage}
+            title="anftDapp.global.modal.errorModal.walletErr"
+            autoReload={true}
+          />
+        )}
+      </>
+      {/* )} */}
     </div>
   );
 };

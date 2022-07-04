@@ -10,6 +10,7 @@ import Logo from '../assets/img/logo.png';
 import { formatBNToken } from '../shared/casual-helpers';
 import { Dropdown } from '../shared/enumeration/dropdown';
 import { Language } from '../shared/enumeration/language';
+import useDeviceDetect from '../shared/hooks/useDeviceDetect';
 import { RootState } from '../shared/reducers';
 import { toggleSidebar } from './reducer';
 
@@ -24,6 +25,7 @@ const intialDDState: DropdownState = {
 const TheSidebar = () => {
   const location = useLocation().pathname;
   const dispatch = useDispatch();
+  const { isMobile } = useDeviceDetect();
   const containerState = useSelector((state: RootState) => state.container);
   const { sidebarShow } = containerState;
   const { tokenBalance, signerAddress } = useSelector((state: RootState) => state.wallet);
@@ -56,10 +58,13 @@ const TheSidebar = () => {
 
   return (
     <CSidebar
-      className="c-sidebar-light text-sm border-0"
+      className={`c-sidebar-light text-sm border-0 ${isMobile ? '' : 'd-lg-none'}`}
       show={sidebarShow}
       unfoldable
-      onShowChange={(val: boolean) => dispatch(toggleSidebar(val))}
+      onShowChange={(val: boolean) => {
+        console.log(val, 'onShowChange');
+        dispatch(toggleSidebar(val));
+      }}
     >
       <CSidebarBrand>ANFT D-APP</CSidebarBrand>
       <ul className="c-sidebar-nav h-100 ps">
@@ -80,7 +85,7 @@ const TheSidebar = () => {
             className={`c-sidebar-nav-link`}
             target="_blank"
             rel="noreferrer noopener"
-            href="https://dapp-guide.anft.vn"
+            href="https://dapp-guide.anfteco.io"
           >
             <CIcon name="cil-book" size="lg" className={`c-sidebar-nav-icon text-primary`} />{' '}
             {t('anftDapp.sidebarComponent.userGuide')}
