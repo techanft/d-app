@@ -85,7 +85,7 @@ const TheSidebar = () => {
             className={`c-sidebar-nav-link`}
             target="_blank"
             rel="noreferrer noopener"
-            href="https://dapp-guide.anft.vn"
+            href="https://dapp-guide.anfteco.io"
           >
             <CIcon name="cil-book" size="lg" className={`c-sidebar-nav-icon text-primary`} />{' '}
             {t('anftDapp.sidebarComponent.userGuide')}
