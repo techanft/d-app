@@ -4,6 +4,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
+import { getListingsInfo } from '../../views/assets/assets.api';
+import { assetsSelectors } from '../../views/assets/assets.reducer';
 import { IOverviewFilter } from '../../views/logsOverview/LogsOverview';
 import {
   getClaimsRecord,
@@ -101,6 +103,21 @@ const ActivityLogsContainer = (props: IActivityLogsProps) => {
 
   const { initialState } = useSelector((state: RootState) => state.records);
 
+  const listings = useSelector(assetsSelectors.selectAll);
+
+  const resultWithListingInfo = (results?: TRecordTypeArray[]) => {
+    if (!results) return [];
+    const listingFound = (listingAddress: string) => listings?.find(listing => listing.address === listingAddress);
+
+    return results.map(item => ({
+      ...item,
+      listingId: listingFound(item.listingAddress)?.id,
+      listingName: listingFound(item.listingAddress)?.name,
+      listingPotentials: listingFound(item.listingAddress)?.listingPotentials
+    }))
+  }
+
+
   const { t } = useTranslation();
 
   const { loading: registerLoading, registers } = initialState.registerInitialState;
@@ -137,11 +154,11 @@ const ActivityLogsContainer = (props: IActivityLogsProps) => {
   };
 
   const recordResultMapping: TRecordTypeMappingResult = {
-    [RecordType.REGISTER]: registers?.results || [],
-    [RecordType.UNREGISTER]: unregisters?.results || [],
-    [RecordType.CLAIM]: claims?.results || [],
-    [RecordType.WITHDRAW]: withdraws?.results || [],
-    [RecordType.OWNERSHIP_EXTENSION]: ownerships?.results || [],
+    [RecordType.REGISTER]: resultWithListingInfo(registers?.results),
+    [RecordType.UNREGISTER]: resultWithListingInfo(unregisters?.results),
+    [RecordType.CLAIM]: resultWithListingInfo(claims?.results),
+    [RecordType.WITHDRAW]: resultWithListingInfo(withdraws?.results),
+    [RecordType.OWNERSHIP_EXTENSION]: resultWithListingInfo(ownerships?.results),
     [RecordType.UPDATE_WORKER]: [],
   };
 
@@ -200,14 +217,13 @@ const ActivityLogsContainer = (props: IActivityLogsProps) => {
     const recordApiFunc = recordTypeMapingApi[investmentActiveTab];
     dispatch(recordFetchingFunc());
     dispatch(recordApiFunc(additionalInvestmentFilterParams));
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(investmentFilterState), JSON.stringify(filterState), investmentActiveTab, signerAddress]);
 
   useEffect(() => {
     if (!signerAddress) return;
     if (!isLogOverview && !filterState.listingAddress) return;
-    
+
     const additionalOwnerFilterParams =
       ownershipActiveTab === RecordType.OWNERSHIP_EXTENSION ? { newOwner: signerAddress } : { owner: signerAddress };
     const filter = {
@@ -222,11 +238,24 @@ const ActivityLogsContainer = (props: IActivityLogsProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(ownershipFilterState), JSON.stringify(filterState), ownershipActiveTab, signerAddress]);
 
+  const isInvestmentTableType = tableType === TableType.INVESTMENT;
+  const currentRecordType = isInvestmentTableType ? investmentActiveTab : ownershipActiveTab;
+
+  const listingAddresses = recordResultMapping[currentRecordType]?.map(listing => listing.listingAddress);
+  const uniqAddresses = Array.from(new Set(listingAddresses));
+
+  useEffect(() => {
+    if (listingAddresses.length > 0) {
+      dispatch(getListingsInfo({ addresses: uniqAddresses }))
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(uniqAddresses), currentRecordType, tableType]);
+
   return (
     <>
       {signerAddress ? (
         <>
-          <CCol xs={12}>
+          <CCol xs={12} className='px-0'>
             <CNav variant="" className={'activity-log-table-nav my-3'}>
               <CNavItem className="col-6 p-0">
                 <CNavLink
@@ -248,7 +277,7 @@ const ActivityLogsContainer = (props: IActivityLogsProps) => {
               </CNavItem>
             </CNav>
           </CCol>
-          <CCol xs={12}>
+          <CCol xs={12} className='px-0'>
             <CTabContent>
               <CTabPane active={tableType === TableType.INVESTMENT}>
                 <CNav variant="tabs">
@@ -371,7 +400,7 @@ const ActivityLogsContainer = (props: IActivityLogsProps) => {
           </CCol>
         </>
       ) : (
-        <CCol xs={12}>
+        <CCol xs={12} className='px-0'>
           <div className="alert alert-warning my-3">
             <span>{t('anftDapp.activityLogsComponent.pleaseConnectWallet')}</span>
           </div>
