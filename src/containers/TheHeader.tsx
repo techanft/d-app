@@ -235,7 +235,7 @@ const TheHeader = () => {
               )}
             </CHeaderNavItem>
           </CHeaderNav>
-          <CHeaderNav>
+          <CHeaderNav className='px-2'>
             <CHeaderNavItem className={`mr-3 ml-auto ${isMobile ? 'd-none' : 'd-none d-lg-block'}`}>
               <CLink to="/listings" className={`${highlightNavItem('/listings')} c-sidebar-nav-link`}>
                 {t('anftDapp.headerComponent.dashboard')}

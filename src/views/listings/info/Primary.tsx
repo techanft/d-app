@@ -76,8 +76,8 @@ const ownershipText = (viewerAddr: string | undefined, listingInfo: IAsset, t: T
       textClassname = viewerIsOwner ? 'text-warning' : 'text-success';
       textContent = viewerIsOwner
         ? t('anftDapp.listingComponent.primaryInfo.ownershipStatus.ownershipAboutToExpire', {
-            time: convertUnixToDate(moment.unix(ownership.toNumber()).subtract(1, 'days').unix()),
-          })
+          time: convertUnixToDate(moment.unix(ownership.toNumber()).subtract(1, 'days').unix()),
+        })
         : t('anftDapp.listingComponent.primaryInfo.ownershipStatus.ownershipAbleToExtends');
     }
   } else {
@@ -90,7 +90,7 @@ const ownershipText = (viewerAddr: string | undefined, listingInfo: IAsset, t: T
 
   return <p className={`ownership-checked m-0 ${textClassname}`}>{textContent}</p>;
 };
-interface IListingInfoProps {
+export interface IListingInfoProps {
   listingId: number;
 }
 
@@ -253,10 +253,12 @@ const ListingInfo = (props: IListingInfoProps) => {
           </CCol>
 
           <CCol xs={12} className="text-primary total-token my-3">
-            {!entityLoading && listing ? (
-              <p className="m-0">
-                {formatBNToken(listing.value, false)} <span className="token-name">{TOKEN_SYMBOL}</span>
-              </p>
+            {!entityLoading && listing?.dailyPayment ? (
+              <>
+                <p className="m-0">
+                  {formatBNToken(listing.dailyPayment, false)} <span className="token-name">{TOKEN_SYMBOL} / {t('anftDapp.listingComponent.primaryInfo.day')}</span>
+                </p>
+              </>
             ) : (
               <InfoLoader width={300} height={29} />
             )}
@@ -450,9 +452,8 @@ const ListingInfo = (props: IListingInfoProps) => {
 
           <CCol xs={12} className="mt-2">
             <CButton
-              className={`px-3 w-100 btn-radius-50 btn-font-style btn btn-primary ${
-                viewerIsOwner ? 'd-block' : 'd-none'
-              }`}
+              className={`px-3 w-100 btn-radius-50 btn-font-style btn btn-primary ${viewerIsOwner ? 'd-block' : 'd-none'
+                }`}
               onClick={toggleCollapseVisibility(CollapseType.MANAGEMENT)}
             >
               {t('anftDapp.listingComponent.primaryInfo.ownershipManagement.ownershipManagement')}

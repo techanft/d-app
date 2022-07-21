@@ -2,13 +2,14 @@ import { cifUs, cifVn } from '@coreui/icons/js/flag';
 import {
   cilAccountLogout,
   cilArrowCircleLeft,
-  cilArrowCircleTop, cilBook, cilCheckCircle, cilChevronCircleDownAlt, cilCopy, cilDescription, cilExternalLink,
+  cilArrowCircleTop, cilBook, cilCheckCircle, cilChevronCircleDownAlt, cilClock, cilCopy, cilDescription, cilExternalLink,
   cilFilter,
   cilFilterX, cilFindInPage, cilFullscreen,
   cilFullscreenExit,
-  cilHistory, cilHome, cilMenu,
+  cilHistory, cilHome, cilLocationPin, cilMenu,
   cilMinus,
   cilMoney,
+  cilObjectUngroup,
   cilPlus,
   cilQrCode,
   cilTrash,
@@ -40,7 +41,10 @@ export const icons = Object.assign(
     cilFindInPage,
     cilDescription,
     cilXCircle,
-    cilCheckCircle
+    cilCheckCircle,
+    cilLocationPin,
+    cilObjectUngroup,
+    cilClock
   },
   {
     cifVn,
