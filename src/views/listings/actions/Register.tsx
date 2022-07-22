@@ -225,10 +225,6 @@ const Register = (props: IRegisterProps) => {
     dispatch(proceedTransaction(body));
   };
 
-  const returnOptionById = (optionId: number | undefined) => {    
-    return listing?.listingPotentials.find((item) => item.id === optionId);
-  };
-
   useEffect(() => {
     /**
      * Initial entity fetching
@@ -735,11 +731,11 @@ const Register = (props: IRegisterProps) => {
               return (
                 <p>
                   {t('anftDapp.registerComponent.claimReward.claimRewardModalContent')}{' '}
-                  <span className="text-primary">“{returnOptionById(chosenOptionId)?.name || ''}”</span>?
+                  <span className="text-primary">“{listing?.listingPotentials[chosenOptionId]?.name || ''}”</span>?
                 </p>
               );
             }}
-            onConfirm={() => onClaimRewardCnfrm(returnOptionById(chosenOptionId)?.id || 0)}
+            onConfirm={() => onClaimRewardCnfrm(chosenOptionId || 0)}
             onAbort={() => handleModalVisibility(ModalType.REWARD_CLAIM, false)}
           />
           <ConfirmModal
@@ -751,16 +747,16 @@ const Register = (props: IRegisterProps) => {
               return (
                 <p>
                   {t('anftDapp.registerComponent.unregister.unregisterModalContentPrev')}{' '}
-                  <span className="text-primary">“{returnOptionById(chosenOptionId)?.name || ''}”</span>{' '}
+                  <span className="text-primary">“{listing.listingPotentials[chosenOptionId]?.name || ''}”</span>{' '}
                   {t('anftDapp.registerComponent.unregister.unregisterModalContentNext')}{' '}
                   <span className="text-primary">
-                    {formatBNToken(returnOptionById(chosenOptionId)?.stake?.amount, true)}
+                    {formatBNToken(listing.listingPotentials[chosenOptionId]?.stake?.amount, true)}
                   </span>
                   ?
                 </p>
               );
             }}
-            onConfirm={() => onUnregisterCnfrm(returnOptionById(chosenOptionId)?.id || 0)}
+            onConfirm={() => onUnregisterCnfrm(chosenOptionId || 0)}
             onAbort={() => handleModalVisibility(ModalType.REWARD_UNREGISTER, false)}
           />
         </CCol>
