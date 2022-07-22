@@ -144,6 +144,7 @@
         "secondaryPrice": "Selling price on the secondary floor",
         "secondaryRent": "Rent price on the secondary floor",
         "profit": "Expected profit",
+        "profitPerMonth": "Expected profit per Month",
         "successRate": "Success rate",
         "profitRatio": "Profit rate"
       },
