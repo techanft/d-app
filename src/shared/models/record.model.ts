@@ -1,9 +1,13 @@
+import { IOption } from "./options.model";
+
 export interface IRecord {
   id: number;
   createdDate: Date;
   listingAddress: string;
   txHash: null | string;
-  listingId: number;
+  listingId?: string;
+  listingName?: string;
+  listingPotentials?: IOption[];
 }
 
 export interface IRecordWorker extends IRecord {
