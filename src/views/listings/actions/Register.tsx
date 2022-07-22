@@ -46,6 +46,7 @@ import SubmissionModal from '../../../shared/components/SubmissionModal';
 import { ToastError, ToastInfo } from '../../../shared/components/Toast';
 import { EventType } from '../../../shared/enumeration/eventType';
 import { ModalType, TModalsVisibility } from '../../../shared/enumeration/modalType';
+import useDeviceDetect from '../../../shared/hooks/useDeviceDetect';
 import useWindowDimensions from '../../../shared/hooks/useWindowDimensions';
 import { IOption } from '../../../shared/models/options.model';
 import { RootState } from '../../../shared/reducers';
@@ -81,6 +82,8 @@ const Register = (props: IRegisterProps) => {
   const formikRef = useRef<FormikProps<IRegister>>(null);
 
   const { t } = useTranslation();
+
+  const { isMobile } = useDeviceDetect();
 
   const registerView = [
     {
@@ -396,7 +399,9 @@ const Register = (props: IRegisterProps) => {
             {t('anftDapp.listingComponent.primaryInfo.investmentActivities.registerClaimReward')}
           </CLabel>
         </CCol>
-        <CCol xs={12}>
+        </CRow>
+        <CRow className={'justify-content-center'}>
+        <CCol xs={`${isMobile ? '12' : '8'}`}>
           <CCard className="mt-1 listing-img-card mb-0">
             {!entityLoading && listing ? (
               <img src={returnTheFirstImage(listing.images)} alt="listingImg" className="w-100 h-100" />
