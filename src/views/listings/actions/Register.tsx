@@ -46,6 +46,7 @@ import SubmissionModal from '../../../shared/components/SubmissionModal';
 import { ToastError, ToastInfo } from '../../../shared/components/Toast';
 import { EventType } from '../../../shared/enumeration/eventType';
 import { ModalType, TModalsVisibility } from '../../../shared/enumeration/modalType';
+import useDeviceDetect from '../../../shared/hooks/useDeviceDetect';
 import useWindowDimensions from '../../../shared/hooks/useWindowDimensions';
 import { IOption } from '../../../shared/models/options.model';
 import { RootState } from '../../../shared/reducers';
@@ -81,6 +82,8 @@ const Register = (props: IRegisterProps) => {
   const formikRef = useRef<FormikProps<IRegister>>(null);
 
   const { t } = useTranslation();
+
+  const { isMobile } = useDeviceDetect();
 
   const registerView = [
     {
@@ -146,7 +149,7 @@ const Register = (props: IRegisterProps) => {
     setModalVisibility({ ...initialModalState, [type]: isVisible });
   };
 
-  const handleRawFormValues = (input: IRegister, id: number): IProceedTxBody => {
+  const handleRawFormValues = (input: IRegister, optionId: number): IProceedTxBody => {
     if (!listing?.address) {
       throw Error('Error getting listing address');
     }
@@ -165,7 +168,7 @@ const Register = (props: IRegisterProps) => {
       args: {
         ...baseSetterArgs,
         _amount: convertDecimalToBn(input.registerAmount.toString()),
-        _optionId: id,
+        _optionId: optionId,
       },
     };
     return output;
@@ -308,7 +311,7 @@ const Register = (props: IRegisterProps) => {
     /**
      * Make sure to refetch if complete info got overriden in some unknown cases
      */
-    const listingHasOptions = listing?.options;
+    const listingHasOptions = listing?.listingPotentials;
     if (Boolean(listingHasOptions) || !provider || !listing || !signerAddress) return;
     const refetchTimer = window.setTimeout(() => {
       dispatch(fetchingEntity());
@@ -326,10 +329,10 @@ const Register = (props: IRegisterProps) => {
   const [amountToReturn, setAmountToReturn] = useState<BigNumber | undefined>(undefined);
 
   const proceedCalculation = async (optionId: number) => {
-    if (!listing || !signer || !signerAddress || !listing.options) return BigNumber.from(0);
+    if (!listing || !signer || !signerAddress || !listing.listingPotentials) return BigNumber.from(0);
     const instance = LISTING_INSTANCE({ address: listing.address, signer });
     if (!instance) return BigNumber.from(0);
-    const optionInfo = listing.options.find(({ id }) => id === optionId);
+    const optionInfo = listing.listingPotentials.find(({ id }) => id === optionId);
 
     const currentUnix = moment().unix();
 
@@ -396,7 +399,9 @@ const Register = (props: IRegisterProps) => {
             {t('anftDapp.listingComponent.primaryInfo.investmentActivities.registerClaimReward')}
           </CLabel>
         </CCol>
-        <CCol xs={12}>
+        </CRow>
+        <CRow className={'justify-content-center'}>
+        <CCol xs={`${isMobile ? '12' : '8'}`}>
           <CCard className="mt-1 listing-img-card mb-0">
             {!entityLoading && listing ? (
               <img src={returnTheFirstImage(listing.images)} alt="listingImg" className="w-100 h-100" />
@@ -409,7 +414,7 @@ const Register = (props: IRegisterProps) => {
                 <p className="mb-2 text-white content-title">{listing?.name ? listing.name : '_'}</p>
                 <p className="mb-0 text-white detail-title-font">
                   {t('anftDapp.registerComponent.activitiesCount')}{' '}
-                  <b>{listing?.options ? listing.options.length : 0}</b>
+                  <b>{listing?.listingPotentials ? listing.listingPotentials.length : 0}</b>
                 </p>
               </CCardTitle>
             </CCardBody>
@@ -422,7 +427,7 @@ const Register = (props: IRegisterProps) => {
                 noItemsView={{
                   noItems: t('anftDapp.global.noItemText'),
                 }}
-                items={listing.options}
+                items={listing.listingPotentials}
                 fields={registerView}
                 responsive
                 hover
@@ -432,7 +437,7 @@ const Register = (props: IRegisterProps) => {
                     return (
                       <td
                         onClick={() => {
-                          toggleDetails(item.id.toString());
+                          toggleDetails(item.id?.toString());
                         }}
                       >
                         <span className="text-primary d-inline-block text-truncate cursor-pointer" style={{ maxWidth: '100px' }}>
@@ -457,7 +462,7 @@ const Register = (props: IRegisterProps) => {
                   },
                   details: (item: IOption) => {
                     return (
-                      <CCollapse show={details.includes(item.id.toString())}>
+                      <CCollapse show={details.includes(item.id?.toString())}>
                         <CCard className="mb-0">
                           <CCardBody className="px-3">
                             <CRow className="align-items-center">
@@ -727,15 +732,15 @@ const Register = (props: IRegisterProps) => {
             color="success"
             title={t('anftDapp.registerComponent.claimReward.claimRewardModalTitle')}
             CustomJSX={() => {
-              if (chosenOptionId === undefined || !listing?.options) return <></>;
+              if (chosenOptionId === undefined || !listing?.listingPotentials) return <></>;
               return (
                 <p>
                   {t('anftDapp.registerComponent.claimReward.claimRewardModalContent')}{' '}
-                  <span className="text-primary">“{listing.options[chosenOptionId].name}”</span>?
+                  <span className="text-primary">“{listing?.listingPotentials[chosenOptionId]?.name || ''}”</span>?
                 </p>
               );
             }}
-            onConfirm={() => onClaimRewardCnfrm(listing?.options ? listing.options[chosenOptionId!].id : 0)}
+            onConfirm={() => onClaimRewardCnfrm(chosenOptionId || 0)}
             onAbort={() => handleModalVisibility(ModalType.REWARD_CLAIM, false)}
           />
           <ConfirmModal
@@ -743,20 +748,20 @@ const Register = (props: IRegisterProps) => {
             color="danger"
             title={t('anftDapp.registerComponent.unregister.unregisterModalTitle')}
             CustomJSX={() => {
-              if (chosenOptionId === undefined || !listing?.options) return <></>;
+              if (chosenOptionId === undefined || !listing?.listingPotentials) return <></>;
               return (
                 <p>
                   {t('anftDapp.registerComponent.unregister.unregisterModalContentPrev')}{' '}
-                  <span className="text-primary">“{listing.options[chosenOptionId].name}”</span>{' '}
+                  <span className="text-primary">“{listing.listingPotentials[chosenOptionId]?.name || ''}”</span>{' '}
                   {t('anftDapp.registerComponent.unregister.unregisterModalContentNext')}{' '}
                   <span className="text-primary">
-                    {formatBNToken(listing.options[chosenOptionId].stake?.amount, true)}
+                    {formatBNToken(listing.listingPotentials[chosenOptionId]?.stake?.amount, true)}
                   </span>
                   ?
                 </p>
               );
             }}
-            onConfirm={() => onUnregisterCnfrm(listing?.options ? listing.options[chosenOptionId!].id : 0)}
+            onConfirm={() => onUnregisterCnfrm(chosenOptionId || 0)}
             onAbort={() => handleModalVisibility(ModalType.REWARD_UNREGISTER, false)}
           />
         </CCol>

@@ -3,6 +3,10 @@ import { CommercialTypes, Methods } from '../enumeration/comercialType';
 import { IDurationRisk } from './listingType.model';
 import { IOption } from './options.model';
 
+interface IListingType {
+  name: string;
+  id: string;
+}
 export interface IAsset {
   id: string;
   createdDate: Date;
@@ -15,7 +19,8 @@ export interface IAsset {
   owner: string | undefined;
   validator: string | undefined;
   totalStake: BigNumber | undefined;
-  options: IOption[];
+  // options: IOption[];
+  listingPotentials: IOption[];
   fee: number | null;
   price: number | null;
   typeId: string;
@@ -29,4 +34,9 @@ export interface IAsset {
   commercialTypes: CommercialTypes[];
   option: Methods;
   goodRentCost?: number;
+  location: string;
+  areaLand: number;
+  type: IListingType;
+  quality: string;
+  numberOfStorey: number;
 }

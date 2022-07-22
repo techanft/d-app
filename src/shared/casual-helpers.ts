@@ -2,7 +2,6 @@ import { BigNumber, ethers } from 'ethers';
 import moment from 'moment';
 import { APP_DATE_FORMAT, TOKEN_SYMBOL } from '../config/constants';
 import { IAsset } from './models/assets.model';
-import { baseOptions } from './models/options.model';
 
 export const estimateOwnership = (amount: BigNumber, dailyPayment: BigNumber, currentOwnership: BigNumber) => {
   const initialOwnership = checkOwnershipExpired(currentOwnership.toNumber())
@@ -104,15 +103,6 @@ export const validateOwnership = (viewerAddr: string | undefined, listingInfo: I
 
 export const formatLocalDatetime = (input: string | Date | undefined): string => {
   return moment(input).format(APP_DATE_FORMAT);
-};
-
-export const returnOptionNameById = (optionId: number): string => {
-  const optionsPromises = baseOptions.find((item) => item.id === optionId);
-  if (optionsPromises) {
-    return optionsPromises.name;
-  } else {
-    return '_';
-  }
 };
 
 // Duplicative logic:
