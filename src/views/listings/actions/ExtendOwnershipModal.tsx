@@ -14,7 +14,7 @@ import {
   CModalTitle,
   CProgress,
   CProgressBar,
-  CRow,
+  CRow
 } from '@coreui/react';
 import { BigNumber } from 'ethers';
 import { Formik, FormikProps } from 'formik';
@@ -40,7 +40,7 @@ import {
   includeMultiple,
   insertCommas,
   returnMaxEndDate,
-  unInsertCommas,
+  unInsertCommas
 } from '../../../shared/casual-helpers';
 import { ToastError } from '../../../shared/components/Toast';
 import { CommercialTypes } from '../../../shared/enumeration/comercialType';
@@ -54,7 +54,7 @@ import { selectEntityById } from '../../assets/assets.reducer';
 import { getEntity } from '../../productType/category.api';
 import {
   fetching as fetchingCategory,
-  selectEntityById as selectCategoryById,
+  selectEntityById as selectCategoryById
 } from '../../productType/category.reducer';
 import { baseSetterArgs } from '../../transactions/settersMapping';
 import { IProceedTxBody, proceedTransaction } from '../../transactions/transactions.api';
@@ -373,11 +373,11 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
   };
 
   const mappingSuccessRateToProfits: TMappingSuccessRateToProfits = {
-    [RiskLevel.VERY_HIGH]: profitsValue.VERY_HIGH,
-    [RiskLevel.HIGH]: profitsValue.HIGH,
+    [RiskLevel.VERY_HIGH]: profitsValue.VERY_LOW,
+    [RiskLevel.HIGH]: profitsValue.LOW,
     [RiskLevel.MEDIUM]: profitsValue.MEDIUM,
-    [RiskLevel.LOW]: profitsValue.LOW,
-    [RiskLevel.VERY_LOW]: profitsValue.VERY_LOW,
+    [RiskLevel.LOW]: profitsValue.HIGH,
+    [RiskLevel.VERY_LOW]: profitsValue.VERY_HIGH,
   };
   const calculateProfit = (
     price: number,
@@ -386,8 +386,8 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
     commercialTypes: CommercialTypes
   ) => {
     const riskLevelInx = riskLevelArray.indexOf(risk);
-    const findNextRisk = risk !== RiskLevel.VERY_HIGH ? riskLevelArray[riskLevelInx + 1] : risk;
-    const profit = mappingSuccessRateToProfits[priceStatus === PriceStatus.HIGH ? findNextRisk : risk];
+    const findPrevRisk = risk !== RiskLevel.VERY_HIGH ? riskLevelArray[riskLevelInx + 1] : risk;
+    const profit = mappingSuccessRateToProfits[priceStatus === PriceStatus.HIGH ? findPrevRisk : risk];
     const ownerPrice = commercialTypes === CommercialTypes.SELL ? listingData.sellPrice : listingData.rentPrice;
     const profitPercent = profit / 100;
     const diff = price <= ownerPrice ? 0 : (price - ownerPrice) * profitPercent;
@@ -508,6 +508,11 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                             Number(unInsertCommas(e.currentTarget.value)),
                             values.commercialTypes
                           );
+                          const currRiskLevel = handleRiskProgressValue(values.dateCount);
+                          const riskLevelInx = riskLevelArray.indexOf(currRiskLevel);
+                          const findPrevRisk =
+                            currRiskLevel !== RiskLevel.VERY_HIGH ? riskLevelArray[riskLevelInx + 1] : currRiskLevel;
+                          const riskLevel = priceStatus === PriceStatus.HIGH ? findPrevRisk : currRiskLevel;
                           setFieldValue('price', unInsertCommas(e.currentTarget.value));
                           setFieldValue('priceStatus', priceStatus);
                           setFieldValue(
@@ -519,6 +524,7 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                               values.commercialTypes
                             )
                           );
+                          setFieldValue('riskLevel', riskLevel);
                         }}
                         value={insertCommas(values.price)}
                       />
@@ -571,16 +577,20 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                       <CInput
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                           const extendDay = Number(unInsertCommas(e.target.value));
+                          const currRiskLevel = handleRiskProgressValue(Number(e.currentTarget.value));
+                          const riskLevelInx = riskLevelArray.indexOf(currRiskLevel);
+                          const findPrevRisk =
+                            currRiskLevel !== RiskLevel.VERY_HIGH ? riskLevelArray[riskLevelInx + 1] : currRiskLevel;
+                          const riskLevel = values.priceStatus === PriceStatus.HIGH ? findPrevRisk : currRiskLevel;
                           try {
                             BigNumber.from(extendDay);
                             const extendDate = moment(startDate).add(
                               returnMaxEndDate(extendDay, getExtenableDayFromTokenBalance()),
                               'day'
                             );
-                            const riskLevel = handleRiskProgressValue(Number(e.currentTarget.value));
                             setFieldValue(
                               'profit',
-                              calculateProfit(values.price, riskLevel, values.priceStatus, values.commercialTypes)
+                              calculateProfit(values.price, currRiskLevel, values.priceStatus, values.commercialTypes)
                             );
                             setFieldValue('riskLevel', riskLevel);
                             setFieldValue('dateCount', extendDay);
