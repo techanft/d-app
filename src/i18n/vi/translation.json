@@ -24,7 +24,13 @@
         },
         "noticeText": "Lưu ý: Thời gian từ 23:30 - {{aboutToExpire}} đến 23:30 - {{expired}}, BĐS này có thể bị người khác chốt quyền sở hữu"
       },
-      "noItemText": "Không có bản ghi"
+      "noItemText": "Không có bản ghi",
+      "moneyUnit": {
+        "million": "Triệu",
+        "billion": "Tỷ",
+        "trillion": "Nghìn Tỷ",
+        "quadrillion": "Triệu Tỷ"
+      }
     },
 
     "sidebarComponent": {
@@ -120,8 +126,8 @@
         "FRANCHISE_ONE": "Ủy Quyền 1 Lần",
         "FRANCHISE": "Ủy Quyền nhiều Lần",
         "AUTONOMY": "Tự Quyền",
-         "RENT":"Thuê",
-         "SELL_RENT":"Bán và Thuê"
+        "RENT": "Thuê",
+        "SELL_RENT": "Bán và Thuê"
       },
       "extendOwnership": {
         "currentOwnership": "Thời gian sở hữu hiện tại",
