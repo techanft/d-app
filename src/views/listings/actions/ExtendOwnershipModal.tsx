@@ -643,7 +643,7 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                           values.dateCount > 0 && values.startDate
                             ? insertCommas(calculateExtendPriceByDays(values.dateCount, values.startDate))
                             : '0'
-                        } ANFT`}
+                        } CNFT`}
                         className="btn-radius-50"
                         disabled
                       />
@@ -673,7 +673,7 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                     </CCol>
                     <CCol xs={7}>
                       <p className="text-primary text-right">
-                        {values.profit ? insertCommas(values.profit) : '_'} ANFT
+                        {values.profit ? insertCommas(values.profit) : '_'} CNFT
                       </p>
                     </CCol>
                   </CFormGroup>
@@ -683,7 +683,7 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                     </CCol>
                     <CCol xs={7}>
                       <p className="text-primary text-right">
-                        {values.profit ? insertCommas(calculateProfitPerMonth(values.dateCount, values.profit)) : '_'} ANFT
+                        {values.profit ? insertCommas(calculateProfitPerMonth(values.dateCount, values.profit)) : '_'} CNFT
                       </p>
                     </CCol>
                   </CFormGroup>

@@ -12,7 +12,7 @@ import {
   CModalFooter,
   CModalHeader,
   CModalTitle,
-  CRow,
+  CRow
 } from '@coreui/react';
 import { Formik, FormikProps } from 'formik';
 import moment from 'moment';
@@ -29,7 +29,7 @@ import {
   convertDecimalToBn,
   insertCommas,
   returnMaxEndDate,
-  unInsertCommas,
+  unInsertCommas
 } from '../../../shared/casual-helpers';
 import { ToastError } from '../../../shared/components/Toast';
 import { EventType } from '../../../shared/enumeration/eventType';
@@ -261,7 +261,7 @@ const WithdrawModal = (props: IWithdrawModal) => {
                           values.withdraw > 0 && values.startDate && Number(values.remainingDays)
                             ? insertCommas(calculateWithdrawPriceByDays(values.withdraw))
                             : '0'
-                        } ANFT`}
+                        } CNFT`}
                         className="btn-radius-50"
                         disabled
                       />

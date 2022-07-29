@@ -334,7 +334,7 @@ const ListingInfo = (props: IListingInfoProps) => {
 
             {!entityLoading && listing?.dailyPayment ? (
               <p className="my-2 value-text">
-                {formatBNToken(listing.dailyPayment, false)} <span className="token-name">ANFT</span>
+                {formatBNToken(listing.dailyPayment, false)} <span className="token-name">CNFT</span>
               </p>
             ) : (
               <InfoLoader width={155} height={27} />
@@ -345,7 +345,7 @@ const ListingInfo = (props: IListingInfoProps) => {
             <p className="detail-title-font my-2">{t('anftDapp.listingComponent.primaryInfo.totalStake')}</p>
             {!entityLoading && listing?.totalStake ? (
               <p className="text-primary my-2 value-text">
-                {formatBNToken(listing.totalStake, false)} <span className="token-name">ANFT</span>
+                {formatBNToken(listing.totalStake, false)} <span className="token-name">CNFT</span>
               </p>
             ) : (
               <InfoLoader width={155} height={27} />

@@ -66,7 +66,7 @@ const TheSidebar = () => {
         dispatch(toggleSidebar(val));
       }}
     >
-      <CSidebarBrand>ANFT D-APP</CSidebarBrand>
+      <CSidebarBrand>CNFT D-APP</CSidebarBrand>
       <ul className="c-sidebar-nav h-100 ps">
         <li className={`c-sidebar-nav-item `}>
           <CLink className={`c-sidebar-nav-link ${highlightNavItem('/listings')}`} to={'/listings'}>
