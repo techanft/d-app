@@ -379,19 +379,42 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
     [RiskLevel.LOW]: profitsValue.HIGH,
     [RiskLevel.VERY_LOW]: profitsValue.VERY_HIGH,
   };
+
+  const calculateSellProfit = (price: number, risk: RiskLevel, priceStatus: PriceStatus) => {
+    const riskLevelInx = riskLevelArray.indexOf(risk);
+    const findPrevRisk = risk !== RiskLevel.VERY_HIGH ? riskLevelArray[riskLevelInx + 1] : risk;
+    const profit = mappingSuccessRateToProfits[priceStatus === PriceStatus.HIGH ? findPrevRisk : risk];
+    const ownerPrice = listingData.sellPrice;
+    const profitPercent = profit / 100;
+    const diff = price <= ownerPrice ? 0 : (price - ownerPrice) * profitPercent;
+    return diff;
+  };
+
+  const calculateRentProfit = (price: number, days: number) => {
+    const priceOf1Day = price / 30;
+    const totalPriceOfDay = listingData.pricePerDay * days;
+    const priceOfRentDay = priceOf1Day * days;
+    const diff = priceOfRentDay > totalPriceOfDay ? priceOfRentDay - totalPriceOfDay : 0;
+    return diff;
+  };
+
   const calculateProfit = (
     price: number,
     risk: RiskLevel,
     priceStatus: PriceStatus,
+    days: number,
     commercialTypes: CommercialTypes
   ) => {
-    const riskLevelInx = riskLevelArray.indexOf(risk);
-    const findPrevRisk = risk !== RiskLevel.VERY_HIGH ? riskLevelArray[riskLevelInx + 1] : risk;
-    const profit = mappingSuccessRateToProfits[priceStatus === PriceStatus.HIGH ? findPrevRisk : risk];
-    const ownerPrice = commercialTypes === CommercialTypes.SELL ? listingData.sellPrice : listingData.rentPrice;
-    const profitPercent = profit / 100;
-    const diff = price <= ownerPrice ? 0 : (price - ownerPrice) * profitPercent;
-    return diff;
+    if (commercialTypes === CommercialTypes.SELL) {
+      return calculateSellProfit(price, risk, priceStatus);
+    } else {
+      return calculateRentProfit(price, days);
+    }
+  };
+
+  const calculateProfitPerMonth = (days: number, profit: number) => {
+    const profitPerMonth = (profit * 30) / days;
+    return profitPerMonth;
   };
 
   const checkPriceisGood = (price: number, commercialTypes: CommercialTypes): PriceStatus => {
@@ -508,6 +531,14 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                             Number(unInsertCommas(e.currentTarget.value)),
                             values.commercialTypes
                           );
+
+                          const profit = calculateProfit(
+                            Number(unInsertCommas(e.currentTarget.value)),
+                            values.riskLevel,
+                            priceStatus,
+                            values.dateCount,
+                            values.commercialTypes
+                          );
                           const currRiskLevel = handleRiskProgressValue(values.dateCount);
                           const riskLevelInx = riskLevelArray.indexOf(currRiskLevel);
                           const findPrevRisk =
@@ -515,15 +546,7 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                           const riskLevel = priceStatus === PriceStatus.HIGH ? findPrevRisk : currRiskLevel;
                           setFieldValue('price', unInsertCommas(e.currentTarget.value));
                           setFieldValue('priceStatus', priceStatus);
-                          setFieldValue(
-                            'profit',
-                            calculateProfit(
-                              Number(unInsertCommas(e.currentTarget.value)),
-                              values.riskLevel,
-                              priceStatus,
-                              values.commercialTypes
-                            )
-                          );
+                          setFieldValue('profit', profit);
                           setFieldValue('riskLevel', riskLevel);
                         }}
                         value={insertCommas(values.price)}
@@ -578,6 +601,14 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                           const extendDay = Number(unInsertCommas(e.target.value));
                           const currRiskLevel = handleRiskProgressValue(Number(e.currentTarget.value));
+                          const profit = calculateProfit(
+                            values.price,
+                            currRiskLevel,
+                            values.priceStatus,
+                            extendDay,
+                            values.commercialTypes
+                          );
+
                           const riskLevelInx = riskLevelArray.indexOf(currRiskLevel);
                           const findPrevRisk =
                             currRiskLevel !== RiskLevel.VERY_HIGH ? riskLevelArray[riskLevelInx + 1] : currRiskLevel;
@@ -588,10 +619,7 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                               returnMaxEndDate(extendDay, getExtenableDayFromTokenBalance()),
                               'day'
                             );
-                            setFieldValue(
-                              'profit',
-                              calculateProfit(values.price, currRiskLevel, values.priceStatus, values.commercialTypes)
-                            );
+                            setFieldValue('profit', profit);
                             setFieldValue('riskLevel', riskLevel);
                             setFieldValue('dateCount', extendDay);
                             setFieldValue('endDate', extendDate);
@@ -640,12 +668,22 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                     </CCol>
                   </CFormGroup>
                   <CFormGroup row>
-                    <CCol xs={4}>
+                    <CCol xs={5}>
                       <CLabel className="fw-bold ">{t('anftDapp.listingComponent.extendOwnership.profit')}:</CLabel>
                     </CCol>
-                    <CCol xs={8}>
+                    <CCol xs={7}>
                       <p className="text-primary text-right">
                         {values.profit ? insertCommas(values.profit) : '_'} ANFT
+                      </p>
+                    </CCol>
+                  </CFormGroup>
+                  <CFormGroup row>
+                    <CCol xs={5}>
+                      <CLabel className="fw-bold ">{t('anftDapp.listingComponent.extendOwnership.profitPerMonth')}:</CLabel>
+                    </CCol>
+                    <CCol xs={7}>
+                      <p className="text-primary text-right">
+                        {values.profit ? insertCommas(calculateProfitPerMonth(values.dateCount, values.profit)) : '_'} ANFT
                       </p>
                     </CCol>
                   </CFormGroup>

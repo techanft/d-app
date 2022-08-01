@@ -63,6 +63,7 @@
       "dailyPayment": "Daily Payment",
       "noListingFound": "No listing found",
       "primaryInfo": {
+        "day": "day",
         "ownershipStatus": {
           "owned": "Owned",
           "ownershipExpired": "Ownership expired. Listing can be owned by another address!",
@@ -144,6 +145,7 @@
         "secondaryPrice": "Selling price on the secondary floor",
         "secondaryRent": "Rent price on the secondary floor",
         "profit": "Expected profit",
+        "profitPerMonth": "Expected profit per Month",
         "successRate": "Success rate",
         "profitRatio": "Profit rate"
       },

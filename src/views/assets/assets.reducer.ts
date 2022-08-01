@@ -3,7 +3,7 @@ import { IAsset } from '../../shared/models/assets.model';
 import { IGetAllResp, IInitialState } from '../../shared/models/base.model';
 import { RootState } from '../../shared/reducers';
 import { IAssetFilter } from '../listings/Listings';
-import { getEntities, getEntity, getOptionsWithStakes } from './assets.api';
+import { getEntities, getEntity, getListingsInfo, getOptionsWithStakes } from './assets.api';
 
 interface IInitialFilterState extends IInitialState {
   filterState: IAssetFilter | undefined;
@@ -89,6 +89,17 @@ const { actions, reducer } = createSlice({
       state.initialState.errorMessage = payload?.message;
       state.initialState.updateEntitySuccess = false;
       state.initialState.entityLoading = false;
+    },
+    [getListingsInfo.fulfilled.type]: (state, { payload }: PayloadAction<IGetAllResp<IAsset>>) => {
+      assetsAdapter.setAll(state, payload.results);
+      state.initialState.totalItems = payload.count;
+      state.initialState.fetchEntitiesSuccess = true;
+      state.initialState.entitiesLoading = false;
+    },
+    [getListingsInfo.rejected.type]: (state, { payload }: PayloadAction<any>) => {
+      state.initialState.errorMessage = payload?.message;
+      state.initialState.entitiesLoading = false;
+      state.initialState.fetchEntitiesSuccess = false;
     },
   },
 });

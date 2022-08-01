@@ -25,6 +25,7 @@ import Loading from '../../../shared/components/Loading';
 import SubmissionModal from '../../../shared/components/SubmissionModal';
 import { ToastError } from '../../../shared/components/Toast';
 import { EventType } from '../../../shared/enumeration/eventType';
+import useDeviceDetect from '../../../shared/hooks/useDeviceDetect';
 import useWindowDimensions from '../../../shared/hooks/useWindowDimensions';
 import { IParams } from '../../../shared/models/base.model';
 import { IRecordWorker } from '../../../shared/models/record.model';
@@ -42,7 +43,7 @@ interface IWorkerListParams {
   [x: string]: string;
 }
 
-interface IWorkersList extends RouteComponentProps<IWorkerListParams> {}
+interface IWorkersList extends RouteComponentProps<IWorkerListParams> { }
 
 const titleTableStyle = {
   textAlign: 'left',
@@ -67,6 +68,8 @@ const WorkersList = (props: IWorkersList) => {
 
   const { width: screenWidth } = useWindowDimensions();
   const { t } = useTranslation();
+
+  const { isMobile } = useDeviceDetect();
 
   const fields = [
     {
@@ -218,7 +221,9 @@ const WorkersList = (props: IWorkersList) => {
           </CButton>
           <CLabel className="text-primary content-title ml-1">{t('anftDapp.workersListComponent.workersList')}</CLabel>
         </CCol>
-        <CCol xs={12}>
+      </CRow>
+      <CRow className={'justify-content-center'}>
+        <CCol xs={`${isMobile ? '12' : '8'}`}>
           <CCard className="mt-1 listing-img-card mb-0">
             {!entityLoading && listing ? (
               <img src={returnTheFirstImage(listing.images)} alt="listingImg" className="w-100 h-100" />
@@ -326,7 +331,7 @@ const WorkersList = (props: IWorkersList) => {
         onConfirm={onDelMldConfrmed}
         onAbort={onDelMldAbort}
       />
-    </CContainer>
+    </CContainer >
   );
 };
 
