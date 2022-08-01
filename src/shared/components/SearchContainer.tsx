@@ -124,7 +124,7 @@ export const FilterComponent = (props: IFilterComponent) => {
               return (
                 <React.Fragment key={i}>
                   {item.singleInput ? (
-                    <CCol xs={12} md={6} xxl={3} className={`px-5px textCol ${item.isHidden ? 'd-none' : ''}`}>
+                    <CCol xs={12} md={6} className={`px-5px textCol ${item.isHidden ? 'd-none' : ''}`}>
                       <CLabel htmlFor={item.id} className="mb-2">
                         {item.title}
                       </CLabel>
@@ -140,7 +140,7 @@ export const FilterComponent = (props: IFilterComponent) => {
                       />
                     </CCol>
                   ) : (
-                    <CCol xs={12} md={6} xxl={3} className={`px-5px textCol ${item.isHidden ? 'd-none' : ''}`}>
+                    <CCol xs={12} md={6} className={`px-5px textCol ${item.isHidden ? 'd-none' : ''}`}>
                       <CLabel htmlFor={item.id}>{item.title}</CLabel>
                       <CRow>
                         <CCol sm={6} className="pr-5px">

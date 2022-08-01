@@ -247,16 +247,6 @@ const TheHeader = () => {
               </CLink>
             </CHeaderNavItem>
             <CHeaderNavItem className={`mr-3 ml-auto ${isMobile ? 'd-none' : 'd-none d-lg-block'}`}>
-              <CLink
-                href="https://dapp-guide.anfteco.io"
-                target="_blank"
-                rel="noreferrer noopener"
-                className={`text-dark  c-sidebar-nav-link`}
-              >
-                {t('anftDapp.sidebarComponent.userGuide')}
-              </CLink>
-            </CHeaderNavItem>
-            <CHeaderNavItem className={`mr-3 ml-auto ${isMobile ? 'd-none' : 'd-none d-lg-block'}`}>
               <CDropdown>
                 <CDropdownToggle caret={false} className={`c-sidebar-nav-dropdown-toggle`}>
                   {t('anftDapp.sidebarComponent.language.language')}&nbsp;

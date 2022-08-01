@@ -80,17 +80,6 @@ const TheSidebar = () => {
             {t('anftDapp.listingComponent.activityLogs')}
           </CLink>
         </li>
-        <li className={`c-sidebar-nav-item`}>
-          <CLink
-            className={`c-sidebar-nav-link`}
-            target="_blank"
-            rel="noreferrer noopener"
-            href="https://dapp-guide.anfteco.io"
-          >
-            <CIcon name="cil-book" size="lg" className={`c-sidebar-nav-icon text-primary`} />{' '}
-            {t('anftDapp.sidebarComponent.userGuide')}
-          </CLink>
-        </li>
         <li className={`c-sidebar-nav-dropdown ${LANGUAGE ? 'c-show' : ''}`}>
           <CLink className="c-sidebar-nav-dropdown-toggle" onClick={setDDCurrying(Dropdown.LANGUAGE, !LANGUAGE)}>
             <FontAwesomeIcon icon={faGlobe} size="lg" className="c-sidebar-nav-icon text-primary" />
