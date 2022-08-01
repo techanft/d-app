@@ -153,7 +153,8 @@
         "profit": "Lợi nhuận dự kiến",
         "profitPerMonth": "Lợi nhuận trong 1 tháng",
         "successRate": "Tỉ lệ thành công",
-        "profitRatio": "Tỉ lệ lợi nhuận"
+        "profitRatio": "Tỉ lệ lợi nhuận",
+        "exchange": "Quy Đổi"
       },
       "withdrawToken": {
         "maximumWithdrawable": "Số ngày rút tối đa",

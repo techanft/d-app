@@ -516,8 +516,8 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                           `anftDapp.listingComponent.extendOwnership.${
                             values.commercialTypes === CommercialTypes.RENT ? 'secondaryRent' : 'secondaryPrice'
                           }`
-                        )}
-                        :
+                        )}{' '}
+                        (ANFT):
                       </CLabel>
                     </CCol>
                     <CCol xs={12}>
@@ -551,8 +551,14 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                         }}
                         value={insertCommas(values.price)}
                       />
-                      <CFormText className={`text-${mapPriceStatusBadge[values.priceStatus]}`}>
-                        {mappingPriceStatusToText[values.priceStatus]}
+                      <CFormText>
+                        {t('anftDapp.listingComponent.extendOwnership.exchange')}:{' '}
+                        {insertCommas(values.price * USD_TO_VND_RATIO)} VND
+                      </CFormText>
+                      <CFormText>
+                        <p className={`m-0 text-${mapPriceStatusBadge[values.priceStatus]}`}>
+                          {mappingPriceStatusToText[values.priceStatus]}
+                        </p>
                       </CFormText>
                     </CCol>
                   </CFormGroup>
@@ -675,16 +681,28 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                       <p className="text-primary text-right">
                         {values.profit ? insertCommas(values.profit) : '_'} ANFT
                       </p>
+                      <CFormText className={'text-right'}>
+                        {values.profit ? insertCommas(values.profit * USD_TO_VND_RATIO) : '_'} VND
+                      </CFormText>
                     </CCol>
                   </CFormGroup>
-                  <CFormGroup row>
+                  <CFormGroup row className={`${values.commercialTypes === CommercialTypes.RENT ? '' : 'd-none'}`}>
                     <CCol xs={5}>
-                      <CLabel className="fw-bold ">{t('anftDapp.listingComponent.extendOwnership.profitPerMonth')}:</CLabel>
+                      <CLabel className="fw-bold ">
+                        {t('anftDapp.listingComponent.extendOwnership.profitPerMonth')}:
+                      </CLabel>
                     </CCol>
                     <CCol xs={7}>
                       <p className="text-primary text-right">
-                        {values.profit ? insertCommas(calculateProfitPerMonth(values.dateCount, values.profit)) : '_'} ANFT
+                        {values.profit ? insertCommas(calculateProfitPerMonth(values.dateCount, values.profit)) : '_'}{' '}
+                        ANFT
                       </p>
+                      <CFormText className={'text-right'}>
+                        {values.profit
+                          ? insertCommas(calculateProfitPerMonth(values.dateCount, values.profit) * USD_TO_VND_RATIO)
+                          : '_'}{' '}
+                        VND
+                      </CFormText>
                     </CCol>
                   </CFormGroup>
                   <CFormGroup row>

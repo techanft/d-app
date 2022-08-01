@@ -153,7 +153,8 @@
         "profit": "Expected profit",
         "profitPerMonth": "Expected profit per Month",
         "successRate": "Success rate",
-        "profitRatio": "Profit rate"
+        "profitRatio": "Profit rate",
+        "exchange": "Exchange"
       },
       "withdrawToken": {
         "maximumWithdrawable": "Maximum Days",
