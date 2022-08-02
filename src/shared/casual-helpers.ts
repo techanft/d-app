@@ -198,7 +198,7 @@ export const includeMultiple = <T>(superset: Array<T> = [], ...subset: Array<T>)
 
 interface IMoneyUnitTranslate {
   number: string;
-  unit: string;
+  unit: string | undefined;
 }
 
 export const moneyUnitTranslate = (input: number): IMoneyUnitTranslate => {

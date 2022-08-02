@@ -39,6 +39,7 @@ import {
   getSecondDifftoEndDate,
   includeMultiple,
   insertCommas,
+  moneyUnitTranslate,
   returnMaxEndDate,
   unInsertCommas
 } from '../../../shared/casual-helpers';
@@ -553,7 +554,12 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                       />
                       <CFormText>
                         {t('anftDapp.listingComponent.extendOwnership.exchange')}:{' '}
-                        {insertCommas(values.price * USD_TO_VND_RATIO)} VND
+                        {!moneyUnitTranslate(values.price * USD_TO_VND_RATIO).unit
+                          ? insertCommas(values.price * USD_TO_VND_RATIO)
+                          : ` ${moneyUnitTranslate(values.price * USD_TO_VND_RATIO).number} ${t(
+                              `anftDapp.global.moneyUnit.${moneyUnitTranslate(values.price * USD_TO_VND_RATIO).unit}`
+                            )} `}{' '}
+                        VND
                       </CFormText>
                       <CFormText>
                         <p className={`m-0 text-${mapPriceStatusBadge[values.priceStatus]}`}>
@@ -682,7 +688,14 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                         {values.profit ? insertCommas(values.profit) : '_'} ANFT
                       </p>
                       <CFormText className={'text-right'}>
-                        {values.profit ? insertCommas(values.profit * USD_TO_VND_RATIO) : '_'} VND
+                        {values.profit
+                          ? !moneyUnitTranslate(values.profit * USD_TO_VND_RATIO).unit
+                            ? insertCommas(values.profit * USD_TO_VND_RATIO)
+                            : ` ${moneyUnitTranslate(values.profit * USD_TO_VND_RATIO).number} ${t(
+                                `anftDapp.global.moneyUnit.${moneyUnitTranslate(values.profit * USD_TO_VND_RATIO).unit}`
+                              )} `
+                          : '_'}{' '}
+                        VND
                       </CFormText>
                     </CCol>
                   </CFormGroup>
@@ -699,7 +712,21 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                       </p>
                       <CFormText className={'text-right'}>
                         {values.profit
-                          ? insertCommas(calculateProfitPerMonth(values.dateCount, values.profit) * USD_TO_VND_RATIO)
+                          ? !moneyUnitTranslate(
+                              calculateProfitPerMonth(values.dateCount, values.profit) * USD_TO_VND_RATIO
+                            ).unit
+                            ? insertCommas(calculateProfitPerMonth(values.dateCount, values.profit) * USD_TO_VND_RATIO)
+                            : ` ${
+                                moneyUnitTranslate(
+                                  calculateProfitPerMonth(values.dateCount, values.profit) * USD_TO_VND_RATIO
+                                ).number
+                              } ${t(
+                                `anftDapp.global.moneyUnit.${
+                                  moneyUnitTranslate(
+                                    calculateProfitPerMonth(values.dateCount, values.profit) * USD_TO_VND_RATIO
+                                  ).unit
+                                }`
+                              )} `
                           : '_'}{' '}
                         VND
                       </CFormText>
