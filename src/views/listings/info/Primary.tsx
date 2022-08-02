@@ -9,14 +9,14 @@ import {
   CDataTable,
   CLink,
   CPagination,
-  CRow
+  CRow,
 } from '@coreui/react';
 import {
   faArrowAltCircleDown,
   faArrowAltCircleUp,
   faClipboard,
   faDonate,
-  faEdit
+  faEdit,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import moment from 'moment';
@@ -32,7 +32,7 @@ import {
   convertUnixToDate,
   formatBNToken,
   formatLocalDatetime,
-  returnTheFirstImage
+  returnTheFirstImage,
 } from '../../../shared/casual-helpers';
 import ConfirmationLoading from '../../../shared/components/ConfirmationLoading';
 import CopyTextToClipBoard from '../../../shared/components/CopyTextToClipboard';
@@ -76,8 +76,8 @@ const ownershipText = (viewerAddr: string | undefined, listingInfo: IAsset, t: T
       textClassname = viewerIsOwner ? 'text-warning' : 'text-success';
       textContent = viewerIsOwner
         ? t('anftDapp.listingComponent.primaryInfo.ownershipStatus.ownershipAboutToExpire', {
-          time: convertUnixToDate(moment.unix(ownership.toNumber()).subtract(1, 'days').unix()),
-        })
+            time: convertUnixToDate(moment.unix(ownership.toNumber()).subtract(1, 'days').unix()),
+          })
         : t('anftDapp.listingComponent.primaryInfo.ownershipStatus.ownershipAbleToExtends');
     }
   } else {
@@ -230,7 +230,7 @@ const ListingInfo = (props: IListingInfoProps) => {
     <CContainer fluid className="px-0">
       <CCol xs={12} className="p-0">
         {!entityLoading && listing ? (
-          <img src={returnTheFirstImage(listing.images)} className="w-100" height={400} alt="listingImg" />
+          <img src={returnTheFirstImage(listing.images)} className="w-100 h-100" alt="listingImg" />
         ) : (
           // Ensuring 16:9 ratio for image and image loader
           <InfoLoader width={screenWidth} height={screenWidth / 1.77} />
@@ -256,7 +256,10 @@ const ListingInfo = (props: IListingInfoProps) => {
             {!entityLoading && listing?.dailyPayment ? (
               <>
                 <p className="m-0">
-                  {formatBNToken(listing.dailyPayment, false)} <span className="token-name">{TOKEN_SYMBOL} / {t('anftDapp.listingComponent.primaryInfo.day')}</span>
+                  {formatBNToken(listing.dailyPayment, false)}{' '}
+                  <span className="token-name">
+                    {TOKEN_SYMBOL} / {t('anftDapp.listingComponent.primaryInfo.day')}
+                  </span>
                 </p>
               </>
             ) : (
@@ -362,7 +365,10 @@ const ListingInfo = (props: IListingInfoProps) => {
           </CCol>
 
           <CCol xs={6} className="text-left">
-            <p className="text-primary my-2 cursor-pointer" onClick={toggleCollapseVisibility(CollapseType.WORKER_LIST)}>
+            <p
+              className="text-primary my-2 cursor-pointer"
+              onClick={toggleCollapseVisibility(CollapseType.WORKER_LIST)}
+            >
               <CIcon name="cil-description" className="mr-1 pb-1" size="lg" />
               {t('anftDapp.listingComponent.primaryInfo.workersList')}
             </p>
@@ -433,14 +439,16 @@ const ListingInfo = (props: IListingInfoProps) => {
                   <CRow className="mx-0">
                     <p
                       onClick={onRegisteringOwnership}
-                      className={`m-0 cursor-pointer ${viewerIsOwner || !ownershipAboutToExpire ? 'text-secondary' : 'text-primary'}`}
+                      className={`m-0 cursor-pointer ${
+                        viewerIsOwner || !ownershipAboutToExpire ? 'text-secondary' : 'text-primary'
+                      }`}
                     >
                       <FontAwesomeIcon icon={faEdit} />{' '}
                       {t('anftDapp.listingComponent.primaryInfo.investmentActivities.registerOwnership')}
                     </p>
                   </CRow>
                   <CRow className="mt-2 mx-0">
-                    <CLink to={`/${listingId}/register`} className='text-decoration-none'>
+                    <CLink to={`/${listingId}/register`} className="text-decoration-none">
                       <FontAwesomeIcon icon={faDonate} />{' '}
                       {t('anftDapp.listingComponent.primaryInfo.investmentActivities.registerClaimReward')}
                     </CLink>
@@ -452,8 +460,9 @@ const ListingInfo = (props: IListingInfoProps) => {
 
           <CCol xs={12} className="mt-2">
             <CButton
-              className={`px-3 w-100 btn-radius-50 btn-font-style btn btn-primary ${viewerIsOwner ? 'd-block' : 'd-none'
-                }`}
+              className={`px-3 w-100 btn-radius-50 btn-font-style btn btn-primary ${
+                viewerIsOwner ? 'd-block' : 'd-none'
+              }`}
               onClick={toggleCollapseVisibility(CollapseType.MANAGEMENT)}
             >
               {t('anftDapp.listingComponent.primaryInfo.ownershipManagement.ownershipManagement')}
@@ -484,7 +493,7 @@ const ListingInfo = (props: IListingInfoProps) => {
                     </p>
                   </CRow>
                   <CRow className="mx-0">
-                    <CLink to={`/${listingId}/workers-list`} className='text-decoration-none'>
+                    <CLink to={`/${listingId}/workers-list`} className="text-decoration-none">
                       <FontAwesomeIcon icon={faClipboard} />{' '}
                       {t('anftDapp.listingComponent.primaryInfo.ownershipManagement.workerManagement')}
                     </CLink>

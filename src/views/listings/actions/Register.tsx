@@ -403,23 +403,25 @@ const Register = (props: IRegisterProps) => {
               </CLabel>
             </CCol>
 
-            <CCard className="mt-1 listing-img-card mb-0">
-              {!entityLoading && listing ? (
-                <img src={returnTheFirstImage(listing.images)} alt="listingImg" className="w-100 h-100" />
-              ) : (
-                // Ensuring 16:9 ratio for image and image loader
-                <InfoLoader width={screenWidth} height={screenWidth / 1.77} />
-              )}
-              <CCardBody className="p-0 listing-card-body">
-                <CCardTitle className="listing-card-title mb-0 px-3 py-2 w-100">
-                  <p className="mb-2 text-white content-title">{listing?.name ? listing.name : '_'}</p>
-                  <p className="mb-0 text-white detail-title-font">
-                    {t('anftDapp.registerComponent.activitiesCount')}{' '}
-                    <b>{listing?.listingPotentials ? listing.listingPotentials.length : 0}</b>
-                  </p>
-                </CCardTitle>
-              </CCardBody>
-            </CCard>
+            <CCol xs={12} className="p-0">
+              <CCard className="mt-1 listing-img-card mb-0">
+                {!entityLoading && listing ? (
+                  <img src={returnTheFirstImage(listing.images)} alt="listingImg" className="w-100 h-100" />
+                ) : (
+                  // Ensuring 16:9 ratio for image and image loader
+                  <InfoLoader width={screenWidth} height={screenWidth / 1.77} />
+                )}
+                <CCardBody className="p-0 listing-card-body">
+                  <CCardTitle className="listing-card-title mb-0 px-3 py-2 w-100">
+                    <p className="mb-2 text-white content-title">{listing?.name ? listing.name : '_'}</p>
+                    <p className="mb-0 text-white detail-title-font">
+                      {t('anftDapp.registerComponent.activitiesCount')}{' '}
+                      <b>{listing?.listingPotentials ? listing.listingPotentials.length : 0}</b>
+                    </p>
+                  </CCardTitle>
+                </CCardBody>
+              </CCard>
+            </CCol>
 
             {listing && signerAddress ? (
               <>

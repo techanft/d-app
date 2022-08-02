@@ -51,14 +51,15 @@ const initialFilterState: IAssetFilter = {
   page: 0,
   size: 10,
   sort: 'createdDate,desc',
-  // level: ExchangeType.PRIMARY,
 };
+
+const hideFilterComponentView = ['activity-logs', 'register', 'workers-list'];
 
 const Listings = () => {
   const history = useHistory();
   const { location } = history;
-  const hideFilterComponent = location.pathname.includes('register') || location.pathname.includes('workers-list');
-  const insideDetailView = location.pathname.includes('detail') || hideFilterComponent;
+  const hideFilterComponent = hideFilterComponentView.find((route) => location.pathname.includes(route));
+  const insideDetailView = location.pathname.includes('detail') || Boolean(hideFilterComponent);
 
   const { isMobile } = useDeviceDetect();
   const dispatch = useDispatch();

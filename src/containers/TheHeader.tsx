@@ -293,7 +293,7 @@ const TheHeader = () => {
             ) : (
               ''
             )}
-            <CHeaderNavItem className={`${isDashboardView ? 'mr-3 ml-auto' : 'ml-auto'}`}>
+            <CHeaderNavItem className={`${isDashboardView ? 'mr-3 ml-auto' : 'ml-auto mr-lg-3'}`}>
               <CButton className="btn-link-wallet btn-radius-50 px-2 btn-font-style" onClick={onConnectWallet}>
                 {signerAddress ? (
                   <b>
