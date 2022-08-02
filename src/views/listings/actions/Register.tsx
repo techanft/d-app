@@ -310,10 +310,10 @@ const Register = (props: IRegisterProps) => {
 
   useEffect(() => {
     /**
-     * Make sure to refetch if complete info got overriden in some unknown cases
+     * Make sure to refetch if option complete info got overriden in some unknown cases
      */
-    const listingHasOptions = listing?.listingPotentials;
-    if (Boolean(listingHasOptions) || !provider || !listing || !signerAddress) return;
+    const listingHasCompleteOptionsInfo = listing?.listingPotentials[0]?.reward; // reward is taken from smartcontract
+    if (Boolean(listingHasCompleteOptionsInfo) || !provider || !listing || !signerAddress) return;
     const refetchTimer = window.setTimeout(() => {
       dispatch(fetchingEntity());
       dispatch(getOptionsWithStakes({ listing, stakeholder: signerAddress, provider }));
