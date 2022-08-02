@@ -65,7 +65,7 @@ const WorkersList = (props: IWorkersList) => {
   const { success, submitted, errorMessage } = useSelector((state: RootState) => state.transactions);
   const { loading, workers, errorMessage: workerErrorMessage } = initialState.workerInitialState;
   const { initialState: assetsInitialState } = useSelector((state: RootState) => state.assets);
-  const { entityLoading } = assetsInitialState;
+  const { entityLoading, fetchEntitiesSuccess } = assetsInitialState;
 
   const { width: screenWidth } = useWindowDimensions();
   const { t } = useTranslation();
@@ -129,6 +129,20 @@ const WorkersList = (props: IWorkersList) => {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
+
+  useEffect(() => {
+    /**
+     * Make sure to refetch if complete info got overriden in some unknown cases
+     */
+    const listingHasCompleteInfo = listing?.ownership;
+    if (Boolean(listingHasCompleteInfo) || !provider || !fetchEntitiesSuccess) return;
+    const refetchTimer = window.setTimeout(() => {
+      dispatch(fetchingEntity());
+      dispatch(getEntity({ id: Number(id), provider }));
+    }, 1500);
+    return () => window.clearTimeout(refetchTimer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, listing, provider, fetchEntitiesSuccess]);
 
   useEffect(() => {
     if (success && listing?.address) {
