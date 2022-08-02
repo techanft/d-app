@@ -442,9 +442,8 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
       return `${moneyUnitTranslate(amount).number} ${t(
         `anftDapp.global.moneyUnit.${moneyUnitTranslate(amount).unit}`
       )}`;
-    } else {
-      return insertCommas(amount);
     }
+    return insertCommas(amount);
   };
 
   return (
