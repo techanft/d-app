@@ -21,7 +21,6 @@ import { APP_LOCAL_DATE_FORMAT } from '../../config/constants';
 import { formatBNToken, insertCommas, returnTheFirstImage } from '../../shared/casual-helpers';
 import FilterComponent from '../../shared/components/FilterComponent';
 import Loading from '../../shared/components/Loading';
-import { ExchangeType } from '../../shared/enumeration/exchangeType';
 import useDeviceDetect from '../../shared/hooks/useDeviceDetect';
 import useWindowDimensions from '../../shared/hooks/useWindowDimensions';
 import { IAsset } from '../../shared/models/assets.model';
@@ -42,7 +41,6 @@ export interface IAssetFilter extends IParams {
   orientation?: string;
   dailyPayment?: string;
   quality?: string;
-  level: ExchangeType;
 }
 
 interface IViewComponent {
@@ -51,15 +49,16 @@ interface IViewComponent {
 
 const initialFilterState: IAssetFilter = {
   page: 0,
-  size: 12,
+  size: 10,
   sort: 'createdDate,desc',
-  level: ExchangeType.PRIMARY,
+  // level: ExchangeType.PRIMARY,
 };
 
 const Listings = () => {
   const history = useHistory();
   const { location } = history;
-  const insideDetailView = location.pathname.includes('detail');
+  const hideFilterComponent = location.pathname.includes('register') || location.pathname.includes('workers-list');
+  const insideDetailView = location.pathname.includes('detail') || hideFilterComponent;
 
   const { isMobile } = useDeviceDetect();
   const dispatch = useDispatch();
