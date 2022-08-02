@@ -39,6 +39,7 @@ import {
   getSecondDifftoEndDate,
   includeMultiple,
   insertCommas,
+  moneyUnitTranslate,
   returnMaxEndDate,
   unInsertCommas
 } from '../../../shared/casual-helpers';
@@ -436,6 +437,15 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
     return `${ratio.numerator} : ${insertCommas(ratio.denominator)}`;
   };
 
+  const renderAmount = (amount: number): string => {
+    if (moneyUnitTranslate(amount).unit) {
+      return `${moneyUnitTranslate(amount).number} ${t(
+        `anftDapp.global.moneyUnit.${moneyUnitTranslate(amount).unit}`
+      )}`;
+    }
+    return insertCommas(amount);
+  };
+
   return (
     <CModal show={isVisible} onClose={closeModal} centered className="border-radius-modal">
       <CModalHeader className="justify-content-center">
@@ -516,8 +526,8 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                           `anftDapp.listingComponent.extendOwnership.${
                             values.commercialTypes === CommercialTypes.RENT ? 'secondaryRent' : 'secondaryPrice'
                           }`
-                        )}
-                        :
+                        )}{' '}
+                        (ANFT):
                       </CLabel>
                     </CCol>
                     <CCol xs={12}>
@@ -551,8 +561,14 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                         }}
                         value={insertCommas(values.price)}
                       />
-                      <CFormText className={`text-${mapPriceStatusBadge[values.priceStatus]}`}>
-                        {mappingPriceStatusToText[values.priceStatus]}
+                      <CFormText>
+                        {t('anftDapp.listingComponent.extendOwnership.exchange')}:{' '}
+                        {renderAmount(values.price * USD_TO_VND_RATIO)} VND
+                      </CFormText>
+                      <CFormText>
+                        <p className={`m-0 text-${mapPriceStatusBadge[values.priceStatus]}`}>
+                          {mappingPriceStatusToText[values.priceStatus]}
+                        </p>
                       </CFormText>
                     </CCol>
                   </CFormGroup>
@@ -675,16 +691,28 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                       <p className="text-primary text-right">
                         {values.profit ? insertCommas(values.profit) : '_'} ANFT
                       </p>
+                      <CFormText className={'text-right'}>
+                        {values.profit ? renderAmount(values.profit * USD_TO_VND_RATIO) : '_'} VND
+                      </CFormText>
                     </CCol>
                   </CFormGroup>
-                  <CFormGroup row>
+                  <CFormGroup row className={`${values.commercialTypes === CommercialTypes.RENT ? '' : 'd-none'}`}>
                     <CCol xs={5}>
-                      <CLabel className="fw-bold ">{t('anftDapp.listingComponent.extendOwnership.profitPerMonth')}:</CLabel>
+                      <CLabel className="fw-bold ">
+                        {t('anftDapp.listingComponent.extendOwnership.profitPerMonth')}:
+                      </CLabel>
                     </CCol>
                     <CCol xs={7}>
                       <p className="text-primary text-right">
-                        {values.profit ? insertCommas(calculateProfitPerMonth(values.dateCount, values.profit)) : '_'} ANFT
+                        {values.profit ? insertCommas(calculateProfitPerMonth(values.dateCount, values.profit)) : '_'}{' '}
+                        ANFT
                       </p>
+                      <CFormText className={'text-right'}>
+                        {values.profit
+                          ? renderAmount(calculateProfitPerMonth(values.dateCount, values.profit) * USD_TO_VND_RATIO)
+                          : '_'}{' '}
+                        VND
+                      </CFormText>
                     </CCol>
                   </CFormGroup>
                   <CFormGroup row>

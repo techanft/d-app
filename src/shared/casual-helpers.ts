@@ -192,6 +192,23 @@ export const calculateRatio = (firstNumb: number, secondNumb: number): IFraction
 // This method checks if an array include multiple elements
 export const includeMultiple = <T>(superset: Array<T> = [], ...subset: Array<T>): boolean => {
   return subset.every(function (value) {
-    return (superset.indexOf(value) >= 0);
+    return superset.indexOf(value) >= 0;
   });
+};
+
+interface IMoneyUnitTranslate {
+  number: string;
+  unit: string | undefined;
 }
+
+export const moneyUnitTranslate = (input: number): IMoneyUnitTranslate => {
+  const units = ['million', 'billion', 'trillion', 'quadrillion'];
+  const unit = Math.floor((input / 1.0e1).toFixed(0).toString().length);
+  const r = unit % 3;
+  const pair = Number('1.0e+' + (unit - r));
+  const x = Math.abs(Number(input)) / Number(pair.toFixed(2));
+  return {
+    number: x.toFixed(2),
+    unit: units[Math.floor(unit / 3) - 2],
+  };
+};
