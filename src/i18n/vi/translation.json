@@ -155,7 +155,8 @@
         "profitPerMonth": "Lợi nhuận trong 1 tháng",
         "successRate": "Tỉ lệ thành công",
         "profitRatio": "Đòn bẩy lợi nhuận",
-        "exchange": "Quy Đổi"
+        "exchange": "Quy Đổi",
+        "maximumStage":"Kỳ tối đa"
       },
       "withdrawToken": {
         "maximumWithdrawable": "Số ngày rút tối đa",

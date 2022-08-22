@@ -573,9 +573,13 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                     </CCol>
                   </CFormGroup>
                   <CFormGroup row className={`${screenWidth <= 335 ? 'd-none' : ''}`}>
-                    <CCol xs={12}>
+                    <CCol xs={12} className="d-flex justify-content-between">
                       <CLabel className="recharge-token-title">
                         {t('anftDapp.listingComponent.withdrawToken.ownershipRange')}
+                      </CLabel>
+                      <CLabel className="recharge-token-title">
+                        {t('anftDapp.listingComponent.extendOwnership.maximumStage')}: {listing?.period}{' '}
+                        {t('anftDapp.listingComponent.withdrawToken.days')}
                       </CLabel>
                     </CCol>
                     <CCol xs={12}>
@@ -703,11 +707,11 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                     <CCol xs={7}>
                       <p className="text-primary text-right">
                         {values.profit ? insertCommas(calculateProfitPerMonth(values.dateCount, values.profit)) : '_'}{' '}
-                        ANFT
+                        VND
                       </p>
                       <CFormText className={'text-right'}>
                         {values.profit
-                          ? renderAmount(calculateProfitPerMonth(values.dateCount, values.profit) * USD_TO_VND_RATIO)
+                          ? renderAmount(calculateProfitPerMonth(values.dateCount, values.profit) / ANFT_TO_VND_RATIO)
                           : '_'}{' '}
                         VND
                       </CFormText>
