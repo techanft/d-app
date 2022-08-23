@@ -22,7 +22,7 @@
           "ethereumIsNotInitializedErrMsg": "Ethereum chưa được khởi tạo. Vui lòng cài đặt ví Ethereum trong trình duyệt của bạn",
           "reload": "Tải lại"
         },
-        "noticeText": "Lưu ý: Thời gian từ 23:30 - {{aboutToExpire}} đến 23:30 - {{expired}}. Quyền gia hạn của bạn được ưu tiên trước ngày hết hạn 1 ngày. Sau thời hạn sở hữu bạn có thể mất quyền từ nhà đầu tư khác."
+        "noticeText": "Lưu ý: Thời gian từ 23:30 - {{aboutToExpire}} đến 23:30 - {{expired}}, BĐS này có thể bị người khác chốt quyền sở hữu"
       },
       "noItemText": "Không có bản ghi",
       "moneyUnit": {
