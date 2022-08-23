@@ -22,7 +22,7 @@
           "ethereumIsNotInitializedErrMsg": "Ethereum chưa được khởi tạo. Vui lòng cài đặt ví Ethereum trong trình duyệt của bạn",
           "reload": "Tải lại"
         },
-        "noticeText": "Lưu ý: Thời gian từ 23:30 - {{aboutToExpire}} đến 23:30 - {{expired}}, BĐS này có thể bị người khác chốt quyền sở hữu"
+        "noticeText": "Lưu ý: Thời gian từ 23:30 - {{aboutToExpire}} đến 23:30 - {{expired}}. Quyền gia hạn của bạn được ưu tiên trước ngày hết hạn 1 ngày. Sau thời hạn sở hữu bạn có thể mất quyền từ nhà đầu tư khác."
       },
       "noItemText": "Không có bản ghi",
       "moneyUnit": {
@@ -130,7 +130,7 @@
         "SELL_RENT": "Bán và Thuê"
       },
       "extendOwnership": {
-        "dailyPayment":"Giá sở hữu trên ngày",
+        "dailyPayment": "Giá sở hữu trên ngày",
         "currentOwnership": "Thời gian sở hữu hiện tại",
         "tokenBalance": "ANFT trong ví",
         "cannotRegisterOwnership": "Bất động sản đang được sở hữu bởi người khác!",
@@ -156,7 +156,7 @@
         "successRate": "Tỉ lệ thành công",
         "profitRatio": "Đòn bẩy lợi nhuận",
         "exchange": "Quy Đổi",
-        "maximumStage":"Kỳ tối đa"
+        "maximumStage": "Kỳ tối đa"
       },
       "withdrawToken": {
         "maximumWithdrawable": "Số ngày rút tối đa",
