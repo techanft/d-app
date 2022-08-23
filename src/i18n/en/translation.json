@@ -130,6 +130,7 @@
         "SELL_RENT": "Sell and Rent"
       },
       "extendOwnership": {
+        "dailyPayment":"Daily Payment",
         "currentOwnership": "Current Ownership",
         "tokenBalance": "Token Balance",
         "cannotRegisterOwnership": "This listing is being owned by another address!",
@@ -154,7 +155,8 @@
         "profitPerMonth": "Expected profit per Month",
         "successRate": "Success rate",
         "profitRatio": "Profit rate",
-        "exchange": "Exchange"
+        "exchange": "Exchange",
+        "maximumStage":"Maximum stage"
       },
       "withdrawToken": {
         "maximumWithdrawable": "Maximum Days",

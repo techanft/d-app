@@ -130,6 +130,7 @@
         "SELL_RENT": "Bán và Thuê"
       },
       "extendOwnership": {
+        "dailyPayment": "Giá sở hữu trên ngày",
         "currentOwnership": "Thời gian sở hữu hiện tại",
         "tokenBalance": "ANFT trong ví",
         "cannotRegisterOwnership": "Bất động sản đang được sở hữu bởi người khác!",
@@ -153,8 +154,9 @@
         "profit": "Lợi nhuận dự kiến",
         "profitPerMonth": "Lợi nhuận trong 1 tháng",
         "successRate": "Tỉ lệ thành công",
-        "profitRatio": "Tỉ lệ lợi nhuận",
-        "exchange": "Quy Đổi"
+        "profitRatio": "Đòn bẩy lợi nhuận",
+        "exchange": "Quy Đổi",
+        "maximumStage": "Kỳ tối đa"
       },
       "withdrawToken": {
         "maximumWithdrawable": "Số ngày rút tối đa",
