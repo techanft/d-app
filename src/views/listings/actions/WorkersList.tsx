@@ -37,13 +37,14 @@ import { fetchingWorker, softResetWorker } from '../../records/records.reducer';
 import { baseSetterArgs } from '../../transactions/settersMapping';
 import { IProceedTxBody, proceedTransaction } from '../../transactions/transactions.api';
 import { fetching, hardReset } from '../../transactions/transactions.reducer';
+import Listings from '../Listings';
 import AddWorkerPermission from './AddWorkerModal';
 
 interface IWorkerListParams {
   [x: string]: string;
 }
 
-interface IWorkersList extends RouteComponentProps<IWorkerListParams> { }
+interface IWorkersList extends RouteComponentProps<IWorkerListParams> {}
 
 const titleTableStyle = {
   textAlign: 'left',
@@ -64,7 +65,7 @@ const WorkersList = (props: IWorkersList) => {
   const { success, submitted, errorMessage } = useSelector((state: RootState) => state.transactions);
   const { loading, workers, errorMessage: workerErrorMessage } = initialState.workerInitialState;
   const { initialState: assetsInitialState } = useSelector((state: RootState) => state.assets);
-  const { entityLoading } = assetsInitialState;
+  const { entityLoading, fetchEntitiesSuccess } = assetsInitialState;
 
   const { width: screenWidth } = useWindowDimensions();
   const { t } = useTranslation();
@@ -128,6 +129,20 @@ const WorkersList = (props: IWorkersList) => {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
+
+  useEffect(() => {
+    /**
+     * Make sure to refetch if complete info got overriden in some unknown cases
+     */
+    const listingHasCompleteInfo = listing?.ownership;
+    if (Boolean(listingHasCompleteInfo) || !provider || !fetchEntitiesSuccess) return;
+    const refetchTimer = window.setTimeout(() => {
+      dispatch(fetchingEntity());
+      dispatch(getEntity({ id: Number(id), provider }));
+    }, 1500);
+    return () => window.clearTimeout(refetchTimer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, listing, provider, fetchEntitiesSuccess]);
 
   useEffect(() => {
     if (success && listing?.address) {
@@ -212,107 +227,118 @@ const WorkersList = (props: IWorkersList) => {
   const isLoadingTransaction = (submitted && !success) || (success && !loading);
 
   return (
-    <CContainer fluid className="mx-0 my-2">
+    <CContainer fluid={isMobile} className={isMobile ? 'mx-0 my-2' : ''}>
       <SubmissionModal />
-      <CRow>
-        <CCol xs={12}>
-          <CButton className="text-primary p-0 pb-1 ">
-            <CIcon name="cil-arrow-circle-left" onClick={() => history.goBack()} size="lg" />
-          </CButton>
-          <CLabel className="text-primary content-title ml-1">{t('anftDapp.workersListComponent.workersList')}</CLabel>
-        </CCol>
-      </CRow>
       <CRow className={'justify-content-center'}>
-        <CCol xs={`${isMobile ? '12' : '8'}`}>
-          <CCard className="mt-1 listing-img-card mb-0">
-            {!entityLoading && listing ? (
-              <img src={returnTheFirstImage(listing.images)} alt="listingImg" className="w-100 h-100" />
-            ) : (
-              // Ensuring 16:9 ratio for image and image loader
-              <InfoLoader width={screenWidth} height={screenWidth / 1.77} />
-            )}
-            <CCardBody className="p-0 listing-card-body">
-              <CCardTitle className="listing-card-title mb-0 px-3 py-2 w-100">
-                <p className="mb-2 text-white content-title">{listing?.name ? listing.name : '_'}</p>
-                <p className="mb-0 text-white detail-title-font">
-                  {t('anftDapp.listingComponent.primaryInfo.workersCount')} <b>{workers?.count || 0}</b>
-                </p>
-              </CCardTitle>
-            </CCardBody>
-          </CCard>
-        </CCol>
-        <CCol xs={12}>
-          {loading && !workers?.results.length ? (
-            <Loading />
-          ) : (
-            <>
-              {isLoadingTransaction ? (
-                <CCol xs={12} className="d-flex justify-content-center my-2">
-                  <ConfirmationLoading />
-                </CCol>
+        <CCol xs={12} lg={`${isMobile ? '12' : '8'}`}>
+          <CRow className="mx-0">
+            <CCol xs={12} className="p-0">
+              <CButton className="text-primary p-0 pb-1 ">
+                <CIcon name="cil-arrow-circle-left" onClick={() => history.goBack()} size="lg" />
+              </CButton>
+              <CLabel className="text-primary content-title ml-1">
+                {t('anftDapp.workersListComponent.workersList')}
+              </CLabel>
+            </CCol>
+
+            <CCard className="mt-1 listing-img-card mb-0">
+              {!entityLoading && listing ? (
+                <img src={returnTheFirstImage(listing.images)} alt="listingImg" className="w-100 h-100" />
               ) : (
-                ''
+                // Ensuring 16:9 ratio for image and image loader
+                <InfoLoader width={screenWidth} height={screenWidth / 1.77} />
               )}
-              <CDataTable
-                striped
-                items={workers?.results}
-                fields={fields}
-                noItemsView={{
-                  noItems: t('anftDapp.global.noItemText'),
-                }}
-                responsive
-                hover
-                header
-                scopedSlots={{
-                  address: (item: IRecordWorker) => {
-                    return (
-                      <td>
-                        <CopyTextToClipBoard text={item.worker} textNumber={10} iconClassName="m-0" />
-                      </td>
-                    );
-                  },
-                  action: (item: IRecordWorker) => {
-                    return (
-                      <td className="text-center">
-                        {!isLoadingTransaction ? (
-                          <CButton
-                            className="text-danger p-0"
-                            disabled={listing ? !validateOwnership(signerAddress, listing) : true}
-                            onClick={onEntityRemoval(item.worker || '_')}
-                          >
-                            <CIcon name="cil-trash" />
-                          </CButton>
-                        ) : (
-                          <CIcon name="cil-trash" />
-                        )}
-                      </td>
-                    );
-                  },
-                }}
-              />
-            </>
-          )}
-          {totalPages > 1 && (
-            <CPagination
-              disabled={loading}
-              activePage={filterState.page + 1}
-              pages={totalPages}
-              onActivePageChange={handlePaginationChange}
-              align="center"
-              className="mt-2"
+              <CCardBody className="p-0 listing-card-body">
+                <CCardTitle className="listing-card-title mb-0 px-3 py-2 w-100">
+                  <p className="mb-2 text-white content-title">{listing?.name ? listing.name : '_'}</p>
+                  <p className="mb-0 text-white detail-title-font">
+                    {t('anftDapp.listingComponent.primaryInfo.workersCount')} <b>{workers?.count || 0}</b>
+                  </p>
+                </CCardTitle>
+              </CCardBody>
+            </CCard>
+            <CCol xs={12} className="p-0">
+              {loading && !workers?.results.length ? (
+                <Loading />
+              ) : (
+                <>
+                  {isLoadingTransaction ? (
+                    <CCol xs={12} className="d-flex justify-content-center my-2">
+                      <ConfirmationLoading />
+                    </CCol>
+                  ) : (
+                    ''
+                  )}
+                  <CDataTable
+                    striped
+                    items={workers?.results}
+                    fields={fields}
+                    noItemsView={{
+                      noItems: t('anftDapp.global.noItemText'),
+                    }}
+                    responsive
+                    hover
+                    header
+                    scopedSlots={{
+                      address: (item: IRecordWorker) => {
+                        return (
+                          <td>
+                            <CopyTextToClipBoard text={item.worker} textNumber={10} iconClassName="m-0" />
+                          </td>
+                        );
+                      },
+                      action: (item: IRecordWorker) => {
+                        return (
+                          <td className="text-center">
+                            {!isLoadingTransaction ? (
+                              <CButton
+                                className="text-danger p-0"
+                                disabled={listing ? !validateOwnership(signerAddress, listing) : true}
+                                onClick={onEntityRemoval(item.worker || '_')}
+                              >
+                                <CIcon name="cil-trash" />
+                              </CButton>
+                            ) : (
+                              <CIcon name="cil-trash" />
+                            )}
+                          </td>
+                        );
+                      },
+                    }}
+                  />
+                </>
+              )}
+              {totalPages > 1 && (
+                <CPagination
+                  disabled={loading}
+                  activePage={filterState.page + 1}
+                  pages={totalPages}
+                  onActivePageChange={handlePaginationChange}
+                  align="center"
+                  className="mt-2"
+                />
+              )}
+            </CCol>
+            <CCol xs={12} className="d-flex justify-content-center p-0">
+              <CButton
+                className="my-2 px-3 w-100 btn-radius-50 btn-font-style btn-primary"
+                onClick={setRequestListener(true, setAddWorkerPermission)}
+                disabled={listing ? !validateOwnership(signerAddress, listing) : true}
+              >
+                {t('anftDapp.workersListComponent.addWorkerPermission')}
+              </CButton>
+            </CCol>
+            <AddWorkerPermission
+              listingId={Number(id)}
+              visible={addWorkerPermission}
+              setVisible={setAddWorkerPermission}
             />
-          )}
+          </CRow>
         </CCol>
-        <CCol xs={12} className="d-flex justify-content-center">
-          <CButton
-            className="my-2 px-3 w-100 btn-radius-50 btn-font-style btn-primary"
-            onClick={setRequestListener(true, setAddWorkerPermission)}
-            disabled={listing ? !validateOwnership(signerAddress, listing) : true}
-          >
-            {t('anftDapp.workersListComponent.addWorkerPermission')}
-          </CButton>
+
+        <CCol xs={12} lg={`${isMobile ? '12' : '4'}`} className={isMobile ? `d-none` : 'p-0'}>
+          <Listings />
         </CCol>
-        <AddWorkerPermission listingId={Number(id)} visible={addWorkerPermission} setVisible={setAddWorkerPermission} />
       </CRow>
       <ConfirmModal
         isVisible={delAlrtMdl}
@@ -331,7 +357,7 @@ const WorkersList = (props: IWorkersList) => {
         onConfirm={onDelMldConfrmed}
         onAbort={onDelMldAbort}
       />
-    </CContainer >
+    </CContainer>
   );
 };
 

@@ -24,7 +24,13 @@
         },
         "noticeText": "Notice: From 23:30 - {{aboutToExpire}} to 23:30 - {{expired}}, another address is able to take the ownership of this listing"
       },
-      "noItemText": "No Record(s) Found"
+      "noItemText": "No Record(s) Found",
+      "moneyUnit": {
+        "million": "Million",
+        "billion": "Billion",
+        "trillion": "Trillion",
+        "quadrillion": "Quadrillion"
+      }
     },
 
     "sidebarComponent": {
@@ -120,10 +126,11 @@
         "FRANCHISE_ONE": "Franchise one",
         "FRANCHISE": "Franchises",
         "AUTONOMY": "Autonomy",
-        "RENT":"Rent",
-        "SELL_RENT":"Sell and Rent"
+        "RENT": "Rent",
+        "SELL_RENT": "Sell and Rent"
       },
       "extendOwnership": {
+        "dailyPayment":"Daily Payment",
         "currentOwnership": "Current Ownership",
         "tokenBalance": "Token Balance",
         "cannotRegisterOwnership": "This listing is being owned by another address!",
@@ -134,20 +141,22 @@
         "minimumOwnership": "Minimum ownership for the listing is 1.0 day!",
         "noticeText": "Ownership will be started from now to the end of the selected day (23:30 - {{day}})",
         "exceedingPeriod": "Ownership days cannot exceed the maximum ownership period: {{day}} days",
-        "exceedingLicenseExpirationDate": "Ownership days cannot exceed the license expiration date: {{day}}"
-        ,"priceStatus": {
+        "exceedingLicenseExpirationDate": "Ownership days cannot exceed the license expiration date: {{day}}",
+        "priceStatus": {
           "LOW": "Your price is too Low",
           "GOOD": "Your price is Good Price",
           "HIGH": "Your price is High Price"
         },
         "undefined": "Undefined",
-        "comercialType": "Comercial Type",
+        "comercialType": "Commercial Type",
         "secondaryPrice": "Selling price on the secondary floor",
         "secondaryRent": "Rent price on the secondary floor",
         "profit": "Expected profit",
         "profitPerMonth": "Expected profit per Month",
         "successRate": "Success rate",
-        "profitRatio": "Profit rate"
+        "profitRatio": "Profit rate",
+        "exchange": "Exchange",
+        "maximumStage":"Maximum stage"
       },
       "withdrawToken": {
         "maximumWithdrawable": "Maximum Days",

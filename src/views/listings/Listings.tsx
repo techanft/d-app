@@ -1,5 +1,17 @@
 import CIcon from '@coreui/icons-react';
-import { CCard, CCardBody, CCardFooter, CCardText, CCardTitle, CCol, CContainer, CImg, CLabel, CPagination, CRow } from '@coreui/react';
+import {
+  CCard,
+  CCardBody,
+  CCardFooter,
+  CCardText,
+  CCardTitle,
+  CCol,
+  CContainer,
+  CImg,
+  CLabel,
+  CPagination,
+  CRow
+} from '@coreui/react';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -9,7 +21,6 @@ import { APP_LOCAL_DATE_FORMAT } from '../../config/constants';
 import { formatBNToken, insertCommas, returnTheFirstImage } from '../../shared/casual-helpers';
 import FilterComponent from '../../shared/components/FilterComponent';
 import Loading from '../../shared/components/Loading';
-import { ExchangeType } from '../../shared/enumeration/exchangeType';
 import useDeviceDetect from '../../shared/hooks/useDeviceDetect';
 import useWindowDimensions from '../../shared/hooks/useWindowDimensions';
 import { IAsset } from '../../shared/models/assets.model';
@@ -30,7 +41,6 @@ export interface IAssetFilter extends IParams {
   orientation?: string;
   dailyPayment?: string;
   quality?: string;
-  level: ExchangeType;
 }
 
 interface IViewComponent {
@@ -39,15 +49,16 @@ interface IViewComponent {
 
 const initialFilterState: IAssetFilter = {
   page: 0,
-  size: 12,
+  size: 10,
   sort: 'createdDate,desc',
-  level: ExchangeType.PRIMARY,
+  // level: ExchangeType.PRIMARY,
 };
 
 const Listings = () => {
   const history = useHistory();
   const { location } = history;
-  const insideDetailView = location.pathname.includes('detail');
+  const hideFilterComponent = location.pathname.includes('register') || location.pathname.includes('workers-list');
+  const insideDetailView = location.pathname.includes('detail') || hideFilterComponent;
 
   const { isMobile } = useDeviceDetect();
   const dispatch = useDispatch();
@@ -104,10 +115,14 @@ const Listings = () => {
           <table className={`w-100 mt-1`}>
             <tbody>
               <tr className={`info-box-daily-payment text-success mt-2 mb-0`}>
-                <td className='d-flex align-items-center mb-1'><CIcon name='cil-money' className='mr-1' /> {formatBNToken(item.dailyPayment, true)}</td>
+                <td className="d-flex align-items-center mb-1">
+                  <CIcon name="cil-money" className="mr-1" /> {formatBNToken(item.dailyPayment, true)}
+                </td>
               </tr>
               <tr className={`info-box-daily-payment text-primary mt-2 mb-0`}>
-                <td className='d-flex align-items-center'><CIcon name='cil-location-pin' className='mr-1 mb-auto' /> {item.location || '_'}</td>
+                <td className="d-flex align-items-center">
+                  <CIcon name="cil-location-pin" className="mr-1 mb-auto" /> {item.location || '_'}
+                </td>
               </tr>
             </tbody>
           </table>
@@ -120,7 +135,13 @@ const Listings = () => {
     <CCol sm={12} md={6} lg={6} xl={`${insideDetailView ? '4' : '6'}`} className={`p-3 ${hideDetailedListing(item)} `}>
       <CCard className="h-100 cursor-pointer" onClick={onRedirecting(`/${item.id}/detail`)}>
         <CCard className="m-0 border-0">
-          <CImg src={returnTheFirstImage(item.images)} height={250} alt="realEstateImg" className="rounded-top" />
+          <div className="aspect-ratio-box">
+            <CImg
+              src={returnTheFirstImage(item.images)}
+              className="aspect-ratio-item rounded-top"
+              alt="realEstateImg"
+            />
+          </div>
         </CCard>
         <CCard className="m-0 h-100 pb-0 border-0">
           <CCardBody className="pb-0">
@@ -129,18 +150,23 @@ const Listings = () => {
               <CCardText>{t('anftDapp.listingComponent.listingValue')}</CCardText>
               <CCardText>{formatBNToken(item.value, width > minimumWidthDisplayingTokenSymbol)}</CCardText>
             </div> */}
-            <CCardText className='content-title text-success mb-2 d-flex align-items-center'>
-              <CIcon name='cil-money' size='lg' className='mr-2' /> {formatBNToken(item.dailyPayment, width > minimumWidthDisplayingTokenSymbol)}
+            <CCardText className="content-title text-success mb-2 d-flex align-items-center">
+              <CIcon name="cil-money" size="lg" className="mr-2" />{' '}
+              {formatBNToken(item.dailyPayment, width > minimumWidthDisplayingTokenSymbol)}
             </CCardText>
-            <CCardText className='content-title text-primary d-flex align-items-center'>
-              <CIcon name='cil-location-pin' size='lg' className='mr-2' /> {item.location || '_'}
+            <CCardText className="content-title text-primary d-flex align-items-center">
+              <CIcon name="cil-location-pin" size="lg" className="mr-2" /> {item.location || '_'}
             </CCardText>
           </CCardBody>
-          <CCardFooter className='content-title d-flex justify-content-between'>
-            <p className='m-0 d-flex align-items-center'><CIcon name='cil-object-ungroup' className='mr-1' />
+          <CCardFooter className="content-title d-flex justify-content-between">
+            <p className="m-0 d-flex align-items-center">
+              <CIcon name="cil-object-ungroup" className="mr-1" />
               {item.areaLand ? insertCommas(item.areaLand) : 0} m<sup>2</sup>
             </p>
-            <p className='m-0 d-flex align-items-center'><CIcon name='cil-clock' className='mr-1' />{moment(item.createdDate).format(APP_LOCAL_DATE_FORMAT)}</p>
+            <p className="m-0 d-flex align-items-center">
+              <CIcon name="cil-clock" className="mr-1" />
+              {moment(item.createdDate).format(APP_LOCAL_DATE_FORMAT)}
+            </p>
           </CCardFooter>
         </CCard>
       </CCard>
