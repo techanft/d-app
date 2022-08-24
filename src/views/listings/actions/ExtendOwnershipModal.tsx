@@ -14,7 +14,7 @@ import {
   CModalTitle,
   CProgress,
   CProgressBar,
-  CRow,
+  CRow
 } from '@coreui/react';
 import { BigNumber } from 'ethers';
 import { Formik, FormikProps } from 'formik';
@@ -39,8 +39,9 @@ import {
   getSecondDifftoEndDate,
   includeMultiple,
   insertCommas,
+  moneyUnitTranslate,
   returnMaxEndDate,
-  unInsertCommas,
+  unInsertCommas
 } from '../../../shared/casual-helpers';
 import { ToastError } from '../../../shared/components/Toast';
 import { CommercialTypes } from '../../../shared/enumeration/comercialType';
@@ -54,7 +55,7 @@ import { selectEntityById } from '../../assets/assets.reducer';
 import { getEntity } from '../../productType/category.api';
 import {
   fetching as fetchingCategory,
-  selectEntityById as selectCategoryById,
+  selectEntityById as selectCategoryById
 } from '../../productType/category.reducer';
 import { baseSetterArgs } from '../../transactions/settersMapping';
 import { IProceedTxBody, proceedTransaction } from '../../transactions/transactions.api';
@@ -330,11 +331,11 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
   const ANFT_TO_VND_RATIO = ANFT_TO_USD_RATIO * USD_TO_VND_RATIO;
 
   const listingData = {
-    sellPrice: listing?.price && listing?.price > 0 ? listing?.price / ANFT_TO_VND_RATIO : 0,
-    pricePerDay: listing?.fee && listing?.fee > 0 ? listing?.fee / ANFT_TO_VND_RATIO : 0,
-    goodPrice: listing?.goodPrice && listing?.goodPrice > 0 ? listing?.goodPrice / ANFT_TO_VND_RATIO : 0,
-    goodRentPrice: listing?.goodRentCost && listing?.goodRentCost > 0 ? listing?.goodRentCost / ANFT_TO_VND_RATIO : 0,
-    rentPrice: listing?.rentCost && listing?.rentCost > 0 ? listing?.rentCost / ANFT_TO_VND_RATIO : 0,
+    sellPrice: listing?.price && listing?.price > 0 ? listing?.price : 0,
+    pricePerDay: listing?.fee && listing?.fee > 0 ? listing?.fee : 0,
+    goodPrice: listing?.goodPrice && listing?.goodPrice > 0 ? listing?.goodPrice : 0,
+    goodRentPrice: listing?.goodRentCost && listing?.goodRentCost > 0 ? listing?.goodRentCost : 0,
+    rentPrice: listing?.rentCost && listing?.rentCost > 0 ? listing?.rentCost : 0,
     ratio: ANFT_TO_VND_RATIO,
     maximumStage: Number(listing?.durationRisk?.value) || 0,
     period: listing?.period || 0,
@@ -373,25 +374,48 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
   };
 
   const mappingSuccessRateToProfits: TMappingSuccessRateToProfits = {
-    [RiskLevel.VERY_HIGH]: profitsValue.VERY_HIGH,
-    [RiskLevel.HIGH]: profitsValue.HIGH,
+    [RiskLevel.VERY_HIGH]: profitsValue.VERY_LOW,
+    [RiskLevel.HIGH]: profitsValue.LOW,
     [RiskLevel.MEDIUM]: profitsValue.MEDIUM,
-    [RiskLevel.LOW]: profitsValue.LOW,
-    [RiskLevel.VERY_LOW]: profitsValue.VERY_LOW,
+    [RiskLevel.LOW]: profitsValue.HIGH,
+    [RiskLevel.VERY_LOW]: profitsValue.VERY_HIGH,
   };
+
+  const calculateSellProfit = (price: number, risk: RiskLevel, priceStatus: PriceStatus) => {
+    const riskLevelInx = riskLevelArray.indexOf(risk);
+    const findPrevRisk = risk !== RiskLevel.VERY_HIGH ? riskLevelArray[riskLevelInx + 1] : risk;
+    const profit = mappingSuccessRateToProfits[priceStatus === PriceStatus.HIGH ? findPrevRisk : risk];
+    const ownerPrice = listingData.sellPrice;
+    const profitPercent = profit / 100;
+    const diff = price <= ownerPrice ? 0 : (price - ownerPrice) * profitPercent;
+    return diff;
+  };
+
+  const calculateRentProfit = (price: number, days: number) => {
+    const priceOf1Day = price / 30;
+    const totalPriceOfDay = listingData.pricePerDay * days;
+    const priceOfRentDay = priceOf1Day * days;
+    const diff = priceOfRentDay > totalPriceOfDay ? priceOfRentDay - totalPriceOfDay : 0;
+    return diff;
+  };
+
   const calculateProfit = (
     price: number,
     risk: RiskLevel,
     priceStatus: PriceStatus,
+    days: number,
     commercialTypes: CommercialTypes
   ) => {
-    const riskLevelInx = riskLevelArray.indexOf(risk);
-    const findNextRisk = risk !== RiskLevel.VERY_HIGH ? riskLevelArray[riskLevelInx + 1] : risk;
-    const profit = mappingSuccessRateToProfits[priceStatus === PriceStatus.HIGH ? findNextRisk : risk];
-    const ownerPrice = commercialTypes === CommercialTypes.SELL ? listingData.sellPrice : listingData.rentPrice;
-    const profitPercent = profit / 100;
-    const diff = price <= ownerPrice ? 0 : (price - ownerPrice) * profitPercent;
-    return diff;
+    if (commercialTypes === CommercialTypes.SELL) {
+      return calculateSellProfit(price, risk, priceStatus);
+    } else {
+      return calculateRentProfit(price, days);
+    }
+  };
+
+  const calculateProfitPerMonth = (days: number, profit: number) => {
+    const profitPerMonth = (profit * 30) / days;
+    return profitPerMonth;
   };
 
   const checkPriceisGood = (price: number, commercialTypes: CommercialTypes): PriceStatus => {
@@ -411,6 +435,15 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
     const totalInputDaysAmount = days * listingData.pricePerDay;
     const ratio = calculateRatio(totalInputDaysAmount, profit);
     return `${ratio.numerator} : ${insertCommas(ratio.denominator)}`;
+  };
+
+  const renderAmount = (amount: number): string => {
+    if (moneyUnitTranslate(amount).unit) {
+      return `${moneyUnitTranslate(amount).number} ${t(
+        `anftDapp.global.moneyUnit.${moneyUnitTranslate(amount).unit}`
+      )}`;
+    }
+    return insertCommas(amount);
   };
 
   return (
@@ -456,11 +489,15 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                   <CFormGroup row>
                     <CCol xs={7}>
                       <CLabel className="recharge-token-title">
-                        {t('anftDapp.listingComponent.primaryInfo.dailyPayment')}
+                        {t('anftDapp.listingComponent.extendOwnership.dailyPayment')}
                       </CLabel>
                     </CCol>
                     <CCol xs={5}>
                       <p className="text-primary text-right">{formatBNToken(listing?.dailyPayment, true)}</p>
+                      <CFormText className={'text-right'}>
+                        {listing?.dailyPayment ? insertCommas(Number(convertBnToDecimal(listing.dailyPayment)) * ANFT_TO_VND_RATIO) : '_'}{' '}
+                        VND
+                      </CFormText>
                     </CCol>
                   </CFormGroup>
                   <CFormGroup row>
@@ -493,8 +530,8 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                           `anftDapp.listingComponent.extendOwnership.${
                             values.commercialTypes === CommercialTypes.RENT ? 'secondaryRent' : 'secondaryPrice'
                           }`
-                        )}
-                        :
+                        )}{' '}
+                        (VND):
                       </CLabel>
                     </CCol>
                     <CCol xs={12}>
@@ -508,29 +545,45 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                             Number(unInsertCommas(e.currentTarget.value)),
                             values.commercialTypes
                           );
+
+                          const profit = calculateProfit(
+                            Number(unInsertCommas(e.currentTarget.value)),
+                            values.riskLevel,
+                            priceStatus,
+                            values.dateCount,
+                            values.commercialTypes
+                          );
+                          const currRiskLevel = handleRiskProgressValue(values.dateCount);
+                          const riskLevelInx = riskLevelArray.indexOf(currRiskLevel);
+                          const findPrevRisk =
+                            currRiskLevel !== RiskLevel.VERY_HIGH ? riskLevelArray[riskLevelInx + 1] : currRiskLevel;
+                          const riskLevel = priceStatus === PriceStatus.HIGH ? findPrevRisk : currRiskLevel;
                           setFieldValue('price', unInsertCommas(e.currentTarget.value));
                           setFieldValue('priceStatus', priceStatus);
-                          setFieldValue(
-                            'profit',
-                            calculateProfit(
-                              Number(unInsertCommas(e.currentTarget.value)),
-                              values.riskLevel,
-                              priceStatus,
-                              values.commercialTypes
-                            )
-                          );
+                          setFieldValue('profit', profit);
+                          setFieldValue('riskLevel', riskLevel);
                         }}
                         value={insertCommas(values.price)}
                       />
-                      <CFormText className={`text-${mapPriceStatusBadge[values.priceStatus]}`}>
-                        {mappingPriceStatusToText[values.priceStatus]}
+                      <CFormText>
+                        {t('anftDapp.listingComponent.extendOwnership.exchange')}:{' '}
+                        {renderAmount(values.price / ANFT_TO_VND_RATIO)} ANFT
+                      </CFormText>
+                      <CFormText>
+                        <p className={`m-0 text-${mapPriceStatusBadge[values.priceStatus]}`}>
+                          {mappingPriceStatusToText[values.priceStatus]}
+                        </p>
                       </CFormText>
                     </CCol>
                   </CFormGroup>
                   <CFormGroup row className={`${screenWidth <= 335 ? 'd-none' : ''}`}>
-                    <CCol xs={12}>
+                    <CCol xs={12} className="d-flex justify-content-between">
                       <CLabel className="recharge-token-title">
                         {t('anftDapp.listingComponent.withdrawToken.ownershipRange')}
+                      </CLabel>
+                      <CLabel className="recharge-token-title">
+                        {t('anftDapp.listingComponent.extendOwnership.maximumStage')}: {listing?.period}{' '}
+                        {t('anftDapp.listingComponent.withdrawToken.days')}
                       </CLabel>
                     </CCol>
                     <CCol xs={12}>
@@ -571,17 +624,26 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                       <CInput
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                           const extendDay = Number(unInsertCommas(e.target.value));
+                          const currRiskLevel = handleRiskProgressValue(Number(e.currentTarget.value));
+                          const profit = calculateProfit(
+                            values.price,
+                            currRiskLevel,
+                            values.priceStatus,
+                            extendDay,
+                            values.commercialTypes
+                          );
+
+                          const riskLevelInx = riskLevelArray.indexOf(currRiskLevel);
+                          const findPrevRisk =
+                            currRiskLevel !== RiskLevel.VERY_HIGH ? riskLevelArray[riskLevelInx + 1] : currRiskLevel;
+                          const riskLevel = values.priceStatus === PriceStatus.HIGH ? findPrevRisk : currRiskLevel;
                           try {
                             BigNumber.from(extendDay);
                             const extendDate = moment(startDate).add(
                               returnMaxEndDate(extendDay, getExtenableDayFromTokenBalance()),
                               'day'
                             );
-                            const riskLevel = handleRiskProgressValue(Number(e.currentTarget.value));
-                            setFieldValue(
-                              'profit',
-                              calculateProfit(values.price, riskLevel, values.priceStatus, values.commercialTypes)
-                            );
+                            setFieldValue('profit', profit);
                             setFieldValue('riskLevel', riskLevel);
                             setFieldValue('dateCount', extendDay);
                             setFieldValue('endDate', extendDate);
@@ -630,13 +692,33 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                     </CCol>
                   </CFormGroup>
                   <CFormGroup row>
-                    <CCol xs={4}>
+                    <CCol xs={5}>
                       <CLabel className="fw-bold ">{t('anftDapp.listingComponent.extendOwnership.profit')}:</CLabel>
                     </CCol>
-                    <CCol xs={8}>
+                    <CCol xs={7}>
+                      <p className="text-primary text-right">{values.profit ? insertCommas(values.profit) : '_'} VND</p>
+                      <CFormText className={'text-right'}>
+                        {values.profit ? renderAmount(values.profit / ANFT_TO_VND_RATIO) : '_'} ANFT
+                      </CFormText>
+                    </CCol>
+                  </CFormGroup>
+                  <CFormGroup row className={`${values.commercialTypes === CommercialTypes.RENT ? '' : 'd-none'}`}>
+                    <CCol xs={5}>
+                      <CLabel className="fw-bold ">
+                        {t('anftDapp.listingComponent.extendOwnership.profitPerMonth')}:
+                      </CLabel>
+                    </CCol>
+                    <CCol xs={7}>
                       <p className="text-primary text-right">
-                        {values.profit ? insertCommas(values.profit) : '_'} ANFT
+                        {values.profit ? insertCommas(calculateProfitPerMonth(values.dateCount, values.profit)) : '_'}{' '}
+                        VND
                       </p>
+                      <CFormText className={'text-right'}>
+                        {values.profit
+                          ? renderAmount(calculateProfitPerMonth(values.dateCount, values.profit) / ANFT_TO_VND_RATIO)
+                          : '_'}{' '}
+                        VND
+                      </CFormText>
                     </CCol>
                   </CFormGroup>
                   <CFormGroup row>

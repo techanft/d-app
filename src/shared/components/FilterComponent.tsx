@@ -6,14 +6,13 @@ import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { IAssetFilter } from '../../views/listings/Listings';
-import { ExchangeType } from '../enumeration/exchangeType';
 import { RootState } from '../reducers';
 
 const initialValues: IAssetFilter = {
   page: 0,
-  size: 5,
+  size: 10,
   sort: 'createdDate,desc',
-  level: ExchangeType.PRIMARY,
+  // level: ExchangeType.PRIMARY,
 };
 
 interface IDataFilter {
@@ -60,7 +59,7 @@ const FilterComponent = () => {
   const { signerAddress } = useSelector((state: RootState) => state.wallet);
 
   return (
-    <CCard className={"card-filter shadow"}>
+    <CCard className={'card-filter shadow'}>
       <Formik<IAssetFilter>
         innerRef={formikRef}
         initialValues={initialValues}
@@ -83,7 +82,7 @@ const FilterComponent = () => {
             <div className="modal-title-style d-flex justify-content-end px-3 py-2">
               <CLabel className="m-auto pl-3"> {t('anftDapp.headerComponent.filter.filter')}</CLabel>
               <CButton className="p-0 text-primary" onClick={resetForm}>
-                <FontAwesomeIcon icon={faSyncAlt} size="lg"/>
+                <FontAwesomeIcon icon={faSyncAlt} size="lg" />
               </CButton>
             </div>
             <CRow className="mx-2">
@@ -116,7 +115,9 @@ const FilterComponent = () => {
                   checked={Boolean(values.owner)}
                   disabled={!Boolean(signerAddress)}
                 />
-                <CLabel className="content-title pl-2 m-0 text-gradient">{t('anftDapp.headerComponent.filter.owned')}</CLabel>
+                <CLabel className="content-title pl-2 m-0 text-gradient">
+                  {t('anftDapp.headerComponent.filter.owned')}
+                </CLabel>
               </CCol>
               <CCol xs={12} className="d-flex justify-content-center my-2">
                 <CButton className="btn btn-primary text-anft-gradiant border-0 btn-radius-50" type="submit">
