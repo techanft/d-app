@@ -10,7 +10,7 @@ import {
   CImg,
   CLabel,
   CPagination,
-  CRow,
+  CRow
 } from '@coreui/react';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
@@ -136,7 +136,13 @@ const Listings = () => {
     <CCol sm={12} md={6} lg={6} xl={`${insideDetailView ? '4' : '6'}`} className={`p-3 ${hideDetailedListing(item)} `}>
       <CCard className="h-100 cursor-pointer" onClick={onRedirecting(`/${item.id}/detail`)}>
         <CCard className="m-0 border-0">
-          <CImg src={returnTheFirstImage(item.images)} height={250} alt="realEstateImg" className="rounded-top" />
+          <div className="aspect-ratio-box">
+            <CImg
+              src={returnTheFirstImage(item.images)}
+              className="aspect-ratio-item rounded-top"
+              alt="realEstateImg"
+            />
+          </div>
         </CCard>
         <CCard className="m-0 h-100 pb-0 border-0">
           <CCardBody className="pb-0">

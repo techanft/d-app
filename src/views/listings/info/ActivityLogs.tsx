@@ -58,7 +58,9 @@ const ActivityLogs = (props: IActivityLogs) => {
             <CCol xs={12} className="p-0">
               <CCard className="mt-1 listing-img-card mb-0">
                 {!entityLoading && listing ? (
-                  <img src={returnTheFirstImage(listing.images)} alt="listingImg" className="w-100 h-100" />
+                  <div className="aspect-ratio-box">
+                    <img src={returnTheFirstImage(listing.images)} className="aspect-ratio-item" alt="listingImg" />
+                  </div>
                 ) : (
                   // Ensuring 16:9 ratio for image and image loader
                   <InfoLoader width={screenWidth} height={screenWidth / 1.77} />

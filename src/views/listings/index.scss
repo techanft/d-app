@@ -116,3 +116,18 @@
   text-align: end;
   color: black;
 }
+
+.aspect-ratio-box {
+  padding-top: 56.25%;
+  height: 0;
+  overflow: hidden;
+  background: white;
+  position: relative;
+  .aspect-ratio-item {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+}

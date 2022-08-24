@@ -230,7 +230,9 @@ const ListingInfo = (props: IListingInfoProps) => {
     <CContainer fluid className="px-0">
       <CCol xs={12} className="p-0">
         {!entityLoading && listing ? (
-          <img src={returnTheFirstImage(listing.images)} className="w-100 h-100" alt="listingImg" />
+          <div className="aspect-ratio-box">
+            <img src={returnTheFirstImage(listing.images)} className="aspect-ratio-item" alt="listingImg" />
+          </div>
         ) : (
           // Ensuring 16:9 ratio for image and image loader
           <InfoLoader width={screenWidth} height={screenWidth / 1.77} />
