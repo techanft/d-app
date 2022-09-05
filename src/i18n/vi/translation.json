@@ -60,6 +60,9 @@
         "type": "Loại",
         "state": "Trạng thái",
         "services": "Dịch vụ",
+        "bedroom": "Số phòng ngủ",
+        "livingroom": "Số phòng ngủ",
+        "ownershipStatus": "Trạng thái sở hữu",
         "apply": "ÁP DỤNG"
       }
     },
@@ -68,6 +71,8 @@
       "listingValue": "Giá trị",
       "dailyPayment": "Phí khai thác",
       "noListingFound": "Không tìm thấy bản ghi nào",
+      "primary": "Sơ cấp",
+      "secondary": "Thứ cấp",
       "primaryInfo": {
         "day": "ngày",
         "ownershipStatus": {

@@ -1,16 +1,16 @@
 import CIcon from '@coreui/icons-react';
 import {
+  CBadge,
   CCard,
   CCardBody,
   CCardFooter,
-  CCardText,
-  CCardTitle,
+  CCardImgOverlay,
   CCol,
   CContainer,
   CImg,
   CLabel,
   CPagination,
-  CRow
+  CRow,
 } from '@coreui/react';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
@@ -21,6 +21,7 @@ import { APP_LOCAL_DATE_FORMAT } from '../../config/constants';
 import { formatBNToken, insertCommas, returnTheFirstImage } from '../../shared/casual-helpers';
 import FilterComponent from '../../shared/components/FilterComponent';
 import Loading from '../../shared/components/Loading';
+import { ExchangeType, mapExchangeTypeBadge } from '../../shared/enumeration/exchangeType';
 import useDeviceDetect from '../../shared/hooks/useDeviceDetect';
 import useWindowDimensions from '../../shared/hooks/useWindowDimensions';
 import { IAsset } from '../../shared/models/assets.model';
@@ -28,6 +29,9 @@ import { IParams } from '../../shared/models/base.model';
 import { RootState } from '../../shared/reducers';
 import { getEntities } from '../assets/assets.api';
 import { assetsSelectors, fetchingEntities, setFilterState as setStoredFilterState } from '../assets/assets.reducer';
+import { getEntities as getListingTypes } from '../productType/category.api';
+import { fetching as fetchingListingType } from '../productType/category.reducer';
+import { getProvincesEntites } from '../provinces/provinces.api';
 import './index.scss';
 import { IListingParams } from './Listing';
 
@@ -39,12 +43,15 @@ export interface IAssetFilter extends IParams {
   segment?: string;
   area?: string;
   orientation?: string;
-  dailyPayment?: string;
+  dailyPayment?: number;
   quality?: string;
+  bedroom?: number;
+  livingroom?: number;
+  ownershipStatus?: string;
 }
 
 interface IViewComponent {
-  item: IAsset;
+  listing: IAsset;
 }
 
 const initialFilterState: IAssetFilter = {
@@ -88,6 +95,13 @@ const Listings = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(filterState), signerAddress]);
 
+  useEffect(() => {
+    dispatch(fetchingListingType());
+    dispatch(getListingTypes());
+    dispatch(getProvincesEntites({ country: 'VN' }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const onRedirecting = (path: string) => {
     return () => {
       window.scrollTo(0, 0);
@@ -104,25 +118,28 @@ const Listings = () => {
   const { width } = useWindowDimensions();
   const minimumWidthDisplayingTokenSymbol = 360;
 
-  const ListView = ({ item }: IViewComponent) => (
-    <CCol md={12} className={`px-0 mx-0 ${hideDetailedListing(item)} `}>
+  const ListView = ({ listing }: IViewComponent) => (
+    <CCol md={12} className={`px-0 mx-0 ${hideDetailedListing(listing)} `}>
       <div
         className="media info-box bg-white my-2 p-2 align-items-center rounded shadow-sm cursor-pointer"
-        onClick={onRedirecting(`/${item.id}/detail`)}
+        onClick={onRedirecting(`/${listing.id}/detail`)}
       >
-        <img src={returnTheFirstImage(item.images)} alt="realEstateImg" className="rounded" />
+        <img src={returnTheFirstImage(listing.images)} alt="realEstateImg" className="rounded" />
         <div className="media-body align-items-around ml-2">
-          <span className="info-box-text text-dark">{item.name ? item.name : '_'}</span>
+          <span className="info-box-text text-dark">{listing.name ? listing.name : '_'}</span>
           <table className={`w-100 mt-1`}>
             <tbody>
               <tr className={`info-box-daily-payment text-success mt-2 mb-0`}>
                 <td className="d-flex align-items-center mb-1">
-                  <CIcon name="cil-money" className="mr-1" /> {formatBNToken(item.dailyPayment, true)}
+                  <CIcon name="cil-money" className="mr-1" /> {formatBNToken(listing.dailyPayment, true)}
                 </td>
               </tr>
               <tr className={`info-box-daily-payment text-primary mt-2 mb-0`}>
                 <td className="d-flex align-items-center">
-                  <CIcon name="cil-location-pin" className="mr-1 mb-auto" /> {item.location || '_'}
+                  <span>
+                    <CIcon name="cil-location-pin" className="mr-1" />
+                    {listing.location || '_'}
+                  </span>
                 </td>
               </tr>
             </tbody>
@@ -132,42 +149,56 @@ const Listings = () => {
     </CCol>
   );
 
-  const GridView = ({ item }: IViewComponent) => (
-    <CCol sm={12} md={6} lg={6} xl={`${insideDetailView ? '4' : '6'}`} className={`p-3 ${hideDetailedListing(item)} `}>
-      <CCard className="h-100 cursor-pointer" onClick={onRedirecting(`/${item.id}/detail`)}>
+  const GridView = ({ listing }: IViewComponent) => (
+    <CCol sm={12} md={6} lg={4} xl={4} className={`p-3 ${hideDetailedListing(listing)} `}>
+      <CCard className="h-100 cursor-pointer" onClick={onRedirecting(`/${listing.id}/detail`)}>
         <CCard className="m-0 border-0">
           <div className="aspect-ratio-box">
             <CImg
-              src={returnTheFirstImage(item.images)}
+              src={returnTheFirstImage(listing.images)}
               className="aspect-ratio-item rounded-top"
               alt="realEstateImg"
             />
           </div>
+          <CCardImgOverlay className="">
+            <CBadge color={mapExchangeTypeBadge[listing.level]} className="font-size-075">
+              {t(`anftDapp.listingComponent.${listing.level.toLocaleLowerCase()}`)}
+            </CBadge>
+          </CCardImgOverlay>
         </CCard>
         <CCard className="m-0 h-100 pb-0 border-0">
           <CCardBody className="pb-0">
-            <CCardTitle>{item.name ? item.name : '_'}</CCardTitle>
-            {/* <div className="d-flex justify-content-between text-primary">
-              <CCardText>{t('anftDapp.listingComponent.listingValue')}</CCardText>
-              <CCardText>{formatBNToken(item.value, width > minimumWidthDisplayingTokenSymbol)}</CCardText>
-            </div> */}
-            <CCardText className="content-title text-success mb-2 d-flex align-items-center">
-              <CIcon name="cil-money" size="lg" className="mr-2" />{' '}
-              {formatBNToken(item.dailyPayment, width > minimumWidthDisplayingTokenSymbol)}
-            </CCardText>
-            <CCardText className="content-title text-primary d-flex align-items-center">
-              <CIcon name="cil-location-pin" size="lg" className="mr-2" /> {item.location || '_'}
-            </CCardText>
+            <h5 className="text-black-blue text-lead">{listing.name}</h5>
+            {listing.level === ExchangeType.PRIMARY ? (
+              <h6>
+                <CIcon name="cil-money" className="text-success mr-1" />
+                {formatBNToken(listing.dailyPayment, width > minimumWidthDisplayingTokenSymbol)}
+                <small className="d-none d-lg-inline-block">{`(${
+                  listing.fee ? insertCommas(listing.fee) : 0
+                } VND)`}</small>
+              </h6>
+            ) : (
+              ''
+            )}
+            <h6>
+              <CIcon name="cil-location-pin" className="text-info mr-1" />
+              <span className={`d-none d-xl-inline`}>{`${listing.location} `}</span>
+              {listing.district.name}, {listing.province.name}
+            </h6>
+            <h6>
+              <CIcon name="cil-tag" className="text-warning" /> {listing.type.name}
+            </h6>
           </CCardBody>
+
           <CCardFooter className="content-title d-flex justify-content-between">
-            <p className="m-0 d-flex align-items-center">
+            <h6 className="m-0 d-flex align-items-center">
               <CIcon name="cil-object-ungroup" className="mr-1" />
-              {item.areaLand ? insertCommas(item.areaLand) : 0} m<sup>2</sup>
-            </p>
-            <p className="m-0 d-flex align-items-center">
+              {listing.areaLand ? insertCommas(listing.areaLand) : 0} m<sup>2</sup>
+            </h6>
+            <h6 className="m-0 d-flex align-items-center">
               <CIcon name="cil-clock" className="mr-1" />
-              {moment(item.createdDate).format(APP_LOCAL_DATE_FORMAT)}
-            </p>
+              {moment(listing.createdDate).format(APP_LOCAL_DATE_FORMAT)}
+            </h6>
           </CCardFooter>
         </CCard>
       </CCard>
@@ -177,7 +208,14 @@ const Listings = () => {
   return (
     <CContainer fluid={isMobile || insideDetailView}>
       <CRow className={`mx-0`}>
-        <CCol md={12} lg={`${isMobile || insideDetailView ? '12' : '8'}`}>
+        <CCol xs={12} className={`${isMobile || insideDetailView ? 'd-none' : 'd-none d-lg-block'}`}>
+          <CRow>
+            <FilterComponent />
+          </CRow>
+        </CCol>
+
+        <CCol xs={12}>
+          {/* <CCol md={12} lg={`${isMobile || insideDetailView ? '12' : '8'}`}> */}
           <CRow>
             {insideDetailView ? (
               <CLabel className="text-primary content-title mt-3">{t('anftDapp.listingComponent.moreListing')}</CLabel>
@@ -188,7 +226,7 @@ const Listings = () => {
               <>
                 {assets.map((item, index) => (
                   <React.Fragment key={`list-${index}`}>
-                    {isMobile || insideDetailView ? <ListView item={item} /> : <GridView item={item} />}
+                    {isMobile || insideDetailView ? <ListView listing={item} /> : <GridView listing={item} />}
                   </React.Fragment>
                 ))}
                 <CCol xs={12} className="p-0">
@@ -218,11 +256,6 @@ const Listings = () => {
                 )}
               </CCol>
             )}
-          </CRow>
-        </CCol>
-        <CCol md={12} lg={4} className={`${isMobile || insideDetailView ? 'd-none' : 'd-none d-lg-block'}`}>
-          <CRow className="p-3">
-            <FilterComponent />
           </CRow>
         </CCol>
       </CRow>
