@@ -53,8 +53,8 @@ body {
     position: relative;
     border-radius: 20px 20px 0 0;
     border: none;
-    max-height: 400px;
-    width: 100%;
+    // max-height: 400px;
+    // width: 100%;
   }
 
   .listing-img-card svg {
@@ -327,4 +327,8 @@ body {
     background-color: rgba(28, 176, 255, 0.25);
     color: black;
   }
+}
+
+.toggle-collapse-btn {
+  transform: rotate(90deg);
 }

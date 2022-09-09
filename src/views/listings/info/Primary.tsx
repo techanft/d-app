@@ -9,14 +9,14 @@ import {
   CDataTable,
   CLink,
   CPagination,
-  CRow
+  CRow,
 } from '@coreui/react';
 import {
   faArrowAltCircleDown,
   faArrowAltCircleUp,
   faClipboard,
   faDonate,
-  faEdit
+  faEdit,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import moment from 'moment';
@@ -32,7 +32,7 @@ import {
   convertUnixToDate,
   formatBNToken,
   formatLocalDatetime,
-  returnTheFirstImage
+  returnTheFirstImage,
 } from '../../../shared/casual-helpers';
 import ConfirmationLoading from '../../../shared/components/ConfirmationLoading';
 import CopyTextToClipBoard from '../../../shared/components/CopyTextToClipboard';
@@ -230,9 +230,7 @@ const ListingInfo = (props: IListingInfoProps) => {
     <CContainer fluid className="px-0">
       <CCol xs={12} className="p-0">
         {!entityLoading && listing ? (
-          <div className="aspect-ratio-box">
-            <img src={returnTheFirstImage(listing.images)} className="aspect-ratio-item" alt="listingImg" />
-          </div>
+          <img src={returnTheFirstImage(listing.images)} className="w-100 h-100" alt="listingImg" />
         ) : (
           // Ensuring 16:9 ratio for image and image loader
           <InfoLoader width={screenWidth} height={screenWidth / 1.77} />

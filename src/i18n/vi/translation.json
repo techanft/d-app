@@ -48,8 +48,8 @@
       "demoNotice": "Các BĐS hiện nay chỉ dùng để Demo thử nghiệm, giúp người dùng có trải nghiệm ban đầu.",
       "filter": {
         "filter": "Tìm kiếm",
-        "city": "Tỉnh/ Thành phố",
-        "dist": "Quận/ Huyện",
+        "city": "Tỉnh/Thành phố",
+        "dist": "Quận/Huyện",
         "classify": "Loại sản phẩm",
         "segment": "Phân khúc",
         "area": "Diện tích",
@@ -60,6 +60,9 @@
         "type": "Loại",
         "state": "Trạng thái",
         "services": "Dịch vụ",
+        "bedroom": "Số phòng ngủ",
+        "livingroom": "Số phòng khách",
+        "ownershipStatus": "Trạng thái sở hữu",
         "apply": "ÁP DỤNG"
       }
     },
@@ -68,6 +71,8 @@
       "listingValue": "Giá trị",
       "dailyPayment": "Phí khai thác",
       "noListingFound": "Không tìm thấy bản ghi nào",
+      "primary": "Sơ cấp",
+      "secondary": "Thứ cấp",
       "primaryInfo": {
         "day": "ngày",
         "ownershipStatus": {
