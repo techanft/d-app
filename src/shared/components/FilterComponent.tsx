@@ -149,43 +149,24 @@ const FilterComponent = () => {
                 </CCol>
               ))}
               <CCol xs={12} sm={6} md={4} lg={3} className="px-2 d-flex align-items-center justify-content-end">
-                {/* <div>
-                  <CInputCheckbox
-                    id="owner"
-                    name="owner"
-                    className="form-check-input m-0"
-                    value={values.owner}
-                    onChange={handleChange}
-                    checked={Boolean(values.owner)}
-                    disabled={!Boolean(signerAddress)}
-                  />
-                  <CLabel className="content-title pl-2 text-gradient">
-                    {t('anftDapp.headerComponent.filter.owned')}
-                  </CLabel>
-                </div> */}
-
-                <CButton className="p-0 text-primary" onClick={resetForm}>
+                <CButton size="lg" className="p-0 text-primary " onClick={resetForm}>
                   <FontAwesomeIcon icon={faSyncAlt} size="lg" />
                 </CButton>
                 <CButton
-                  className="text-primary toggle-collapse-btn"
+                  size="lg"
+                  className="text-primary toggle-collapse-btn "
                   onClick={setAdvancedSearchListener(!advandedSearch)}
                 >
                   <CIcon name={advandedSearch ? 'cil-fullscreen-exit' : 'cil-fullscreen'} size="lg" />
                 </CButton>
-                <CButton className="btn btn-primary text-anft-gradiant border-0 btn-radius-50 px-4" type="submit">
+                <CButton
+                  className="btn btn-primary text-anft-gradiant border-0 btn-radius-50 px-4"
+                  type="submit"
+                  size="lg"
+                >
                   {t('anftDapp.headerComponent.filter.filter')}
                 </CButton>
               </CCol>
-
-              {/* <CCol xs={12} className="d-flex justify-content-center my-2">
-                <CButton className="btn btn-primary text-anft-gradiant border-0 btn-radius-50" type="submit">
-                  {t('anftDapp.headerComponent.filter.apply')}
-                </CButton>
-                <CButton className="p-0 text-primary" onClick={resetForm}>
-                  <FontAwesomeIcon icon={faSyncAlt} size="lg" />
-                </CButton>
-              </CCol> */}
             </CRow>
           </CForm>
         )}
