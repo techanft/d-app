@@ -495,7 +495,9 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                     <CCol xs={5}>
                       <p className="text-primary text-right">{formatBNToken(listing?.dailyPayment, true)}</p>
                       <CFormText className={'text-right'}>
-                        {listing?.dailyPayment ? insertCommas(Number(convertBnToDecimal(listing.dailyPayment)) * ANFT_TO_VND_RATIO) : '_'}{' '}
+                        {listing?.dailyPayment
+                          ? insertCommas(Number(convertBnToDecimal(listing.dailyPayment)) * ANFT_TO_VND_RATIO)
+                          : '_'}{' '}
                         VND
                       </CFormText>
                     </CCol>
@@ -717,7 +719,7 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                         {values.profit
                           ? renderAmount(calculateProfitPerMonth(values.dateCount, values.profit) / ANFT_TO_VND_RATIO)
                           : '_'}{' '}
-                        VND
+                        ANFT
                       </CFormText>
                     </CCol>
                   </CFormGroup>
