@@ -11,7 +11,7 @@ import {
   IRecordOwnership,
   IRecordRegister,
   IRecordUnRegister,
-  IRecordWithdraw
+  IRecordWithdraw,
 } from '../models/record.model';
 import { TableType, TRecordTypeArray } from './ActivityLogsContainer';
 
@@ -198,7 +198,9 @@ const renderRecordRegister = ({
     )}
     <tr>
       <td>{transFunc('anftDapp.registerComponent.activity')}</td>
-      <td className="text-right">{record.listingPotentials ? record.listingPotentials[Number(record.optionId)]?.name : '_'}</td>
+      <td className="text-right">
+        {record.listingPotentials ? record.listingPotentials[Number(record.optionId)]?.name : '_'}
+      </td>
     </tr>
     <tr>
       <td>{transFunc('anftDapp.activityLogsComponent.activityLogsTable.amount')}</td>
@@ -253,7 +255,9 @@ const renderRecordUnRegister = ({
     )}
     <tr>
       <td>{transFunc('anftDapp.registerComponent.activity')}</td>
-      <td className="text-right">{record.listingPotentials ? record.listingPotentials[Number(record.optionId)].name : '_'}</td>
+      <td className="text-right">
+        {record.listingPotentials ? record.listingPotentials[Number(record.optionId)]?.name : '_'}
+      </td>
     </tr>
   </>
 );

@@ -48,8 +48,8 @@
       "demoNotice": "Các BĐS hiện nay chỉ dùng để Demo thử nghiệm, giúp người dùng có trải nghiệm ban đầu.",
       "filter": {
         "filter": "Tìm kiếm",
-        "city": "Tỉnh/ Thành phố",
-        "dist": "Quận/ Huyện",
+        "city": "Tỉnh/Thành phố",
+        "dist": "Quận/Huyện",
         "classify": "Loại sản phẩm",
         "segment": "Phân khúc",
         "area": "Diện tích",
@@ -61,7 +61,7 @@
         "state": "Trạng thái",
         "services": "Dịch vụ",
         "bedroom": "Số phòng ngủ",
-        "livingroom": "Số phòng ngủ",
+        "livingroom": "Số phòng khách",
         "ownershipStatus": "Trạng thái sở hữu",
         "apply": "ÁP DỤNG"
       }

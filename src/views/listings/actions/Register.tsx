@@ -392,7 +392,7 @@ const Register = (props: IRegisterProps) => {
     <CContainer fluid={isMobile} className={isMobile ? 'mx-0 my-2' : ''}>
       <SubmissionModal />
       <CRow className={'justify-content-center'}>
-        <CCol xs={12} lg={`${isMobile ? '12' : '8'}`}>
+        <CCol xs={12} lg={`${isMobile ? '12' : '8'}`} className={!isMobile ? 'mt-2' : ''}>
           <CRow className="mx-0">
             <CCol xs={12} className="p-0">
               <CButton className="text-primary p-0 pb-1 ">
