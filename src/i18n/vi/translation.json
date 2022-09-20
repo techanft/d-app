@@ -144,7 +144,8 @@
         "incorrectInputType": "Số ANFT không hợp lệ!",
         "inputIsRequired": "Vui lòng không để trống ô này!",
         "minimumOwnership": "Thời gian sở hữu tối thiểu là 1.0 ngày!",
-        "noticeText": "Thời gian sở hữu sẽ được tính từ thời điểm hiện tại đến cuối ngày được chọn (23:30 - {{day}})",
+        "registerOwnershipNoticeText": "Thời gian sở hữu sẽ được tính từ thời điểm hiện tại đến cuối ngày được chọn 23:30 - {{day}}",
+        "extendOwnershipNoticeText": "Thời gian sở hữu sẽ được tiếp tục từ 23:30 - {{expiredDay}} đến cuối ngày được chọn 23:30 - {{day}}",
         "exceedingPeriod": "Số ngày sở hữu không được vượt quá kỳ sở hữu tối đa: {{day}} ngày",
         "exceedingLicenseExpirationDate": "Thời gian sở hữu không được vượt quá ngày hết hạn cấp phép của BĐS: {{day}}",
         "priceStatus": {
@@ -161,7 +162,8 @@
         "successRate": "Tỉ lệ thành công",
         "profitRatio": "Đòn bẩy lợi nhuận",
         "exchange": "Quy Đổi",
-        "maximumStage": "Kỳ tối đa"
+        "maximumStage": "Kỳ tối đa",
+        "registerOwnershipSuccess": "Đã chốt quyền sở hữu thành công, vui lòng chuyển tới Nền tảng QLTS để thiết lập giá cho tài sản"
       },
       "withdrawToken": {
         "maximumWithdrawable": "Số ngày rút tối đa",

@@ -14,7 +14,7 @@ import {
   CModalTitle,
   CProgress,
   CProgressBar,
-  CRow
+  CRow,
 } from '@coreui/react';
 import { BigNumber } from 'ethers';
 import { Formik, FormikProps } from 'formik';
@@ -41,9 +41,9 @@ import {
   insertCommas,
   moneyUnitTranslate,
   returnMaxEndDate,
-  unInsertCommas
+  unInsertCommas,
 } from '../../../shared/casual-helpers';
-import { ToastError } from '../../../shared/components/Toast';
+import { ToastError, ToastSuccess } from '../../../shared/components/Toast';
 import { CommercialTypes } from '../../../shared/enumeration/comercialType';
 import { EventType } from '../../../shared/enumeration/eventType';
 import { mapPriceStatusBadge, PriceStatus } from '../../../shared/enumeration/goodPrice';
@@ -55,7 +55,7 @@ import { selectEntityById } from '../../assets/assets.reducer';
 import { getEntity } from '../../productType/category.api';
 import {
   fetching as fetchingCategory,
-  selectEntityById as selectCategoryById
+  selectEntityById as selectCategoryById,
 } from '../../productType/category.reducer';
 import { baseSetterArgs } from '../../transactions/settersMapping';
 import { IProceedTxBody, proceedTransaction } from '../../transactions/transactions.api';
@@ -137,6 +137,9 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
 
   useEffect(() => {
     if (submitted) {
+      if (modelType === ModalType.OWNERSHIP_REGISTER) {
+        ToastSuccess(t('anftDapp.listingComponent.extendOwnership.registerOwnershipSuccess'));
+      }
       setVisibility(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -679,9 +682,14 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                         {errors.dateCount}
                       </CInvalidFeedback>
                       <CFormText>
-                        {t('anftDapp.listingComponent.extendOwnership.noticeText', {
-                          day: `${values.endDate.format(APP_LOCAL_DATE_FORMAT)}`,
-                        })}
+                        {modelType === ModalType.OWNERSHIP_REGISTER || !listing?.ownership
+                          ? t('anftDapp.listingComponent.extendOwnership.registerOwnershipNoticeText', {
+                              day: `${values.endDate.format(APP_LOCAL_DATE_FORMAT)}`,
+                            })
+                          : t('anftDapp.listingComponent.extendOwnership.extendOwnershipNoticeText', {
+                              expiredDay: `${moment.unix(listing.ownership.toNumber()).format(APP_LOCAL_DATE_FORMAT)}`,
+                              day: `${values.endDate.format(APP_LOCAL_DATE_FORMAT)}`,
+                            })}
                       </CFormText>
                       <CFormText>
                         <p className={`text-danger m-0`}>
