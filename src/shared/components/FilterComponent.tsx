@@ -12,9 +12,9 @@ import { RootState } from '../reducers';
 
 const initialValues: IAssetFilter = {
   page: 0,
-  size: 10,
+  size: 12,
   sort: 'createdDate,desc',
-  // level: ExchangeType.PRIMARY,
+  sellStatus: 'YET_SOLD,LOCKED',
 };
 
 interface IDataFilter {

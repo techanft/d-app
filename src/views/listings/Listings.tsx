@@ -45,6 +45,7 @@ export interface IAssetFilter extends IParams {
   bedroom?: number;
   livingroom?: number;
   ownershipStatus?: string;
+  sellStatus: string;
 }
 
 interface IViewComponent {
@@ -53,8 +54,9 @@ interface IViewComponent {
 
 const initialFilterState: IAssetFilter = {
   page: 0,
-  size: 10,
+  size: 12,
   sort: 'createdDate,desc',
+  sellStatus: 'YET_SOLD,LOCKED',
 };
 
 const hideFilterComponentView = ['activity-logs', 'register', 'workers-list'];

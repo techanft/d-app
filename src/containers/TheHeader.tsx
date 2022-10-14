@@ -74,8 +74,9 @@ const dataFilterDemo: IDataFilter[] = [
 
 const initialValues: IAssetFilter = {
   page: 0,
-  size: 10,
+  size: 12,
   sort: 'createdDate,desc',
+  sellStatus: 'YET_SOLD,LOCKED',
 };
 
 type TListingsFilter = {
