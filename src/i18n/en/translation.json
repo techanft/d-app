@@ -24,7 +24,13 @@
         },
         "noticeText": "Notice: From 23:30 - {{aboutToExpire}} to 23:30 - {{expired}}, another address is able to take the ownership of this listing"
       },
-      "noItemText": "No Record(s) Found"
+      "noItemText": "No Record(s) Found",
+      "moneyUnit": {
+        "million": "Million",
+        "billion": "Billion",
+        "trillion": "Trillion",
+        "quadrillion": "Quadrillion"
+      }
     },
 
     "sidebarComponent": {
@@ -54,6 +60,9 @@
         "type": "Type",
         "state": "State",
         "services": "Services",
+        "bedroom": "Bedroom",
+        "livingroom": "Living room",
+        "ownershipStatus": "Ownership status",
         "apply": "APPLY"
       }
     },
@@ -62,7 +71,10 @@
       "listingValue": "Value",
       "dailyPayment": "Daily Payment",
       "noListingFound": "No listing found",
+      "primary": "Primary",
+      "secondary": "Secondary",
       "primaryInfo": {
+        "day": "day",
         "ownershipStatus": {
           "owned": "Owned",
           "ownershipExpired": "Ownership expired. Listing can be owned by another address!",
@@ -119,10 +131,11 @@
         "FRANCHISE_ONE": "Franchise one",
         "FRANCHISE": "Franchises",
         "AUTONOMY": "Autonomy",
-        "RENT":"Rent",
-        "SELL_RENT":"Sell and Rent"
+        "RENT": "Rent",
+        "SELL_RENT": "Sell and Rent"
       },
       "extendOwnership": {
+        "dailyPayment": "Daily Payment",
         "currentOwnership": "Current Ownership",
         "tokenBalance": "Token Balance",
         "cannotRegisterOwnership": "This listing is being owned by another address!",
@@ -131,21 +144,26 @@
         "incorrectInputType": "Incorrect input type!",
         "inputIsRequired": "This field is required!",
         "minimumOwnership": "Minimum ownership for the listing is 1.0 day!",
-        "noticeText": "Ownership will be started from now to the end of the selected day (23:30 - {{day}})",
+        "registerOwnershipNoticeText": "Ownership will be started from now to the end of the selected day 23:30 - {{day}}",
+        "extendOwnershipNoticeText": "Ownership will be continued from 23:30 - {{expiredDay}} to the end of the selected day 23:30 - {{day}}",
         "exceedingPeriod": "Ownership days cannot exceed the maximum ownership period: {{day}} days",
-        "exceedingLicenseExpirationDate": "Ownership days cannot exceed the license expiration date: {{day}}"
-        ,"priceStatus": {
+        "exceedingLicenseExpirationDate": "Ownership days cannot exceed the license expiration date: {{day}}",
+        "priceStatus": {
           "LOW": "Your price is too Low",
           "GOOD": "Your price is Good Price",
           "HIGH": "Your price is High Price"
         },
         "undefined": "Undefined",
-        "comercialType": "Comercial Type",
+        "comercialType": "Commercial Type",
         "secondaryPrice": "Selling price on the secondary floor",
         "secondaryRent": "Rent price on the secondary floor",
         "profit": "Expected profit",
+        "profitPerMonth": "Expected profit per Month",
         "successRate": "Success rate",
-        "profitRatio": "Profit rate"
+        "profitRatio": "Profit rate",
+        "exchange": "Exchange",
+        "maximumStage": "Maximum stage",
+        "registerOwnershipSuccess": "Successfully extended ownership, please redirect to Listing Management Dashboard to set up the price"
       },
       "withdrawToken": {
         "maximumWithdrawable": "Maximum Days",

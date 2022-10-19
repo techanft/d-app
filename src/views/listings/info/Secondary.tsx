@@ -1,20 +1,17 @@
 import { CCol, CContainer, CLabel, CRow } from '@coreui/react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { IListingDetails } from '../../../shared/models/listingDetails.model';
+import { useSelector } from 'react-redux';
+import { insertCommas } from '../../../shared/casual-helpers';
+import { selectEntityById } from '../../assets/assets.reducer';
 import '../index.scss';
+import { IListingInfoProps } from './Primary';
 
-const ListingDetails = () => {
+const ListingDetails = (props: IListingInfoProps) => {
   const { t } = useTranslation();
+  const { listingId } = props;
 
-  const demoListingDetails: IListingDetails = {
-    address: 'Ciputra Hanoi',
-    type: 'Thuê Biệt Thự/Nhà Ciputra Hanoi',
-    area: '400',
-    floorDirect: '03/ Đông Nam',
-    quality: 'A',
-    service: 'Văn phòng',
-  };
+  const listing = useSelector(selectEntityById(listingId));
 
   return (
     <CContainer className="px-0" fluid>
@@ -26,27 +23,27 @@ const ListingDetails = () => {
         </CCol>
         <CCol xs={6}>
           <p className="detail-title-font my-2">{t('anftDapp.listingComponent.secondaryInfo.sector')}</p>
-          <p className="my-2 detail-value">{demoListingDetails.address}</p>
+          <p className="my-2 detail-value">{listing?.location || '_'}</p>
         </CCol>
         <CCol xs={6}>
           <p className="detail-title-font my-2">{t('anftDapp.listingComponent.secondaryInfo.propertyType')}</p>
-          <p className="my-2 detail-value">{demoListingDetails.type}</p>
+          <p className="my-2 detail-value">{listing?.type.name || '_'}</p>
         </CCol>
         <CCol xs={6}>
           <p className="detail-title-font my-2">{t('anftDapp.listingComponent.secondaryInfo.area')}</p>
-          <p className="my-2 detail-value">{demoListingDetails.area}</p>
+          <p className="my-2 detail-value">{listing?.areaLand ? insertCommas(listing.areaLand) : 0} m<sup>2</sup></p>
         </CCol>
         <CCol xs={6}>
           <p className="detail-title-font my-2">{t('anftDapp.listingComponent.secondaryInfo.floorAndOrientation')}</p>
-          <p className="my-2 detail-value">{demoListingDetails.floorDirect}</p>
+          <p className="my-2 detail-value">{listing?.numberOfStorey ? insertCommas(listing.numberOfStorey) : 0}</p>
         </CCol>
         <CCol xs={6}>
           <p className="detail-title-font my-2">{t('anftDapp.listingComponent.secondaryInfo.quality')}</p>
-          <p className="my-2 detail-value">{demoListingDetails.quality}</p>
+          <p className="my-2 detail-value">{listing?.quality || '_'}</p>
         </CCol>
         <CCol xs={6}>
           <p className="detail-title-font my-2">{t('anftDapp.listingComponent.secondaryInfo.services')}</p>
-          <p className="my-2 detail-value">{demoListingDetails.service}</p>
+          <p className="my-2 detail-value">{listing?.listingPotentials?.map(item => item.name).join(', ')}</p>
         </CCol>
       </CRow>
     </CContainer>

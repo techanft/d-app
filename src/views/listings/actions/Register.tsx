@@ -46,6 +46,7 @@ import SubmissionModal from '../../../shared/components/SubmissionModal';
 import { ToastError, ToastInfo } from '../../../shared/components/Toast';
 import { EventType } from '../../../shared/enumeration/eventType';
 import { ModalType, TModalsVisibility } from '../../../shared/enumeration/modalType';
+import useDeviceDetect from '../../../shared/hooks/useDeviceDetect';
 import useWindowDimensions from '../../../shared/hooks/useWindowDimensions';
 import { IOption } from '../../../shared/models/options.model';
 import { RootState } from '../../../shared/reducers';
@@ -55,6 +56,7 @@ import { baseSetterArgs } from '../../transactions/settersMapping';
 import { IProceedTxBody, proceedTransaction } from '../../transactions/transactions.api';
 import { fetching, hardReset } from '../../transactions/transactions.reducer';
 import '../index.scss';
+import Listings from '../Listings';
 
 interface IRegisterParams {
   [x: string]: string;
@@ -81,6 +83,8 @@ const Register = (props: IRegisterProps) => {
   const formikRef = useRef<FormikProps<IRegister>>(null);
 
   const { t } = useTranslation();
+
+  const { isMobile } = useDeviceDetect();
 
   const registerView = [
     {
@@ -146,7 +150,7 @@ const Register = (props: IRegisterProps) => {
     setModalVisibility({ ...initialModalState, [type]: isVisible });
   };
 
-  const handleRawFormValues = (input: IRegister, id: number): IProceedTxBody => {
+  const handleRawFormValues = (input: IRegister, optionId: number): IProceedTxBody => {
     if (!listing?.address) {
       throw Error('Error getting listing address');
     }
@@ -165,7 +169,7 @@ const Register = (props: IRegisterProps) => {
       args: {
         ...baseSetterArgs,
         _amount: convertDecimalToBn(input.registerAmount.toString()),
-        _optionId: id,
+        _optionId: optionId,
       },
     };
     return output;
@@ -306,10 +310,10 @@ const Register = (props: IRegisterProps) => {
 
   useEffect(() => {
     /**
-     * Make sure to refetch if complete info got overriden in some unknown cases
+     * Make sure to refetch if option complete info got overriden in some unknown cases
      */
-    const listingHasOptions = listing?.options;
-    if (Boolean(listingHasOptions) || !provider || !listing || !signerAddress) return;
+    const listingHasCompleteOptionsInfo = listing?.listingPotentials[0]?.reward; // reward is taken from smartcontract
+    if (Boolean(listingHasCompleteOptionsInfo) || !provider || !listing || !signerAddress) return;
     const refetchTimer = window.setTimeout(() => {
       dispatch(fetchingEntity());
       dispatch(getOptionsWithStakes({ listing, stakeholder: signerAddress, provider }));
@@ -326,10 +330,10 @@ const Register = (props: IRegisterProps) => {
   const [amountToReturn, setAmountToReturn] = useState<BigNumber | undefined>(undefined);
 
   const proceedCalculation = async (optionId: number) => {
-    if (!listing || !signer || !signerAddress || !listing.options) return BigNumber.from(0);
+    if (!listing || !signer || !signerAddress || !listing.listingPotentials) return BigNumber.from(0);
     const instance = LISTING_INSTANCE({ address: listing.address, signer });
     if (!instance) return BigNumber.from(0);
-    const optionInfo = listing.options.find(({ id }) => id === optionId);
+    const optionInfo = listing.listingPotentials.find(({ id }) => id === optionId);
 
     const currentUnix = moment().unix();
 
@@ -385,357 +389,369 @@ const Register = (props: IRegisterProps) => {
   const isLoadingTransactionAndFetchingOptions = submitted || !updateEntitySuccess;
 
   return (
-    <CContainer fluid className="mx-0 my-2">
+    <CContainer fluid={isMobile} className={isMobile ? 'mx-0 my-2' : ''}>
       <SubmissionModal />
-      <CRow>
-        <CCol xs={12}>
-          <CButton className="text-primary p-0 pb-1 ">
-            <CIcon name="cil-arrow-circle-left" onClick={() => history.goBack()} size="lg" />
-          </CButton>
-          <CLabel className="text-primary content-title ml-1">
-            {t('anftDapp.listingComponent.primaryInfo.investmentActivities.registerClaimReward')}
-          </CLabel>
-        </CCol>
-        <CCol xs={12}>
-          <CCard className="mt-1 listing-img-card mb-0">
-            {!entityLoading && listing ? (
-              <img src={returnTheFirstImage(listing.images)} alt="listingImg" className="w-100 h-100" />
-            ) : (
-              // Ensuring 16:9 ratio for image and image loader
-              <InfoLoader width={screenWidth} height={screenWidth / 1.77} />
-            )}
-            <CCardBody className="p-0 listing-card-body">
-              <CCardTitle className="listing-card-title mb-0 px-3 py-2 w-100">
-                <p className="mb-2 text-white content-title">{listing?.name ? listing.name : '_'}</p>
-                <p className="mb-0 text-white detail-title-font">
-                  {t('anftDapp.registerComponent.activitiesCount')}{' '}
-                  <b>{listing?.options ? listing.options.length : 0}</b>
-                </p>
-              </CCardTitle>
-            </CCardBody>
-          </CCard>
+      <CRow className={'justify-content-center'}>
+        <CCol xs={12} lg={`${isMobile ? '12' : '8'}`} className={!isMobile ? 'mt-2' : ''}>
+          <CRow className="mx-0">
+            <CCol xs={12} className="p-0">
+              <CButton className="text-primary p-0 pb-1 ">
+                <CIcon name="cil-arrow-circle-left" onClick={() => history.goBack()} size="lg" />
+              </CButton>
+              <CLabel className="text-primary content-title ml-1">
+                {t('anftDapp.listingComponent.primaryInfo.investmentActivities.registerClaimReward')}
+              </CLabel>
+            </CCol>
 
-          {listing && signerAddress ? (
-            <>
-              <CDataTable
-                striped
-                noItemsView={{
-                  noItems: t('anftDapp.global.noItemText'),
-                }}
-                items={listing.options}
-                fields={registerView}
-                responsive
-                hover
-                header
-                scopedSlots={{
-                  activityName: (item: IOption) => {
-                    return (
-                      <td
-                        onClick={() => {
-                          toggleDetails(item.id.toString());
-                        }}
-                      >
-                        <span className="text-primary d-inline-block text-truncate cursor-pointer" style={{ maxWidth: '100px' }}>
-                          {item.name ? item.name : '_'}
-                        </span>
-                      </td>
-                    );
-                  },
-                  reward: (item: IOption) => {
-                    return <td>{item.reward ? `${item.reward.toString()}%` : '_'}</td>;
-                  },
-                  registerAmount: (item: IOption) => {
-                    return (
-                      <td>
-                        {item.stake?.amount.eq(0) ? (
-                          <span className="text-danger">{t('anftDapp.registerComponent.notRegister')}</span>
-                        ) : (
-                          formatBNToken(item.stake?.amount, true)
-                        )}
-                      </td>
-                    );
-                  },
-                  details: (item: IOption) => {
-                    return (
-                      <CCollapse show={details.includes(item.id.toString())}>
-                        <CCard className="mb-0">
-                          <CCardBody className="px-3">
-                            <CRow className="align-items-center">
-                              <CCol xs={12}>
-                                {isLoadingTransactionAndFetchingOptions ? (
-                                  <CRow>
-                                    <CCol xs={12} className="d-flex justify-content-center">
-                                      <ConfirmationLoading />
+            <CCol xs={12} className="p-0">
+              <CCard className="mt-1 listing-img-card mb-0">
+                {!entityLoading && listing ? (
+                  <img src={returnTheFirstImage(listing.images)} alt="listingImg" className="w-100 h-100" />
+                ) : (
+                  // Ensuring 16:9 ratio for image and image loader
+                  <InfoLoader width={screenWidth} height={screenWidth / 1.77} />
+                )}
+                <CCardBody className="p-0 listing-card-body">
+                  <CCardTitle className="listing-card-title mb-0 px-3 py-2 w-100">
+                    <p className="mb-2 text-white content-title">{listing?.name ? listing.name : '_'}</p>
+                    <p className="mb-0 text-white detail-title-font">
+                      {t('anftDapp.registerComponent.activitiesCount')}{' '}
+                      <b>{listing?.listingPotentials ? listing.listingPotentials.length : 0}</b>
+                    </p>
+                  </CCardTitle>
+                </CCardBody>
+              </CCard>
+            </CCol>
+
+            {listing && signerAddress ? (
+              <>
+                <CDataTable
+                  striped
+                  noItemsView={{
+                    noItems: t('anftDapp.global.noItemText'),
+                  }}
+                  items={listing.listingPotentials}
+                  fields={registerView}
+                  responsive
+                  hover
+                  header
+                  scopedSlots={{
+                    activityName: (item: IOption) => {
+                      return (
+                        <td
+                          onClick={() => {
+                            toggleDetails(item.id?.toString());
+                          }}
+                        >
+                          <span
+                            className="text-primary d-inline-block text-truncate cursor-pointer"
+                            style={{ maxWidth: '100px' }}
+                          >
+                            {item.name ? item.name : '_'}
+                          </span>
+                        </td>
+                      );
+                    },
+                    reward: (item: IOption) => {
+                      return <td>{item.reward ? `${item.reward.toString()}%` : '_'}</td>;
+                    },
+                    registerAmount: (item: IOption) => {
+                      return (
+                        <td>
+                          {item.stake?.amount.eq(0) ? (
+                            <span className="text-danger">{t('anftDapp.registerComponent.notRegister')}</span>
+                          ) : (
+                            formatBNToken(item.stake?.amount, true)
+                          )}
+                        </td>
+                      );
+                    },
+                    details: (item: IOption) => {
+                      return (
+                        <CCollapse show={details.includes(item.id?.toString())}>
+                          <CCard className="mb-0">
+                            <CCardBody className="px-3">
+                              <CRow className="align-items-center">
+                                <CCol xs={12}>
+                                  {isLoadingTransactionAndFetchingOptions ? (
+                                    <CRow>
+                                      <CCol xs={12} className="d-flex justify-content-center">
+                                        <ConfirmationLoading />
+                                      </CCol>
+                                    </CRow>
+                                  ) : (
+                                    ''
+                                  )}
+                                  <CFormGroup row>
+                                    <CCol xs={12}>
+                                      <p className="content-title text-primary font-weight-bold my-2 w-100 text-center">
+                                        {item.name ? item.name : '_'}
+                                      </p>
                                     </CCol>
-                                  </CRow>
-                                ) : (
-                                  ''
-                                )}
-                                <CFormGroup row>
-                                  <CCol xs={12}>
-                                    <p className="content-title text-primary font-weight-bold my-2 w-100 text-center">
-                                      {item.name ? item.name : '_'}
-                                    </p>
-                                  </CCol>
-                                </CFormGroup>
-                                <CFormGroup row className="align-items-center">
-                                  <CCol xs={5}>
-                                    <CLabel className="font-weight-bold my-2">
-                                      {t('anftDapp.listingComponent.primaryInfo.totalStake')}
-                                    </CLabel>
-                                  </CCol>
-                                  <CCol xs={7}>
-                                    <p className="text-primary my-2 text-right">
-                                      {formatBNToken(item.totalStake, true)}
-                                      <CTooltip
-                                        placement="bottom"
-                                        content={t('anftDapp.registerComponent.totalStakeDescription')}
-                                      >
-                                        <FontAwesomeIcon icon={faInfoCircle} size="sm" className="ml-2" />
-                                      </CTooltip>
-                                    </p>
-                                  </CCol>
-                                </CFormGroup>
-                                <CFormGroup row className="align-items-center">
-                                  <CCol xs={5}>
-                                    <CLabel className="font-weight-bold my-2">
-                                      {t('anftDapp.listingComponent.extendOwnership.tokenBalance')}
-                                    </CLabel>
-                                  </CCol>
-                                  <CCol xs={7}>
-                                    <p className="text-primary my-2 text-right">{formatBNToken(tokenBalance, true)}</p>
-                                  </CCol>
-                                </CFormGroup>
-                                <Formik
-                                  innerRef={formikRef}
-                                  enableReinitialize
-                                  initialValues={createInitialValues(item)}
-                                  validationSchema={validationSchema}
-                                  onSubmit={(rawValues) => {
-                                    try {
-                                      const value = handleRawFormValues(rawValues, item.id);
-                                      dispatch(fetching());
-                                      dispatch(proceedTransaction(value));
-                                    } catch (error) {
-                                      console.log(`Error submitting form ${error}`);
-                                      ToastError(`${t('anftDapp.global.errors.errorSubmittingForm')}: ${error}`);
-                                    }
-                                  }}
-                                >
-                                  {({
-                                    values,
-                                    errors,
-                                    touched,
-                                    handleBlur,
-                                    handleSubmit,
-                                    setFieldValue,
-                                    submitForm,
-                                    isSubmitting,
-                                  }) => (
-                                    <CForm className="form-horizontal" onSubmit={handleSubmit}>
-                                      <CFormGroup row className="align-items-center justify-content-between">
-                                        <CCol xs={5}>
-                                          <p className="font-weight-bold my-2">
-                                            {t('anftDapp.registerComponent.registerAmount')}
-                                          </p>
-                                        </CCol>
-                                        <CCol xs={7} md={5}>
-                                          <CInputGroup>
-                                            <CInput
-                                              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                                                setFieldValue(`registerAmount`, unInsertCommas(e.target.value));
-                                              }}
-                                              id="registerAmount"
-                                              autoComplete="off"
-                                              name="registerAmount"
-                                              value={values.registerAmount ? insertCommas(values.registerAmount) : ''}
-                                              onBlur={handleBlur}
-                                              placeholder={`${t('anftDapp.registerComponent.registerAmount')}...`}
-                                              className="btn-radius-50"
-                                              disabled={!isEditingRegister && !item.stake?.amount.eq(0)}
-                                            />
-                                            {item.stake?.amount && !item.stake.amount.eq(0) && !isEditingRegister ? (
-                                              <CInputGroupAppend>
-                                                <CButton
-                                                  color="primary"
-                                                  className="btn-radius-50"
-                                                  onClick={onEditingRegister(
-                                                    Number(convertBnToDecimal(item.stake.amount))
-                                                  )}
-                                                >
-                                                  <FontAwesomeIcon icon={faPen} />
-                                                </CButton>
-                                              </CInputGroupAppend>
-                                            ) : (
-                                              <CInputGroupAppend>
-                                                <CButton
-                                                  color="primary"
-                                                  className="btn-radius-50 px-2"
-                                                  onClick={() =>
-                                                    setFieldValue(
-                                                      `registerAmount`,
-                                                      unInsertCommas(convertBnToDecimal(tokenBalance!))
-                                                    )
-                                                  }
-                                                >
-                                                  MAX
-                                                </CButton>
-                                              </CInputGroupAppend>
-                                            )}
-                                          </CInputGroup>
-                                          {isEditingRegister || item.stake?.amount.eq(0) ? (
-                                            <CInvalidFeedback
-                                              className={
-                                                !!errors.registerAmount && touched.registerAmount ? 'd-block' : 'd-none'
-                                              }
-                                            >
-                                              {errors.registerAmount}
-                                            </CInvalidFeedback>
-                                          ) : (
-                                            ''
-                                          )}
-                                        </CCol>
-                                      </CFormGroup>
-                                      {item.stake?.amount ? (
-                                        !item.stake.amount.eq(0) ? (
-                                          <>
-                                            <CFormGroup row className="align-items-center">
-                                              <CCol xs={5}>
-                                                <p className="font-weight-bold my-2">
-                                                  {t('anftDapp.registerComponent.rewardToken')}
-                                                </p>
-                                              </CCol>
-                                              <CCol xs={7}>
-                                                <p className="text-primary my-2 text-right">
-                                                  {amountToReturn ? formatBNToken(amountToReturn, true, 10) : 0}
+                                  </CFormGroup>
+                                  <CFormGroup row className="align-items-center">
+                                    <CCol xs={5}>
+                                      <CLabel className="font-weight-bold my-2">
+                                        {t('anftDapp.listingComponent.primaryInfo.totalStake')}
+                                      </CLabel>
+                                    </CCol>
+                                    <CCol xs={7}>
+                                      <p className="text-primary my-2 text-right">
+                                        {formatBNToken(item.totalStake, true)}
+                                        <CTooltip
+                                          placement="bottom"
+                                          content={t('anftDapp.registerComponent.totalStakeDescription')}
+                                        >
+                                          <FontAwesomeIcon icon={faInfoCircle} size="sm" className="ml-2" />
+                                        </CTooltip>
+                                      </p>
+                                    </CCol>
+                                  </CFormGroup>
+                                  <CFormGroup row className="align-items-center">
+                                    <CCol xs={5}>
+                                      <CLabel className="font-weight-bold my-2">
+                                        {t('anftDapp.listingComponent.extendOwnership.tokenBalance')}
+                                      </CLabel>
+                                    </CCol>
+                                    <CCol xs={7}>
+                                      <p className="text-primary my-2 text-right">
+                                        {formatBNToken(tokenBalance, true)}
+                                      </p>
+                                    </CCol>
+                                  </CFormGroup>
+                                  <Formik
+                                    innerRef={formikRef}
+                                    enableReinitialize
+                                    initialValues={createInitialValues(item)}
+                                    validationSchema={validationSchema}
+                                    onSubmit={(rawValues) => {
+                                      try {
+                                        const value = handleRawFormValues(rawValues, item.id);
+                                        dispatch(fetching());
+                                        dispatch(proceedTransaction(value));
+                                      } catch (error) {
+                                        console.log(`Error submitting form ${error}`);
+                                        ToastError(`${t('anftDapp.global.errors.errorSubmittingForm')}: ${error}`);
+                                      }
+                                    }}
+                                  >
+                                    {({
+                                      values,
+                                      errors,
+                                      touched,
+                                      handleBlur,
+                                      handleSubmit,
+                                      setFieldValue,
+                                      submitForm,
+                                      isSubmitting,
+                                    }) => (
+                                      <CForm className="form-horizontal" onSubmit={handleSubmit}>
+                                        <CFormGroup row className="align-items-center justify-content-between">
+                                          <CCol xs={5}>
+                                            <p className="font-weight-bold my-2">
+                                              {t('anftDapp.registerComponent.registerAmount')}
+                                            </p>
+                                          </CCol>
+                                          <CCol xs={7} md={5}>
+                                            <CInputGroup>
+                                              <CInput
+                                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                                  setFieldValue(`registerAmount`, unInsertCommas(e.target.value));
+                                                }}
+                                                id="registerAmount"
+                                                autoComplete="off"
+                                                name="registerAmount"
+                                                value={values.registerAmount ? insertCommas(values.registerAmount) : ''}
+                                                onBlur={handleBlur}
+                                                placeholder={`${t('anftDapp.registerComponent.registerAmount')}...`}
+                                                className="btn-radius-50"
+                                                disabled={!isEditingRegister && !item.stake?.amount.eq(0)}
+                                              />
+                                              {item.stake?.amount && !item.stake.amount.eq(0) && !isEditingRegister ? (
+                                                <CInputGroupAppend>
                                                   <CButton
-                                                    onClick={onRefreshAmountToReturn(item.id)}
-                                                    className="p-0 ml-2"
+                                                    color="primary"
+                                                    className="btn-radius-50"
+                                                    onClick={onEditingRegister(
+                                                      Number(convertBnToDecimal(item.stake.amount))
+                                                    )}
                                                   >
-                                                    <FontAwesomeIcon icon={faSyncAlt} className="text-primary" />
+                                                    <FontAwesomeIcon icon={faPen} />
                                                   </CButton>
-                                                </p>
-                                              </CCol>
-                                            </CFormGroup>
-                                            {item.stake?.start && !item.stake.start.eq(0) ? (
-                                              <CFormGroup row className="align-items-center">
-                                                <CCol xs={5}>
-                                                  <p className="font-weight-bold my-2">
-                                                    {t('anftDapp.registerComponent.stakeStart')}
-                                                  </p>
-                                                </CCol>
-                                                <CCol xs={7}>
-                                                  <p className="my-2 text-right">
-                                                    {convertUnixToDate(item.stake?.start.toNumber())}
-                                                  </p>
-                                                </CCol>
-                                              </CFormGroup>
+                                                </CInputGroupAppend>
+                                              ) : (
+                                                <CInputGroupAppend>
+                                                  <CButton
+                                                    color="primary"
+                                                    className="btn-radius-50 px-2"
+                                                    onClick={() =>
+                                                      setFieldValue(
+                                                        `registerAmount`,
+                                                        unInsertCommas(convertBnToDecimal(tokenBalance!))
+                                                      )
+                                                    }
+                                                  >
+                                                    MAX
+                                                  </CButton>
+                                                </CInputGroupAppend>
+                                              )}
+                                            </CInputGroup>
+                                            {isEditingRegister || item.stake?.amount.eq(0) ? (
+                                              <CInvalidFeedback
+                                                className={
+                                                  !!errors.registerAmount && touched.registerAmount
+                                                    ? 'd-block'
+                                                    : 'd-none'
+                                                }
+                                              >
+                                                {errors.registerAmount}
+                                              </CInvalidFeedback>
                                             ) : (
                                               ''
                                             )}
-                                            {isEditingRegister ? (
-                                              <CFormGroup row>
-                                                <CCol xs={12} className="d-flex justify-content-center mt-3">
-                                                  <CButton
-                                                    className="btn-radius-50 btn-primary mr-2"
-                                                    onClick={checkTokenBalanceGteRegisterAmount(
-                                                      submitForm,
-                                                      item.stake.amount
-                                                    )}
-                                                    disabled={(isSubmitting && loading) || !updateEntitySuccess}
-                                                  >
-                                                    {t('anftDapp.global.modal.confirm')}
-                                                  </CButton>
-                                                  <CButton
-                                                    className="btn-radius-50 btn-outline-danger ml-2"
-                                                    variant="ghost"
-                                                    onClick={onCancelEditingRegister(setFieldValue)}
-                                                    disabled={(isSubmitting && loading) || !updateEntitySuccess}
-                                                  >
-                                                    {t('anftDapp.global.modal.cancel')}
-                                                  </CButton>
+                                          </CCol>
+                                        </CFormGroup>
+                                        {item.stake?.amount ? (
+                                          !item.stake.amount.eq(0) ? (
+                                            <>
+                                              <CFormGroup row className="align-items-center">
+                                                <CCol xs={5}>
+                                                  <p className="font-weight-bold my-2">
+                                                    {t('anftDapp.registerComponent.rewardToken')}
+                                                  </p>
+                                                </CCol>
+                                                <CCol xs={7}>
+                                                  <p className="text-primary my-2 text-right">
+                                                    {amountToReturn ? formatBNToken(amountToReturn, true, 10) : 0}
+                                                    <CButton
+                                                      onClick={onRefreshAmountToReturn(item.id)}
+                                                      className="p-0 ml-2"
+                                                    >
+                                                      <FontAwesomeIcon icon={faSyncAlt} className="text-primary" />
+                                                    </CButton>
+                                                  </p>
                                                 </CCol>
                                               </CFormGroup>
-                                            ) : (
-                                              <CFormGroup row>
-                                                <CCol xs={12} className="d-flex justify-content-center mt-3">
-                                                  <CButton
-                                                    className="btn-radius-50 btn-success mr-2"
-                                                    onClick={onClaimReward(item.id, item.stake.amount)}
-                                                    disabled={(isSubmitting && loading) || !updateEntitySuccess}
-                                                  >
-                                                    {t('anftDapp.registerComponent.claimReward.claimReward')}
-                                                  </CButton>
-                                                  <CButton
-                                                    className="btn-radius-50 btn-outline-danger ml-2"
-                                                    variant="ghost"
-                                                    onClick={onUnregister(item.id)}
-                                                    disabled={(isSubmitting && loading) || !updateEntitySuccess}
-                                                  >
-                                                    {t('anftDapp.registerComponent.unregister.unregister')}
-                                                  </CButton>
-                                                </CCol>
-                                              </CFormGroup>
-                                            )}
-                                          </>
+                                              {item.stake?.start && !item.stake.start.eq(0) ? (
+                                                <CFormGroup row className="align-items-center">
+                                                  <CCol xs={5}>
+                                                    <p className="font-weight-bold my-2">
+                                                      {t('anftDapp.registerComponent.stakeStart')}
+                                                    </p>
+                                                  </CCol>
+                                                  <CCol xs={7}>
+                                                    <p className="my-2 text-right">
+                                                      {convertUnixToDate(item.stake?.start.toNumber())}
+                                                    </p>
+                                                  </CCol>
+                                                </CFormGroup>
+                                              ) : (
+                                                ''
+                                              )}
+                                              {isEditingRegister ? (
+                                                <CFormGroup row>
+                                                  <CCol xs={12} className="d-flex justify-content-center mt-3">
+                                                    <CButton
+                                                      className="btn-radius-50 btn-primary mr-2"
+                                                      onClick={checkTokenBalanceGteRegisterAmount(
+                                                        submitForm,
+                                                        item.stake.amount
+                                                      )}
+                                                      disabled={(isSubmitting && loading) || !updateEntitySuccess}
+                                                    >
+                                                      {t('anftDapp.global.modal.confirm')}
+                                                    </CButton>
+                                                    <CButton
+                                                      className="btn-radius-50 btn-outline-danger ml-2"
+                                                      variant="ghost"
+                                                      onClick={onCancelEditingRegister(setFieldValue)}
+                                                      disabled={(isSubmitting && loading) || !updateEntitySuccess}
+                                                    >
+                                                      {t('anftDapp.global.modal.cancel')}
+                                                    </CButton>
+                                                  </CCol>
+                                                </CFormGroup>
+                                              ) : (
+                                                <CFormGroup row>
+                                                  <CCol xs={12} className="d-flex justify-content-center mt-3">
+                                                    <CButton
+                                                      className="btn-radius-50 btn-success mr-2"
+                                                      onClick={onClaimReward(item.id, item.stake.amount)}
+                                                      disabled={(isSubmitting && loading) || !updateEntitySuccess}
+                                                    >
+                                                      {t('anftDapp.registerComponent.claimReward.claimReward')}
+                                                    </CButton>
+                                                    <CButton
+                                                      className="btn-radius-50 btn-outline-danger ml-2"
+                                                      variant="ghost"
+                                                      onClick={onUnregister(item.id)}
+                                                      disabled={(isSubmitting && loading) || !updateEntitySuccess}
+                                                    >
+                                                      {t('anftDapp.registerComponent.unregister.unregister')}
+                                                    </CButton>
+                                                  </CCol>
+                                                </CFormGroup>
+                                              )}
+                                            </>
+                                          ) : (
+                                            <CFormGroup row>
+                                              <CCol xs={12} className="d-flex justify-content-center mt-3">
+                                                <CButton
+                                                  className="btn-radius-50 btn-primary mr-2"
+                                                  type="submit"
+                                                  disabled={(isSubmitting && loading) || !updateEntitySuccess}
+                                                >
+                                                  {t('anftDapp.registerComponent.register')}
+                                                </CButton>
+                                              </CCol>
+                                            </CFormGroup>
+                                          )
                                         ) : (
-                                          <CFormGroup row>
-                                            <CCol xs={12} className="d-flex justify-content-center mt-3">
-                                              <CButton
-                                                className="btn-radius-50 btn-primary mr-2"
-                                                type="submit"
-                                                disabled={(isSubmitting && loading) || !updateEntitySuccess}
-                                              >
-                                                {t('anftDapp.registerComponent.register')}
-                                              </CButton>
-                                            </CCol>
-                                          </CFormGroup>
-                                        )
-                                      ) : (
-                                        ''
-                                      )}
-                                    </CForm>
-                                  )}
-                                </Formik>
-                              </CCol>
-                            </CRow>
-                          </CCardBody>
-                        </CCard>
-                      </CCollapse>
-                    );
-                  },
-                }}
-              />
-              <CCol xs={12} className="px-0">
-                <i className="detail-title-font">{t('anftDapp.registerComponent.selectActivity')}</i>
+                                          ''
+                                        )}
+                                      </CForm>
+                                    )}
+                                  </Formik>
+                                </CCol>
+                              </CRow>
+                            </CCardBody>
+                          </CCard>
+                        </CCollapse>
+                      );
+                    },
+                  }}
+                />
+                <CCol xs={12} className="px-0">
+                  <i className="detail-title-font">{t('anftDapp.registerComponent.selectActivity')}</i>
+                </CCol>
+                <CCol xs={12} className="text-center my-2">
+                  <CLink to={`/${Number(id)}/activity-logs`}>
+                    <CIcon name="cil-history" /> {t('anftDapp.listingComponent.activityLogs')}
+                  </CLink>
+                </CCol>
+              </>
+            ) : (
+              <CCol xs={12} className="p-0">
+                <div className="alert alert-warning my-3">
+                  <span>{t('anftDapp.registerComponent.pleaseConnectWallet')}</span>
+                </div>
               </CCol>
-              <CCol xs={12} className="text-center my-2">
-                <CLink to={`/${Number(id)}/activity-logs`}>
-                  <CIcon name="cil-history" /> {t('anftDapp.listingComponent.activityLogs')}
-                </CLink>
-              </CCol>
-            </>
-          ) : (
-            <CCol xs={12} className="p-0">
-              <div className="alert alert-warning my-3">
-                <span>{t('anftDapp.registerComponent.pleaseConnectWallet')}</span>
-              </div>
-            </CCol>
-          )}
+            )}
+          </CRow>
           <ConfirmModal
             isVisible={modalsVisibility[ModalType.REWARD_CLAIM]}
             color="success"
             title={t('anftDapp.registerComponent.claimReward.claimRewardModalTitle')}
             CustomJSX={() => {
-              if (chosenOptionId === undefined || !listing?.options) return <></>;
+              if (chosenOptionId === undefined || !listing?.listingPotentials) return <></>;
               return (
                 <p>
                   {t('anftDapp.registerComponent.claimReward.claimRewardModalContent')}{' '}
-                  <span className="text-primary">“{listing.options[chosenOptionId].name}”</span>?
+                  <span className="text-primary">“{listing?.listingPotentials[chosenOptionId]?.name || ''}”</span>?
                 </p>
               );
             }}
-            onConfirm={() => onClaimRewardCnfrm(listing?.options ? listing.options[chosenOptionId!].id : 0)}
+            onConfirm={() => onClaimRewardCnfrm(chosenOptionId || 0)}
             onAbort={() => handleModalVisibility(ModalType.REWARD_CLAIM, false)}
           />
           <ConfirmModal
@@ -743,22 +759,25 @@ const Register = (props: IRegisterProps) => {
             color="danger"
             title={t('anftDapp.registerComponent.unregister.unregisterModalTitle')}
             CustomJSX={() => {
-              if (chosenOptionId === undefined || !listing?.options) return <></>;
+              if (chosenOptionId === undefined || !listing?.listingPotentials) return <></>;
               return (
                 <p>
                   {t('anftDapp.registerComponent.unregister.unregisterModalContentPrev')}{' '}
-                  <span className="text-primary">“{listing.options[chosenOptionId].name}”</span>{' '}
+                  <span className="text-primary">“{listing.listingPotentials[chosenOptionId]?.name || ''}”</span>{' '}
                   {t('anftDapp.registerComponent.unregister.unregisterModalContentNext')}{' '}
                   <span className="text-primary">
-                    {formatBNToken(listing.options[chosenOptionId].stake?.amount, true)}
+                    {formatBNToken(listing.listingPotentials[chosenOptionId]?.stake?.amount, true)}
                   </span>
                   ?
                 </p>
               );
             }}
-            onConfirm={() => onUnregisterCnfrm(listing?.options ? listing.options[chosenOptionId!].id : 0)}
+            onConfirm={() => onUnregisterCnfrm(chosenOptionId || 0)}
             onAbort={() => handleModalVisibility(ModalType.REWARD_UNREGISTER, false)}
           />
+        </CCol>
+        <CCol xs={12} lg={`${isMobile ? '12' : '4'}`} className={isMobile ? `d-none` : 'p-0'}>
+          <Listings />
         </CCol>
       </CRow>
     </CContainer>

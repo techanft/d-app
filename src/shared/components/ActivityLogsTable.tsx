@@ -4,14 +4,14 @@ import React from 'react';
 import { TFunction, useTranslation } from 'react-i18next';
 import { APP_DATE_FORMAT, BLOCKCHAIN_NETWORK } from '../../config/constants';
 import { IRecordParams } from '../../views/records/records.api';
-import { calculateDateDifference, getEllipsisTxt, insertCommas, returnOptionNameById } from '../casual-helpers';
+import { calculateDateDifference, getEllipsisTxt, insertCommas } from '../casual-helpers';
 import { RecordType } from '../enumeration/recordType';
 import {
   IRecordClaim,
   IRecordOwnership,
   IRecordRegister,
   IRecordUnRegister,
-  IRecordWithdraw
+  IRecordWithdraw,
 } from '../models/record.model';
 import { TableType, TRecordTypeArray } from './ActivityLogsContainer';
 
@@ -42,7 +42,7 @@ const renderRecordOwnerShip = ({
     <tr>
       <td>{transFunc('anftDapp.activityLogsComponent.activityLogsTable.listing')}</td>
       <td className="text-right text-truncate" style={{ maxWidth: '100px' }}>
-        <CLink to={`/${record.listingId}/detail`}>{`BĐS thử nghiệm ${record.listingId}`}</CLink>
+        <CLink to={`/${record.listingId}/detail`}>{record.listingName || '_'}</CLink>
       </td>
     </tr>
     {record.txHash && (
@@ -91,7 +91,7 @@ const renderRecordOwnerShip = ({
     </tr>
     <tr>
       <td>{transFunc('anftDapp.activityLogsComponent.activityLogsTable.amount')}</td>
-      <td className="text-right">{insertCommas(record.amount || '')}</td>
+      <td className="text-right">{insertCommas(record.amount || '', 10)}</td>
     </tr>
   </>
 );
@@ -101,7 +101,7 @@ const renderRecordClaim = ({ record, transFunc, shouldDisplayBlockchainAddress }
     <tr>
       <td>{transFunc('anftDapp.activityLogsComponent.activityLogsTable.listing')}</td>
       <td className="text-right text-truncate" style={{ maxWidth: '100px' }}>
-        <CLink to={`/${record.listingId}/detail`}>{`BĐS thử nghiệm ${record.listingId}`}</CLink>
+        <CLink to={`/${record.listingId}/detail`}>{record.listingName || '_'}</CLink>
       </td>
     </tr>
     {record.txHash && (
@@ -138,7 +138,7 @@ const renderRecordClaim = ({ record, transFunc, shouldDisplayBlockchainAddress }
     )}
     <tr>
       <td>{transFunc('anftDapp.activityLogsComponent.activityLogsTable.amount')}</td>
-      <td className="text-right">{insertCommas(record.amount || '', 6)}</td>
+      <td className="text-right">{insertCommas(record.amount || '', 10)}</td>
     </tr>
 
     <tr>
@@ -161,7 +161,7 @@ const renderRecordRegister = ({
     <tr>
       <td>{transFunc('anftDapp.activityLogsComponent.activityLogsTable.listing')}</td>
       <td className="text-right text-truncate" style={{ maxWidth: '100px' }}>
-        <CLink to={`/${record.listingId}/detail`}>{`BĐS thử nghiệm ${record.listingId}`}</CLink>
+        <CLink to={`/${record.listingId}/detail`}>{record.listingName || '_'}</CLink>
       </td>
     </tr>
     {record.txHash && (
@@ -198,11 +198,13 @@ const renderRecordRegister = ({
     )}
     <tr>
       <td>{transFunc('anftDapp.registerComponent.activity')}</td>
-      <td className="text-right">{returnOptionNameById(Number(record.optionId))}</td>
+      <td className="text-right">
+        {record.listingPotentials ? record.listingPotentials[Number(record.optionId)]?.name : '_'}
+      </td>
     </tr>
     <tr>
       <td>{transFunc('anftDapp.activityLogsComponent.activityLogsTable.amount')}</td>
-      <td className="text-right">{insertCommas(record.amount || '')}</td>
+      <td className="text-right">{insertCommas(record.amount || '', 10)}</td>
     </tr>
   </>
 );
@@ -216,7 +218,7 @@ const renderRecordUnRegister = ({
     <tr>
       <td>{transFunc('anftDapp.activityLogsComponent.activityLogsTable.listing')}</td>
       <td className="text-right text-truncate" style={{ maxWidth: '100px' }}>
-        <CLink to={`/${record.listingId}/detail`}>{`BĐS thử nghiệm ${record.listingId}`}</CLink>
+        <CLink to={`/${record.listingId}/detail`}>{record.listingName || '_'}</CLink>
       </td>
     </tr>
     {record.txHash && (
@@ -253,7 +255,9 @@ const renderRecordUnRegister = ({
     )}
     <tr>
       <td>{transFunc('anftDapp.registerComponent.activity')}</td>
-      <td className="text-right">{returnOptionNameById(Number(record.optionId))}</td>
+      <td className="text-right">
+        {record.listingPotentials ? record.listingPotentials[Number(record.optionId)]?.name : '_'}
+      </td>
     </tr>
   </>
 );
@@ -267,7 +271,7 @@ const renderRecordWithdraw = ({
     <tr>
       <td>{transFunc('anftDapp.activityLogsComponent.activityLogsTable.listing')}</td>
       <td className="text-right text-truncate" style={{ maxWidth: '100px' }}>
-        <CLink to={`/${record.listingId}/detail`}>{`BĐS thử nghiệm ${record.listingId}`}</CLink>
+        <CLink to={`/${record.listingId}/detail`}>{record.listingName || '_'}</CLink>
       </td>
     </tr>
     {record.txHash && (
@@ -321,7 +325,7 @@ const renderRecordWithdraw = ({
     </tr>
     <tr>
       <td>{transFunc('anftDapp.activityLogsComponent.activityLogsTable.amount')}</td>
-      <td className="text-right">{insertCommas(record.amount || '')}</td>
+      <td className="text-right">{insertCommas(record.amount || '', 10)}</td>
     </tr>
   </>
 );

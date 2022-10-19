@@ -11,8 +11,8 @@ import TheSidebar from './TheSidebar';
 
 const TheLayout = () => {
   const { providerErrorMessage } = useSelector((state: RootState) => state.wallet);
-  const containerState = useSelector((state: RootState) => state.container);
-  const { sidebarShow } = containerState;
+  // const containerState = useSelector((state: RootState) => state.container);
+  // const { sidebarShow } = containerState;
   const { isMobile } = useDeviceDetect();
   const shouldDisplayLogoScreen = useCountdownTimer({ seconds: 1 });
 

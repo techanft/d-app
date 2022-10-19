@@ -7,7 +7,7 @@ import { LISTING_INSTANCE } from '../../shared/blockchain-helpers';
 import { ToastInfo } from '../../shared/components/Toast';
 import { IAsset } from '../../shared/models/assets.model';
 import { IGetAllResp } from '../../shared/models/base.model';
-import { baseOptions, IOption, IStake } from '../../shared/models/options.model';
+import { IOption, IStake } from '../../shared/models/options.model';
 import { Listing } from '../../typechain';
 import { IAssetFilter } from '../listings/Listings';
 
@@ -63,7 +63,7 @@ const getListingCompleteInfo = async (listing: IAsset, provider: ethers.provider
 
     const [ownership, value, dailyPayment, owner, validator, totalStake] = await Promise.all(
       Object.values(promises)
-    );
+    ) ;
 
     return {
       ...listing,
@@ -125,7 +125,7 @@ export const getOptionsWithStakes = createAsyncThunk(
       const { listing, stakeholder, provider } = body;
       const instance = LISTING_INSTANCE({address: listing.address, provider});
       if (!instance) throw String('Error in generating listing instance');
-      const options = await getOptionsOverview(instance);
+      const options = await getOptionsOverview(instance, listing);
       const optionsWithStakesPromises = options.map(({ id }) => getOptionStake(instance, id, stakeholder));
       const results = await Promise.all(optionsWithStakesPromises);
 
@@ -134,26 +134,26 @@ export const getOptionsWithStakes = createAsyncThunk(
         stake: results[i],
       }));
 
-      return { ...listing, options: optionsWithStakes };
+      return { ...listing, listingPotentials: optionsWithStakes };
     } catch (error: any) {
       return thunkAPI.rejectWithValue(error.response.data);
     }
   }
 );
 
-const getOptionsOverview = async (contract: Listing) => {
-  const optionsPromises = baseOptions.map(({ id }) => contract.options(id));
+const getOptionsOverview = async (contract: Listing, listing: IAsset) => {
+  const optionsPromises = listing.listingPotentials.map((item, i) => contract.options(i));
 
   const results = await Promise.all(optionsPromises);
 
-  const options: IOption[] = baseOptions.map((initialOption, i) => ({
+  const options: IOption[] = listing.listingPotentials.map((initialOption, i) => ({
     ...initialOption,
+    id: i,
     reward: results[i]._reward,
     totalStake: results[i]._totalStake,
     isSet: results[i]._isSet,
   }));
-  const activeOptions = options.filter((e) => e.reward?.toNumber() !== 0);
-  return activeOptions;
+  return options;
 };
 
 const getOptionStake = async (listingContract: Listing, optionId: number, stakeholder: string) => {
@@ -167,3 +167,16 @@ const getOptionStake = async (listingContract: Listing, optionId: number, stakeh
   };
   return stake;
 };
+
+interface IGetListingsByListingAddresses {
+  addresses: string[]
+}
+
+export const getListingsInfo = createAsyncThunk(`get-all-${prefix}`, async (body: IGetListingsByListingAddresses, thunkAPI) => {
+  try {
+    const { data } = await axios.post<IGetAllResp<IAsset> >(`${MANAGEMENT_SITE_URL}api/public/listings`, body);
+    return data;
+  } catch (error: any) {
+    return thunkAPI.rejectWithValue(error.response.data);
+  }
+});

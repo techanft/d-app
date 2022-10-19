@@ -67,15 +67,14 @@ const LogsOverview = (props: IActivityLogs) => {
 
   return (
     <CContainer fluid className="mx-0 my-2">
-      <CRow>
-        <CCol xs={12}>
+      <CRow className={'justify-content-center'}>
+        <CCol xs={12} md={`${isMobile ? '12' : '8'}`}>
           <CButton className="text-primary p-0 pb-1 ">
             <CIcon name="cil-arrow-circle-left" onClick={() => history.goBack()} size="lg" />
           </CButton>
           <CLabel className="text-primary content-title ml-1">{t('anftDapp.listingComponent.activityLogs')}</CLabel>
         </CCol>
-        </CRow><CRow className={"justify-content-center"}>
-        <CCol xs={`${isMobile ? '12' : '8'}`}>
+        <CCol xs={12} md={`${isMobile ? '12' : '8'}`}>
           <Formik
             initialValues={filterState}
             validationSchema={validationSchema}

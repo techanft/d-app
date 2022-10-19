@@ -5,11 +5,12 @@ import {
   CCardBody,
   CCardHeader,
   CCol,
-  CCollapse, CForm,
+  CCollapse,
+  CForm,
   CInput,
   CLabel,
   CRow,
-  CSelect
+  CSelect,
 } from '@coreui/react';
 import { FormikState } from 'formik';
 import React, { useState } from 'react';
@@ -68,47 +69,47 @@ export const SearchContainer = (props: ISearchContainer) => {
   };
   return (
     <>
-        <CForm onSubmit={handleSubmit}>
-          <CRow className="search-container">
-            <CCol xs={12}>
-              <CCard className={'btn-radius-25i m-0'}>
-                <CCardHeader className={'btn-radius-50i border-bottom-0'}>
-                  <div className="d-flex justify-content-between">
-                    <p className="content-title mb-0">
-                      {!cardVisible ? t('anftDapp.headerComponent.filter.filter') : ''}
-                    </p>
+      <CForm onSubmit={handleSubmit}>
+        <CRow className="search-container">
+          <CCol xs={12}>
+            <CCard className={'btn-radius-25i m-0'}>
+              <CCardHeader className={'btn-radius-50i border-bottom-0'}>
+                <div className="d-flex justify-content-between">
+                  <p className="content-title mb-0">
+                    {!cardVisible ? t('anftDapp.headerComponent.filter.filter') : ''}
+                  </p>
 
-                    <div>
-                      <CButton className="collapse-icon btn-tool " onClick={handleResetForm}>
-                        <CIcon name="cil-filter-x" size="lg" />
-                      </CButton>
-                      <CButton
-                        className="collapse-icon btn-tool toggle-collapse-btn"
-                        onClick={setCardVisibleListener(!cardVisible)}
-                      >
-                        <CIcon name={cardVisible ? 'cil-fullscreen-exit' : 'cil-fullscreen'} size="lg" />
-                      </CButton>
-                    </div>
+                  <div>
+                    <CButton className="collapse-icon btn-tool " onClick={handleResetForm}>
+                      <CIcon name="cil-filter-x" size="lg" />
+                    </CButton>
+                    <CButton
+                      className="collapse-icon btn-tool toggle-collapse-btn"
+                      onClick={setCardVisibleListener(!cardVisible)}
+                    >
+                      <CIcon name={cardVisible ? 'cil-fullscreen-exit' : 'cil-fullscreen'} size="lg" />
+                    </CButton>
                   </div>
-                </CCardHeader>
-                <CCollapse show={cardVisible}>
-                  <CCardBody>
-                    <CRow className="mb-1">
-                      {listComponent.map((item, index) => (
-                        <React.Fragment key={index}>{item}</React.Fragment>
-                      ))}
-                    </CRow>
-                    <CRow className="text-center justify-content-center">
-                      <CButton type="submit" className="btn btn-primary btn-radius-50">
-                        {t('anftDapp.headerComponent.filter.apply')}
-                      </CButton>
-                    </CRow>
-                  </CCardBody>
-                </CCollapse>
-              </CCard>
-            </CCol>
-          </CRow>
-        </CForm>
+                </div>
+              </CCardHeader>
+              <CCollapse show={cardVisible}>
+                <CCardBody>
+                  <CRow className="mb-1">
+                    {listComponent.map((item, index) => (
+                      <React.Fragment key={index}>{item}</React.Fragment>
+                    ))}
+                  </CRow>
+                  <CRow className="text-center justify-content-center">
+                    <CButton type="submit" className="btn btn-primary btn-radius-50">
+                      {t('anftDapp.headerComponent.filter.apply')}
+                    </CButton>
+                  </CRow>
+                </CCardBody>
+              </CCollapse>
+            </CCard>
+          </CCol>
+        </CRow>
+      </CForm>
     </>
   );
 };
@@ -124,7 +125,7 @@ export const FilterComponent = (props: IFilterComponent) => {
               return (
                 <React.Fragment key={i}>
                   {item.singleInput ? (
-                    <CCol xs={12} md={6} xxl={3} className={`px-5px textCol ${item.isHidden ? 'd-none' : ''}`}>
+                    <CCol xs={12} md={6} xxl={6} className={`px-5px textCol ${item.isHidden ? 'd-none' : ''}`}>
                       <CLabel htmlFor={item.id} className="mb-2">
                         {item.title}
                       </CLabel>
@@ -190,7 +191,7 @@ export const FilterComponent = (props: IFilterComponent) => {
                       />
                     </CCol>
                   ) : (
-                    <CCol xs={12} md={6} xxl={3} className={`px-5px textCol ${item.isHidden ? 'd-none' : ''}`}>
+                    <CCol xs={12} md={6} xxl={6} className={`px-5px textCol ${item.isHidden ? 'd-none' : ''}`}>
                       <CRow>
                         <CCol xs={6} sm={6} className="pr-5px">
                           <CLabel htmlFor={item.id}>{item.title}</CLabel>

@@ -2,7 +2,6 @@ import { BigNumber, ethers } from 'ethers';
 import moment from 'moment';
 import { APP_DATE_FORMAT, TOKEN_SYMBOL } from '../config/constants';
 import { IAsset } from './models/assets.model';
-import { baseOptions } from './models/options.model';
 
 export const estimateOwnership = (amount: BigNumber, dailyPayment: BigNumber, currentOwnership: BigNumber) => {
   const initialOwnership = checkOwnershipExpired(currentOwnership.toNumber())
@@ -106,15 +105,6 @@ export const formatLocalDatetime = (input: string | Date | undefined): string =>
   return moment(input).format(APP_DATE_FORMAT);
 };
 
-export const returnOptionNameById = (optionId: number): string => {
-  const optionsPromises = baseOptions.find((item) => item.id === optionId);
-  if (optionsPromises) {
-    return optionsPromises.name;
-  } else {
-    return '_';
-  }
-};
-
 // Duplicative logic:
 // startDate/toDate originally are momment.Momment
 // They're converted to ISOString as params to put in this function
@@ -202,7 +192,7 @@ export const calculateRatio = (firstNumb: number, secondNumb: number): IFraction
 // This method checks if an array include multiple elements
 export const includeMultiple = <T>(superset: Array<T> = [], ...subset: Array<T>): boolean => {
   return subset.every(function (value) {
-    return (superset.indexOf(value) >= 0);
+    return superset.indexOf(value) >= 0;
   });
 };
 

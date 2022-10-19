@@ -67,11 +67,11 @@ const Listing = (props: IListingProps) => {
   return (
     <CContainer>
       <CRow className={'justify-content-center'}>
-        <CCol xs={12} lg={`${isMobile ? '12' : '8'}`}>
+        <CCol xs={12} lg={`${isMobile ? '12' : '8'}`} className={isMobile ? 'p-0' : ''}>
           <CRow className="mx-0">
             <SubmissionModal />
             <Primary listingId={Number(id)} />
-            <Secondary />
+            <Secondary listingId={Number(id)} />
 
             <CCol xs={12} className="text-center my-3">
               <CLink to={`/${Number(id)}/activity-logs`} className="text-decoration-none">
@@ -86,7 +86,7 @@ const Listing = (props: IListingProps) => {
           </CCol> */}
           </CRow>
         </CCol>
-        <CCol xs={12} lg={`${isMobile ? '12' : '4'}`}>
+        <CCol xs={12} lg={`${isMobile ? '12' : '4'}`} className="p-0">
           <Listings />
         </CCol>
       </CRow>

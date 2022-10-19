@@ -17,7 +17,7 @@ import {
   CRow,
   CSelect,
   CSubheader,
-  CTooltip
+  CTooltip,
 } from '@coreui/react';
 import { faInfoCircle, faSyncAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -31,7 +31,6 @@ import Logo from '../assets/img/logo.png';
 import { TOKEN_INSTANCE } from '../shared/blockchain-helpers';
 import { formatBNToken, getEllipsisTxt } from '../shared/casual-helpers';
 import { ToastError, ToastInfo } from '../shared/components/Toast';
-import { ExchangeType } from '../shared/enumeration/exchangeType';
 import { Language } from '../shared/enumeration/language';
 import useDeviceDetect from '../shared/hooks/useDeviceDetect';
 import { RootState } from '../shared/reducers';
@@ -39,7 +38,7 @@ import { getEntities } from '../views/assets/assets.api';
 import {
   fetchingEntities,
   setFilterState as setStoredFilterState,
-  softReset as assetsSoftReset
+  softReset as assetsSoftReset,
 } from '../views/assets/assets.reducer';
 import { IAssetFilter } from '../views/listings/Listings';
 import { softReset as transactionsSoftReset } from '../views/transactions/transactions.reducer';
@@ -48,7 +47,7 @@ import {
   getContractWithSigner,
   getProviderLogin,
   getSigner,
-  getTokenBalance
+  getTokenBalance,
 } from '../views/wallet/wallet.api';
 import { resetSigner, softReset as walletSoftReset } from '../views/wallet/wallet.reducer';
 import { toggleSidebar } from './reducer';
@@ -75,9 +74,9 @@ const dataFilterDemo: IDataFilter[] = [
 
 const initialValues: IAssetFilter = {
   page: 0,
-  size: 5,
+  size: 12,
   sort: 'createdDate,desc',
-  level: ExchangeType.PRIMARY,
+  sellStatus: 'YET_SOLD,LOCKED',
 };
 
 type TListingsFilter = {
@@ -195,7 +194,6 @@ const TheHeader = () => {
     return {
       ...values,
       owner: Boolean(values.owner) ? signerAddress : undefined,
-      level: Boolean(values.owner) ? ExchangeType.SECONDARY : ExchangeType.PRIMARY,
     };
   };
 
@@ -235,7 +233,7 @@ const TheHeader = () => {
               )}
             </CHeaderNavItem>
           </CHeaderNav>
-          <CHeaderNav>
+          <CHeaderNav className="px-2">
             <CHeaderNavItem className={`mr-3 ml-auto ${isMobile ? 'd-none' : 'd-none d-lg-block'}`}>
               <CLink to="/listings" className={`${highlightNavItem('/listings')} c-sidebar-nav-link`}>
                 {t('anftDapp.headerComponent.dashboard')}
@@ -296,7 +294,7 @@ const TheHeader = () => {
             ) : (
               ''
             )}
-            <CHeaderNavItem className={`${isDashboardView ? 'mr-3 ml-auto' : 'ml-auto'}`}>
+            <CHeaderNavItem className={`${isDashboardView ? 'mr-3 ml-auto' : 'ml-auto mr-lg-3'}`}>
               <CButton className="btn-link-wallet btn-radius-50 px-2 btn-font-style" onClick={onConnectWallet}>
                 {signerAddress ? (
                   <b>
