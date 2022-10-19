@@ -1,12 +1,15 @@
 import { BigNumber } from 'ethers';
 import { CommercialTypes, Methods } from '../enumeration/comercialType';
+import { ExchangeType } from '../enumeration/exchangeType';
 import { IDurationRisk } from './listingType.model';
 import { IOption } from './options.model';
+import { IDistrictsAddress, IProvincesAddress } from './provinces.model';
 
 interface IListingType {
   name: string;
   id: string;
 }
+
 export interface IAsset {
   id: string;
   createdDate: Date;
@@ -39,4 +42,7 @@ export interface IAsset {
   type: IListingType;
   quality: string;
   numberOfStorey: number;
+  level: ExchangeType;
+  province: IProvincesAddress;
+  district: IDistrictsAddress;
 }

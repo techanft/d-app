@@ -74,8 +74,9 @@ const dataFilterDemo: IDataFilter[] = [
 
 const initialValues: IAssetFilter = {
   page: 0,
-  size: 10,
+  size: 12,
   sort: 'createdDate,desc',
+  sellStatus: 'YET_SOLD,LOCKED',
 };
 
 type TListingsFilter = {
@@ -293,7 +294,7 @@ const TheHeader = () => {
             ) : (
               ''
             )}
-            <CHeaderNavItem className={`${isDashboardView ? 'mr-3 ml-auto' : 'ml-auto'}`}>
+            <CHeaderNavItem className={`${isDashboardView ? 'mr-3 ml-auto' : 'ml-auto mr-lg-3'}`}>
               <CButton className="btn-link-wallet btn-radius-50 px-2 btn-font-style" onClick={onConnectWallet}>
                 {signerAddress ? (
                   <b>

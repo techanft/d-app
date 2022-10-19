@@ -60,6 +60,9 @@
         "type": "Type",
         "state": "State",
         "services": "Services",
+        "bedroom": "Bedroom",
+        "livingroom": "Living room",
+        "ownershipStatus": "Ownership status",
         "apply": "APPLY"
       }
     },
@@ -68,6 +71,8 @@
       "listingValue": "Value",
       "dailyPayment": "Daily Payment",
       "noListingFound": "No listing found",
+      "primary": "Primary",
+      "secondary": "Secondary",
       "primaryInfo": {
         "day": "day",
         "ownershipStatus": {
@@ -130,7 +135,7 @@
         "SELL_RENT": "Sell and Rent"
       },
       "extendOwnership": {
-        "dailyPayment":"Daily Payment",
+        "dailyPayment": "Daily Payment",
         "currentOwnership": "Current Ownership",
         "tokenBalance": "Token Balance",
         "cannotRegisterOwnership": "This listing is being owned by another address!",
@@ -139,7 +144,8 @@
         "incorrectInputType": "Incorrect input type!",
         "inputIsRequired": "This field is required!",
         "minimumOwnership": "Minimum ownership for the listing is 1.0 day!",
-        "noticeText": "Ownership will be started from now to the end of the selected day (23:30 - {{day}})",
+        "registerOwnershipNoticeText": "Ownership will be started from now to the end of the selected day 23:30 - {{day}}",
+        "extendOwnershipNoticeText": "Ownership will be continued from 23:30 - {{expiredDay}} to the end of the selected day 23:30 - {{day}}",
         "exceedingPeriod": "Ownership days cannot exceed the maximum ownership period: {{day}} days",
         "exceedingLicenseExpirationDate": "Ownership days cannot exceed the license expiration date: {{day}}",
         "priceStatus": {
@@ -156,7 +162,8 @@
         "successRate": "Success rate",
         "profitRatio": "Profit rate",
         "exchange": "Exchange",
-        "maximumStage":"Maximum stage"
+        "maximumStage": "Maximum stage",
+        "registerOwnershipSuccess": "Successfully extended ownership, please redirect to Listing Management Dashboard to set up the price"
       },
       "withdrawToken": {
         "maximumWithdrawable": "Maximum Days",
