@@ -204,4 +204,32 @@ export const includeMultiple = <T>(superset: Array<T> = [], ...subset: Array<T>)
   return subset.every(function (value) {
     return (superset.indexOf(value) >= 0);
   });
+};
+
+interface IMoneyUnitTranslate {
+  number: string;
+  unit: string | undefined;
 }
+
+export const moneyUnitTranslate = (input: number): IMoneyUnitTranslate => {
+  const units = ['million', 'billion', 'trillion', 'quadrillion'];
+  const unit = Math.floor((input / 1.0e1).toFixed(0).toString().length);
+  const r = unit % 3;
+  const pair = Number('1.0e+' + (unit - r));
+  const x = Math.abs(Number(input)) / Number(pair.toFixed(2));
+  return {
+    number: x.toFixed(2),
+    unit: units[Math.floor(unit / 3) - 2],
+  };
+};
+
+
+export const checkIsLocalhost = (): boolean => {
+  const isLocalHost =
+    window.location.hostname === 'localhost' ||
+    // [::1] is the IPv6 localhost address.
+    window.location.hostname === '[::1]' ||
+    // 127.0.0.1/8 is considered localhost for IPv4.
+    Boolean(window.location.hostname.match(/^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/));
+  return isLocalHost;
+};
