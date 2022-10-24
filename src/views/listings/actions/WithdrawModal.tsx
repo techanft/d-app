@@ -146,7 +146,7 @@ const WithdrawModal = (props: IWithdrawModal) => {
   }, [isVisible]);
 
   return (
-    <CModal show={isVisible} onClose={closeModal} centered className="border-radius-modal">
+    <CModal show={isVisible} onClose={closeModal} closeOnBackdrop={false} centered className="border-radius-modal">
       <CModalHeader className="justify-content-center">
         <CModalTitle className="modal-title-style">
           {t('anftDapp.listingComponent.primaryInfo.ownershipManagement.withdrawToken')}

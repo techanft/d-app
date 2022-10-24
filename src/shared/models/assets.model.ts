@@ -1,5 +1,6 @@
 import { BigNumber } from 'ethers';
 import { CommercialTypes, Methods } from '../enumeration/comercialType';
+import { RentStatus, SellStatus } from '../enumeration/commercialStatus';
 import { ExchangeType } from '../enumeration/exchangeType';
 import { IDurationRisk } from './listingType.model';
 import { IOption } from './options.model';
@@ -45,4 +46,6 @@ export interface IAsset {
   level: ExchangeType;
   province: IProvincesAddress;
   district: IDistrictsAddress;
+  sellStatus: SellStatus;
+  rentStatus: RentStatus;
 }
