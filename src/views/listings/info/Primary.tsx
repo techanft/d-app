@@ -38,6 +38,7 @@ import ConfirmationLoading from '../../../shared/components/ConfirmationLoading'
 import CopyTextToClipBoard from '../../../shared/components/CopyTextToClipboard';
 import InfoLoader from '../../../shared/components/InfoLoader';
 import { ToastError, ToastInfo } from '../../../shared/components/Toast';
+import { SellStatus } from '../../../shared/enumeration/commercialStatus';
 import { CollapseType, ModalType, TCollapseVisibility, TModalsVisibility } from '../../../shared/enumeration/modalType';
 import useWindowDimensions from '../../../shared/hooks/useWindowDimensions';
 import { IAsset } from '../../../shared/models/assets.model';
@@ -165,6 +166,8 @@ const ListingInfo = (props: IListingInfoProps) => {
   const ownershipAboutToExpire = listing?.ownership ? checkOwnershipAboutToExpire(listing.ownership.toNumber()) : false;
   const viewerIsOwner = Boolean(signerAddress && signerAddress === listing?.owner);
 
+  const isListingSold = listing?.sellStatus === SellStatus.TRANSFER_WAITING || listing?.sellStatus === SellStatus.SOLD;
+
   const initialModalState: TModalsVisibility = {
     [ModalType.OWNERSHIP_EXTENSION]: false,
     [ModalType.OWNERSHIP_WITHDRAW]: false,
@@ -269,7 +272,11 @@ const ListingInfo = (props: IListingInfoProps) => {
 
           <CCol xs={12} className=" mb-3">
             {!entityLoading && listing?.ownership ? (
-              ownershipText(signerAddress, listing, t)
+              !isListingSold ? (
+                ownershipText(signerAddress, listing, t)
+              ) : (
+                ''
+              )
             ) : (
               <InfoLoader width={300} height={29} />
             )}
@@ -427,6 +434,7 @@ const ListingInfo = (props: IListingInfoProps) => {
             <CButton
               className="px-3 w-100 btn-radius-50 btn-font-style btn btn-outline-primary"
               onClick={toggleCollapseVisibility(CollapseType.INVESTMENT)}
+              disabled={isListingSold}
             >
               {t('anftDapp.listingComponent.primaryInfo.investmentActivities.investmentActivities')}
             </CButton>
@@ -464,6 +472,7 @@ const ListingInfo = (props: IListingInfoProps) => {
                 viewerIsOwner ? 'd-block' : 'd-none'
               }`}
               onClick={toggleCollapseVisibility(CollapseType.MANAGEMENT)}
+              disabled={isListingSold}
             >
               {t('anftDapp.listingComponent.primaryInfo.ownershipManagement.ownershipManagement')}
             </CButton>

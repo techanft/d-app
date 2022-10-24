@@ -24,6 +24,7 @@ import InfoLoader from '../../../shared/components/InfoLoader';
 import Loading from '../../../shared/components/Loading';
 import SubmissionModal from '../../../shared/components/SubmissionModal';
 import { ToastError } from '../../../shared/components/Toast';
+import { SellStatus } from '../../../shared/enumeration/commercialStatus';
 import { EventType } from '../../../shared/enumeration/eventType';
 import useDeviceDetect from '../../../shared/hooks/useDeviceDetect';
 import useWindowDimensions from '../../../shared/hooks/useWindowDimensions';
@@ -60,6 +61,7 @@ const WorkersList = (props: IWorkersList) => {
 
   const dispatch = useDispatch();
   const listing = useSelector(selectEntityById(Number(id)));
+  const isListingSold = listing?.sellStatus === SellStatus.TRANSFER_WAITING || listing?.sellStatus === SellStatus.SOLD;
   const { signer, provider, signerAddress } = useSelector((state: RootState) => state.wallet);
   const { initialState } = useSelector((state: RootState) => state.records);
   const { success, submitted, errorMessage } = useSelector((state: RootState) => state.transactions);
@@ -326,7 +328,7 @@ const WorkersList = (props: IWorkersList) => {
               <CButton
                 className="my-2 px-3 w-100 btn-radius-50 btn-font-style btn-primary"
                 onClick={setRequestListener(true, setAddWorkerPermission)}
-                disabled={listing ? !validateOwnership(signerAddress, listing) : true}
+                disabled={listing ? !validateOwnership(signerAddress, listing) || isListingSold : true}
               >
                 {t('anftDapp.workersListComponent.addWorkerPermission')}
               </CButton>
