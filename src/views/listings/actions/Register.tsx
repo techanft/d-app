@@ -44,6 +44,7 @@ import ConfirmModal from '../../../shared/components/ConfirmModal';
 import InfoLoader from '../../../shared/components/InfoLoader';
 import SubmissionModal from '../../../shared/components/SubmissionModal';
 import { ToastError, ToastInfo } from '../../../shared/components/Toast';
+import { SellStatus } from '../../../shared/enumeration/commercialStatus';
 import { EventType } from '../../../shared/enumeration/eventType';
 import { ModalType, TModalsVisibility } from '../../../shared/enumeration/modalType';
 import useDeviceDetect from '../../../shared/hooks/useDeviceDetect';
@@ -113,6 +114,8 @@ const Register = (props: IRegisterProps) => {
   const { entityLoading, fetchEntitySuccess, updateEntitySuccess } = initialState;
 
   const listing = useSelector(selectEntityById(Number(id)));
+
+  const isListingSold = listing?.sellStatus === SellStatus.TRANSFER_WAITING || listing?.sellStatus === SellStatus.SOLD;
 
   const { width: screenWidth } = useWindowDimensions();
 
@@ -440,6 +443,7 @@ const Register = (props: IRegisterProps) => {
                       return (
                         <td
                           onClick={() => {
+                            if (isListingSold) return;
                             toggleDetails(item.id?.toString());
                           }}
                         >
