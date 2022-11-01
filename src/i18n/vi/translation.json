@@ -4,7 +4,8 @@
       "errors": {
         "pleaseConnectWallet": "Vui lòng liên kết ví!",
         "errorSubmittingForm": "Lỗi gửi biểu mẫu",
-        "qrScanError": "Lỗi quét mã QR"
+        "qrScanError": "Lỗi quét mã QR",
+        "UNAUTHORIZED": "Tên đăng nhập hoặc mật khẩu không đúng"
       },
       "modal": {
         "confirm": "XÁC NHẬN",
@@ -33,13 +34,24 @@
       }
     },
 
+    "loginModal": {
+      "title": "Đăng nhập QLTS",
+      "userName": "Tên tài khoản",
+      "password": "Mật khẩu",
+      "login": "ĐĂNG NHẬP",
+      "loginSuccess": "Đăng nhập thành công",
+      "pleaseEnterUserName": "Vui lòng nhập tên tài khoản",
+      "pleaseEnterPassword": "Vui lòng nhập mật khẩu"
+    },
+
     "sidebarComponent": {
       "language": {
         "language": "Ngôn ngữ",
         "vietnamese": "Tiếng Việt",
         "english": "Tiếng Anh"
       },
-      "userGuide": "Hướng dẫn sử dụng"
+      "userGuide": "Hướng dẫn sử dụng",
+      "remAccount": "Tài khoản QLTS"
     },
 
     "headerComponent": {
@@ -163,7 +175,8 @@
         "profitRatio": "Đòn bẩy lợi nhuận",
         "exchange": "Quy Đổi",
         "maximumStage": "Kỳ tối đa",
-        "registerOwnershipSuccess": "Đã chốt quyền sở hữu thành công, vui lòng chuyển tới Nền tảng QLTS để thiết lập giá cho tài sản"
+        "registerOwnershipSuccess": "Đã chốt quyền sở hữu thành công",
+        "walletAddressNotMatchRemAccountWalletAddress": "Địa chỉ ví đã liên kết không trùng khớp với địa chỉ ví tài khoản QLTS"
       },
       "withdrawToken": {
         "maximumWithdrawable": "Số ngày rút tối đa",

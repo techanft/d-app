@@ -18,6 +18,7 @@ import {
   cilHistory,
   cilHome,
   cilLocationPin,
+  cilLockLocked,
   cilMenu,
   cilMinus,
   cilMoney,
@@ -26,6 +27,7 @@ import {
   cilQrCode,
   cilTag,
   cilTrash,
+  cilUser,
   cilX,
   cilXCircle,
 } from '@coreui/icons/js/free';
@@ -60,6 +62,8 @@ export const icons = Object.assign(
     cilObjectUngroup,
     cilClock,
     cilTag,
+    cilUser,
+    cilLockLocked
   },
   {
     cifVn,

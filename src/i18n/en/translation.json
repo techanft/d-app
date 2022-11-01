@@ -4,7 +4,8 @@
       "errors": {
         "pleaseConnectWallet": "Please connect to your wallet!",
         "errorSubmittingForm": "Error in submitting form",
-        "qrScanError": "Error in scanning QR code"
+        "qrScanError": "Error in scanning QR code",
+        "UNAUTHORIZED": "Unauthorized"
       },
       "modal": {
         "confirm": "CONFIRM",
@@ -33,13 +34,24 @@
       }
     },
 
+    "loginModal": {
+      "title": "Real Estate Management Login",
+      "userName": "User name",
+      "password": "Password",
+      "login": "LOGIN",
+      "loginSuccess": "Logged in successfully",
+      "pleaseEnterUserName": "Please enter username",
+      "pleaseEnterPassword": "Please enter password"
+    },
+
     "sidebarComponent": {
       "language": {
         "language": "Language",
         "vietnamese": "Vietnamese",
         "english": "English"
       },
-      "userGuide": "User Guide"
+      "userGuide": "User Guide",
+      "remAccount": "Real Estate Account"
     },
 
     "headerComponent": {
@@ -163,7 +175,8 @@
         "profitRatio": "Profit rate",
         "exchange": "Exchange",
         "maximumStage": "Maximum stage",
-        "registerOwnershipSuccess": "Successfully extended ownership, please redirect to Listing Management Dashboard to set up the price"
+        "registerOwnershipSuccess": "Successfully extended ownership",
+        "walletAddressNotMatchRemAccountWalletAddress": "Wallet address connected was not match with real estate management wallet address"
       },
       "withdrawToken": {
         "maximumWithdrawable": "Maximum Days",

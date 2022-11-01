@@ -8,10 +8,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import Logo from '../assets/img/logo.png';
 import { formatBNToken } from '../shared/casual-helpers';
+import LoginModal from '../shared/components/LoginModal';
 import { Dropdown } from '../shared/enumeration/dropdown';
 import { Language } from '../shared/enumeration/language';
 import useDeviceDetect from '../shared/hooks/useDeviceDetect';
 import { RootState } from '../shared/reducers';
+import { logout } from '../views/auth/auth.reducer';
 import { toggleSidebar } from './reducer';
 
 interface DropdownState {
@@ -26,9 +28,11 @@ const TheSidebar = () => {
   const location = useLocation().pathname;
   const dispatch = useDispatch();
   const { isMobile } = useDeviceDetect();
+  const { user } = useSelector((state: RootState) => state.authentication);
   const containerState = useSelector((state: RootState) => state.container);
   const { sidebarShow } = containerState;
   const { tokenBalance, signerAddress } = useSelector((state: RootState) => state.wallet);
+  const [loginModalVisible, setLoginModalVisible] = useState<boolean>(false);
 
   const { i18n, t } = useTranslation();
 
@@ -117,6 +121,19 @@ const TheSidebar = () => {
             </li>
           </ul>
         </li>
+        <li className={`c-sidebar-nav-item`}>
+          <CLink
+            className={`c-sidebar-nav-link`}
+            to=""
+            onClick={() => (!user ? setLoginModalVisible(true) : dispatch(logout()))}
+          >
+            <CIcon name="cil-user" size="lg" className={`c-sidebar-nav-icon text-primary`} />{' '}
+            <div className={'d-flex justify-content-between align-items-center w-100'}>
+              <span>{user ? user.login : t('anftDapp.sidebarComponent.remAccount')}</span>
+              {user ? <CIcon name="cil-account-logout" className="text-danger rotate-180" /> : ''}
+            </div>
+          </CLink>
+        </li>
       </ul>
       <CSidebarFooter className={`text-center bg-white`}>
         <span className="text-primary">
@@ -133,6 +150,8 @@ const TheSidebar = () => {
           )}
         </span>
       </CSidebarFooter>
+
+      {loginModalVisible ? <LoginModal isVisible={loginModalVisible} setVisibility={setLoginModalVisible} /> : ''}
     </CSidebar>
   );
 };

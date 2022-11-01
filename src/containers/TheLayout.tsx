@@ -1,12 +1,14 @@
 import CIcon from '@coreui/icons-react';
-import React from 'react';
-import { useSelector } from 'react-redux';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { TheContent, TheHeader } from '.';
 import Logo from '../assets/img/logo.png';
 import ErrorModal from '../shared/components/ErrorModal';
 import useCountdownTimer from '../shared/hooks/useCountdownTimer';
 import useDeviceDetect from '../shared/hooks/useDeviceDetect';
 import { RootState } from '../shared/reducers';
+import { account } from '../views/auth/auth.api';
+import { fetching } from '../views/auth/auth.reducer';
 import TheSidebar from './TheSidebar';
 
 const TheLayout = () => {
@@ -22,6 +24,22 @@ const TheLayout = () => {
     </div>
   );
 
+  const dispatch = useDispatch();
+  const { token } = useSelector((state: RootState) => state.authentication);
+  
+  useEffect(() => {
+    let tempToken = token;
+    if (!tempToken) {
+      tempToken = localStorage.getItem('authentication_token');
+    }
+    
+    if (tempToken) {
+      dispatch(fetching());
+      dispatch(account());
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token]);
+  
   if (shouldDisplayLogoScreen) return logoScreen;
 
   return (
