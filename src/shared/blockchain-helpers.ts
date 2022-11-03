@@ -44,8 +44,8 @@ export const LISTING_INSTANCE = ({ address, signer, provider }: IListingInstance
 
 export const promptUserToSwitchChain = () => {
   _window.ethereum.request({
-    method: 'wallet_addEthereumChain',
-    params: [BLOCKCHAIN_NETWORK],
+    method: 'wallet_switchEthereumChain',
+    params: [{chainId: BLOCKCHAIN_NETWORK.chainId}],
   });
 };
 
