@@ -12,6 +12,8 @@ const ActivityLogs = React.lazy(() => import('./views/listings/info/ActivityLogs
 
 const WorkersList = React.lazy(() => import('./views/listings/actions/WorkersList'));
 
+const RemAccountAuth = React.lazy(() => import('./views/auth/RemAccountAuth'))
+
 // https://github.com/ReactTraining/react-router/tree/master/packages/react-router-config
 const routes = [
   { path: '/listings', name: 'Listings', component: Listings, exact: true },
@@ -19,7 +21,14 @@ const routes = [
   {
     path: '/:id/detail',
     name: 'Listing',
-    component: Listing
+    component: Listing,
+    exact: true,
+  },
+  {
+    path: '/:id/detail/:token',
+    name: 'RemAccountAuth',
+    component: RemAccountAuth,
+    exact: true,
   },
   {
     path: '/:id/register',

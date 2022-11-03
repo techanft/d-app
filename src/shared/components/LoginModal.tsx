@@ -4,14 +4,15 @@ import {
   CCol,
   CForm,
   CInput,
-  CInputGroup, CInputGroupPrepend,
+  CInputGroup,
+  CInputGroupPrepend,
   CInvalidFeedback,
   CModal,
   CModalBody,
   CModalFooter,
   CModalHeader,
   CModalTitle,
-  CRow
+  CRow,
 } from '@coreui/react';
 import { Formik } from 'formik';
 import React, { useEffect } from 'react';
@@ -20,6 +21,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
 import { ILoginForm, loginKeyCloak } from '../../views/auth/auth.api';
 import { fetching, resetEntity } from '../../views/auth/auth.reducer';
+import { IUpdatePriceTransaction, updatePriceTransaction } from '../../views/transactions/transactions.api';
+import { IUpdateBusinessPrice, fetching as fetchingTransaction, softReset } from '../../views/transactions/transactions.reducer';
+import { BROADCAST_INSTANCE } from '../blockchain-helpers';
+import { MessageType } from '../enumeration/messageType';
+import { Roles } from '../enumeration/roles';
 import { RootState } from '../reducers';
 import { ToastError, ToastSuccess } from './Toast';
 
@@ -31,7 +37,12 @@ interface ILoginModal {
 const initialValues: ILoginForm = { username: '', password: '', rememberMe: false };
 
 const LoginModal = ({ isVisible, setVisibility }: ILoginModal) => {
-  const { loginSuccess, errorMessage } = useSelector((state: RootState) => state.authentication);
+  const { loginSuccess, errorMessage, user } = useSelector((state: RootState) => state.authentication);
+  const { businessPrice, updateBusinessPriceSuccess } = useSelector((state: RootState) => state.transactions);
+  const { signer, signerAddress } = useSelector((state: RootState) => state.wallet);
+
+  const isRoleUser = user?.role === Roles.USER;
+
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const validationSchema = Yup.object().shape({
@@ -57,6 +68,48 @@ const LoginModal = ({ isVisible, setVisibility }: ILoginModal) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [errorMessage]);
+
+  const handleValuesUpdatePrice = (values: IUpdateBusinessPrice): IUpdatePriceTransaction => {
+    if (!signer) {
+      throw Error('No Signer found');
+    }
+    const BroadcastInstance = BROADCAST_INSTANCE({ signer });
+    if (!BroadcastInstance) {
+      throw Error('Error in gerenating Broadcast Instance');
+    }
+
+    const output: IUpdatePriceTransaction = {
+      type: MessageType.UPDATE_PRICE,
+      rentPrice: Number(values.rentPrice || 0),
+      sellPrice: Number(values.sellPrice || 0),
+      listingId: values.listingId,
+      instance: BroadcastInstance,
+    };
+    return output;
+  };
+
+  useEffect(() => {
+    if (user && businessPrice) {
+      const bodyUpdateBusinessPrice = handleValuesUpdatePrice(businessPrice);
+      if (isRoleUser) {
+        if (user.walletAddress === signerAddress) {
+          dispatch(fetchingTransaction());
+          dispatch(updatePriceTransaction(bodyUpdateBusinessPrice));
+        } else {
+          ToastError(t(`anftDapp.listingComponent.extendOwnership.walletAddressNotMatchRemAccountWalletAddress`));
+        }
+      } else ToastError(t(`anftDapp.listingComponent.extendOwnership.remAccountInvalid`));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(user), JSON.stringify(businessPrice)]); 
+
+  useEffect(() => {
+    if (updateBusinessPriceSuccess) {
+      ToastSuccess(t('anftDapp.listingComponent.extendOwnership.updateBusinessPriceSuccess'))
+      dispatch(softReset())
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [updateBusinessPriceSuccess]);
 
   return (
     <CModal show={isVisible} centered className="border-radius-modal" closeOnBackdrop={false}>

@@ -15,9 +15,10 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
-import { formatBNToken, insertCommas, returnTheFirstImage } from '../../shared/casual-helpers';
+import { formatBNToken, includeMultiple, insertCommas, returnTheFirstImage } from '../../shared/casual-helpers';
 import FilterComponent from '../../shared/components/FilterComponent';
 import Loading from '../../shared/components/Loading';
+import { CommercialTypes } from '../../shared/enumeration/comercialType';
 import { mapExchangeTypeBadge } from '../../shared/enumeration/exchangeType';
 import useDeviceDetect from '../../shared/hooks/useDeviceDetect';
 import useWindowDimensions from '../../shared/hooks/useWindowDimensions';
@@ -117,6 +118,15 @@ const Listings = () => {
   const { width } = useWindowDimensions();
   const minimumWidthDisplayingTokenSymbol = 360;
 
+  const getComercialTypesName = (listing: IAsset) => {
+    const commercialTypes = listing?.commercialTypes || [];
+    const bothSellAndRentMethods = includeMultiple(commercialTypes, CommercialTypes.RENT, CommercialTypes.SELL);
+    const onlyRentMethod = commercialTypes?.length === 1 && commercialTypes.includes(CommercialTypes.RENT);
+    if (bothSellAndRentMethods) return 'SELL_RENT';
+    if (onlyRentMethod) return 'RENT';
+    return 'SELL';
+  };
+
   const ListView = ({ listing }: IViewComponent) => (
     <CCol md={12} className={`px-0 mx-0 ${hideDetailedListing(listing)} `}>
       <div
@@ -144,7 +154,7 @@ const Listings = () => {
               <tr className={`info-box-daily-payment`}>
                 <td className="d-flex align-items-center">
                   <CBadge color={mapExchangeTypeBadge[listing.level]} className="mt-1">
-                    {t(`anftDapp.listingComponent.${listing.level.toLocaleLowerCase()}`)}
+                    {t(`anftDapp.listingComponent.${listing.level?.toLocaleLowerCase()}`)}
                   </CBadge>
                 </td>
               </tr>
@@ -168,7 +178,7 @@ const Listings = () => {
           </div>
           <CCardImgOverlay className="">
             <CBadge color={mapExchangeTypeBadge[listing.level]} className="font-size-075">
-              {t(`anftDapp.listingComponent.${listing.level.toLocaleLowerCase()}`)}
+              {t(`anftDapp.listingComponent.${listing.level?.toLocaleLowerCase()}`)}
             </CBadge>
           </CCardImgOverlay>
         </CCard>
@@ -187,12 +197,15 @@ const Listings = () => {
               <span className={`d-none d-xl-inline`}>{`${listing.location} `}</span>
               {listing.district.name}, {listing.province.name}
             </h6>
-            <h6>
+            {/* <h6>
               <CIcon name="cil-object-ungroup" className="mr-1 text-primary" />
               {listing.areaLand ? insertCommas(listing.areaLand) : 0} m<sup>2</sup>
+            </h6> */}
+            <h6>
+              <CIcon name="cil-tag" className="text-warning" /> {listing.type.name}
             </h6>
             <h6 className="mb-0">
-              <CIcon name="cil-tag" className="text-warning" /> {listing.type.name}
+              <CIcon name="cil-list" className="text-primary" /> {t(`anftDapp.listingComponent.methods.${getComercialTypesName(listing)}`)}
             </h6>
           </CCardBody>
         </CCard>

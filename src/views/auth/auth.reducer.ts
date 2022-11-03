@@ -1,8 +1,6 @@
 import { IUser } from './../../shared/models/user.model';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import {
-    account, login, loginKeyCloak
-} from './auth.api';
+import { account, login, loginKeyCloak } from './auth.api';
 
 interface IInitialLoginState {
   loading: boolean;
@@ -11,6 +9,7 @@ interface IInitialLoginState {
   loginSuccess: boolean;
   getAccountSuccess: boolean;
   token: string | null;
+  loginModalVisible: boolean;
 }
 
 const initialState: IInitialLoginState = {
@@ -20,6 +19,7 @@ const initialState: IInitialLoginState = {
   getAccountSuccess: false,
   token: null,
   user: null,
+  loginModalVisible: false,
 };
 
 const { actions, reducer } = createSlice({
@@ -50,6 +50,9 @@ const { actions, reducer } = createSlice({
       state.loginSuccess = false;
       state.loading = false;
       state.errorMessage = null;
+    },
+    setLoginModalVisible(state, { payload }: PayloadAction<boolean>) {
+      state.loginModalVisible = payload;
     },
   },
   extraReducers: {
@@ -91,5 +94,5 @@ const { actions, reducer } = createSlice({
   },
 });
 
-export const { fetching, resetAll, resetEntity, logout, storeToken } = actions;
+export const { fetching, resetAll, resetEntity, logout, storeToken, setLoginModalVisible } = actions;
 export default reducer;

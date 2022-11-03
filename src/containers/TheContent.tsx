@@ -6,7 +6,9 @@ import { _window } from '../config/constants';
 // routes config
 import routes from '../routes';
 import Loading from '../shared/components/Loading';
+import LoginModal from '../shared/components/LoginModal';
 import { RootState } from '../shared/reducers';
+import { setLoginModalVisible } from '../views/auth/auth.reducer';
 import { getSigner } from '../views/wallet/wallet.api';
 
 const loading = (
@@ -18,6 +20,9 @@ const loading = (
 const TheContent = () => {
   const dispatch = useDispatch();
   const { provider } = useSelector((state: RootState) => state.wallet);
+  const { loginModalVisible } = useSelector((state: RootState) => state.authentication);
+
+  const setModalVisibility = (key: boolean) => dispatch(setLoginModalVisible(key));
 
   _window.ethereum.on('accountsChanged', () => {
     if (provider) {
@@ -32,28 +37,29 @@ const TheContent = () => {
 
   return (
     <main className="c-main py-0">
+      <LoginModal isVisible={loginModalVisible} setVisibility={setModalVisibility} />
       <CContainer fluid className="px-0">
-            <Suspense fallback={loading}>
-              <Switch>
-                {routes.map((route, idx) => {
-                  return (
-                    route.component && (
-                      <Route
-                        key={idx}
-                        path={route.path}
-                        exact={route.exact}
-                        render={(props) => (
-                          <CFade>
-                            <route.component {...props} />
-                          </CFade>
-                        )}
-                      />
-                    )
-                  );
-                })}
-                <Redirect from="/" to="/listings" />
-              </Switch>
-            </Suspense>
+        <Suspense fallback={loading}>
+          <Switch>
+            {routes.map((route, idx) => {
+              return (
+                route.component && (
+                  <Route
+                    key={idx}
+                    path={route.path}
+                    exact={route.exact}
+                    render={(props) => (
+                      <CFade>
+                        <route.component {...props} />
+                      </CFade>
+                    )}
+                  />
+                )
+              );
+            })}
+            <Redirect from="/" to="/listings" />
+          </Switch>
+        </Suspense>
       </CContainer>
     </main>
   );

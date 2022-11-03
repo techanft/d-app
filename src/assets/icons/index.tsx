@@ -17,6 +17,7 @@ import {
   cilFullscreenExit,
   cilHistory,
   cilHome,
+  cilList,
   cilLocationPin,
   cilLockLocked,
   cilMenu,
@@ -63,7 +64,8 @@ export const icons = Object.assign(
     cilClock,
     cilTag,
     cilUser,
-    cilLockLocked
+    cilLockLocked,
+    cilList
   },
   {
     cifVn,

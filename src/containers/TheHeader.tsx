@@ -319,9 +319,9 @@ const TheHeader = () => {
               {user ? (
                 <CDropdown>
                   <CDropdownToggle caret={false} className={`c-sidebar-nav-dropdown-toggle px-0`}>
-                    <CButton className={'btn-radius-50 btn-link-wallet'}>
+                    <div className={'btn-radius-50 btn-link-wallet px-2 py-1'}>
                       <CIcon name="cil-user" className="m-0 mb-1" />
-                    </CButton>
+                    </div>
                   </CDropdownToggle>
                   <CDropdownMenu>
                     <CDropdownItem className={'d-flex justify-content-between'} onClick={() => dispatch(logout())}>
