@@ -1,6 +1,6 @@
 import { _env, EnvEnum } from '../shared/env-detect';
 import { IWindowEth } from '../shared/models/base.model';
-import { BSC_MAINNET_CONFIG, CRONOS_TESTNET_CONFIG } from './chains';
+import { BSC_MAINNET_CONFIG, GOERLI_TESTNET_CONFIG } from './chains';
 
 export const APP_DATE_FORMAT = 'HH:mm - DD/MM/YY';
 export const APP_TIMESTAMP_FORMAT = 'DD/MM/YY HH:mm:ss';
@@ -21,4 +21,4 @@ export const USING_TESTNET = _env !== EnvEnum.PROD; // Network toggler
 export const SERVICE_API_URL = USING_TESTNET ?  'https://dapp-dev.anfteco.io/api/' : 'https://app.anfteco.io/api/' ;
 export const MANAGEMENT_SITE_URL = USING_TESTNET ? 'https://dev.anfteco.vn/' : 'https://anfteco.vn/';
 
-export const BLOCKCHAIN_NETWORK = USING_TESTNET ? CRONOS_TESTNET_CONFIG : BSC_MAINNET_CONFIG
+export const BLOCKCHAIN_NETWORK = USING_TESTNET ? GOERLI_TESTNET_CONFIG : BSC_MAINNET_CONFIG
