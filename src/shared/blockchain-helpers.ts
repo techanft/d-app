@@ -1,7 +1,7 @@
 import { BigNumber, ethers } from 'ethers';
 import listingArtifact from '../assets/artifacts/Listing.json';
-import testTokenImplementation from '../assets/deployments/cronos-testnet/Token_Implementation.json';
-import testTokenProxy from '../assets/deployments/cronos-testnet/Token_Proxy.json';
+import testTokenImplementation from '../assets/deployments/goerli/Token_Implementation.json';
+import testTokenProxy from '../assets/deployments/goerli/Token_Proxy.json';
 import mainTokenImplementation from '../assets/deployments/bsc-mainnet/Token_Implementation.json';
 import mainTokenProxy from '../assets/deployments/bsc-mainnet/Token_Proxy.json';
 import { BLOCKCHAIN_NETWORK, USING_TESTNET, _window } from '../config/constants';
@@ -44,8 +44,8 @@ export const LISTING_INSTANCE = ({ address, signer, provider }: IListingInstance
 
 export const promptUserToSwitchChain = () => {
   _window.ethereum.request({
-    method: 'wallet_addEthereumChain',
-    params: [BLOCKCHAIN_NETWORK],
+    method: 'wallet_switchEthereumChain',
+    params: [{chainId: BLOCKCHAIN_NETWORK.chainId}],
   });
 };
 
