@@ -8,12 +8,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import Logo from '../assets/img/logo.png';
 import { formatBNToken } from '../shared/casual-helpers';
-import LoginModal from '../shared/components/LoginModal';
 import { Dropdown } from '../shared/enumeration/dropdown';
 import { Language } from '../shared/enumeration/language';
 import useDeviceDetect from '../shared/hooks/useDeviceDetect';
 import { RootState } from '../shared/reducers';
-import { logout } from '../views/auth/auth.reducer';
+import { logout, setLoginModalVisible } from '../views/auth/auth.reducer';
 import { toggleSidebar } from './reducer';
 
 interface DropdownState {
@@ -32,7 +31,6 @@ const TheSidebar = () => {
   const containerState = useSelector((state: RootState) => state.container);
   const { sidebarShow } = containerState;
   const { tokenBalance, signerAddress } = useSelector((state: RootState) => state.wallet);
-  const [loginModalVisible, setLoginModalVisible] = useState<boolean>(false);
 
   const { i18n, t } = useTranslation();
 
@@ -125,7 +123,7 @@ const TheSidebar = () => {
           <CLink
             className={`c-sidebar-nav-link`}
             to=""
-            onClick={() => (!user ? setLoginModalVisible(true) : dispatch(logout()))}
+            onClick={() => (!user ? dispatch(setLoginModalVisible(true)) : dispatch(logout()))}
           >
             <CIcon name="cil-user" size="lg" className={`c-sidebar-nav-icon text-primary`} />{' '}
             <div className={'d-flex justify-content-between align-items-center w-100'}>
@@ -150,8 +148,6 @@ const TheSidebar = () => {
           )}
         </span>
       </CSidebarFooter>
-
-      {loginModalVisible ? <LoginModal isVisible={loginModalVisible} setVisibility={setLoginModalVisible} /> : ''}
     </CSidebar>
   );
 };

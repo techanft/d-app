@@ -30,7 +30,6 @@ import anftLogo from '../assets/img/ANT_logo_main_color.png';
 import Logo from '../assets/img/logo.png';
 import { TOKEN_INSTANCE } from '../shared/blockchain-helpers';
 import { formatBNToken, getEllipsisTxt } from '../shared/casual-helpers';
-import LoginModal from '../shared/components/LoginModal';
 import { ToastError, ToastInfo } from '../shared/components/Toast';
 import { Language } from '../shared/enumeration/language';
 import useDeviceDetect from '../shared/hooks/useDeviceDetect';
@@ -41,7 +40,7 @@ import {
   setFilterState as setStoredFilterState,
   softReset as assetsSoftReset,
 } from '../views/assets/assets.reducer';
-import { logout } from '../views/auth/auth.reducer';
+import { logout, setLoginModalVisible } from '../views/auth/auth.reducer';
 import { IAssetFilter } from '../views/listings/Listings';
 import { softReset as transactionsSoftReset } from '../views/transactions/transactions.reducer';
 import {
@@ -125,8 +124,6 @@ const TheHeader = () => {
   const { sidebarShow } = containerState;
 
   const { t, i18n } = useTranslation();
-
-  const [loginModalVisible, setLoginModalVisible] = useState<boolean>(false);
 
   const onConnectWallet = () => {
     if (signerAddress) return dispatch(resetSigner());
@@ -331,7 +328,10 @@ const TheHeader = () => {
                   </CDropdownMenu>
                 </CDropdown>
               ) : (
-                <CButton className={'btn-radius-50 btn-link-wallet'} onClick={() => setLoginModalVisible(true)}>
+                <CButton
+                  className={'btn-radius-50 btn-link-wallet'}
+                  onClick={() => dispatch(setLoginModalVisible(true))}
+                >
                   <CIcon name="cil-user" className="m-0 mb-1" />
                 </CButton>
               )}
@@ -461,8 +461,6 @@ const TheHeader = () => {
           </CCol>
         </CRow>
       </CSubheader>
-
-      {loginModalVisible ? <LoginModal isVisible={loginModalVisible} setVisibility={setLoginModalVisible} /> : ''}
     </>
   );
 };

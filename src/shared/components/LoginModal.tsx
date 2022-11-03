@@ -20,7 +20,7 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
 import { ILoginForm, loginKeyCloak } from '../../views/auth/auth.api';
-import { fetching, resetEntity } from '../../views/auth/auth.reducer';
+import { fetching, resetEntity, setLoginModalVisible } from '../../views/auth/auth.reducer';
 import { IUpdatePriceTransaction, updatePriceTransaction } from '../../views/transactions/transactions.api';
 import { IUpdateBusinessPrice, fetching as fetchingTransaction, softReset } from '../../views/transactions/transactions.reducer';
 import { BROADCAST_INSTANCE } from '../blockchain-helpers';
@@ -29,17 +29,14 @@ import { Roles } from '../enumeration/roles';
 import { RootState } from '../reducers';
 import { ToastError, ToastSuccess } from './Toast';
 
-interface ILoginModal {
-  isVisible: boolean;
-  setVisibility: (visible: boolean) => void;
-}
-
 const initialValues: ILoginForm = { username: '', password: '', rememberMe: false };
 
-const LoginModal = ({ isVisible, setVisibility }: ILoginModal) => {
-  const { loginSuccess, errorMessage, user } = useSelector((state: RootState) => state.authentication);
+const LoginModal = () => {
+  const { loginSuccess, errorMessage, user, loginModalVisible } = useSelector((state: RootState) => state.authentication);
   const { businessPrice, updateBusinessPriceSuccess } = useSelector((state: RootState) => state.transactions);
   const { signer, signerAddress } = useSelector((state: RootState) => state.wallet);
+
+  const setLoginModalVisibility = (key: boolean) => dispatch(setLoginModalVisible(key));
 
   const isRoleUser = user?.role === Roles.USER;
 
@@ -50,12 +47,12 @@ const LoginModal = ({ isVisible, setVisibility }: ILoginModal) => {
     password: Yup.string().trim().required(t('anftDapp.loginModal.pleaseEnterPassword')),
   });
 
-  const onClose = () => setVisibility(false);
+  const onClose = () => setLoginModalVisibility(false);
 
   useEffect(() => {
     if (loginSuccess) {
       ToastSuccess(t('anftDapp.loginModal.loginSuccess'));
-      setVisibility(false);
+      setLoginModalVisibility(false);
       dispatch(resetEntity());
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -112,7 +109,7 @@ const LoginModal = ({ isVisible, setVisibility }: ILoginModal) => {
   }, [updateBusinessPriceSuccess]);
 
   return (
-    <CModal show={isVisible} centered className="border-radius-modal" closeOnBackdrop={false}>
+    <CModal show={loginModalVisible} centered className="border-radius-modal" closeOnBackdrop={false}>
       <CModalHeader className="justify-content-center">
         <CModalTitle className="modal-title-style">{t('anftDapp.loginModal.title')}</CModalTitle>
       </CModalHeader>

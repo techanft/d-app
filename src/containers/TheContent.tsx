@@ -8,7 +8,6 @@ import routes from '../routes';
 import Loading from '../shared/components/Loading';
 import LoginModal from '../shared/components/LoginModal';
 import { RootState } from '../shared/reducers';
-import { setLoginModalVisible } from '../views/auth/auth.reducer';
 import { getSigner } from '../views/wallet/wallet.api';
 
 const loading = (
@@ -20,9 +19,6 @@ const loading = (
 const TheContent = () => {
   const dispatch = useDispatch();
   const { provider } = useSelector((state: RootState) => state.wallet);
-  const { loginModalVisible } = useSelector((state: RootState) => state.authentication);
-
-  const setModalVisibility = (key: boolean) => dispatch(setLoginModalVisible(key));
 
   _window.ethereum.on('accountsChanged', () => {
     if (provider) {
@@ -37,7 +33,7 @@ const TheContent = () => {
 
   return (
     <main className="c-main py-0">
-      <LoginModal isVisible={loginModalVisible} setVisibility={setModalVisibility} />
+      <LoginModal />
       <CContainer fluid className="px-0">
         <Suspense fallback={loading}>
           <Switch>
