@@ -19,10 +19,14 @@ import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
-import { ILoginForm, loginKeyCloak } from '../../views/auth/auth.api';
+import { account, ILoginForm, loginKeyCloak } from '../../views/auth/auth.api';
 import { fetching, resetEntity, setLoginModalVisible } from '../../views/auth/auth.reducer';
 import { IUpdatePriceTransaction, updatePriceTransaction } from '../../views/transactions/transactions.api';
-import { IUpdateBusinessPrice, fetching as fetchingTransaction, softReset } from '../../views/transactions/transactions.reducer';
+import {
+  IUpdateBusinessPrice,
+  fetching as fetchingTransaction,
+  softReset,
+} from '../../views/transactions/transactions.reducer';
 import { BROADCAST_INSTANCE } from '../blockchain-helpers';
 import { MessageType } from '../enumeration/messageType';
 import { Roles } from '../enumeration/roles';
@@ -32,9 +36,12 @@ import { ToastError, ToastSuccess } from './Toast';
 const initialValues: ILoginForm = { username: '', password: '', rememberMe: false };
 
 const LoginModal = () => {
-  const { loginSuccess, errorMessage, user, loginModalVisible } = useSelector((state: RootState) => state.authentication);
+  const { loginSuccess, errorMessage, user, loginModalVisible } = useSelector(
+    (state: RootState) => state.authentication
+  );
   const { businessPrice, updateBusinessPriceSuccess } = useSelector((state: RootState) => state.transactions);
   const { signer, signerAddress } = useSelector((state: RootState) => state.wallet);
+  const { token } = useSelector((state: RootState) => state.authentication);
 
   const setLoginModalVisibility = (key: boolean) => dispatch(setLoginModalVisible(key));
 
@@ -66,6 +73,20 @@ const LoginModal = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [errorMessage]);
 
+  useEffect(() => {
+    let tempToken = token;
+    if (!tempToken) {
+      tempToken = localStorage.getItem('authentication_token');
+    }
+    
+    if (tempToken) {
+      dispatch(fetching());
+      dispatch(account());
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token]);
+  
+
   const handleValuesUpdatePrice = (values: IUpdateBusinessPrice): IUpdatePriceTransaction => {
     if (!signer) {
       throw Error('No Signer found');
@@ -88,22 +109,20 @@ const LoginModal = () => {
   useEffect(() => {
     if (user && businessPrice) {
       const bodyUpdateBusinessPrice = handleValuesUpdatePrice(businessPrice);
-      if (isRoleUser) {
-        if (user.walletAddress === signerAddress) {
-          dispatch(fetchingTransaction());
-          dispatch(updatePriceTransaction(bodyUpdateBusinessPrice));
-        } else {
-          ToastError(t(`anftDapp.listingComponent.extendOwnership.walletAddressNotMatchRemAccountWalletAddress`));
-        }
-      } else ToastError(t(`anftDapp.listingComponent.extendOwnership.remAccountInvalid`));
+      if (!isRoleUser) return ToastError(t(`anftDapp.listingComponent.extendOwnership.remAccountInvalid`));
+      if (user.walletAddress !== signerAddress)
+        return ToastError(t(`anftDapp.listingComponent.extendOwnership.walletAddressNotMatchRemAccountWalletAddress`));
+
+      dispatch(fetchingTransaction());
+      dispatch(updatePriceTransaction(bodyUpdateBusinessPrice));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [JSON.stringify(user), JSON.stringify(businessPrice)]); 
+  }, [JSON.stringify(user), JSON.stringify(businessPrice)]);
 
   useEffect(() => {
     if (updateBusinessPriceSuccess) {
-      ToastSuccess(t('anftDapp.listingComponent.extendOwnership.updateBusinessPriceSuccess'))
-      dispatch(softReset())
+      ToastSuccess(t('anftDapp.listingComponent.extendOwnership.updateBusinessPriceSuccess'));
+      dispatch(softReset());
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [updateBusinessPriceSuccess]);
