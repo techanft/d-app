@@ -6,6 +6,7 @@ import { _window } from '../config/constants';
 // routes config
 import routes from '../routes';
 import Loading from '../shared/components/Loading';
+import LoginModal from '../shared/components/LoginModal';
 import { RootState } from '../shared/reducers';
 import { getSigner } from '../views/wallet/wallet.api';
 
@@ -32,28 +33,29 @@ const TheContent = () => {
 
   return (
     <main className="c-main py-0">
+      <LoginModal />
       <CContainer fluid className="px-0">
-            <Suspense fallback={loading}>
-              <Switch>
-                {routes.map((route, idx) => {
-                  return (
-                    route.component && (
-                      <Route
-                        key={idx}
-                        path={route.path}
-                        exact={route.exact}
-                        render={(props) => (
-                          <CFade>
-                            <route.component {...props} />
-                          </CFade>
-                        )}
-                      />
-                    )
-                  );
-                })}
-                <Redirect from="/" to="/listings" />
-              </Switch>
-            </Suspense>
+        <Suspense fallback={loading}>
+          <Switch>
+            {routes.map((route, idx) => {
+              return (
+                route.component && (
+                  <Route
+                    key={idx}
+                    path={route.path}
+                    exact={route.exact}
+                    render={(props) => (
+                      <CFade>
+                        <route.component {...props} />
+                      </CFade>
+                    )}
+                  />
+                )
+              );
+            })}
+            <Redirect from="/" to="/listings" />
+          </Switch>
+        </Suspense>
       </CContainer>
     </main>
   );

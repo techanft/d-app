@@ -12,6 +12,7 @@ import { Dropdown } from '../shared/enumeration/dropdown';
 import { Language } from '../shared/enumeration/language';
 import useDeviceDetect from '../shared/hooks/useDeviceDetect';
 import { RootState } from '../shared/reducers';
+import { logout, setLoginModalVisible } from '../views/auth/auth.reducer';
 import { toggleSidebar } from './reducer';
 
 interface DropdownState {
@@ -26,6 +27,7 @@ const TheSidebar = () => {
   const location = useLocation().pathname;
   const dispatch = useDispatch();
   const { isMobile } = useDeviceDetect();
+  const { user } = useSelector((state: RootState) => state.authentication);
   const containerState = useSelector((state: RootState) => state.container);
   const { sidebarShow } = containerState;
   const { tokenBalance, signerAddress } = useSelector((state: RootState) => state.wallet);
@@ -116,6 +118,19 @@ const TheSidebar = () => {
               </CLink>
             </li>
           </ul>
+        </li>
+        <li className={`c-sidebar-nav-item`}>
+          <CLink
+            className={`c-sidebar-nav-link`}
+            to=""
+            onClick={() => (!user ? dispatch(setLoginModalVisible(true)) : dispatch(logout()))}
+          >
+            <CIcon name="cil-user" size="lg" className={`c-sidebar-nav-icon text-primary`} />{' '}
+            <div className={'d-flex justify-content-between align-items-center w-100'}>
+              <span>{user ? user.login : t('anftDapp.sidebarComponent.remAccount')}</span>
+              {user ? <CIcon name="cil-account-logout" className="text-danger rotate-180" /> : ''}
+            </div>
+          </CLink>
         </li>
       </ul>
       <CSidebarFooter className={`text-center bg-white`}>

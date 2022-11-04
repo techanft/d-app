@@ -4,7 +4,8 @@
       "errors": {
         "pleaseConnectWallet": "Please connect to your wallet!",
         "errorSubmittingForm": "Error in submitting form",
-        "qrScanError": "Error in scanning QR code"
+        "qrScanError": "Error in scanning QR code",
+        "UNAUTHORIZED": "Unauthorized"
       },
       "modal": {
         "confirm": "CONFIRM",
@@ -33,13 +34,24 @@
       }
     },
 
+    "loginModal": {
+      "title": "Real Estate Management Login",
+      "userName": "User name",
+      "password": "Password",
+      "login": "LOGIN",
+      "loginSuccess": "Logged in successfully",
+      "pleaseEnterUserName": "Please enter username",
+      "pleaseEnterPassword": "Please enter password"
+    },
+
     "sidebarComponent": {
       "language": {
         "language": "Language",
         "vietnamese": "Vietnamese",
         "english": "English"
       },
-      "userGuide": "User Guide"
+      "userGuide": "User Guide",
+      "remAccount": "Real Estate Account"
     },
 
     "headerComponent": {
@@ -157,13 +169,27 @@
         "comercialType": "Commercial Type",
         "secondaryPrice": "Selling price on the secondary floor",
         "secondaryRent": "Rent price on the secondary floor",
+        "revenue": "Expected revenue",
+        "revenuePerMonth": "Expected revenue/month",
         "profit": "Expected profit",
-        "profitPerMonth": "Expected profit per Month",
+        "profitPerMonth": "Expected profit/month",
         "successRate": "Success rate",
         "profitRatio": "Profit rate",
         "exchange": "Exchange",
         "maximumStage": "Maximum stage",
-        "registerOwnershipSuccess": "Successfully extended ownership, please redirect to Listing Management Dashboard to set up the price"
+        "registerOwnershipSuccess": "Successfully extended ownership",
+        "walletAddressNotMatchRemAccountWalletAddress": "Wallet address connected was not match with real estate management wallet address",
+        "remAccountInvalid": "Real Estate Management account is invalid",
+        "pleaseEnterSellPrice": "Please enter selling price on the secondary floor ",
+        "pleaseEnterRentPrice": "Please enter rent price on the secondary floor",
+        "sellPriceMustGreaterThanOrEqualToMinPrice": "Sell price must be greater than or equal to min price",
+        "sellPriceMustLessThanOrEqualToMaxPrice": "Sell price must be less than or equal to max price",
+        "sellPriceInvalid": "Sell price is invalid",
+        "rentPriceMustGreaterThanOrEqualToMinRentCost": "Sell price must be greater than or equal to min rent cost",
+        "rentPriceMustLessThanOrEqualToMaxRentCost": "Rent price must be less than or equal to max rent cost",
+        "rentPriceInvalid": "Rent price is invalid",
+        "loginRemAccountToUpdateSecondaryPrice": "Login Real Estate Management account to update business price",
+        "updateBusinessPriceSuccess": "Successfully updated business price"
       },
       "withdrawToken": {
         "maximumWithdrawable": "Maximum Days",
