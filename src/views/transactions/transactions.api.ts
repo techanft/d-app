@@ -1,6 +1,8 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
+import { pickBy } from 'lodash';
 import { EventType } from '../../shared/enumeration/eventType';
-import { Listing } from '../../typechain';
+import { MessageType } from '../../shared/enumeration/messageType';
+import { Listing,  Validation} from '../../typechain';
 import { settersMapping, TBaseSetterArguments } from './settersMapping';
 import { ICTransaction } from './transactions.reducer';
 
@@ -38,6 +40,26 @@ export const proceedTransaction = createAsyncThunk('proceedTransaction', async (
       listingId,
     };
     return payload;
+  } catch (error: any) {
+    return thunkAPI.rejectWithValue(error);
+  }
+});
+
+export interface IUpdatePriceTransaction {
+  instance: Validation;
+  type: MessageType;
+  sellPrice?: number;
+  rentPrice?: number;
+  otp?: string;
+  userId?: string;
+  listingId?: string;
+}
+
+export const updatePriceTransaction = createAsyncThunk('update-price-transaction', async (body: IUpdatePriceTransaction, thunkAPI) => {
+  const { instance, ...rest } = body;
+  try {
+    const tx = await instance.sendMessage(JSON.stringify(pickBy(rest)));
+    return await tx.wait(1);
   } catch (error: any) {
     return thunkAPI.rejectWithValue(error);
   }

@@ -112,7 +112,7 @@ const FilterComponent = () => {
                       className="btn-radius-50 text-dark px-2 content-title filter-search-select"
                       onChange={handleChange}
                       value={values[e] || ''}
-                      id={e}
+                      id={`filter-${e}`}
                       name={e}
                       disabled
                     >
@@ -135,7 +135,7 @@ const FilterComponent = () => {
                     className="btn-radius-50 text-dark px-2 content-title filter-search-select"
                     onChange={handleChange}
                     value={values[e] || ''}
-                    id={e}
+                    id={`filter-${e}`}
                     name={e}
                     disabled
                   >

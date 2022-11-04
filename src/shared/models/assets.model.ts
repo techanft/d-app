@@ -48,4 +48,8 @@ export interface IAsset {
   district: IDistrictsAddress;
   sellStatus: SellStatus;
   rentStatus: RentStatus;
+  minPrice: number;
+  maxPrice: number;
+  minRentCost: number;
+  maxRentCost: number;
 }

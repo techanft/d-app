@@ -4,7 +4,8 @@
       "errors": {
         "pleaseConnectWallet": "Vui lòng liên kết ví!",
         "errorSubmittingForm": "Lỗi gửi biểu mẫu",
-        "qrScanError": "Lỗi quét mã QR"
+        "qrScanError": "Lỗi quét mã QR",
+        "UNAUTHORIZED": "Tên đăng nhập hoặc mật khẩu không đúng"
       },
       "modal": {
         "confirm": "XÁC NHẬN",
@@ -33,13 +34,24 @@
       }
     },
 
+    "loginModal": {
+      "title": "Đăng nhập QLTS",
+      "userName": "Tên tài khoản",
+      "password": "Mật khẩu",
+      "login": "ĐĂNG NHẬP",
+      "loginSuccess": "Đăng nhập thành công",
+      "pleaseEnterUserName": "Vui lòng nhập tên tài khoản",
+      "pleaseEnterPassword": "Vui lòng nhập mật khẩu"
+    },
+
     "sidebarComponent": {
       "language": {
         "language": "Ngôn ngữ",
         "vietnamese": "Tiếng Việt",
         "english": "Tiếng Anh"
       },
-      "userGuide": "Hướng dẫn sử dụng"
+      "userGuide": "Hướng dẫn sử dụng",
+      "remAccount": "Tài khoản QLTS"
     },
 
     "headerComponent": {
@@ -156,14 +168,28 @@
         "undefined": "Không xác định",
         "comercialType": "Hình thức khai thác",
         "secondaryPrice": "Giá bán trên sàn thứ cấp",
-        "secondaryRent": "Giá thuê trên sàn thứ cấp",
+        "secondaryRent": "Giá thuê/tháng trên sàn thứ cấp",
+        "revenue": "Doanh thu dự kiến",
+        "revenuePerMonth": "Doanh thu dự kiến/tháng",
         "profit": "Lợi nhuận dự kiến",
-        "profitPerMonth": "Lợi nhuận trong 1 tháng",
+        "profitPerMonth": "Lợi nhuận dự kiến/tháng",
         "successRate": "Tỉ lệ thành công",
         "profitRatio": "Đòn bẩy lợi nhuận",
         "exchange": "Quy Đổi",
         "maximumStage": "Kỳ tối đa",
-        "registerOwnershipSuccess": "Đã chốt quyền sở hữu thành công, vui lòng chuyển tới Nền tảng QLTS để thiết lập giá cho tài sản"
+        "registerOwnershipSuccess": "Đã chốt quyền sở hữu thành công",
+        "walletAddressNotMatchRemAccountWalletAddress": "Địa chỉ ví đã liên kết không trùng khớp với địa chỉ ví tài khoản QLTS",
+        "remAccountInvalid": "Tài khoản QLTS không hợp lệ để cập nhật giá thứ cấp",
+        "pleaseEnterSellPrice": "Vui lòng nhập giá bán trên sàn thứ cấp",
+        "pleaseEnterRentPrice": "Vui lòng nhập giá thuê trên sàn thứ cấp",
+        "sellPriceMustGreaterThanOrEqualToMinPrice": "Giá bán không được thấp hơn giá bán tối thiểu",
+        "sellPriceMustLessThanOrEqualToMaxPrice": "Giá bán không được cao hơn giá bán tối đa",
+        "sellPriceInvalid": "Giá bán không hợp lệ",
+        "rentPriceMustGreaterThanOrEqualToMinRentCost": "Giá thuê không được thấp hơn giá thuê tối thiểu",
+        "rentPriceMustLessThanOrEqualToMaxRentCost": "Giá thuê không được cao hơn giá thuê tối đa",
+        "rentPriceInvalid": "Giá thuê/tháng không hợp lệ",
+        "loginRemAccountToUpdateSecondaryPrice": "Đăng nhập tài khoản QLTS đã đăng ký địa chỉ ví đang sử dụng để cập nhật giá kinh doanh trên sàn thứ cấp",
+        "updateBusinessPriceSuccess": "Cập nhật giá kinh doanh thành công"
       },
       "withdrawToken": {
         "maximumWithdrawable": "Số ngày rút tối đa",

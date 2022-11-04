@@ -48,7 +48,7 @@ export const CRONOS_TESTNET_CONFIG = {
 
 export const GOERLI_TESTNET_CONFIG = {
   chainId: '0x5',
-  rpcUrls: ['https://goerli.infura.io/v3/ede6566d02614bbba864b2722c05d632'],
+  rpcUrls: ['https://goerli.infura.io/v3/6691bdaed28c4fb48761ed834e85db4c'],
   chainName: 'Goerli Testnet',
   nativeCurrency: {
     name: 'Goerli ETH',

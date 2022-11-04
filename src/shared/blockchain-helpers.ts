@@ -5,10 +5,12 @@ import testTokenProxy from '../assets/deployments/goerli/Token_Proxy.json';
 import mainTokenImplementation from '../assets/deployments/bsc-mainnet/Token_Implementation.json';
 import mainTokenProxy from '../assets/deployments/bsc-mainnet/Token_Proxy.json';
 import { BLOCKCHAIN_NETWORK, USING_TESTNET, _window } from '../config/constants';
-import { Listing, Token } from '../typechain';
+import { Listing, Token, Validation } from '../typechain';
 import { convertDecimalToBn } from './casual-helpers';
 import { IAsset } from './models/assets.model';
 import { IOption } from './models/options.model';
+import testnetBroadcaster from '../assets/deployments/goerli/Validation.json';
+import mainnetBrodcaster from '../assets/deployments/bsc-mainnet/Validation.json';
 
 interface ITokenInstance {
   signer?: ethers.providers.JsonRpcSigner;
@@ -38,6 +40,18 @@ export const LISTING_INSTANCE = ({ address, signer, provider }: IListingInstance
     return new ethers.Contract(address, contractABI, signer || provider) as Listing;
   } catch (error) {
     console.log(`Error getting listing instance: ${error}`);
+    return null;
+  }
+};
+
+export const BROADCAST_INSTANCE = ({ signer, provider }: ITokenInstance): Validation | null => {
+  try {
+    if (!signer && !provider) throw String('requires either signer or provider to generate a instance');
+    const contractAddress = USING_TESTNET ? testnetBroadcaster.address : mainnetBrodcaster.address;
+    const contractABI = USING_TESTNET ?  testnetBroadcaster.abi : mainnetBrodcaster.abi;
+    return new ethers.Contract(contractAddress, contractABI, signer || provider) as Validation;
+  } catch (error) {
+    console.log(`Error getting broadcaster instance: ${error}`);
     return null;
   }
 };
