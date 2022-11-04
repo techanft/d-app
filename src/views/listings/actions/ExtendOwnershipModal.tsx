@@ -739,17 +739,21 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                     </CCol>
                   </CFormGroup>
 
-                  <CFormGroup
-                    row
-                    className={`border-top mb-2 ${modelType !== ModalType.OWNERSHIP_REGISTER ? 'd-none' : ''}`}
-                  >
-                    <CCol xs={12} className="mt-2">
-                      <small className="text-info">
-                        <FontAwesomeIcon icon={faInfoCircle} className="mr-1" />
-                        {t('anftDapp.listingComponent.extendOwnership.loginRemAccountToUpdateSecondaryPrice')}
-                      </small>
-                    </CCol>
-                  </CFormGroup>
+                  {user ? (
+                    ''
+                  ) : (
+                    <CFormGroup
+                      row
+                      className={`border-top mb-2 ${modelType !== ModalType.OWNERSHIP_REGISTER ? 'd-none' : ''}`}
+                    >
+                      <CCol xs={12} className="mt-2">
+                        <small className="text-info">
+                          <FontAwesomeIcon icon={faInfoCircle} className="mr-1" />
+                          {t('anftDapp.listingComponent.extendOwnership.loginRemAccountToUpdateSecondaryPrice')}
+                        </small>
+                      </CCol>
+                    </CFormGroup>
+                  )}
 
                   {isSellCommercial && modelType === ModalType.OWNERSHIP_REGISTER ? (
                     <>

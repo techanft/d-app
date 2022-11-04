@@ -22,7 +22,11 @@ import * as Yup from 'yup';
 import { ILoginForm, loginKeyCloak } from '../../views/auth/auth.api';
 import { fetching, resetEntity, setLoginModalVisible } from '../../views/auth/auth.reducer';
 import { IUpdatePriceTransaction, updatePriceTransaction } from '../../views/transactions/transactions.api';
-import { IUpdateBusinessPrice, fetching as fetchingTransaction, softReset } from '../../views/transactions/transactions.reducer';
+import {
+  IUpdateBusinessPrice,
+  fetching as fetchingTransaction,
+  softReset,
+} from '../../views/transactions/transactions.reducer';
 import { BROADCAST_INSTANCE } from '../blockchain-helpers';
 import { MessageType } from '../enumeration/messageType';
 import { Roles } from '../enumeration/roles';
@@ -32,7 +36,9 @@ import { ToastError, ToastSuccess } from './Toast';
 const initialValues: ILoginForm = { username: '', password: '', rememberMe: false };
 
 const LoginModal = () => {
-  const { loginSuccess, errorMessage, user, loginModalVisible } = useSelector((state: RootState) => state.authentication);
+  const { loginSuccess, errorMessage, user, loginModalVisible } = useSelector(
+    (state: RootState) => state.authentication
+  );
   const { businessPrice, updateBusinessPriceSuccess } = useSelector((state: RootState) => state.transactions);
   const { signer, signerAddress } = useSelector((state: RootState) => state.wallet);
 
@@ -98,18 +104,18 @@ const LoginModal = () => {
       } else ToastError(t(`anftDapp.listingComponent.extendOwnership.remAccountInvalid`));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [JSON.stringify(user), JSON.stringify(businessPrice)]); 
+  }, [JSON.stringify(user), JSON.stringify(businessPrice)]);
 
   useEffect(() => {
     if (updateBusinessPriceSuccess) {
-      ToastSuccess(t('anftDapp.listingComponent.extendOwnership.updateBusinessPriceSuccess'))
-      dispatch(softReset())
+      ToastSuccess(t('anftDapp.listingComponent.extendOwnership.updateBusinessPriceSuccess'));
+      dispatch(softReset());
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [updateBusinessPriceSuccess]);
 
   return (
-    <CModal show={loginModalVisible} centered className="border-radius-modal" closeOnBackdrop={false}>
+    <CModal show={loginModalVisible} centered className="border-radius-modal" closeOnBackdrop={false}> 
       <CModalHeader className="justify-content-center">
         <CModalTitle className="modal-title-style">{t('anftDapp.loginModal.title')}</CModalTitle>
       </CModalHeader>
