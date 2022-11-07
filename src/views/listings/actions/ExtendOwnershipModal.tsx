@@ -684,9 +684,9 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                               returnMaxEndDate(extendDay, getExtenableDayFromTokenBalance()),
                               'day'
                             );
-                            setFieldValue('sellProfit', sellProfit);
-                            setFieldValue('rentProfit', rentProfit);
-                            setFieldValue('sellRiskLevel', sellRiskLevel);
+                            await setFieldValue('sellProfit', sellProfit);
+                            await setFieldValue('rentProfit', rentProfit);
+                            await setFieldValue('sellRiskLevel', sellRiskLevel);
                             await setFieldValue('rentRiskLevel', rentRiskLevel);
                             setFieldValue('dateCount', extendDay);
                             setFieldValue('endDate', extendDate);
@@ -807,9 +807,9 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                                   : currRiskLevel;
                               const riskLevel = priceStatus === PriceStatus.HIGH ? findPrevRisk : currRiskLevel;
                               await setFieldValue('sellPrice', unInsertCommas(e.currentTarget.value).trim());
-                              setFieldValue('sellPriceStatus', priceStatus);
-                              setFieldValue('sellProfit', profit);
-                              setFieldValue('sellRiskLevel', riskLevel);
+                              await setFieldValue('sellPriceStatus', priceStatus);
+                              await setFieldValue('sellProfit', profit);
+                              await setFieldValue('sellRiskLevel', riskLevel);
                             }}
                             value={insertCommas(values.sellPrice)}
                           />
@@ -964,9 +964,9 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                                   : currRiskLevel;
                               const riskLevel = priceStatus === PriceStatus.HIGH ? findPrevRisk : currRiskLevel;
                               await setFieldValue('rentPrice', unInsertCommas(e.currentTarget.value).trim());
-                              setFieldValue('rentPriceStatus', priceStatus);
-                              setFieldValue('rentProfit', profit);
-                              setFieldValue('rentRiskLevel', riskLevel);
+                              await setFieldValue('rentPriceStatus', priceStatus);
+                              await setFieldValue('rentProfit', profit);
+                              await setFieldValue('rentRiskLevel', riskLevel);
                             }}
                             value={insertCommas(values.rentPrice)}
                           />
