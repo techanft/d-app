@@ -40,6 +40,7 @@ import {
   setFilterState as setStoredFilterState,
   softReset as assetsSoftReset,
 } from '../views/assets/assets.reducer';
+import { logout, setLoginModalVisible } from '../views/auth/auth.reducer';
 import { IAssetFilter } from '../views/listings/Listings';
 import { softReset as transactionsSoftReset } from '../views/transactions/transactions.reducer';
 import {
@@ -113,6 +114,7 @@ const TheHeader = () => {
     tokenBalance,
     errorMessage: walletErrorMessage,
   } = useSelector((state: RootState) => state.wallet);
+  const { user } = useSelector((state: RootState) => state.authentication);
   const { initialState: assetsInitialState } = useSelector((state: RootState) => state.assets);
   const { errorMessage: assetErrorMessage } = assetsInitialState;
 
@@ -278,7 +280,7 @@ const TheHeader = () => {
                   </CDropdownItem>
                 </CDropdownMenu>
               </CDropdown>
-            </CHeaderNavItem>{' '}
+            </CHeaderNavItem>
             {signerAddress && tokenBalance ? (
               <CHeaderNavItem className={`mr-3 ml-auto ${isMobile ? 'd-none' : 'd-none d-lg-block'}`}>
                 <span className="text-primary">
@@ -305,6 +307,34 @@ const TheHeader = () => {
                   `${t('anftDapp.headerComponent.connectWallet')}`
                 )}
               </CButton>
+            </CHeaderNavItem>
+            <CHeaderNavItem
+              className={`${isDashboardView ? 'mr-3 ml-auto' : 'ml-auto mr-lg-3'} ${
+                isMobile ? 'd-none' : 'd-none d-lg-block'
+              }`}
+            >
+              {user ? (
+                <CDropdown>
+                  <CDropdownToggle caret={false} className={`c-sidebar-nav-dropdown-toggle px-0`}>
+                    <div className={'btn-radius-50 btn-link-wallet px-2 py-1'}>
+                      <CIcon name="cil-user" className="m-0 mb-1" />
+                    </div>
+                  </CDropdownToggle>
+                  <CDropdownMenu>
+                    <CDropdownItem className={'d-flex justify-content-between'} onClick={() => dispatch(logout())}>
+                      <span>{user.login}</span>
+                      <CIcon name="cil-account-logout" className="text-danger rotate-180" />
+                    </CDropdownItem>
+                  </CDropdownMenu>
+                </CDropdown>
+              ) : (
+                <CButton
+                  className={'btn-radius-50 btn-link-wallet'}
+                  onClick={() => dispatch(setLoginModalVisible(true))}
+                >
+                  <CIcon name="cil-user" className="m-0 mb-1" />
+                </CButton>
+              )}
             </CHeaderNavItem>
             <CHeaderNavItem className={`${isDashboardView ? '' : 'd-none'} nav-item-filter`}>
               <CDropdown className={`dr-item-filter  ${isMobile ? '' : 'd-block d-lg-none'}`}>

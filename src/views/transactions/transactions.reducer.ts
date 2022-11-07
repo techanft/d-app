@@ -1,18 +1,28 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { ContractReceipt, ethers } from 'ethers';
 import { EventType } from '../../shared/enumeration/eventType';
-import { awaitTransaction, proceedTransaction } from './transactions.api';
+import { awaitTransaction, proceedTransaction, updatePriceTransaction } from './transactions.api';
+
 export interface ICTransaction {
   contractTransaction: ethers.ContractTransaction;
   type: EventType;
   listingId: number;
 }
+
+export interface IUpdateBusinessPrice {
+  sellPrice: number | undefined;
+  rentPrice: number | undefined;
+  listingId: string;
+}
+
 interface ITxInitialState {
   transaction: ICTransaction | undefined;
   loading: boolean;
   submitted: boolean;
   success: boolean;  
   errorMessage: string | undefined;
+  updateBusinessPriceSuccess: boolean
+  businessPrice: IUpdateBusinessPrice | null;
 }
 
 const initialState: ITxInitialState = {
@@ -21,6 +31,8 @@ const initialState: ITxInitialState = {
   loading: false,
   success: false,
   errorMessage: undefined,
+  updateBusinessPriceSuccess: false,
+  businessPrice: null
 };
 
 // export type IAuthentication = Readonly<typeof initialState>;
@@ -43,6 +55,11 @@ const { actions, reducer } = createSlice({
       state.submitted = false;
       state.loading = false;
       state.errorMessage = undefined;
+      state.updateBusinessPriceSuccess = false;
+      state.businessPrice = null;
+    },
+    storeBusinessPrice(state, { payload }: PayloadAction<IUpdateBusinessPrice>) {
+      state.businessPrice = payload;
     },
   },
   extraReducers: {
@@ -65,9 +82,16 @@ const { actions, reducer } = createSlice({
       state.loading = false;
     },
 
-   
+    [updatePriceTransaction.fulfilled.type]: (state, { payload }: PayloadAction<ICTransaction>) => {
+      state.loading = false;
+      state.updateBusinessPriceSuccess = true;
+    },
+    [updatePriceTransaction.rejected.type]: (state, { payload }) => {
+      state.errorMessage = payload?.message;
+      state.loading = false;
+    },
   },
 });
 
 export default reducer;
-export const { fetching, hardReset, softReset } = actions;
+export const { fetching, hardReset, softReset, storeBusinessPrice } = actions;

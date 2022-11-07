@@ -11,7 +11,7 @@ export const BSC_TESTNET_CONFIG = {
 };
 
 export const RINKEBY_TESTNET_CONFIG = {
-  chainId: '0x04',
+  chainId: '0x4',
   rpcUrls: ['https://rinkeby.infura.io/v3/'],
   chainName: 'Ethereum Rinkeby Testnet',
   nativeCurrency: {
@@ -35,7 +35,7 @@ export const BSC_MAINNET_CONFIG = {
 };
 
 export const CRONOS_TESTNET_CONFIG = {
-  chainId: '0x0152',
+  chainId: '0x152',
   rpcUrls: ['https://cronos-testnet-3.crypto.org:8545/'],
   chainName: 'CRONOS TESTNET',
   nativeCurrency: {
@@ -45,3 +45,15 @@ export const CRONOS_TESTNET_CONFIG = {
   },
   blockExplorerUrls: ['https://testnet.cronoscan.com'],
 };
+
+export const GOERLI_TESTNET_CONFIG = {
+  chainId: '0x5',
+  rpcUrls: ['https://goerli.infura.io/v3/6691bdaed28c4fb48761ed834e85db4c'],
+  chainName: 'Goerli Testnet',
+  nativeCurrency: {
+    name: 'Goerli ETH',
+    symbol: 'GETH',
+    decimals: 18,
+  },
+  blockExplorerUrls: ['https://goerli.etherscan.io'],
+}

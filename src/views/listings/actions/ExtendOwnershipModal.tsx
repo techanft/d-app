@@ -1,3 +1,4 @@
+import CIcon from '@coreui/icons-react';
 import {
   CButton,
   CCol,
@@ -16,10 +17,12 @@ import {
   CProgressBar,
   CRow,
 } from '@coreui/react';
+import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { BigNumber } from 'ethers';
 import { Formik, FormikProps } from 'formik';
 import moment, { Moment } from 'moment';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { DateRangePicker } from 'react-dates';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
@@ -52,6 +55,9 @@ import { RiskLevel, riskLevelArray } from '../../../shared/enumeration/riskLevel
 import useWindowDimensions from '../../../shared/hooks/useWindowDimensions';
 import { RootState } from '../../../shared/reducers';
 import { selectEntityById } from '../../assets/assets.reducer';
+import { setLoginModalVisible } from '../../auth/auth.reducer';
+import { getCurrentEntity } from '../../mini-stage/miniStages.api';
+import { fetching as fetchingMiniStage } from '../../mini-stage/miniStages.reducer';
 import { getEntity } from '../../productType/category.api';
 import {
   fetching as fetchingCategory,
@@ -59,6 +65,7 @@ import {
 } from '../../productType/category.reducer';
 import { baseSetterArgs } from '../../transactions/settersMapping';
 import { IProceedTxBody, proceedTransaction } from '../../transactions/transactions.api';
+import { IUpdateBusinessPrice, storeBusinessPrice } from '../../transactions/transactions.reducer';
 import { fetching } from '../../wallet/wallet.reducer';
 
 interface IExtendOwnershipModal {
@@ -84,15 +91,18 @@ type TMappingSuccessRate = { [key in RiskLevel]: IForecastValue };
 type TModelTypeMappingMoment = { [key in ModalType.OWNERSHIP_EXTENSION | ModalType.OWNERSHIP_REGISTER]: moment.Moment };
 
 interface IIntialValues {
-  price: number;
   tokenAmount: number;
   startDate: moment.Moment;
   endDate: moment.Moment;
   dateCount: number;
-  profit: number;
-  priceStatus: PriceStatus;
-  riskLevel: RiskLevel;
-  commercialTypes: CommercialTypes;
+  sellPrice: number | undefined;
+  sellProfit: number;
+  sellPriceStatus: PriceStatus;
+  sellRiskLevel: RiskLevel;
+  rentPrice: number | undefined;
+  rentProfit: number;
+  rentPriceStatus: PriceStatus;
+  rentRiskLevel: RiskLevel;
 }
 
 interface IRiskValue {
@@ -108,6 +118,8 @@ const isCurrentDatePlusValueOverdue = (value: number, expiredDate: Moment) => {
   return currDate.add(value, 'day') <= expiredDate;
 };
 
+const USD_TO_VND_RATIO = 23300;
+
 const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
   const { isVisible, setVisibility, listingId, title, modelType } = props;
   const dispatch = useDispatch();
@@ -117,10 +129,20 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
 
   const listing = useSelector(selectEntityById(listingId));
   const listingType = useSelector(selectCategoryById(listing?.typeId || ''));
-  const { signer, tokenBalance } = useSelector((state: RootState) => state.wallet);
+  const { user } = useSelector((state: RootState) => state.authentication);
+  const { signer, tokenBalance, signerAddress } = useSelector((state: RootState) => state.wallet);
   const { submitted } = useSelector((state: RootState) => state.transactions);
 
   const { t } = useTranslation();
+
+  const [updatePriceBody, setUpdatePriceBody] = useState<IUpdateBusinessPrice | undefined>(undefined);
+  const { initialState } = useSelector((state: RootState) => state.miniStages);
+  const { currentEntity } = initialState;
+  const ANFT_TO_USD_RATIO = currentEntity?.salePrice || 1;
+  const ANFT_TO_VND_RATIO = ANFT_TO_USD_RATIO * USD_TO_VND_RATIO;
+
+  const isSellCommercial = listing?.commercialTypes.includes(CommercialTypes.SELL);
+  const isRentCommercial = listing?.commercialTypes.includes(CommercialTypes.RENT);
 
   const expiredLicenseDate = moment(listing?.licenseDate).add(listing?.licensePeriod, 'year');
 
@@ -129,21 +151,26 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
   };
 
   useEffect(() => {
-    if (!isVisible) {
+    if (isVisible) {
+      dispatch(fetchingMiniStage());
+      dispatch(getCurrentEntity());
+    } else {
       formikRef.current?.resetForm();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isVisible]);
 
   useEffect(() => {
-    if (submitted) {
+    if (submitted && updatePriceBody) {
       if (modelType === ModalType.OWNERSHIP_REGISTER) {
         ToastSuccess(t('anftDapp.listingComponent.extendOwnership.registerOwnershipSuccess'));
+        dispatch(setLoginModalVisible(!user));
+        dispatch(storeBusinessPrice(updatePriceBody));
       }
       setVisibility(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [submitted]);
+  }, [submitted, JSON.stringify(updatePriceBody)]);
 
   useEffect(() => {
     if (listing?.typeId) {
@@ -172,18 +199,6 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
   const bothSellAndRentMethods = includeMultiple(commercialTypes, CommercialTypes.RENT, CommercialTypes.SELL);
   const onlyRentMethod = commercialTypes?.length === 1 && commercialTypes.includes(CommercialTypes.RENT);
 
-  const getComercialTypes = () => {
-    if (bothSellAndRentMethods) {
-      return CommercialTypes.SELL;
-    }
-
-    if (onlyRentMethod) {
-      return CommercialTypes.RENT;
-    }
-
-    return CommercialTypes.SELL;
-  };
-
   const getComercialTypesName = () => {
     if (bothSellAndRentMethods) {
       return 'SELL_RENT';
@@ -195,15 +210,18 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
   };
 
   const initialValues: IIntialValues = {
-    price: 0,
     tokenAmount: 0,
     startDate,
     endDate,
     dateCount: calculateDateDifference(startDate, endDate),
-    profit: 0,
-    priceStatus: PriceStatus.LOW,
-    riskLevel: RiskLevel.VERY_HIGH,
-    commercialTypes: getComercialTypes(),
+    rentPrice: undefined,
+    sellPrice: undefined,
+    sellProfit: 0,
+    sellPriceStatus: PriceStatus.LOW,
+    sellRiskLevel: RiskLevel.VERY_HIGH,
+    rentProfit: 0,
+    rentPriceStatus: PriceStatus.LOW,
+    rentRiskLevel: RiskLevel.VERY_HIGH,
   };
 
   const getExtenableDayFromTokenBalance = (): number => {
@@ -246,6 +264,55 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
           if (!value || !listing?.licensePeriod || !listing?.licenseDate) return true;
           return isCurrentDatePlusValueOverdue(value, expiredLicenseDate);
         }
+      ),
+
+    sellPrice: Yup.number()
+      .test(
+        'sellPrice-is-required',
+        t(`anftDapp.listingComponent.extendOwnership.pleaseEnterSellPrice`),
+        function (value: number | undefined) {
+          if (!isSellCommercial) {
+            return true;
+          }
+          return Number(value) >= 0;
+        }
+      )
+      .typeError(t(`anftDapp.listingComponent.extendOwnership.sellPriceInvalid`))
+      .min(
+        listing?.minPrice || 1,
+        `${t(`anftDapp.listingComponent.extendOwnership.sellPriceMustGreaterThanOrEqualToMinPrice`)}: ${
+          listing?.minPrice ? insertCommas(listing.minPrice) : 1
+        } VND`
+      )
+      .max(
+        listing?.maxPrice || 1,
+        `${t(`anftDapp.listingComponent.extendOwnership.sellPriceMustLessThanOrEqualToMaxPrice`)}: ${
+          listing?.maxPrice ? insertCommas(listing.maxPrice) : 1
+        } VND`
+      ),
+    rentPrice: Yup.number()
+      .test(
+        'rentPrice-is-required',
+        t(`anftDapp.listingComponent.extendOwnership.pleaseEnterRentPrice`),
+        function (value: number | undefined) {
+          if (!isRentCommercial) {
+            return true;
+          }
+          return Number(value) >= 0;
+        }
+      )
+      .typeError(t(`anftDapp.listingComponent.extendOwnership.rentPriceInvalid`))
+      .min(
+        listing?.minRentCost || 1,
+        `${t(`anftDapp.listingComponent.extendOwnership.rentPriceMustGreaterThanOrEqualToMinRentCost`)}: ${
+          listing?.minRentCost ? insertCommas(listing.minRentCost) : 1
+        } VND`
+      )
+      .max(
+        listing?.maxRentCost || 1,
+        `${t(`anftDapp.listingComponent.extendOwnership.rentPriceMustLessThanOrEqualToMaxRentCost`)}: ${
+          listing?.maxRentCost ? insertCommas(listing.maxRentCost) : 1
+        } VND`
       ),
   });
 
@@ -302,37 +369,6 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
     },
   };
 
-  const successRateForecast = (percent: number): RiskLevel => {
-    if (percent <= riskValue.VERY_HIGH) {
-      return RiskLevel.VERY_HIGH;
-    }
-    if (percent > riskValue.VERY_HIGH && percent <= riskValue.HIGH) {
-      return RiskLevel.HIGH;
-    }
-    if (percent > riskValue.HIGH && percent <= riskValue.MEDIUM) {
-      return RiskLevel.MEDIUM;
-    }
-    if (percent > riskValue.MEDIUM && percent <= riskValue.LOW) {
-      return RiskLevel.LOW;
-    }
-    return RiskLevel.VERY_LOW;
-  };
-
-  const handleRiskProgressValue = (days: number): RiskLevel => {
-    const percentRegistOnMaxStage = (days / listingData.maximumStage) * 100;
-    const riskLevel = successRateForecast(percentRegistOnMaxStage);
-    // if (priceStatus === PriceStatus.HIGH) return mappingSuccessRate[mappingPriceStatus[riskLevel]];
-    // return mappingSuccessRate[riskLevel];
-    // if (priceStatus === PriceStatus.HIGH) return remappingRiskLevel[riskLevel];
-    return riskLevel;
-  };
-
-  const USD_TO_VND_RATIO = 23300;
-  const ANFT_TO_USD_RATIO = 1;
-  //api get real-time price of token from pancakeswap: https://api.pancakeswap.info/api/v2/tokens/{token_address}
-
-  const ANFT_TO_VND_RATIO = ANFT_TO_USD_RATIO * USD_TO_VND_RATIO;
-
   const listingData = {
     sellPrice: listing?.price && listing?.price > 0 ? listing?.price : 0,
     pricePerDay: listing?.fee && listing?.fee > 0 ? listing?.fee : 0,
@@ -369,7 +405,32 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
     HIGH: getProfitsValue(RiskLevel.HIGH),
     VERY_HIGH: getProfitsValue(RiskLevel.VERY_HIGH),
   };
-  //t('anftDapp.listingComponent.successLevel.VERY_HIGH')
+
+  const successRateForecast = (percent: number): RiskLevel => {
+    if (percent <= riskValue.VERY_HIGH) {
+      return RiskLevel.VERY_HIGH;
+    }
+    if (percent > riskValue.VERY_HIGH && percent <= riskValue.HIGH) {
+      return RiskLevel.HIGH;
+    }
+    if (percent > riskValue.HIGH && percent <= riskValue.MEDIUM) {
+      return RiskLevel.MEDIUM;
+    }
+    if (percent > riskValue.MEDIUM && percent <= riskValue.LOW) {
+      return RiskLevel.LOW;
+    }
+    return RiskLevel.VERY_LOW;
+  };
+
+  const handleRiskProgressValue = (days: number): RiskLevel => {
+    const percentRegistOnMaxStage = (days / listingData.maximumStage) * 100;
+    const riskLevel = successRateForecast(percentRegistOnMaxStage);
+    // if (priceStatus === PriceStatus.HIGH) return mappingSuccessRate[mappingPriceStatus[riskLevel]];
+    // return mappingSuccessRate[riskLevel];
+    // if (priceStatus === PriceStatus.HIGH) return remappingRiskLevel[riskLevel];
+    return riskLevel;
+  };
+
   const mappingPriceStatusToText: TMappingPriceStatusToText = {
     [PriceStatus.LOW]: t('anftDapp.listingComponent.extendOwnership.priceStatus.LOW'),
     [PriceStatus.GOOD]: t('anftDapp.listingComponent.extendOwnership.priceStatus.GOOD'),
@@ -449,6 +510,12 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
     return insertCommas(amount);
   };
 
+  const returnSellProfit = (profit: number, dailyPayment: BigNumber | undefined, dateCount: number) => {
+    if (!profit) return 0;
+    const totalPayment = (dailyPayment ? Number(convertBnToDecimal(dailyPayment)) : 0) * ANFT_TO_VND_RATIO * dateCount;
+    return profit - totalPayment;
+  };
+
   return (
     <CModal show={isVisible} onClose={closeModal} closeOnBackdrop={false} centered className="border-radius-modal">
       <CModalHeader className="justify-content-center">
@@ -463,31 +530,40 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
             const value = handleRawFormValues(rawValues);
             dispatch(fetching());
             dispatch(proceedTransaction(value));
+
+            const updatePriceBody: IUpdateBusinessPrice = {
+              listingId: listingId.toString(),
+              sellPrice: rawValues.sellPrice,
+              rentPrice: rawValues.rentPrice,
+            };
+            setUpdatePriceBody(updatePriceBody);
           } catch (error) {
             console.log(`Error submitting form ${error}`);
             ToastError(`${t('anftDapp.global.errors.errorSubmittingForm')}: ${error}`);
           }
         }}
       >
-        {({ values, errors, touched, setFieldValue, handleSubmit, handleChange }) => (
+        {({ values, errors, touched, setFieldValue, handleSubmit }) => (
           <CForm onSubmit={handleSubmit}>
             <CModalBody>
               <CRow>
                 <CCol xs={12}>
-                  <CFormGroup row>
-                    <CCol xs={7}>
-                      <CLabel className="recharge-token-title">
-                        {t('anftDapp.listingComponent.extendOwnership.currentOwnership')}
-                      </CLabel>
-                    </CCol>
-                    {listing?.ownership ? (
-                      <CCol xs={5}>
-                        <p className="text-primary text-right">{convertUnixToDate(listing.ownership.toNumber())}</p>
+                  {modelType === ModalType.OWNERSHIP_EXTENSION ? (
+                    <CFormGroup row>
+                      <CCol xs={7}>
+                        <CLabel className="recharge-token-title">
+                          {t('anftDapp.listingComponent.extendOwnership.currentOwnership')}
+                        </CLabel>
                       </CCol>
-                    ) : (
-                      ''
-                    )}
-                  </CFormGroup>
+                      <CCol xs={5}>
+                        <p className="text-primary text-right m-0">
+                          {listing?.ownership ? convertUnixToDate(listing.ownership.toNumber()) : '_'}
+                        </p>
+                      </CCol>
+                    </CFormGroup>
+                  ) : (
+                    ''
+                  )}
 
                   <CFormGroup row>
                     <CCol xs={7}>
@@ -496,13 +572,16 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                       </CLabel>
                     </CCol>
                     <CCol xs={5}>
-                      <p className="text-primary text-right">{formatBNToken(listing?.dailyPayment, true)}</p>
-                      <CFormText className={'text-right'}>
-                        {listing?.dailyPayment
-                          ? insertCommas(Number(convertBnToDecimal(listing.dailyPayment)) * ANFT_TO_VND_RATIO)
-                          : '_'}{' '}
-                        VND
-                      </CFormText>
+                      <p className="text-primary text-right m-0">
+                        {formatBNToken(listing?.dailyPayment, true)}{' '}
+                        <small className={'text-right text-muted'}>
+                          (
+                          {listing?.dailyPayment
+                            ? insertCommas(Number(convertBnToDecimal(listing.dailyPayment)) * ANFT_TO_VND_RATIO)
+                            : '_'}{' '}
+                          VND)
+                        </small>
+                      </p>
                     </CCol>
                   </CFormGroup>
                   <CFormGroup row>
@@ -512,7 +591,7 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                       </CLabel>
                     </CCol>
                     <CCol xs={6}>
-                      <p className="text-primary text-right">{formatBNToken(tokenBalance, true)}</p>
+                      <p className="text-primary text-right m-0">{formatBNToken(tokenBalance, true)}</p>
                     </CCol>
                   </CFormGroup>
                   <CFormGroup row>
@@ -522,65 +601,12 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                       </CLabel>
                     </CCol>
                     <CCol xs={6}>
-                      <p className="text-primary text-right">
+                      <p className="text-primary text-right m-0">
                         {t(`anftDapp.listingComponent.methods.${getComercialTypesName()}`)}
                       </p>
                     </CCol>
                   </CFormGroup>
 
-                  <CFormGroup row>
-                    <CCol xs={12}>
-                      <CLabel className="recharge-token-title">
-                        {t(
-                          `anftDapp.listingComponent.extendOwnership.${
-                            values.commercialTypes === CommercialTypes.RENT ? 'secondaryRent' : 'secondaryPrice'
-                          }`
-                        )}{' '}
-                        (VND):
-                      </CLabel>
-                    </CCol>
-                    <CCol xs={12}>
-                      <CInput
-                        id="price"
-                        name="price"
-                        className="btn-radius-50"
-                        type="text"
-                        onChange={(e: React.FormEvent<HTMLInputElement>) => {
-                          const priceStatus = checkPriceisGood(
-                            Number(unInsertCommas(e.currentTarget.value)),
-                            values.commercialTypes
-                          );
-
-                          const profit = calculateProfit(
-                            Number(unInsertCommas(e.currentTarget.value)),
-                            values.riskLevel,
-                            priceStatus,
-                            values.dateCount,
-                            values.commercialTypes
-                          );
-                          const currRiskLevel = handleRiskProgressValue(values.dateCount);
-                          const riskLevelInx = riskLevelArray.indexOf(currRiskLevel);
-                          const findPrevRisk =
-                            currRiskLevel !== RiskLevel.VERY_HIGH ? riskLevelArray[riskLevelInx + 1] : currRiskLevel;
-                          const riskLevel = priceStatus === PriceStatus.HIGH ? findPrevRisk : currRiskLevel;
-                          setFieldValue('price', unInsertCommas(e.currentTarget.value));
-                          setFieldValue('priceStatus', priceStatus);
-                          setFieldValue('profit', profit);
-                          setFieldValue('riskLevel', riskLevel);
-                        }}
-                        value={insertCommas(values.price)}
-                      />
-                      <CFormText>
-                        {t('anftDapp.listingComponent.extendOwnership.exchange')}:{' '}
-                        {renderAmount(values.price / ANFT_TO_VND_RATIO)} ANFT
-                      </CFormText>
-                      <CFormText>
-                        <p className={`m-0 text-${mapPriceStatusBadge[values.priceStatus]}`}>
-                          {mappingPriceStatusToText[values.priceStatus]}
-                        </p>
-                      </CFormText>
-                    </CCol>
-                  </CFormGroup>
                   <CFormGroup row className={`${screenWidth <= 335 ? 'd-none' : ''}`}>
                     <CCol xs={12} className="d-flex justify-content-between">
                       <CLabel className="recharge-token-title">
@@ -627,29 +653,41 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                         {t('anftDapp.listingComponent.withdrawToken.days')}
                       </CLabel>
                       <CInput
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        onChange={async (e: React.ChangeEvent<HTMLInputElement>) => {
                           const extendDay = Number(unInsertCommas(e.target.value));
                           const currRiskLevel = handleRiskProgressValue(Number(e.currentTarget.value));
-                          const profit = calculateProfit(
-                            values.price,
+                          const sellProfit = calculateProfit(
+                            values.sellPrice || 0,
                             currRiskLevel,
-                            values.priceStatus,
+                            values.sellPriceStatus,
                             extendDay,
-                            values.commercialTypes
+                            CommercialTypes.SELL
+                          );
+                          const rentProfit = calculateProfit(
+                            values.rentPrice || 0,
+                            currRiskLevel,
+                            values.rentPriceStatus,
+                            extendDay,
+                            CommercialTypes.RENT
                           );
 
                           const riskLevelInx = riskLevelArray.indexOf(currRiskLevel);
                           const findPrevRisk =
                             currRiskLevel !== RiskLevel.VERY_HIGH ? riskLevelArray[riskLevelInx + 1] : currRiskLevel;
-                          const riskLevel = values.priceStatus === PriceStatus.HIGH ? findPrevRisk : currRiskLevel;
+                          const sellRiskLevel =
+                            values.sellPriceStatus === PriceStatus.HIGH ? findPrevRisk : currRiskLevel;
+                          const rentRiskLevel =
+                            values.rentPriceStatus === PriceStatus.HIGH ? findPrevRisk : currRiskLevel;
                           try {
                             BigNumber.from(extendDay);
                             const extendDate = moment(startDate).add(
                               returnMaxEndDate(extendDay, getExtenableDayFromTokenBalance()),
                               'day'
                             );
-                            setFieldValue('profit', profit);
-                            setFieldValue('riskLevel', riskLevel);
+                            await setFieldValue('sellProfit', sellProfit);
+                            await setFieldValue('rentProfit', rentProfit);
+                            await setFieldValue('sellRiskLevel', sellRiskLevel);
+                            await setFieldValue('rentRiskLevel', rentRiskLevel);
                             setFieldValue('dateCount', extendDay);
                             setFieldValue('endDate', extendDate);
                           } catch (err) {
@@ -701,62 +739,342 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                       </CFormText>
                     </CCol>
                   </CFormGroup>
-                  <CFormGroup row>
-                    <CCol xs={5}>
-                      <CLabel className="fw-bold ">{t('anftDapp.listingComponent.extendOwnership.profit')}:</CLabel>
-                    </CCol>
-                    <CCol xs={7}>
-                      <p className="text-primary text-right">{values.profit ? insertCommas(values.profit) : '_'} VND</p>
-                      <CFormText className={'text-right'}>
-                        {values.profit ? renderAmount(values.profit / ANFT_TO_VND_RATIO) : '_'} ANFT
-                      </CFormText>
-                    </CCol>
-                  </CFormGroup>
-                  <CFormGroup row className={`${values.commercialTypes === CommercialTypes.RENT ? '' : 'd-none'}`}>
-                    <CCol xs={5}>
-                      <CLabel className="fw-bold ">
-                        {t('anftDapp.listingComponent.extendOwnership.profitPerMonth')}:
-                      </CLabel>
-                    </CCol>
-                    <CCol xs={7}>
-                      <p className="text-primary text-right">
-                        {values.profit ? insertCommas(calculateProfitPerMonth(values.dateCount, values.profit)) : '_'}{' '}
-                        VND
-                      </p>
-                      <CFormText className={'text-right'}>
-                        {values.profit
-                          ? renderAmount(calculateProfitPerMonth(values.dateCount, values.profit) / ANFT_TO_VND_RATIO)
-                          : '_'}{' '}
-                        ANFT
-                      </CFormText>
-                    </CCol>
-                  </CFormGroup>
-                  <CFormGroup row>
-                    <CCol xs={12}>
-                      <CLabel className="fw-bold">{t('anftDapp.listingComponent.extendOwnership.successRate')}:</CLabel>
-                    </CCol>
-                    <CCol xs={12}>
-                      <CProgress>
-                        <CProgressBar
-                          value={mappingSuccessRate[values.riskLevel].value}
-                          color={mappingSuccessRate[values.riskLevel].color}
-                        />
-                      </CProgress>
-                      <small className={`text-${mappingSuccessRate[values.riskLevel].color}`}>
-                        {mappingSuccessRate[values.riskLevel].text}
-                      </small>
-                    </CCol>
-                  </CFormGroup>
-                  <CFormGroup row>
-                    <CCol xs={4}>
-                      <CLabel className="fw-bold ">
-                        {t('anftDapp.listingComponent.extendOwnership.profitRatio')}:
-                      </CLabel>
-                    </CCol>
-                    <CCol xs={8}>
-                      <p className="text-primary text-right">{calculateProfitRatio(values.dateCount, values.profit)}</p>
-                    </CCol>
-                  </CFormGroup>
+
+                  {user ? (
+                    user.walletAddress !== signerAddress ? (
+                      <CFormGroup
+                        row
+                        className={`border-top mb-2 ${modelType !== ModalType.OWNERSHIP_REGISTER ? 'd-none' : ''}`}
+                      >
+                        <CCol xs={12} className="mt-2">
+                          <small className="text-warning">
+                            <CIcon name="cil-warning" className="mr-1" />
+                            {t(
+                              `anftDapp.listingComponent.extendOwnership.warningAccountLoggedInNotMatch`
+                            )}
+                          </small>
+                        </CCol>
+                      </CFormGroup>
+                    ) : (
+                      ''
+                    )
+                  ) : (
+                    <CFormGroup
+                      row
+                      className={`border-top mb-2 ${modelType !== ModalType.OWNERSHIP_REGISTER ? 'd-none' : ''}`}
+                    >
+                      <CCol xs={12} className="mt-2">
+                        <small className="text-info">
+                          <FontAwesomeIcon icon={faInfoCircle} className="mr-1" />
+                          {t('anftDapp.listingComponent.extendOwnership.loginRemAccountToUpdateSecondaryPrice')}
+                        </small>
+                      </CCol>
+                    </CFormGroup>
+                  )}
+
+                  {isSellCommercial && modelType === ModalType.OWNERSHIP_REGISTER ? (
+                    <>
+                      <CFormGroup row>
+                        <CCol xs={12}>
+                          <CLabel className="recharge-token-title">
+                            {t(`anftDapp.listingComponent.extendOwnership.secondaryPrice`)} (VND):
+                          </CLabel>
+                        </CCol>
+                        <CCol xs={12}>
+                          <CInput
+                            id="sellPrice"
+                            name="sellPrice"
+                            className="btn-radius-50"
+                            type="text"
+                            onChange={async (e: React.FormEvent<HTMLInputElement>) => {
+                              const priceStatus = checkPriceisGood(
+                                Number(unInsertCommas(e.currentTarget.value)),
+                                CommercialTypes.SELL
+                              );
+
+                              const profit = calculateProfit(
+                                Number(unInsertCommas(e.currentTarget.value)),
+                                values.sellRiskLevel,
+                                priceStatus,
+                                values.dateCount,
+                                CommercialTypes.SELL
+                              );
+                              const currRiskLevel = handleRiskProgressValue(values.dateCount);
+                              const riskLevelInx = riskLevelArray.indexOf(currRiskLevel);
+                              const findPrevRisk =
+                                currRiskLevel !== RiskLevel.VERY_HIGH
+                                  ? riskLevelArray[riskLevelInx + 1]
+                                  : currRiskLevel;
+                              const riskLevel = priceStatus === PriceStatus.HIGH ? findPrevRisk : currRiskLevel;
+                              await setFieldValue('sellPrice', unInsertCommas(e.currentTarget.value).trim());
+                              await setFieldValue('sellPriceStatus', priceStatus);
+                              await setFieldValue('sellProfit', profit);
+                              await setFieldValue('sellRiskLevel', riskLevel);
+                            }}
+                            value={insertCommas(values.sellPrice)}
+                          />
+                          <CFormText>
+                            {t('anftDapp.listingComponent.extendOwnership.exchange')}:{' '}
+                            {renderAmount((values.sellPrice || 0) / ANFT_TO_VND_RATIO)} ANFT
+                          </CFormText>
+
+                          <CInvalidFeedback className={errors.sellPrice && touched.sellPrice ? 'd-block' : 'd-none'}>
+                            {errors.sellPrice}
+                          </CInvalidFeedback>
+
+                          {values.sellPrice && !errors.sellPrice ? (
+                            <CFormText>
+                              <p className={`m-0 text-${mapPriceStatusBadge[values.sellPriceStatus]}`}>
+                                {mappingPriceStatusToText[values.sellPriceStatus]}
+                              </p>
+                            </CFormText>
+                          ) : (
+                            ''
+                          )}
+                        </CCol>
+                      </CFormGroup>
+
+                      <CFormGroup row>
+                        <CCol xs={5}>
+                          <CLabel className="recharge-token-title">
+                            {t('anftDapp.listingComponent.extendOwnership.revenue')}:
+                          </CLabel>
+                        </CCol>
+                        <CCol xs={7}>
+                          <p className="text-primary text-right m-0">
+                            {values.sellProfit ? insertCommas(values.sellProfit) : '0'} VND{' '}
+                            <small className="text-muted">
+                              ({values.sellProfit ? renderAmount(Number(values.sellProfit) / ANFT_TO_VND_RATIO) : '0'}{' '}
+                              ANFT)
+                            </small>
+                          </p>
+                        </CCol>
+                      </CFormGroup>
+
+                      <CFormGroup row>
+                        <CCol xs={5}>
+                          <CLabel className="recharge-token-title">
+                            {t('anftDapp.listingComponent.extendOwnership.profit')}:
+                          </CLabel>
+                        </CCol>
+                        <CCol xs={7}>
+                          <p className="text-primary text-right m-0">
+                            {values.sellProfit
+                              ? insertCommas(
+                                  returnSellProfit(Number(values.sellProfit), listing?.dailyPayment, values.dateCount)
+                                )
+                              : '0'}{' '}
+                            VND{' '}
+                            <small className="text-muted">
+                              (
+                              {values.sellProfit
+                                ? renderAmount(
+                                    Number(
+                                      returnSellProfit(
+                                        Number(values.sellProfit),
+                                        listing?.dailyPayment,
+                                        values.dateCount
+                                      )
+                                    ) / ANFT_TO_VND_RATIO
+                                  )
+                                : '0'}{' '}
+                              ANFT)
+                            </small>
+                          </p>
+                        </CCol>
+                      </CFormGroup>
+                      <CFormGroup row>
+                        <CCol xs={12}>
+                          <CLabel className="recharge-token-title">
+                            {t('anftDapp.listingComponent.extendOwnership.successRate')}:
+                          </CLabel>
+                        </CCol>
+                        <CCol xs={12}>
+                          {values.sellPrice && !errors.sellPrice && !errors.sellPrice ? (
+                            <>
+                              <CProgress>
+                                <CProgressBar
+                                  value={mappingSuccessRate[values.sellRiskLevel].value}
+                                  color={mappingSuccessRate[values.sellRiskLevel].color}
+                                />
+                              </CProgress>
+                              <small className={`text-${mappingSuccessRate[values.sellRiskLevel].color}`}>
+                                {mappingSuccessRate[values.sellRiskLevel].text}
+                              </small>
+                            </>
+                          ) : (
+                            <CProgress>
+                              <CProgressBar value={0} color="secondary" />
+                            </CProgress>
+                          )}
+                        </CCol>
+                      </CFormGroup>
+                      <CFormGroup row>
+                        <CCol xs={4}>
+                          <CLabel className="recharge-token-title">
+                            {t('anftDapp.listingComponent.extendOwnership.profitRatio')}:
+                          </CLabel>
+                        </CCol>
+                        <CCol xs={8}>
+                          <p className="text-primary text-right m-0">
+                            {calculateProfitRatio(
+                              values.dateCount,
+                              returnSellProfit(Number(values.sellProfit), listing?.dailyPayment, values.dateCount)
+                            )}
+                          </p>
+                        </CCol>
+                      </CFormGroup>
+                    </>
+                  ) : (
+                    ''
+                  )}
+
+                  {isRentCommercial && modelType === ModalType.OWNERSHIP_REGISTER ? (
+                    <>
+                      <CFormGroup row>
+                        <CCol xs={12}>
+                          <CLabel className="recharge-token-title">
+                            {t(`anftDapp.listingComponent.extendOwnership.secondaryRent`)} (VND):
+                          </CLabel>
+                        </CCol>
+                        <CCol xs={12}>
+                          <CInput
+                            id="rentPrice"
+                            name="rentPrice"
+                            className="btn-radius-50"
+                            type="text"
+                            onChange={async (e: React.FormEvent<HTMLInputElement>) => {
+                              const priceStatus = checkPriceisGood(
+                                Number(unInsertCommas(e.currentTarget.value)),
+                                CommercialTypes.RENT
+                              );
+
+                              const profit = calculateProfit(
+                                Number(unInsertCommas(e.currentTarget.value)),
+                                values.rentRiskLevel,
+                                priceStatus,
+                                values.dateCount,
+                                CommercialTypes.RENT
+                              );
+                              const currRiskLevel = handleRiskProgressValue(values.dateCount);
+                              const riskLevelInx = riskLevelArray.indexOf(currRiskLevel);
+                              const findPrevRisk =
+                                currRiskLevel !== RiskLevel.VERY_HIGH
+                                  ? riskLevelArray[riskLevelInx + 1]
+                                  : currRiskLevel;
+                              const riskLevel = priceStatus === PriceStatus.HIGH ? findPrevRisk : currRiskLevel;
+                              await setFieldValue('rentPrice', unInsertCommas(e.currentTarget.value).trim());
+                              await setFieldValue('rentPriceStatus', priceStatus);
+                              await setFieldValue('rentProfit', profit);
+                              await setFieldValue('rentRiskLevel', riskLevel);
+                            }}
+                            value={insertCommas(values.rentPrice)}
+                          />
+                          <CFormText>
+                            {t('anftDapp.listingComponent.extendOwnership.exchange')}:{' '}
+                            {renderAmount((values.rentPrice || 0) / ANFT_TO_VND_RATIO)} ANFT
+                          </CFormText>
+
+                          <CInvalidFeedback className={errors.rentPrice && touched.rentPrice ? 'd-block' : 'd-none'}>
+                            {errors.rentPrice}
+                          </CInvalidFeedback>
+
+                          {values.rentPrice && !errors.rentPrice ? (
+                            <CFormText>
+                              <p className={`m-0 text-${mapPriceStatusBadge[values.rentPriceStatus]}`}>
+                                {mappingPriceStatusToText[values.rentPriceStatus]}
+                              </p>
+                            </CFormText>
+                          ) : (
+                            ''
+                          )}
+                        </CCol>
+                      </CFormGroup>
+
+                      <CFormGroup row>
+                        <CCol xs={5}>
+                          <CLabel className="recharge-token-title">
+                            {t('anftDapp.listingComponent.extendOwnership.revenuePerMonth')}:
+                          </CLabel>
+                        </CCol>
+                        <CCol xs={7}>
+                          <p className="text-primary text-right m-0">
+                            {values.rentPrice ? insertCommas(values.rentPrice) : '0'} VND{' '}
+                            <small className="text-muted">
+                              ({values.rentPrice ? renderAmount(Number(values.rentPrice) / ANFT_TO_VND_RATIO) : '0'}{' '}
+                              ANFT)
+                            </small>
+                          </p>
+                        </CCol>
+                      </CFormGroup>
+
+                      <CFormGroup row>
+                        <CCol xs={5}>
+                          <CLabel className="recharge-token-title">
+                            {t('anftDapp.listingComponent.extendOwnership.profitPerMonth')}:
+                          </CLabel>
+                        </CCol>
+                        <CCol xs={7}>
+                          <p className="text-primary text-right m-0">
+                            {values.rentProfit
+                              ? insertCommas(calculateProfitPerMonth(values.dateCount, values.rentProfit))
+                              : '0'}{' '}
+                            VND{' '}
+                            <small className="text-muted">
+                              (
+                              {values.rentProfit
+                                ? renderAmount(
+                                    calculateProfitPerMonth(values.dateCount, values.rentProfit) / ANFT_TO_VND_RATIO
+                                  )
+                                : '0'}{' '}
+                              ANFT)
+                            </small>
+                          </p>
+                        </CCol>
+                      </CFormGroup>
+
+                      <CFormGroup row>
+                        <CCol xs={12}>
+                          <CLabel className="recharge-token-title">
+                            {t('anftDapp.listingComponent.extendOwnership.successRate')}:
+                          </CLabel>
+                        </CCol>
+                        <CCol xs={12}>
+                          {values.rentPrice && !errors.rentPrice && !errors.rentPrice ? (
+                            <>
+                              <CProgress>
+                                <CProgressBar
+                                  value={mappingSuccessRate[values.rentRiskLevel].value}
+                                  color={mappingSuccessRate[values.rentRiskLevel].color}
+                                />
+                              </CProgress>
+                              <small className={`text-${mappingSuccessRate[values.rentRiskLevel].color}`}>
+                                {mappingSuccessRate[values.rentRiskLevel].text}
+                              </small>
+                            </>
+                          ) : (
+                            <CProgress>
+                              <CProgressBar value={0} color="secondary" />
+                            </CProgress>
+                          )}
+                        </CCol>
+                      </CFormGroup>
+                      <CFormGroup row>
+                        <CCol xs={4}>
+                          <CLabel className="recharge-token-title">
+                            {t('anftDapp.listingComponent.extendOwnership.profitRatio')}:
+                          </CLabel>
+                        </CCol>
+                        <CCol xs={8}>
+                          <p className="text-primary text-right m-0">
+                            {calculateProfitRatio(values.dateCount, values.rentProfit)}
+                          </p>
+                        </CCol>
+                      </CFormGroup>
+                    </>
+                  ) : (
+                    ''
+                  )}
                 </CCol>
               </CRow>
             </CModalBody>

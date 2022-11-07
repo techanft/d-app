@@ -6,8 +6,10 @@ import records from '../../views/records/records.reducer';
 import transactions from '../../views/transactions/transactions.reducer';
 import wallet from '../../views/wallet/wallet.reducer';
 import provinces from '../../views/provinces/provinces.reducer';
+import authentication from '../../views/auth/auth.reducer';
+import miniStages from '../../views/mini-stage/miniStages.reducer';
 
-const rootReducer = combineReducers({ records, wallet, assets, transactions, container, category, provinces });
+const rootReducer = combineReducers({ records, wallet, assets, transactions, container, category, provinces, authentication, miniStages });
 
 export type RootState = ReturnType<typeof rootReducer>;
 

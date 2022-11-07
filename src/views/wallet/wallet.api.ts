@@ -1,5 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { ethers } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 import { BLOCKCHAIN_NETWORK, _window } from '../../config/constants';
 import { promptUserToSwitchChain, TOKEN_INSTANCE } from '../../shared/blockchain-helpers';
 
@@ -74,12 +74,12 @@ export const getProvider = createAsyncThunk('getProvider', async (_, thunkAPI) =
     if (!_window.ethereum) throw Error('anftDapp.global.modal.errorModal.ethereumIsNotInitializedErrMsg');
     const provider = new ethers.providers.Web3Provider(_window.ethereum);
     const { chainId } = await provider.getNetwork();
-
-    if (ethers.utils.hexlify(chainId) !== BLOCKCHAIN_NETWORK.chainId) {
+    const providerChainIdBN = BigNumber.from(chainId);
+    const networkChainIdBN = BigNumber.from(BLOCKCHAIN_NETWORK.chainId);
+    if (!providerChainIdBN.eq(networkChainIdBN)) {
       promptUserToSwitchChain();
       throw Error(INVALID_NETWORK_ERR);
     }
-
     return provider;
   } catch (error) {
     return thunkAPI.rejectWithValue(error);

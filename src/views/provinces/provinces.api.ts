@@ -1,5 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+import axios from '../../config/axios-interceptor';
 import { pickBy } from 'lodash';
 import { MANAGEMENT_SITE_URL } from '../../config/constants';
 import { IDistrictsAddress, IProvincesAddress, IWardsAddress } from '../../shared/models/provinces.model';
