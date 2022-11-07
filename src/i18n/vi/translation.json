@@ -189,7 +189,8 @@
         "rentPriceMustLessThanOrEqualToMaxRentCost": "Giá thuê không được cao hơn giá thuê tối đa",
         "rentPriceInvalid": "Giá thuê/tháng không hợp lệ",
         "loginRemAccountToUpdateSecondaryPrice": "Đăng nhập tài khoản QLTS đã đăng ký địa chỉ ví đang sử dụng để cập nhật giá kinh doanh trên sàn thứ cấp",
-        "updateBusinessPriceSuccess": "Cập nhật giá kinh doanh thành công"
+        "updateBusinessPriceSuccess": "Cập nhật giá kinh doanh thành công",
+        "warningAccountLoggedInNotMatch": "Địa chỉ ví đã liên kết không trùng khớp với tài khoản đã đăng nhập. BĐS cần được cập nhật giá trên QLTS để lên sàn thứ cấp"
       },
       "withdrawToken": {
         "maximumWithdrawable": "Số ngày rút tối đa",

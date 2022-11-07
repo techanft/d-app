@@ -1,3 +1,4 @@
+import CIcon from '@coreui/icons-react';
 import {
   CButton,
   CCol,
@@ -129,7 +130,7 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
   const listing = useSelector(selectEntityById(listingId));
   const listingType = useSelector(selectCategoryById(listing?.typeId || ''));
   const { user } = useSelector((state: RootState) => state.authentication);
-  const { signer, tokenBalance } = useSelector((state: RootState) => state.wallet);
+  const { signer, tokenBalance, signerAddress } = useSelector((state: RootState) => state.wallet);
   const { submitted } = useSelector((state: RootState) => state.transactions);
 
   const { t } = useTranslation();
@@ -740,7 +741,23 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                   </CFormGroup>
 
                   {user ? (
-                    ''
+                    user.walletAddress !== signerAddress ? (
+                      <CFormGroup
+                        row
+                        className={`border-top mb-2 ${modelType !== ModalType.OWNERSHIP_REGISTER ? 'd-none' : ''}`}
+                      >
+                        <CCol xs={12} className="mt-2">
+                          <small className="text-warning">
+                            <CIcon name="cil-warning" className="mr-1" />
+                            {t(
+                              `anftDapp.listingComponent.extendOwnership.warningAccountLoggedInNotMatch`
+                            )}
+                          </small>
+                        </CCol>
+                      </CFormGroup>
+                    ) : (
+                      ''
+                    )
                   ) : (
                     <CFormGroup
                       row
