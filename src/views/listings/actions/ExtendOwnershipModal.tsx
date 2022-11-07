@@ -656,20 +656,6 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                         onChange={async (e: React.ChangeEvent<HTMLInputElement>) => {
                           const extendDay = Number(unInsertCommas(e.target.value));
                           const currRiskLevel = handleRiskProgressValue(Number(e.currentTarget.value));
-                          const sellProfit = calculateProfit(
-                            values.sellPrice || 0,
-                            currRiskLevel,
-                            values.sellPriceStatus,
-                            extendDay,
-                            CommercialTypes.SELL
-                          );
-                          const rentProfit = calculateProfit(
-                            values.rentPrice || 0,
-                            currRiskLevel,
-                            values.rentPriceStatus,
-                            extendDay,
-                            CommercialTypes.RENT
-                          );
 
                           const riskLevelInx = riskLevelArray.indexOf(currRiskLevel);
                           const findPrevRisk =
@@ -678,6 +664,21 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                             values.sellPriceStatus === PriceStatus.HIGH ? findPrevRisk : currRiskLevel;
                           const rentRiskLevel =
                             values.rentPriceStatus === PriceStatus.HIGH ? findPrevRisk : currRiskLevel;
+
+                            const sellProfit = calculateProfit(
+                              values.sellPrice || 0,
+                              sellRiskLevel,
+                              values.sellPriceStatus,
+                              extendDay,
+                              CommercialTypes.SELL
+                            );
+                            const rentProfit = calculateProfit(
+                              values.rentPrice || 0,
+                              rentRiskLevel,
+                              values.rentPriceStatus,
+                              extendDay,
+                              CommercialTypes.RENT
+                            );
                           try {
                             BigNumber.from(extendDay);
                             const extendDate = moment(startDate).add(
@@ -749,9 +750,7 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                         <CCol xs={12} className="mt-2">
                           <small className="text-warning">
                             <CIcon name="cil-warning" className="mr-1" />
-                            {t(
-                              `anftDapp.listingComponent.extendOwnership.warningAccountLoggedInNotMatch`
-                            )}
+                            {t(`anftDapp.listingComponent.extendOwnership.warningAccountLoggedInNotMatch`)}
                           </small>
                         </CCol>
                       </CFormGroup>
@@ -791,25 +790,24 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                                 Number(unInsertCommas(e.currentTarget.value)),
                                 CommercialTypes.SELL
                               );
-
-                              const profit = calculateProfit(
-                                Number(unInsertCommas(e.currentTarget.value)),
-                                values.sellRiskLevel,
-                                priceStatus,
-                                values.dateCount,
-                                CommercialTypes.SELL
-                              );
                               const currRiskLevel = handleRiskProgressValue(values.dateCount);
                               const riskLevelInx = riskLevelArray.indexOf(currRiskLevel);
                               const findPrevRisk =
                                 currRiskLevel !== RiskLevel.VERY_HIGH
                                   ? riskLevelArray[riskLevelInx + 1]
                                   : currRiskLevel;
-                              const riskLevel = priceStatus === PriceStatus.HIGH ? findPrevRisk : currRiskLevel;
+                              const sellRiskLevel = priceStatus === PriceStatus.HIGH ? findPrevRisk : currRiskLevel;
+                              const profit = calculateProfit(
+                                Number(unInsertCommas(e.currentTarget.value)),
+                                sellRiskLevel,
+                                priceStatus,
+                                values.dateCount,
+                                CommercialTypes.SELL
+                              );
                               await setFieldValue('sellPrice', unInsertCommas(e.currentTarget.value).trim());
-                              await setFieldValue('sellPriceStatus', priceStatus);
-                              await setFieldValue('sellProfit', profit);
-                              await setFieldValue('sellRiskLevel', riskLevel);
+                              setFieldValue('sellPriceStatus', priceStatus);
+                              setFieldValue('sellProfit', profit);
+                              setFieldValue('sellRiskLevel', sellRiskLevel);
                             }}
                             value={insertCommas(values.sellPrice)}
                           />
@@ -948,25 +946,24 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                                 Number(unInsertCommas(e.currentTarget.value)),
                                 CommercialTypes.RENT
                               );
-
-                              const profit = calculateProfit(
-                                Number(unInsertCommas(e.currentTarget.value)),
-                                values.rentRiskLevel,
-                                priceStatus,
-                                values.dateCount,
-                                CommercialTypes.RENT
-                              );
                               const currRiskLevel = handleRiskProgressValue(values.dateCount);
                               const riskLevelInx = riskLevelArray.indexOf(currRiskLevel);
                               const findPrevRisk =
                                 currRiskLevel !== RiskLevel.VERY_HIGH
                                   ? riskLevelArray[riskLevelInx + 1]
                                   : currRiskLevel;
-                              const riskLevel = priceStatus === PriceStatus.HIGH ? findPrevRisk : currRiskLevel;
+                              const rentRiskLevel = priceStatus === PriceStatus.HIGH ? findPrevRisk : currRiskLevel;
+                              const profit = calculateProfit(
+                                Number(unInsertCommas(e.currentTarget.value)),
+                                rentRiskLevel,
+                                priceStatus,
+                                values.dateCount,
+                                CommercialTypes.RENT
+                              );
                               await setFieldValue('rentPrice', unInsertCommas(e.currentTarget.value).trim());
-                              await setFieldValue('rentPriceStatus', priceStatus);
-                              await setFieldValue('rentProfit', profit);
-                              await setFieldValue('rentRiskLevel', riskLevel);
+                              setFieldValue('rentPriceStatus', priceStatus);
+                              setFieldValue('rentProfit', profit);
+                              setFieldValue('rentRiskLevel', rentRiskLevel);
                             }}
                             value={insertCommas(values.rentPrice)}
                           />
