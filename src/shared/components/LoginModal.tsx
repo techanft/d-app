@@ -36,12 +36,11 @@ import { ToastError, ToastSuccess } from './Toast';
 const initialValues: ILoginForm = { username: '', password: '', rememberMe: false };
 
 const LoginModal = () => {
-  const { loginSuccess, errorMessage, user, loginModalVisible } = useSelector(
+  const { loginSuccess, errorMessage, user, loginModalVisible, token } = useSelector(
     (state: RootState) => state.authentication
   );
   const { businessPrice, updateBusinessPriceSuccess } = useSelector((state: RootState) => state.transactions);
   const { signer, signerAddress } = useSelector((state: RootState) => state.wallet);
-  const { token } = useSelector((state: RootState) => state.authentication);
 
   const setLoginModalVisibility = (key: boolean) => dispatch(setLoginModalVisible(key));
 
@@ -85,7 +84,6 @@ const LoginModal = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
-  
 
   const handleValuesUpdatePrice = (values: IUpdateBusinessPrice): IUpdatePriceTransaction => {
     if (!signer) {

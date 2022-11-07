@@ -29,6 +29,7 @@ import {
   cilTag,
   cilTrash,
   cilUser,
+  cilWarning,
   cilX,
   cilXCircle,
 } from '@coreui/icons/js/free';
@@ -65,7 +66,8 @@ export const icons = Object.assign(
     cilTag,
     cilUser,
     cilLockLocked,
-    cilList
+    cilList,
+    cilWarning
   },
   {
     cifVn,

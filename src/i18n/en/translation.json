@@ -189,7 +189,8 @@
         "rentPriceMustLessThanOrEqualToMaxRentCost": "Rent price must be less than or equal to max rent cost",
         "rentPriceInvalid": "Rent price is invalid",
         "loginRemAccountToUpdateSecondaryPrice": "Login Real Estate Management account to update business price",
-        "updateBusinessPriceSuccess": "Successfully updated business price"
+        "updateBusinessPriceSuccess": "Successfully updated business price",
+        "warningAccountLoggedInNotMatch": "Unmatched registered wallet address. You will have to login into the real estate platform to update business price"
       },
       "withdrawToken": {
         "maximumWithdrawable": "Maximum Days",

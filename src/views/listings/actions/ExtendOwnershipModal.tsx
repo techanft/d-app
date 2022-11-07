@@ -1,3 +1,4 @@
+import CIcon from '@coreui/icons-react';
 import {
   CButton,
   CCol,
@@ -129,7 +130,7 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
   const listing = useSelector(selectEntityById(listingId));
   const listingType = useSelector(selectCategoryById(listing?.typeId || ''));
   const { user } = useSelector((state: RootState) => state.authentication);
-  const { signer, tokenBalance } = useSelector((state: RootState) => state.wallet);
+  const { signer, tokenBalance, signerAddress } = useSelector((state: RootState) => state.wallet);
   const { submitted } = useSelector((state: RootState) => state.transactions);
 
   const { t } = useTranslation();
@@ -270,7 +271,7 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
         'sellPrice-is-required',
         t(`anftDapp.listingComponent.extendOwnership.pleaseEnterSellPrice`),
         function (value: number | undefined) {
-          if (!isSellCommercial || !user) {
+          if (!isSellCommercial) {
             return true;
           }
           return Number(value) >= 0;
@@ -294,7 +295,7 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
         'rentPrice-is-required',
         t(`anftDapp.listingComponent.extendOwnership.pleaseEnterRentPrice`),
         function (value: number | undefined) {
-          if (!isRentCommercial || !user) {
+          if (!isRentCommercial) {
             return true;
           }
           return Number(value) >= 0;
@@ -683,9 +684,9 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                               returnMaxEndDate(extendDay, getExtenableDayFromTokenBalance()),
                               'day'
                             );
-                            setFieldValue('sellProfit', sellProfit);
-                            setFieldValue('rentProfit', rentProfit);
-                            setFieldValue('sellRiskLevel', sellRiskLevel);
+                            await setFieldValue('sellProfit', sellProfit);
+                            await setFieldValue('rentProfit', rentProfit);
+                            await setFieldValue('sellRiskLevel', sellRiskLevel);
                             await setFieldValue('rentRiskLevel', rentRiskLevel);
                             setFieldValue('dateCount', extendDay);
                             setFieldValue('endDate', extendDate);
@@ -740,7 +741,23 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                   </CFormGroup>
 
                   {user ? (
-                    ''
+                    user.walletAddress !== signerAddress ? (
+                      <CFormGroup
+                        row
+                        className={`border-top mb-2 ${modelType !== ModalType.OWNERSHIP_REGISTER ? 'd-none' : ''}`}
+                      >
+                        <CCol xs={12} className="mt-2">
+                          <small className="text-warning">
+                            <CIcon name="cil-warning" className="mr-1" />
+                            {t(
+                              `anftDapp.listingComponent.extendOwnership.warningAccountLoggedInNotMatch`
+                            )}
+                          </small>
+                        </CCol>
+                      </CFormGroup>
+                    ) : (
+                      ''
+                    )
                   ) : (
                     <CFormGroup
                       row
@@ -790,9 +807,9 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                                   : currRiskLevel;
                               const riskLevel = priceStatus === PriceStatus.HIGH ? findPrevRisk : currRiskLevel;
                               await setFieldValue('sellPrice', unInsertCommas(e.currentTarget.value).trim());
-                              setFieldValue('sellPriceStatus', priceStatus);
-                              setFieldValue('sellProfit', profit);
-                              setFieldValue('sellRiskLevel', riskLevel);
+                              await setFieldValue('sellPriceStatus', priceStatus);
+                              await setFieldValue('sellProfit', profit);
+                              await setFieldValue('sellRiskLevel', riskLevel);
                             }}
                             value={insertCommas(values.sellPrice)}
                           />
@@ -947,9 +964,9 @@ const ExtendOwnershipModal = (props: IExtendOwnershipModal) => {
                                   : currRiskLevel;
                               const riskLevel = priceStatus === PriceStatus.HIGH ? findPrevRisk : currRiskLevel;
                               await setFieldValue('rentPrice', unInsertCommas(e.currentTarget.value).trim());
-                              setFieldValue('rentPriceStatus', priceStatus);
-                              setFieldValue('rentProfit', profit);
-                              setFieldValue('rentRiskLevel', riskLevel);
+                              await setFieldValue('rentPriceStatus', priceStatus);
+                              await setFieldValue('rentProfit', profit);
+                              await setFieldValue('rentRiskLevel', riskLevel);
                             }}
                             value={insertCommas(values.rentPrice)}
                           />
