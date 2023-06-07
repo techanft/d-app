@@ -18,7 +18,7 @@ export const _window = window as unknown as IWindowEth;
 
 export const USING_TESTNET = _env !== EnvEnum.PROD; // Network toggler
 
-export const SERVICE_API_URL = USING_TESTNET ?  'https://dapp-dev.anfteco.io/api/' : 'https://app.anfteco.io/api/' ;
+export const SERVICE_API_URL = USING_TESTNET ?  'https://dapp-dev.anfteco.io/api/' : 'https://app.anfteco.vn/api/' ;
 export const MANAGEMENT_SITE_URL = USING_TESTNET ? 'https://dev.anfteco.vn/' : 'https://anfteco.vn/';
 
 export const BLOCKCHAIN_NETWORK = USING_TESTNET ? GOERLI_TESTNET_CONFIG : BSC_MAINNET_CONFIG
