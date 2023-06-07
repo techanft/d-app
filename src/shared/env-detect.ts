@@ -7,7 +7,7 @@ export enum EnvEnum {
 }
 
 const devHost = 'dapp-dev.anfteco.io';
-const prodHost = 'app.anfteco.io';
+const prodHost = 'app.anfteco.vn';
 
 const envDetect = (): EnvEnum  => {
     const hostname = window.location.hostname;
